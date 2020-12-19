@@ -1,4 +1,4 @@
 # geomander
 Geographic Tools for Studying Gerrymandering
 
-R package, in development. Focuses on creating data sets and other tools that help make understanding gerrymandering faster and easier.
+R package, in development. Focuses on creating data sets and other tools that help make understanding gerrymandering faster and easier. Designed for easy preparation to run simulation analysis with the R package redist, but is aimed at the geographic aspects of redistricting, not partitioning methods.
