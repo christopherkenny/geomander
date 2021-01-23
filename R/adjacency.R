@@ -28,3 +28,44 @@ add_edge <- function(adjacency, v1, v2, zero = TRUE){
 
   return(adjacency)
 }
+
+#' Suggest Neighbors for Lonely Precincts
+#'
+#' For precincts which have no adjacent precincts, this suggests the nearest precinct
+#' as a friend to add. This is useful for when a small number of precincts are disconnected
+#' from the remainder of the geography, such as an island.
+#'
+#' @param shp an sf shapefile
+#' @param adjacency an adjacency list
+#' @param idx Optional. Which indices to suggest neighbors for. If blank, suggests for those
+#' with no neighbors.
+#' @param neighbors number of neighbors to suggest
+#'
+#' @return
+#' @export
+#' @importFrom dplyr bind_rows
+#' @importFrom nngeo st_nn
+#' @importFrom tibble tibble
+#' @examples
+suggest_neighbors <- function(shp, adjacency, idx, neighbors = 1){
+  if(missing(idx)){
+    idx <- which(lengths(adjacency) == 0)
+  }
+  
+  out <- tibble()
+  for(i in idx){
+    
+    nn <- suppressMessages(st_nn(x = shp[i,], y = shp[-i,], k = neighbors) %>% unlist())
+    for(j in 1:length(nn)){
+      if(nn[j] >= i){
+        nn[j] <- nn[j] + 1
+      }
+    }
+    
+    
+    out <- bind_rows(out, tibble(x = i, y = nn))
+  }
+  
+  return(out)
+  
+}
