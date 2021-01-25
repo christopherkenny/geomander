@@ -19,18 +19,16 @@ check_contiguity <- function(adjacency, group){
     }
     groups <- rep(0, length(group))
     sorted <- sort(unique(group))
-      for(i in 1:length(group)){
-        groups[i] <- which(sorted == group[i])
-      }
-    
-    
+    for(i in 1:length(group)){
+      groups[i] <- which(sorted == group[i])
+    }
   } else{
     groups <- rep(1L, length(adjacency))
   }
   
   
   out <- tibble(group = group, group_number = groups, component = contiguity(adjacency, groups))
- 
+  
   return(out) 
 }
 
@@ -45,7 +43,8 @@ check_contiguity <- function(adjacency, group){
 #' @return
 #' @export
 #'
-#' @importFrom dplyr row_number
+#' @importFrom dplyr row_number distinct filter mutate 
+#' @importFromsf st_distance
 #'
 #' @examples
 suggest_component_connection <- function(shp, adjacency, group){
@@ -60,10 +59,30 @@ suggest_component_connection <- function(shp, adjacency, group){
   
   shp <- shp %>% mutate(rownum = row_number())
   
+  out <- tibble()
+  for(g in 1:length(unique(group))){
+    sub <- components$component[group == g]
+    if(max(sub) > 1){
+      for(c in 1:max(sub)){
+        tempx <- shp %>% filter(group == g, components$component == c)
+        tempy <- shp %>% filter(group == g, components$component != c)
+        dists <- sf::st_distance(x = tempx, y = tempy)
+        prop <- arrayInd(which.min(dists), dim(dists))
+        out <- out %>% bind_rows(tibble(x = tempx$rownum[prop[1,1]], y = tempy$rownum[prop[1,2]]))
+      }
+    }
+
+  }
   
+  for(i in 1:nrow(out)){
+    if(out[i, 1] > out[i,2]){
+      temp <- out[i, 1]
+      out[i, 1] <- out[i, 2]
+      out[i, 2] <- temp
+    }
+  }
   
-  
-  
+  return(distinct(out))
   
 }
 

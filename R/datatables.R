@@ -10,7 +10,7 @@
 #'
 #' @return
 #' 
-#' @importFrom tidycensus fips_codes get_decennial
+#' @importFrom tidycensus get_decennial
 #' @importFrom tigris blocks
 #' @importFrom dplyr filter select mutate all_of
 #' @importFrom tibble tibble
@@ -51,19 +51,24 @@ create_block_table <- function(state, county, geography = TRUE, year = 2010){
   out <- out %>% select(GEOID, variable, value) %>% pivot_wider(id_cols = GEOID, names_from = 'variable', values_from = 'value')
   
   if(geography){
-    blocks <- tigris::blocks(state = state, year = year) 
+    if(!missing(county)){
+      blocks <- tigris::blocks(state = state, year = year, county = county) 
+    } else {
+      blocks <- tigris::blocks(state = state, year = year) 
+    }
+    
     blocks <- blocks %>% mutate(waterpct = AWATER10/(ALAND10+AWATER10))
     blocks <- blocks %>% select(any_of(c('STATEFP10', 'COUNTYFP10', 'TRACTCE10', 'BLOCKCE10', 'GEOID10',
                                        'STATEFP00', 'COUNTYFP00', 'TRACTCE00', 'BLOCKCE00', 'GEOID00',
                                        'waterpct', 'geometry')))
     names(blocks)[str_detect(names(blocks), pattern = 'GEOID')] <- 'GEOID'
-  
+
     out <- blocks %>% left_join(y = out)
     
     names(out) <- c('State', 'County', 'Tract', 'Block', 'GEOID', 'waterpct', 
                      'Total', 'TotalWhite', 'TotalBlack', 'TotalHisp', 'VAP', 'VAPWhite', 'VAPBlack', 'VAPHisp', 'Place', 'geometry')
     
-  } else{
+  } else {
     names(out) <- c('State', 'County', 'Tract', 'Block', 'GEOID', 'waterpct', 'geometry')
   }
   

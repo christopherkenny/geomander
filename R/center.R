@@ -10,22 +10,22 @@
 #'
 #' @examples
 st_centerish <- function(shp){
-  cent <- st_centroid(shp)
+  suppressWarnings( cent <- st_centroid(shp) )
   
   
   if(nrow(shp) > 1){
-    outside <- diag(st_within(x = cent, y = shp, spare = FALSE))
-    pts <- st_point_on_surface(shp[outside, ])
-    st_geometry(cent[outside,]) <- st_geometry(pts)
+    outside <- diag(st_within(x = cent, y = shp, sparse = FALSE))
+    suppressWarnings( pts <- st_point_on_surface(shp[outside, ]) )
+    suppressWarnings( st_geometry(cent[outside,]) <- st_geometry(pts) )
   } else {
     
     
-    outside <- as.logical(st_within(x = cent, y = shp, spare = FALSE))
+    outside <- as.logical(st_within(x = cent, y = shp, sparse = FALSE))
     if(is.na(outside)){
       outside <- TRUE
     }
     
-    st_geometry(cent[outside]) <- st_geometry(st_point_on_surface(shp[outside]))
+    suppressWarnings( st_geometry(cent[outside]) <- st_geometry(st_point_on_surface(shp[outside])) )
     
     
   }
