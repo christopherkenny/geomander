@@ -9,6 +9,7 @@
 #' @return Integer Vector of matches length(to) with values in 1:nrow(from)
 #' @export
 #' @importFrom sf st_centroid st_point_on_surface st_nearest_feature st_intersection
+#' 
 #' @examples \dontrun{
 #' data(checkerboard)
 #' counties <- st_as_sf(as.data.frame(rbind(st_union(checkerboard %>% filter(i < 4)), 
@@ -84,3 +85,5 @@ geo_match <- function(from, to, method = 'center', tiebreaker = TRUE){
   return(as.integer(ints))
   
 }
+
+globalVariables(c('fromid', 'toid', 'area'))

@@ -3,6 +3,7 @@
 #'
 #' @param from Required. sf dataframe. the geography to subset
 #' @param to Required. sf dataframe. the geography that from must intersect
+#' @param bool Optional, defaults to FALSE. Should this just return a logical vector?
 #'
 #' @return sf data frame or logical vector if bool=TRUE
 #' @export
@@ -28,6 +29,7 @@ geo_filter <- function(from, to, bool = FALSE){
 #' @param from Required. sf dataframe. the geography to subset
 #' @param to Required. sf dataframe. the geography that from must intersect
 #' @param thresh Percent as decimal of an area to trim away.
+#' @param bool Optional, defaults to FALSE. Should this just return a logical vector?
 #'
 #' @return sf data frame or logical vector if bool=TRUE
 #' @export

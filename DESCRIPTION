@@ -18,7 +18,9 @@ Imports: Rcpp,
   tibble,
   tidycensus,
   tidyr,
-  tigris
+  tigris,
+  ggplot2
 Depends: 
     R (>= 2.10)
 LazyData: true
+Encoding: UTF-8

@@ -7,14 +7,14 @@
 suggest_component_connection(shp, adjacency, group)
 }
 \arguments{
-\item{shp}{}
+\item{shp}{An sf shapefile}
 
-\item{adjacency}{}
+\item{adjacency}{adjacency list}
 
-\item{group}{}
+\item{group}{array of group identifiers. Typically district numbers or county names.}
 }
 \value{
-
+tibble with two columns of suggested rows of shp to connect in adj
 }
 \description{
 Suggests nearest neighbors for connected a disconnected group.

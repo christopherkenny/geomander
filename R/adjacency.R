@@ -41,7 +41,7 @@ add_edge <- function(adjacency, v1, v2, zero = TRUE){
 #' with no neighbors.
 #' @param neighbors number of neighbors to suggest
 #'
-#' @return
+#' @return tibble with two columns of suggested rows of shp to connect in adj
 #' @export
 #' @importFrom dplyr bind_rows
 #' @importFrom nngeo st_nn

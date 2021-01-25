@@ -14,7 +14,7 @@ estimate_down(wts, value, group)
 \item{group}{matches of length(wts) that correspond to row indices of value. Often, this input is the output of geo_match.}
 }
 \value{
-
+numeric vector with each value split by weight
 }
 \description{
 Non-geographic partner function to geo_estimate_down. Allows users to estimate 

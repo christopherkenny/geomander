@@ -18,10 +18,11 @@ geo_estimate_down(from, to, wts, value, method = "center")
 \item{method}{string from center, centroid, point, or area for matching levels}
 }
 \value{
-
+numeric vector with each value split by weight
 }
 \description{
 Simple method for estimating data down to a lower level. This is most often useful
 for getting election data down from a precinct level to a block level in the case
-that a state or other jurisdiction split precincts when creating districts.
+that a state or other jurisdiction split precincts when creating districts. Geographic
+parter to estimate_down.
 }

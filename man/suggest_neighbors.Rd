@@ -17,7 +17,7 @@ with no neighbors.}
 \item{neighbors}{number of neighbors to suggest}
 }
 \value{
-
+tibble with two columns of suggested rows of shp to connect in adj
 }
 \description{
 For precincts which have no adjacent precincts, this suggests the nearest precinct

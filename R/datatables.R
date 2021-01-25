@@ -8,11 +8,11 @@
 #' @param geography Defaults to TRUE. Whether to return the geography or not.
 #' @param year year, must be 2010 at the moment. 2020 to be added once available. 2000 if rereleased.
 #'
-#' @return
+#' @return dataframe with data for each block in the selected region
 #' 
 #' @importFrom tidycensus get_decennial
 #' @importFrom tigris blocks
-#' @importFrom dplyr filter select mutate all_of
+#' @importFrom dplyr filter select mutate all_of any_of left_join
 #' @importFrom tibble tibble
 #' @importFrom tidyr pivot_wider
 #' @importFrom stringr str_detect
@@ -22,7 +22,7 @@
 #' @examples
 create_block_table <- function(state, county, geography = TRUE, year = 2010){
   
-  if(! state %in% state.abb){
+  if(! state %in% datasets::state.abb){
     stop('Please provide a two letter postal abbreviation for the state.')
   }
   
@@ -75,3 +75,4 @@ create_block_table <- function(state, county, geography = TRUE, year = 2010){
   return(out)
 }
 
+globalVariables(c('GEOID', 'variable', 'value', 'AWATER10', 'ALAND10'))

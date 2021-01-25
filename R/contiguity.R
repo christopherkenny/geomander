@@ -36,15 +36,15 @@ check_contiguity <- function(adjacency, group){
 #' 
 #' Suggests nearest neighbors for connected a disconnected group.
 #'
-#' @param shp 
-#' @param adjacency 
-#' @param group 
+#' @param shp An sf shapefile
+#' @param adjacency adjacency list
+#' @param group array of group identifiers. Typically district numbers or county names.
 #'
-#' @return
+#' @return tibble with two columns of suggested rows of shp to connect in adj
 #' @export
 #'
 #' @importFrom dplyr row_number distinct filter mutate 
-#' @importFromsf st_distance
+#' @importFrom sf st_distance
 #'
 #' @examples
 suggest_component_connection <- function(shp, adjacency, group){

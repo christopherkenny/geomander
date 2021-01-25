@@ -10,6 +10,8 @@ geo_filter(from, to, bool = FALSE)
 \item{from}{Required. sf dataframe. the geography to subset}
 
 \item{to}{Required. sf dataframe. the geography that from must intersect}
+
+\item{bool}{Optional, defaults to FALSE. Should this just return a logical vector?}
 }
 \value{
 sf data frame or logical vector if bool=TRUE

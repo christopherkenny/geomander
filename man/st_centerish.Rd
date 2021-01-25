@@ -7,10 +7,10 @@
 st_centerish(shp)
 }
 \arguments{
-\item{shp}{An sf shapefile}
+\item{shp}{An sf dataframe}
 }
 \value{
-
+An sf dataframe where geometry is the center(ish) of each shape in shp
 }
 \description{
 Returns points within the shape, near the center.
