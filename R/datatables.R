@@ -19,7 +19,9 @@
 #' @importFrom magrittr %>%
 #' @export
 #' 
-#' @examples
+#' @examples \dontrun{
+#' create_block_table(state = 'NY', county = 'Rockland', geography = F)
+#' }
 create_block_table <- function(state, county, geography = TRUE, year = 2010){
   
   if(! state %in% datasets::state.abb){
@@ -69,8 +71,11 @@ create_block_table <- function(state, county, geography = TRUE, year = 2010){
                      'Total', 'TotalWhite', 'TotalBlack', 'TotalHisp', 'VAP', 'VAPWhite', 'VAPBlack', 'VAPHisp', 'Place', 'geometry')
     
   } else {
-    names(out) <- c('State', 'County', 'Tract', 'Block', 'GEOID', 'waterpct', 'geometry')
+    names(out) <- c('GEOID', 'Total', 'TotalWhite', 'TotalBlack', 'TotalHisp', 'VAP', 'VAPWhite', 'VAPBlack', 'VAPHisp', 'Place')
   }
+  
+  out <- out %>% mutate(TotalOther = Total - TotalWhite - TotalBlack - TotalHisp,
+                        VAPOther = VAP - VAPWhite - VAPBlack - VAPHisp)
   
   return(out)
 }
