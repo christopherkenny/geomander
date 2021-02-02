@@ -22,3 +22,8 @@ dataframe with data for each block in the selected region
 Creates a block level dataset, using the decennial census information, with the 
 standard redistricting variables.
 }
+\examples{
+\dontrun{
+create_block_table(state = 'NY', county = 'Rockland', geography = F)
+}
+}

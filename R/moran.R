@@ -5,10 +5,8 @@
 #' @param wts Required. Numeric vector with weights to use for Moran's I.
 #' @param spatial_mat matrix of spatial weights. Optional if shp or adj provided.
 #'
-#' @return
+#' @return tibble
 #' @export
-#'
-#' @examples
 local_morans <- function(shp, adj, wts, spatial_mat){
   if(missing(shp) & missing(adj) & missing(spatial_mat)){
     stop('Please supply an argument to at least one of shp or adj or spatial_mat.')
@@ -50,11 +48,9 @@ local_morans <- function(shp, adj, wts, spatial_mat){
 #' @param adj zero indexed adjacency list. Optional if shp or spatial_mat provided.
 #' @param wts Required. Numeric vector with weights to use for Moran's I.
 #' @param spatial_mat matrix of spatial weights. Optional if shp or adj provided.
-#'
-#' @return
+#' @importFrom sf st_relate
+#' @return list
 #' @export
-#'
-#' @examples
 global_morans <- function(shp, adj, wts, spatial_mat){
   if(missing(shp) & missing(adj) & missing(spatial_mat)){
     stop('Please supply an argument to at least one of shp or adj or spatial_mat.')

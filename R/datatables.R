@@ -81,4 +81,71 @@ create_block_table <- function(state, county, geography = TRUE, year = 2010){
   return(out)
 }
 
-globalVariables(c('GEOID', 'variable', 'value', 'AWATER10', 'ALAND10'))
+
+#'  Aggregate Block Table by Matches
+#'
+#' Aggregates block table values up to a higher level, normally precincts, hence
+#' the name block2prec. 
+#'
+#' @param block_table Required. Block table output from create_block_table
+#' @param matches Required. Grouping variable to aggregate up by, typically made with geo_match
+#' @param geometry Boolean. Whether to keep geometry or not.
+#'
+#' @importFrom sf st_union st_as_sf st_drop_geometry
+#' @importFrom dplyr summarize
+#' @return dataframe with length(unique(matches)) rows
+#' @export
+block2prec <- function(block_table, matches, geometry = FALSE){
+  if(missing(block_table)){
+    stop("Please provide an argument to block_table.")
+  }
+  if(missing(matches)){
+    stop("Please provide an argument to matches")
+  }
+  
+  block_table <- block_table %>% mutate(matches_id = matches)
+  
+  if(!geometry){
+    ret <- block_table %>% st_drop_geometry() %>% 
+      group_by(matches_id) %>% summarize(
+        State = unique(State),
+        County = unique(County),
+        Total = sum(Total),
+        TotalWhite = sum(TotalWhite),
+        TotalBlack = sum(TotalBlack),
+        TotalHisp = sum(TotalHisp),
+        TotalOther = sum(TotalOther),
+        VAP = sum(VAP),
+        VAPWhite = sum(VAPWhite),
+        VAPBlack = sum(VAPBlack),
+        VAPHisp = sum(VAPHisp),
+        VAPOther = sum(VAPOther)
+      )
+  } else {
+    ret <- block_table %>% 
+      group_by(matches_id) %>% summarize(
+        State = unique(State),
+        County = unique(County),
+        Total = sum(Total),
+        TotalWhite = sum(TotalWhite),
+        TotalBlack = sum(TotalBlack),
+        TotalHisp = sum(TotalHisp),
+        TotalOther = sum(TotalOther),
+        VAP = sum(VAP),
+        VAPWhite = sum(VAPWhite),
+        VAPBlack = sum(VAPBlack),
+        VAPHisp = sum(VAPHisp),
+        VAPOther = sum(VAPOther),
+        geometry = st_union(geometry)
+      ) %>% st_as_sf()
+  }
+  
+  return(ret)
+}
+
+
+
+globalVariables(c('GEOID', 'variable', 'value', 'AWATER10', 'ALAND10', 'County',
+                  'State', 'Total', 'TotalBlack', 'TotalHisp', 'TotalOther', 
+                  'TotalWhite', 'VAP',
+                  'VAPBlack', 'VAPHisp', 'VAPOther', 'VAPWhite', 'matches_id'))

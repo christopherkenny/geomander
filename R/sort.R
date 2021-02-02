@@ -7,7 +7,6 @@
 #' @return sf dataframe
 #' @export
 #'
-#' @examples
 geo_sort <- function(shp){
   if(missing(shp)){
     stop('shp is required.')

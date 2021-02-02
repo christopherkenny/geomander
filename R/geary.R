@@ -5,10 +5,8 @@
 #' @param wts Required. Numeric vector with weights to use for Moran's I.
 #' @param spatial_mat matrix of spatial weights. Not required if shp or adj provided.
 #'
-#' @return
+#' @return numeric vector 
 #' @export
-#'
-#' @examples
 local_gearys <- function(shp, adj, wts, spatial_mat){
   if(missing(shp) & missing(adj) & missing(spatial_mat)){
     stop('Please supply an argument to at least one of shp or adj or spatial_mat.')
@@ -52,10 +50,9 @@ local_gearys <- function(shp, adj, wts, spatial_mat){
 #' @param wts Required. Numeric vector with weights to use for Moran's I.
 #' @param spatial_mat matrix of spatial weights. Optional if shp or adj provided.
 #'
-#' @return
+#' @return double
 #' @export
 #'
-#' @examples
 global_geary <- function(shp, adj, wts, spatial_mat){
   if(missing(shp) & missing(adj) & missing(spatial_mat)){
     stop('Please supply an argument to at least one of shp or adj or spatial_mat.')
