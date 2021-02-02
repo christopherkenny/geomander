@@ -35,7 +35,6 @@ geo_filter <- function(from, to, bool = FALSE){
 #' @export
 #'
 #' @importFrom sf st_intersection st_area
-#' @examples
 geo_trim <- function(from, to, thresh = 0.01, bool = FALSE){
   
   ints <- sf::st_intersection(x = from, y = to)
