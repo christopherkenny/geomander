@@ -73,6 +73,16 @@ suggest_neighbors <- function(shp, adjacency, idx, neighbors = 1){
 
 
 
+#' Compare Adajacency Lists
+#'
+#' @param adj1 Required. A first adjacency list.
+#' @param adj2 Required. A second adjacency list.
+#' @param shp shapefile to compare intersection types.
+#' @param zero Boolean. Defaults to TRUE. Are adj1 and adj2 zero indexed?
+#'
+#' @return tibble with row indices to compare, and optionally columns which describe the 
+#' DE-9IM relationship between differences.
+#' @export
 compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE){
   
   if(missing(adj1) | missing(adj2)){
