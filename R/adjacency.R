@@ -69,3 +69,54 @@ suggest_neighbors <- function(shp, adjacency, idx, neighbors = 1){
   return(out)
   
 }
+
+
+
+
+compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE){
+  
+  if(missing(adj1) | missing(adj2)){
+    stop('Please provide an argument to both adj1 and adj2.')
+  }
+  
+  if(length(adj1) != length(adj2)){
+    stop('Adjacencies have different lengths.')
+  }
+  
+  ret <- tibble()
+  for(i in 1:length(adj1)){
+
+    temp1 <- tibble(x = i, y = adj1[[i]][which(!(adj1[[i]] %in% adj2[[i]]))],
+                    from = 1)
+    temp2 <- tibble(x = i, y = adj2[[i]][which(!(adj2[[i]] %in% adj1[[i]]))],
+                    from = 2)
+    
+    ret <- bind_rows(ret, temp1, temp2)
+  }
+  
+  
+  if(nrow(ret) > 0 & zero){
+    ret$y <- ret$y + 1
+  }
+  
+  ret$relation <- NA_character_
+  ret$class <- NA_character_
+  
+  
+  if(!missing(shp)){
+    if(nrow(ret) > 1){
+      for(i in 1:nrow(ret)){
+        temp1 <- shp %>% slice(ret$x[i])
+        temp2 <- shp %>% slice(ret$y[i])
+        
+        ret$relation[i] <- st_relate(temp1, temp2)
+        suppressWarnings(ret$class[i] <- class(st_geometry(st_intersection(shp[ret$x[i],], 
+                                                          shp[ret$y[i],])))[1])
+      }
+    }
+  }
+  
+
+  
+  return(ret)
+}

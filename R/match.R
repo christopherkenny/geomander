@@ -39,23 +39,18 @@ geo_match <- function(from, to, method = 'center', tiebreaker = TRUE){
     }
     
     pts <- op(from)
-
+    
     ints <- st_intersects(pts, to)
     if(any(lengths(ints) != 1 )){
+      idx <- which(lengths(ints) != 1)
+      
       if(tiebreaker){
-        nnb <- st_nearest_feature(x = st_centroid(from), y = st_centroid(to))
+        nnb <- st_nearest_feature(x = st_centroid(from[idx,]), y = st_centroid(to))
         
-        for(i in 1:length(ints)){
-          if(length(ints[[i]]) == 0){
-            ints[[i]] <- nnb[i]
+        for(i in 1:length(idx)){
+            ints[[ idx[i] ]] <- nnb[i]
           }
-          if(length(ints[[i]]) > 1){
-            ints[[i]] <- nnb[i]
-          }
-        }
-        
-        
-      } else{
+        } else{
         
         for(i in 1:length(ints)){
           if(length(ints[[i]]) == 0){
@@ -81,7 +76,6 @@ geo_match <- function(from, to, method = 'center', tiebreaker = TRUE){
       ungroup() %>% 
       pull(toid)
   }
-  
   return(as.integer(ints))
   
 }

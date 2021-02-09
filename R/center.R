@@ -10,13 +10,16 @@
 #' @importFrom sf st_geometry st_geometry<- st_within st_centroid st_point_on_surface
 #' @examples
 st_centerish <- function(shp){
+  
   suppressWarnings( cent <- st_centroid(shp) )
   
-  
   if(nrow(shp) > 1){
-    outside <- diag(st_within(x = cent, y = shp, sparse = FALSE))
+
+    outside <- sapply(1:nrow(shp), 
+                      function(x){suppressMessages(st_within(x = cent[x,], y = shp[x,], sparse = FALSE))})
     suppressWarnings( pts <- st_point_on_surface(shp[outside, ]) )
     suppressWarnings( st_geometry(cent[outside,]) <- st_geometry(pts) )
+    
   } else {
     
     
@@ -30,7 +33,5 @@ st_centerish <- function(shp){
     
   }
 
-
-  
   return(cent)
 }
