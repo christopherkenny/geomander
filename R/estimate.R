@@ -85,4 +85,89 @@ estimate_down <- function(wts, value, group){
   return(tb$out)
 }
 
-globalVariables(c('GTot', 'cont', 'out'))
+
+#' Estimate Up Geography Levels
+#'
+#' Simple method for aggregating data up to a higher level This is most often useful
+#' for getting population data from a block level up to a precinct level.
+#' Geographic parter to estimate_up.
+#'
+#' @param from smaller geography level
+#' @param to larger geography level
+#' @param value numeric vector of length nrow(from). Defaults to 1. 
+#' @param method string from center, centroid, point, or area for matching levels
+#'
+#' @return numeric vector with each value aggregated by grou
+#' 
+#' @importFrom tibble tibble add_row
+#' @importFrom dplyr group_by ungroup slice pull left_join
+#' 
+#' @export
+#'
+#' @examples
+geo_estimate_up <- function(from, to, value, method = 'center'){
+  group <- geo_match(from = from, to = to, method = method)
+  
+  if(missing(value)){
+    value <- 1
+  }
+  tb <- tibble(value = value, group = group) %>% 
+    group_by(group) %>% 
+    summarize(value = sum(value)) %>% 
+    arrange(group)
+  
+  if(nrow(tb) < nrow(to)){
+    for(i in 1:nrow(to)){
+      if(tb$group[i] != i){
+        tb <- tb %>% add_row(group = i, value = 0, .after = (i-1))
+      }
+        
+    }
+  }
+  
+  return(tb$value)
+  
+}
+
+#' Estimate Up Levels
+#' 
+#' Non-geographic partner function to geo_estimate_up. Allows users to aggregate
+#' up without the costly matching operation if they've already matched.
+#'
+#' @param value numeric vector. Defaults to 1. Typically population values.
+#' @param group matches of length(value) that correspond to row indices of value. 
+#' Often, this input is the output of geo_match.
+#' 
+#' @return numeric vector with each value aggregated by group
+#' 
+#' @importFrom tibble tibble add_row
+#' @importFrom dplyr group_by ungroup slice pull left_join 
+#' @export
+#'
+#' @examples
+estimate_up <- function(value, group){
+
+  if(missing(value)){
+    value <- 1
+  }
+  
+  tb <- tibble(value = value, group = group) %>% 
+    group_by(group) %>% 
+    summarize(value = sum(value)) %>% 
+    arrange(group)
+  
+  if(nrow(tb) < max(group)){
+    for(i in 1:max(group{
+      if(tb$group[i] != i){
+        tb <- tb %>% add_row(group = i, value = 0, .after = (i-1))
+      }
+      
+    }
+  }
+  
+  return(tb$value)
+  
+}
+
+
+globalVariables(c('GTot', 'cont', 'out', 'group', 'value'))

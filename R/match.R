@@ -37,16 +37,18 @@ geo_match <- function(from, to, method = 'center', tiebreaker = TRUE){
     } else {
       op <- sf::st_point_on_surface
     }
+    suppressMessages(
+    suppressWarnings( pts <- op(from))
+    )
     
-    pts <- op(from)
-    
-    ints <- st_intersects(pts, to)
+    suppressMessages(ints <- st_intersects(pts, to))
     if(any(lengths(ints) != 1 )){
       idx <- which(lengths(ints) != 1)
       
       if(tiebreaker){
-        nnb <- st_nearest_feature(x = st_centroid(from[idx,]), y = st_centroid(to))
-        
+        suppressMessages(
+        suppressWarnings(nnb <- st_nearest_feature(x = st_centroid(from[idx,]), y = st_centroid(to)))
+        )
         for(i in 1:length(idx)){
             ints[[ idx[i] ]] <- nnb[i]
           }
