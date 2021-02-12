@@ -35,9 +35,9 @@ geo_estimate_down <- function(from, to, wts, value, method = 'center'){
     ungroup() %>% 
     mutate(cont = wts/GTot)
   
-  tb2 <- tibble(group = 1:nrow(from), value = value)
+  tb2 <- tibble(group = 1:length(value), value = value)
   
-  tb <- tb %>% left_join(tb2) %>% mutate(out = cont*value)
+  tb <- tb %>% left_join(tb2, by = 'group') %>% mutate(out = cont*value)
   
   tb <- tb %>% mutate(out = ifelse(is.na(out), 0, out))
   
@@ -76,9 +76,9 @@ estimate_down <- function(wts, value, group){
     ungroup() %>% 
     mutate(cont = wts/GTot)
   
-  tb2 <- tibble(group = 1:length(group), value = value)
+  tb2 <- tibble(group = 1:max(group), value = value)
   
-  tb <- tb %>% left_join(tb2) %>% mutate(out = cont*value)
+  tb <- tb %>% left_join(tb2, by = 'group') %>% mutate(out = cont*value)
   
   tb <- tb %>% mutate(out = ifelse(is.na(out), 0, out))
   

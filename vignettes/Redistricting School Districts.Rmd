@@ -1,0 +1,178 @@
+---
+title: "Redistricting School Districts"
+author: Christopher T Kenny
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Redistricting School Districts}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The primary motivation behind this package is to make data preparation steps easier for redistricting simulation methods within R. This vignette covers a few key tasks, primarily building a block level dataset of population data, subsetting by spatial relationship, and then running a basic simulation. This is shown in the context of dividing North Rockland Central School District in NY into 7 wards at the block level. 
+
+
+```{r libs, warning = FALSE, message = FALSE}
+library(geomander)
+
+library(ggplot2)
+library(dplyr)
+library(stringr)
+
+library(redist)
+library(sf)
+library(tigris)
+library(patchwork)
+```
+
+
+First, we want to build a block level dataset. The school district intersects two counties, though almost all of the population in the district comes from Rockland County. create_block_table allows you to build block level datasets with the primary variables needed for redistricting purposes - total population by race and voting age population (VAP) by race.
+```{r, results = 'hide'}
+blocksRockland <- create_block_table(state = 'NY', county = 'Rockland')
+blocksOrange <- create_block_table(state = 'NY', county = 'Orange')
+
+blocks <- bind_rows(blocksRockland, blocksOrange)
+```
+
+Next, we need the shape for North Rockland, which can be obtained from the R package tigris as below. The same idea holds for having target areas, such as counties or legislative districts, though they are less likely to directly use the block level data.
+```{r}
+school <- school_districts(state = 'NY') %>% filter(str_detect(NAME, 'North Rockland'))
+```
+The immediate and common difficulty here is that we have nearly 15,000 blocks, but the target region, in this case the school district outlined in red is significantly smaller than that.
+```{r}
+blocks %>% ggplot() + 
+  geom_sf() +
+  geom_sf(data = school, fill = NA, color = 'red') +
+  theme_void()
+```
+As a first pass, we can use the geo_filter function, which wraps sf's st_intersects and filters only to those that intersect.
+```{r}
+blocks <- blocks %>% geo_filter(to = school)
+```
+
+This drops us down to 852 blocks and is a conservative filtering, as you only need to intersect at a single point.
+```{r}
+blocks %>% mutate(id = row_number()) %>% 
+  ggplot() + geom_sf() +
+  geom_sf(data = school, fill = NA, color = 'red') 
+```
+Yet, we probably want to go further than that, getting rid of the various external pieces.
+We can use geo_trim to do just that. First, we want to check what would be thrown away at the default area threshold of 1%. Below, I've first checked what would be trimmed away, by setting bool = TRUE and plotting it.
+```{r}
+blocks$trim <- blocks %>% geo_trim(to = school, bool = TRUE)
+
+blocks %>% ggplot() + geom_sf(aes(fill = trim)) + 
+  geom_sf(data = school, fill = NA, lwd = 1.5)
+```
+
+To me, it looks like we are subsetting correctly with this threshold, so we actually trim away this time.
+```{r}
+blocks <- blocks %>% geo_trim(to = school)
+```
+And indeed, just plotting the block geographies looks like the school district from before.
+```{r}
+blocks %>% ggplot() +
+  geom_sf() +
+  theme_void()
+```
+
+Very often, at this step, we want to consider including information about other geographies, particularly towns, villages, or counties. In the package, for illustration purposes, I've included a small towns dataset from the [Rockland County GIS Office](https://www.rocklandgis.com/portal/apps/sites/#/data/items/746ec7870a0b4f46b168e07369e79a27).
+```{r data}
+data("towns")
+
+blocks %>% ggplot() +
+  geom_sf() +
+  theme_void() +
+  geom_sf(data = towns, aes(fill = as.character(ID)))
+```
+
+From this, we can then try to match our blocks to towns. I use the default setting, which relies on st_centerish, which comes from st_centroid when the centroid is within the shape and otherwise relies on st_point_on_surface to ensure that we are only matching by points within a shape.
+```{r}
+matched <- geo_match(from = blocks, to = towns)
+```
+
+Now, I've used the default tiebreaker setting, which assigns all blocks to a town, even if they do not overlap.
+```{r}
+blocks %>% 
+  ggplot() +
+  geom_sf(aes(fill = as.character(matched))) +
+  theme_void() +
+  labs(fill = 'Match')
+```
+So, we want to make two particular edits to the outcome. First, we create a fake Orange County Town for the blocks that come from Orange County, though there are only a few dozen people who live in those blocks.
+```{r}
+blocks <- blocks %>% mutate(TownID = matched) %>% 
+  mutate(TownID = ifelse(County != '087', 8, TownID)) 
+```
+
+Second, we can see that one block in 7 was matched to 1 because it didn't properly intersect the towns and thus went for the closest town by distance between their centroids. The same issue happened for two blocks in Di
+
+Now, to figure out what's going on and try to clean it up, we can build an adjacency graph for each block by town and see which pieces are discontinuous.
+
+```{r, message = FALSE}
+adj <- redist.adjacency(shp = blocks)
+
+comp <- check_contiguity(adjacency = adj, group = blocks$TownID)
+
+which(comp$component > 1)
+```
+
+Then, using that information, we can figure out three of these need to be renamed.
+```{r}
+blocks$TownID[406] <- 7
+blocks$TownID[581] <- 2
+blocks$TownID[585] <- 4
+```
+
+Now all towns are completely connected or contiguous.
+```{r}
+comp <- check_contiguity(adjacency = adj, group = blocks$TownID)
+
+which(comp$component > 1)
+```
+
+So, finally, we have the data in a simulation-ready state! We can now use the adjacency list created above with redist.adjacency to run a simulation using redist.smc. See [the redist package](http://kosukeimai.github.io/redist/) for more information about what's going on here.
+```{r}
+sims005 <- redist.smc(adjobj = adj, 
+                   popvec = blocks$Total, 
+                   popcons = 0.005, 
+                   nsims = 500,
+                   ndists = 7, 
+                   counties = blocks$TownNumber,
+                   silent = TRUE)
+
+cds <- as.matrix(sims005) %>% unique(MARGIN  = 2)
+
+par <- redist.parity(district_membership = cds, population = blocks$Total)
+
+comp <- redist.compactness(shp = blocks, district_membership = cds, adjacency = adj, measure = 'PolsbyPopper', ncores = 7)
+
+comp_m <- comp %>% group_by(nloop) %>% summarize(mean = mean(PolsbyPopper), min = min(PolsbyPopper))
+
+pick <- tibble(parity = par) %>% bind_cols(comp_m) %>% slice_max(order_by = mean, n = 1) %>% pull(nloop)
+```
+
+In short, the above uses a Sequential Monte Carlo algorithm to draw 500 compact districts that try to preserve towns. From those, I pick a map that is on average, pretty compact.
+
+Using that choice of districts, we can then summarize the block level data, using block2prec, but in this case it is summarizing to a ward level.
+```{r}
+smry <- block2prec(blocks, matches = cds[,pick])
+```
+
+Then we have the basic information we want and we can look at the VAP data to see that we have one majority minority Hispanic ward and one potential coalition ward.
+```{r}
+smry %>% select(matches_id, starts_with('VAP'))
+```
+And finally, we can also use block2prec to join the geometries of the wards to plot:
+```{r, message = FALSE}
+block2prec(blocks, matches = cds[,pick], geometry = TRUE) %>% 
+  ggplot() + 
+  geom_sf() + 
+  theme_void() +
+  geom_sf_label(aes(label = matches_id))
+```
+
+

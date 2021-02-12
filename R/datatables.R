@@ -203,8 +203,8 @@ block2prec <- function(block_table, matches, geometry = FALSE){
   if(!geometry){
     ret <- block_table %>% st_drop_geometry() %>% 
       group_by(matches_id) %>% summarize(
-        State = unique(State),
-        County = unique(County),
+        State = ifelse(length(unique(State)) == 1, unique(State), NA),
+        County = ifelse(length(unique(County)) == 1, unique(County), NA),
         Total = sum(Total),
         TotalWhite = sum(TotalWhite),
         TotalBlack = sum(TotalBlack),
@@ -219,8 +219,8 @@ block2prec <- function(block_table, matches, geometry = FALSE){
   } else {
     ret <- block_table %>% 
       group_by(matches_id) %>% summarize(
-        State = unique(State),
-        County = unique(County),
+        State = ifelse(length(unique(State)) == 1, unique(State), NA),
+        County = ifelse(length(unique(County)) == 1, unique(County), NA),
         Total = sum(Total),
         TotalWhite = sum(TotalWhite),
         TotalBlack = sum(TotalBlack),
@@ -301,12 +301,12 @@ block2prec_by_county <- function(block_table, precinct, precinct_county_fips){
   precinct <- precinct %>% mutate(rowid = row_number()) %>% select(rowid, geometry, all_of(precinct_county_fips))
   
   prectb <- tibble()
-  counties <- unique(block_table$County)
+  countiesl <- unique(block_table$County)
   
-  for(cty in 1:length(counties)){
+  for(cty in 1:length(countiesl)){
 
-    bsub <- blocks %>% filter(County == counties[cty])
-    psub <- precinct %>% filter(.data[[precinct_county_fips]] == counties[cty]) %>% 
+    bsub <- blocks %>% filter(County == countiesl[cty])
+    psub <- precinct %>% filter(.data[[precinct_county_fips]] == countiesl[cty]) %>% 
       mutate(matches_id = row_number())
     
     matches <- geo_match(from = bsub, to = psub)
@@ -317,7 +317,7 @@ block2prec_by_county <- function(block_table, precinct, precinct_county_fips){
     prectb <- prectb %>% bind_rows(prectemp)
   }
   
-  prectb <- prectb %>% arrange(rowid)
+  prectb <- prectb %>% arrange(rowid) %>% mutate(matches_id = rowid) %>% select(-rowid)
   
   return(prectb)
 }
