@@ -10,7 +10,12 @@
 #' @return adjacency list.
 #' @export
 #'
-#' @examples
+#' @examples \dontrun{
+#' data(towns)
+#' adj <- lapply(spdep::poly2nb(towns, queen = FALSE), function(x){x-1L})
+#' add_edge(adj, 2, 3)
+#' 
+#' }
 add_edge <- function(adjacency, v1, v2, zero = TRUE){
   if(length(v1) != length(v2)){
     stop('v1 and v2 lengths are different.')
@@ -46,7 +51,16 @@ add_edge <- function(adjacency, v1, v2, zero = TRUE){
 #' @importFrom dplyr bind_rows
 #' @importFrom nngeo st_nn
 #' @importFrom tibble tibble
-#' @examples
+#' @examples \dontrun{
+#' data(va18sub)
+#' sub <- va18sub[1:91,]
+#' adj <- lapply(sf::st_relate(sub, pattern = 'F***1****'), function(x){x-1L})
+#' suggest_neighbors(sub, adj)
+#' }
+#' 
+
+#' 
+#' 
 suggest_neighbors <- function(shp, adjacency, idx, neighbors = 1){
   if(missing(idx)){
     idx <- which(lengths(adjacency) == 0)
@@ -83,6 +97,14 @@ suggest_neighbors <- function(shp, adjacency, idx, neighbors = 1){
 #' @return tibble with row indices to compare, and optionally columns which describe the 
 #' DE-9IM relationship between differences.
 #' @export
+#' 
+#' @examples \dontrun{
+#' data(towns)
+#' spdep_rook <- spdep::poly2nb(towns, queen = F)
+#' sf_rook <- st_relate(towns, pattern = 'F***1****')
+#' compare_adjacencies(spdep_rook, sf_rook, zero = FALSE)
+#' 
+#' }
 compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE){
   
   if(missing(adj1) | missing(adj2)){
