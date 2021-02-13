@@ -22,3 +22,12 @@ DE-9IM relationship between differences.
 \description{
 Compare Adajacency Lists
 }
+\examples{
+\dontrun{
+data(towns)
+spdep_rook <- spdep::poly2nb(towns, queen = F)
+sf_rook <- st_relate(towns, pattern = 'F***1****')
+compare_adjacencies(spdep_rook, sf_rook, zero = FALSE)
+
+}
+}

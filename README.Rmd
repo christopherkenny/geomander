@@ -1,0 +1,90 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# geomander
+
+<!-- badges: start -->
+![GitHub](https://img.shields.io/github/license/christopherkenny/geomander)
+<!-- badges: end -->
+
+Focuses on creating data sets and other tools that help make understanding gerrymandering faster and easier. Designed for easy preparation to run simulation analysis with the R package redist, but is aimed at the geographic aspects of redistricting, not partitioning methods. Most of these tools are gathered from seminar papers and do not correspond to a single publication.
+
+## Installation
+<!---
+You can install the released version of geomander from [CRAN](https://CRAN.R-project.org) with:
+
+``` r
+install.packages("geomander")
+```
+
+And the development version from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("christopherkenny/geomander")
+```
+--->
+
+Currently, geomander is only available from [GitHub](https://github.com/christopherkenny/geomander) and can be installed with:
+```r
+# install.packages('remotes')
+remotes::install_github('christopherkenny/geomander')
+```
+
+## Examples
+
+A very common task is aggregating block data to precincts.
+
+```{r example}
+library(geomander)
+library(tidyverse)
+ 
+# load precincts
+data("va18sub")
+
+# subset to target area
+va18sub <- va18sub %>% filter(COUNTYFP == '087')
+
+# create block data
+block <- create_block_table(state = 'VA', county = '087')  
+
+# match the geographies
+matches <- geo_match(from = block, to = va18sub)
+
+# Aggregate
+prec <- block2prec(block_table = block, matches = matches)
+
+```
+
+Other important tasks include breaking data into pieces by blocks underlying them.
+```{r}
+library(geomander)
+library(tidyverse)
+ 
+# load precincts
+data("va18sub")
+
+# subset to target area
+va18sub <- va18sub %>% filter(COUNTYFP == '087')
+
+# create block data
+block <- create_block_table(state = 'VA', county = '087')  
+
+# Estimate down to blocks
+disagg <- geo_estimate_down(from = va18sub, to = block, wts = block$VAP, value = va18sub$G18USSRSTE)
+
+```
+
+For more information, see the documentation and vignettes, available at [christopherkenny.github.io/geomander/](christopherkenny.github.io/geomander/)

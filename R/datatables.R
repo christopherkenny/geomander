@@ -190,6 +190,13 @@ create_tract_table <- function(state, county, geography = TRUE, year = 2019){
 #' @importFrom dplyr summarize arrange 
 #' @return dataframe with length(unique(matches)) rows
 #' @export
+#' 
+#' @examples \dontrun{
+#' data(towns)
+#' block <- create_block_table('NY', 'Rockland')
+#' matches <- geo_match(block, towns)
+#' block2prec(block, matches)
+#' }
 block2prec <- function(block_table, matches, geometry = FALSE){
   if(missing(block_table)){
     stop("Please provide an argument to block_table.")
@@ -282,6 +289,13 @@ block2prec <- function(block_table, matches, geometry = FALSE){
 #' 
 #' @return dataframe with nrow(precinct) rows
 #' @export
+#' 
+#' @examples \dontrun{
+#' #' data(towns)
+#' towns$fips <- '087'
+#' block <- create_block_table('NY', 'Rockland')
+#' block2prec(block, towns, 'fips')
+#' }
 block2prec_by_county <- function(block_table, precinct, precinct_county_fips){
   
   if(missing(block_table)){

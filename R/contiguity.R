@@ -8,7 +8,15 @@
 #' 
 #' @export
 #' @importFrom tibble tibble
-#' @examples
+#' @examples \dontrun{
+#' library(redist)
+#' set.seed(1)
+#' dists <- sample(1:2, 25, replace = TRUE)
+#' data(fl25)
+#' adj <- redist.adjacency(fl25)
+#' check_contiguity(adj, dists)
+#' 
+#' }
 check_contiguity <- function(adjacency, group){
   if(missing(adjacency)){
     stop('Please provide an argument to adjacency.')
@@ -46,7 +54,14 @@ check_contiguity <- function(adjacency, group){
 #' @importFrom dplyr row_number distinct filter mutate 
 #' @importFrom sf st_distance
 #'
-#' @examples
+#' @examples \dontrun{
+#' library(redist)
+#' set.seed(1)
+#' dists <- sample(1:2, 25, replace = TRUE)
+#' data(fl25)
+#' adj <- redist.adjacency(fl25)
+#' suggest_component_connection(fl25, adj, dists)
+#' }
 suggest_component_connection <- function(shp, adjacency, group){
   if(missing(shp)){
     stop('Please provide an argument to shp')

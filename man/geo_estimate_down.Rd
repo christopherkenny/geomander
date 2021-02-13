@@ -26,3 +26,11 @@ for getting election data down from a precinct level to a block level in the cas
 that a state or other jurisdiction split precincts when creating districts. Geographic
 parter to estimate_down.
 }
+\examples{
+\dontrun{
+data("va18sub")
+va18sub <- va18sub \%>\% filter(COUNTYFP == '087')
+block <- create_block_table(state = 'VA', county = '087')  
+disagg <- geo_estimate_down(from = va18sub, to = block, wts = block$VAP, value = va18sub$G18USSRSTE)
+}
+}

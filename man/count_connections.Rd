@@ -17,3 +17,11 @@ matrix with the number of connections between precincts
 \description{
 Count Times Precincts are Connected
 }
+\examples{
+\dontrun{
+library(redist)
+data(algdat.p10)
+count_connections(algdat.p10$cdmat)
+
+}
+}

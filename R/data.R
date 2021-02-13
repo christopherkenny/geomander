@@ -6,7 +6,7 @@
 #' @usage data("checkerboard")
 #' @format An sf dataframe with 64 observations
 #' 
-#' @example \dontrun{data("checkerboard")}
+#' @examples \dontrun{data("checkerboard")}
 NULL
 
 #' Checkerboard Adjacency
@@ -17,7 +17,7 @@ NULL
 #' @usage data("checkerboard_adj")
 #' @format A list with 64 entries
 #' 
-#' @example \dontrun{data("checkerboard_adj")}
+#' @examples \dontrun{data("checkerboard_adj")}
 NULL
 
 #' va18sub
@@ -34,7 +34,7 @@ NULL
 #' 018 Precinct-Level Election Results, 
 #' https://doi.org/10.7910/DVN/UBKYRU/FQDLOO, Harvard Dataverse, V4
 #' 
-#' @example  \dontrun{data("va18sub")}
+#' @examples  \dontrun{data("va18sub")}
 NULL
 
 
@@ -50,5 +50,5 @@ NULL
 #' @references 
 #' https://www.rocklandgis.com/portal/apps/sites/#/data/items/746ec7870a0b4f46b168e07369e79a27
 #' 
-#' @example \dontrun{data("towns")}
+#' @examples \dontrun{data("towns")}
 NULL

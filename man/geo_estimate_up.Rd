@@ -23,3 +23,11 @@ Simple method for aggregating data up to a higher level This is most often usefu
 for getting population data from a block level up to a precinct level.
 Geographic parter to estimate_up.
 }
+\examples{
+\dontrun{
+data("va18sub")
+va18sub <- va18sub \%>\% filter(COUNTYFP == '087')
+block <- create_block_table(state = 'VA', county = '087')  
+agg <- geo_estimate_down(from = block, to = va18shp, value = block$Total)
+}
+}

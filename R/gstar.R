@@ -10,7 +10,11 @@
 #'
 #' @return vector of G*i scores
 #' @export
-#'
+#' @examples \dontrun{
+#' #' data("checkerboard")
+#' checkerboard <- checkerboard %>% mutate(m = as.numeric((id+i) %% 2 == 0))
+#' gstar_i(shp = checkerboard, wts = checkerboard$m)
+#' }
 gstar_i <- function(shp, adj, wts, spatial_mat){
   if(missing(shp) & missing(adj) & missing(spatial_mat)){
     stop('Please supply an argument to at least one of shp or adj or spatial_mat.')

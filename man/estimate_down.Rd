@@ -20,3 +20,12 @@ numeric vector with each value split by weight
 Non-geographic partner function to geo_estimate_down. Allows users to estimate 
 down without the costly matching operation if they've already matched.
 }
+\examples{
+\dontrun{
+data("va18sub")
+va18sub <- va18sub \%>\% filter(COUNTYFP == '087')
+block <- create_block_table(state = 'VA', county = '087')  
+groups <- geo_match(block, va18sub)
+disagg <- estimate_down(wts = block$VAP, value = va18sub$G18USSRSTE, group = groups)
+}
+}

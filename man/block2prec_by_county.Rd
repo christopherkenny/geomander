@@ -22,3 +22,11 @@ based on a County fips column. This helps get around the problem that county geo
 often have borders that follow rivers and lead to funny shaped blocks. This guarantees
 that every block is matched to a precinct which is in the same county.
 }
+\examples{
+\dontrun{
+#' data(towns)
+towns$fips <- '087'
+block <- create_block_table('NY', 'Rockland')
+block2prec(block, towns, 'fips')
+}
+}

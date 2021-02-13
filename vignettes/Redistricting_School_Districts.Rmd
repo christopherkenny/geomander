@@ -25,12 +25,11 @@ library(stringr)
 library(redist)
 library(sf)
 library(tigris)
-library(patchwork)
 ```
 
 
 First, we want to build a block level dataset. The school district intersects two counties, though almost all of the population in the district comes from Rockland County. create_block_table allows you to build block level datasets with the primary variables needed for redistricting purposes - total population by race and voting age population (VAP) by race.
-```{r, results = 'hide'}
+```{r, results = 'hide', message = FALSE}
 blocksRockland <- create_block_table(state = 'NY', county = 'Rockland')
 blocksOrange <- create_block_table(state = 'NY', county = 'Orange')
 
@@ -38,7 +37,7 @@ blocks <- bind_rows(blocksRockland, blocksOrange)
 ```
 
 Next, we need the shape for North Rockland, which can be obtained from the R package tigris as below. The same idea holds for having target areas, such as counties or legislative districts, though they are less likely to directly use the block level data.
-```{r}
+```{r, results = 'hide', message = FALSE}
 school <- school_districts(state = 'NY') %>% filter(str_detect(NAME, 'North Rockland'))
 ```
 The immediate and common difficulty here is that we have nearly 15,000 blocks, but the target region, in this case the school district outlined in red is significantly smaller than that.
@@ -148,9 +147,9 @@ cds <- as.matrix(sims005) %>% unique(MARGIN  = 2)
 
 par <- redist.parity(district_membership = cds, population = blocks$Total)
 
-comp <- redist.compactness(shp = blocks, district_membership = cds, adjacency = adj, measure = 'PolsbyPopper', ncores = 7)
+comp <- redist.compactness(shp = blocks, district_membership = cds, adjacency = adj, measure = 'EdgesRemoved')
 
-comp_m <- comp %>% group_by(nloop) %>% summarize(mean = mean(PolsbyPopper), min = min(PolsbyPopper))
+comp_m <- comp %>% group_by(nloop) %>% summarize(mean = mean(EdgesRemoved))
 
 pick <- tibble(parity = par) %>% bind_cols(comp_m) %>% slice_max(order_by = mean, n = 1) %>% pull(nloop)
 ```
@@ -167,7 +166,7 @@ Then we have the basic information we want and we can look at the VAP data to se
 smry %>% select(matches_id, starts_with('VAP'))
 ```
 And finally, we can also use block2prec to join the geometries of the wards to plot:
-```{r, message = FALSE}
+```{r, message = FALSE, warning = FALSE}
 block2prec(blocks, matches = cds[,pick], geometry = TRUE) %>% 
   ggplot() + 
   geom_sf() + 

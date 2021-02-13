@@ -5,6 +5,13 @@
 #'
 #' @return matrix with the number of connections between precincts
 #' @export
+#' 
+#' @examples \dontrun{
+#' library(redist)
+#' data(algdat.p10)
+#' count_connections(algdat.p10$cdmat)
+#' 
+#' }
 count_connections <- function(dm, normalize = FALSE){
   mat <- countconnections(dm)
   mat <- mat + t(mat)

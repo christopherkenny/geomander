@@ -1,12 +1,14 @@
 Package: geomander
 Type: Package
 Title: Geographic Tools for Studying Gerrymandering
-Version: 1.1
+Version: 1.0.0
 Date: 2021-02-12
-Author: Christopher T. Kenny
-Maintainer: Christopher T. Kenny <christopherkenny@fas.harvard.edu>
+Authors@R: person("Christopher T.", "Kenny", email = "christopherkenny@fas.harvard.edu",
+                  role = c("aut", "cre"))
 Description: A compilation of tools to complete common tasks for studying gerrymandering. This focuses on the geographic tool side of common problems, such as linking different levels of spatial units or estimating how to break up units.
 License: MIT + file LICENSE
+URL: https://christopherkenny.github.io/geomander/
+BugReports: https://github.com/christopherkenny/geomander/issues
 RoxygenNote: 7.1.1
 LinkingTo: Rcpp
 Imports: Rcpp,

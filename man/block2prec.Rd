@@ -20,3 +20,11 @@ dataframe with length(unique(matches)) rows
 Aggregates block table values up to a higher level, normally precincts, hence
 the name block2prec.
 }
+\examples{
+\dontrun{
+data(towns)
+block <- create_block_table('NY', 'Rockland')
+matches <- geo_match(block, towns)
+block2prec(block, matches)
+}
+}

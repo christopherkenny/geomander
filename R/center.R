@@ -8,7 +8,10 @@
 #' @return An sf dataframe where geometry is the center(ish) of each shape in shp
 #' @export
 #' @importFrom sf st_geometry st_geometry<- st_within st_centroid st_point_on_surface
-#' @examples
+#' @examples \dontrun{
+#' data(towns)
+#' st_centerish(towns)
+#' }
 st_centerish <- function(shp){
   
   suppressWarnings( cent <- st_centroid(shp) )

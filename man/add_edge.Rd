@@ -23,3 +23,11 @@ adjacency list.
 \description{
 Add Edges to an Adjacency List
 }
+\examples{
+\dontrun{
+data(towns)
+adj <- lapply(spdep::poly2nb(towns, queen = FALSE), function(x){x-1L})
+add_edge(adj, 2, 3)
+
+}
+}

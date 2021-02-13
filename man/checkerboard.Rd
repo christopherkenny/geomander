@@ -12,3 +12,6 @@ data("checkerboard")
 \description{
 This data set contains 64 squares in an 8x8 grid, like a checkerboard.
 }
+\examples{
+\dontrun{data("checkerboard")}
+}

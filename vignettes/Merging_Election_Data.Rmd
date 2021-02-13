@@ -39,7 +39,7 @@ unique(va18sub$COUNTYFP)
 ```
 After noting the counties included, we can use create_block_table to collect the key population boxes needed for most redistricting analysis for these two counties.
 
-```{r, message = FALSE}
+```{r, message = FALSE, results = 'hide'}
 blocks87 <- create_block_table(state = 'VA', county = '087')  
 blocks89 <- create_block_table(state = 'VA', county = '089')  
 blocks <- bind_rows(blocks87, blocks89)
@@ -93,7 +93,7 @@ blocks <- create_block_table(state = 'VA', county = '087')
 ```
 
 Third, we use tigris to get voting districts for the relevant Virginia counties.
-```{r}
+```{r, results='hide', message = FALSE}
 vtd <- voting_districts(state = 'VA') %>% filter(COUNTYFP10 == '087')
 ```
 

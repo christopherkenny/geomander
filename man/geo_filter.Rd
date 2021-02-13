@@ -19,3 +19,10 @@ sf data frame or logical vector if bool=TRUE
 \description{
 Filter to Intersecting Pieces
 }
+\examples{
+\dontrun{
+data(towns)
+block <- create_block_table('NY', 'Rockland')
+geo_filter(block, towns)
+}
+}

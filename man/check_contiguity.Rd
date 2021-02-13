@@ -18,3 +18,14 @@ identified connected component number
 \description{
 Check Contiguity by group
 }
+\examples{
+\dontrun{
+library(redist)
+set.seed(1)
+dists <- sample(1:2, 25, replace = TRUE)
+data(fl25)
+adj <- redist.adjacency(fl25)
+check_contiguity(adj, dists)
+
+}
+}

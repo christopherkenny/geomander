@@ -24,3 +24,14 @@ For precincts which have no adjacent precincts, this suggests the nearest precin
 as a friend to add. This is useful for when a small number of precincts are disconnected
 from the remainder of the geography, such as an island.
 }
+\examples{
+\dontrun{
+data(va18sub)
+sub <- va18sub[1:91,]
+adj <- lapply(sf::st_relate(sub, pattern = 'F***1****'), function(x){x-1L})
+suggest_neighbors(sub, adj)
+}
+
+
+
+}

@@ -23,3 +23,10 @@ Computes the Global Geary's Contiguity statistic. Can produce spatial weights
 from an adjacency or sf data frame, in which case the spatial_mat is a contiguity
 matrix. Users can also provide a spatial_mat argument directly.
 }
+\examples{
+\dontrun{
+data("checkerboard")
+checkerboard <- checkerboard \%>\% mutate(m = as.numeric((id+i) \%\% 2 == 0))
+global_geary(shp = checkerboard, wts = checkerboard$m)
+}
+}

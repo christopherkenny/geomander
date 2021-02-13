@@ -19,3 +19,12 @@ numeric vector with each value aggregated by group
 Non-geographic partner function to geo_estimate_up. Allows users to aggregate
 up without the costly matching operation if they've already matched.
 }
+\examples{
+\dontrun{
+data("va18sub")
+va18sub <- va18sub \%>\% filter(COUNTYFP == '087')
+block <- create_block_table(state = 'VA', county = '087')  
+groups <- geo_match(block, va18sub)
+agg <- geo_estimate_down(alue = block$Total, group = groups)
+}
+}

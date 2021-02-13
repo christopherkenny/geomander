@@ -1,6 +1,6 @@
 template:
   params:
-    bootswatch: cerulean
+    bootswatch: journal
 reference:
 - title: "Estimating Across Geographic Levels"
   desc: "Functions for approximating values at different levels of geography"

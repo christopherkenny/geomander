@@ -12,3 +12,6 @@ data("checkerboard_adj")
 \description{
 This data contains a zero indexed adjacency list for the checkerboard dataset.
 }
+\examples{
+\dontrun{data("checkerboard_adj")}
+}

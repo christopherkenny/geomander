@@ -18,7 +18,12 @@
 #' 
 #' @export
 #'
-#' @examples
+#' @examples \dontrun{
+#' data("va18sub")
+#' va18sub <- va18sub %>% filter(COUNTYFP == '087')
+#' block <- create_block_table(state = 'VA', county = '087')  
+#' disagg <- geo_estimate_down(from = va18sub, to = block, wts = block$VAP, value = va18sub$G18USSRSTE)
+#' }
 geo_estimate_down <- function(from, to, wts, value, method = 'center'){
   group <- geo_match(from = to, to = from, method = method)
   
@@ -60,7 +65,13 @@ geo_estimate_down <- function(from, to, wts, value, method = 'center'){
 #' @importFrom dplyr group_by ungroup slice pull left_join
 #' @export
 #'
-#' @examples
+#' @examples \dontrun{
+#' data("va18sub")
+#' va18sub <- va18sub %>% filter(COUNTYFP == '087')
+#' block <- create_block_table(state = 'VA', county = '087')  
+#' groups <- geo_match(block, va18sub)
+#' disagg <- estimate_down(wts = block$VAP, value = va18sub$G18USSRSTE, group = groups)
+#' }
 estimate_down <- function(wts, value, group){
   
   if(missing(wts)){
@@ -104,7 +115,12 @@ estimate_down <- function(wts, value, group){
 #' 
 #' @export
 #'
-#' @examples
+#' @examples \dontrun{
+#' data("va18sub")
+#' va18sub <- va18sub %>% filter(COUNTYFP == '087')
+#' block <- create_block_table(state = 'VA', county = '087')  
+#' agg <- geo_estimate_down(from = block, to = va18shp, value = block$Total)
+#' }
 geo_estimate_up <- function(from, to, value, method = 'center'){
   group <- geo_match(from = from, to = to, method = method)
   
@@ -144,7 +160,13 @@ geo_estimate_up <- function(from, to, value, method = 'center'){
 #' @importFrom dplyr group_by ungroup slice pull left_join 
 #' @export
 #'
-#' @examples
+#' @examples \dontrun{
+#' data("va18sub")
+#' va18sub <- va18sub %>% filter(COUNTYFP == '087')
+#' block <- create_block_table(state = 'VA', county = '087')  
+#' groups <- geo_match(block, va18sub)
+#' agg <- geo_estimate_down(alue = block$Total, group = groups)
+#' }
 estimate_up <- function(value, group){
 
   if(missing(value)){

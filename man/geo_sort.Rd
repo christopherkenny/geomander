@@ -15,3 +15,9 @@ sf dataframe
 \description{
 Reorders precincts by distance from the NW corner of the bounding box.
 }
+\examples{
+\dontrun{
+data(va18sub)
+geo_sort(va18sub)
+}
+}

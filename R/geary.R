@@ -7,6 +7,12 @@
 #'
 #' @return numeric vector 
 #' @export
+#' 
+#' @examples \dontrun{
+#' data("checkerboard")
+#' checkerboard <- checkerboard %>% mutate(m = as.numeric((id+i) %% 2 == 0))
+#' local_geary(shp = checkerboard, wts = checkerboard$m)
+#' }
 local_gearys <- function(shp, adj, wts, spatial_mat){
   if(missing(shp) & missing(adj) & missing(spatial_mat)){
     stop('Please supply an argument to at least one of shp or adj or spatial_mat.')
@@ -52,7 +58,11 @@ local_gearys <- function(shp, adj, wts, spatial_mat){
 #'
 #' @return double
 #' @export
-#'
+#' @examples \dontrun{
+#' data("checkerboard")
+#' checkerboard <- checkerboard %>% mutate(m = as.numeric((id+i) %% 2 == 0))
+#' global_geary(shp = checkerboard, wts = checkerboard$m)
+#' }
 global_geary <- function(shp, adj, wts, spatial_mat){
   if(missing(shp) & missing(adj) & missing(spatial_mat)){
     stop('Please supply an argument to at least one of shp or adj or spatial_mat.')

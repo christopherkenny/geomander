@@ -19,3 +19,13 @@ tibble with two columns of suggested rows of shp to connect in adj
 \description{
 Suggests nearest neighbors for connected a disconnected group.
 }
+\examples{
+\dontrun{
+library(redist)
+set.seed(1)
+dists <- sample(1:2, 25, replace = TRUE)
+data(fl25)
+adj <- redist.adjacency(fl25)
+suggest_component_connection(fl25, adj, dists)
+}
+}
