@@ -1,0 +1,51 @@
+template:
+  params:
+    bootswatch: cerulean
+reference:
+- title: "Estimating Across Geographic Levels"
+  desc: "Functions for approximating values at different levels of geography"
+- contents:
+  - geo_estimate_down
+  - estimate_down 
+  - geo_estimate_up
+  - estimate_up 
+  - geo_match 
+- title: "Buiding Datasets"
+  desc: "Functions to help build and refine data" 
+- contents:
+  - create_block_table
+  - create_tract_table
+  - block2prec
+  - block2prec_by_county
+  - geo_filter
+  - geo_trim
+- title: "Fixing Geographic Imperfections"
+  desc: "Functions to help pretend that the geographies were properly connected"
+- contents:
+  - check_contiguity
+  - add_edge
+  - compare_adjacencies
+  - geo_plot_group
+  - geo_sort
+  - suggest_component_connection
+  - suggest_neighbors
+- title: "Spatial Autocorrelation"
+  desc: "Functions to measure local and global autocorrelation measures"
+- contents:
+  - global_geary
+  - global_morans
+  - gstar_i
+  - local_gearys
+  - local_morans
+- title: "Included Example Data"
+- contents:
+  - checkerboard
+  - checkerboard_adj
+  - towns
+  - va18sub
+- title: "Leftovers"
+  desc: Functions that don't really fit elsewhere
+- contents:
+  - st_centerish
+  - count_connections
+  - geomander-package 
