@@ -20,10 +20,15 @@ or the name of a column in precincts with district assignments.}
 tibble with columns Id, as used by DRA, identical to GEOID in census terms and District.
 }
 \description{
-R to DRA
+Project a plan at the precinct level down to blocks into a format that can be used
+with DRA. Projecting down to blocks can take a lot of time for larger states.
 }
 \examples{
 \dontrun{
-
+cd <- tigris::congressional_districts() \%>\% filter(STATEFP == '49')
+cnty <- tigris::counties(state = 49)
+matchedcty <- geo_match(from = cnty, to = cd)
+# use counties as precincts and let the plan be their center match:
+r2dra(cnty, matchedcty, 'UT', 'r2dra_ex.csv')
 }
 }
