@@ -60,7 +60,9 @@ check_contiguity <- function(adjacency, group){
 #' dists <- sample(1:2, 25, replace = TRUE)
 #' data(fl25)
 #' adj <- redist.adjacency(fl25)
-#' suggest_component_connection(fl25, adj, dists)
+#' suggests <- suggest_component_connection(fl25, adj, dists)
+#' 
+#' adj <- adj %>% add_edge(v1 = suggests$x, v2 = suggests$y)
 #' }
 suggest_component_connection <- function(shp, adjacency, group){
   if(missing(shp)){
@@ -78,9 +80,12 @@ suggest_component_connection <- function(shp, adjacency, group){
   for(g in 1:length(unique(group))){
     sub <- components$component[group == g]
     if(max(sub) > 1){
+      cents <- st_centerish(shp)
       for(c in 1:max(sub)){
-        tempx <- shp %>% filter(group == g, components$component == c)
-        tempy <- shp %>% filter(group == g, components$component != c)
+        tempx <- cents[group == g & components$component == c,]
+          #shp %>% filter(group == g, components$component == c)
+        tempy <- cents[group == g & components$component != c,]
+          #shp %>% filter(group == g, components$component != c)
         dists <- sf::st_distance(x = tempx, y = tempy)
         prop <- arrayInd(which.min(dists), dim(dists))
         out <- out %>% bind_rows(tibble(x = tempx$rownum[prop[1,1]], y = tempy$rownum[prop[1,2]]))

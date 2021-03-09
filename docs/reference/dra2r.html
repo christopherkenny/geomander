@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Suggest Neighbors for Lonely Precincts — suggest_neighbors • geomander</title>
+<title>DRA to R — dra2r • geomander</title>
 
 
 <!-- jquery -->
@@ -39,10 +39,8 @@
 
 
 
-<meta property="og:title" content="Suggest Neighbors for Lonely Precincts — suggest_neighbors" />
-<meta property="og:description" content="For precincts which have no adjacent precincts, this suggests the nearest precinct
-as a friend to add. This is useful for when a small number of precincts are disconnected
-from the remainder of the geography, such as an island." />
+<meta property="og:title" content="DRA to R — dra2r" />
+<meta property="og:description" content="Creates a block or precinct level dataset from DRA csv output." />
 
 
 
@@ -128,56 +126,44 @@ from the remainder of the geography, such as an island." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Suggest Neighbors for Lonely Precincts</h1>
-    <small class="dont-index">Source: <a href='https://github.com/christopherkenny/geomander/blob/master/R/adjacency.R'><code>R/adjacency.R</code></a></small>
-    <div class="hidden name"><code>suggest_neighbors.Rd</code></div>
+    <h1>DRA to R</h1>
+    <small class="dont-index">Source: <a href='https://github.com/christopherkenny/geomander/blob/master/R/dra.R'><code>R/dra.R</code></a></small>
+    <div class="hidden name"><code>dra2r.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>For precincts which have no adjacent precincts, this suggests the nearest precinct
-as a friend to add. This is useful for when a small number of precincts are disconnected
-from the remainder of the geography, such as an island.</p>
+    <p>Creates a block or precinct level dataset from DRA csv output.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>suggest_neighbors</span><span class='op'>(</span><span class='va'>shp</span>, <span class='va'>adjacency</span>, <span class='va'>idx</span>, neighbors <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>dra2r</span><span class='op'>(</span><span class='va'>dra</span>, <span class='va'>state</span>, <span class='va'>precincts</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>shp</th>
-      <td><p>an sf shapefile</p></td>
+      <th>dra</th>
+      <td><p>The path to an exported csv or 
+a dataframe with columns Id and District, loaded from a DRA export.</p></td>
     </tr>
     <tr>
-      <th>adjacency</th>
-      <td><p>an adjacency list</p></td>
+      <th>state</th>
+      <td><p>the state postal code of the state</p></td>
     </tr>
     <tr>
-      <th>idx</th>
-      <td><p>Optional. Which indices to suggest neighbors for. If blank, suggests for those
-with no neighbors.</p></td>
-    </tr>
-    <tr>
-      <th>neighbors</th>
-      <td><p>number of neighbors to suggest</p></td>
+      <th>precincts</th>
+      <td><p>an sf dataframe of precinct shapes to link the output to</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>tibble with two columns of suggested rows of shp to connect in adj</p>
+    <p>sf dataframe either at the block level or preinct level</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>va18sub</span><span class='op'>)</span>
-<span class='va'>sub</span> <span class='op'>&lt;-</span> <span class='va'>va18sub</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>91</span>,<span class='op'>]</span>
-<span class='va'>adj</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='fu'>sf</span><span class='fu'>::</span><span class='fu'><a href='https://r-spatial.github.io/sf/reference/st_relate.html'>st_relate</a></span><span class='op'>(</span><span class='va'>sub</span>, pattern <span class='op'>=</span> <span class='st'>'F***1****'</span><span class='op'>)</span>, <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>{</span><span class='va'>x</span><span class='op'>-</span><span class='fl'>1L</span><span class='op'>}</span><span class='op'>)</span>
-<span class='va'>suggests</span> <span class='op'>&lt;-</span> <span class='fu'>suggest_neighbors</span><span class='op'>(</span><span class='va'>sub</span>, <span class='va'>adj</span><span class='op'>)</span>
-
-<span class='va'>adj</span> <span class='op'>&lt;-</span> <span class='va'>adj</span> <span class='op'>%&gt;%</span> <span class='fu'><a href='add_edge.html'>add_edge</a></span><span class='op'>(</span>v1 <span class='op'>=</span> <span class='va'>suggests</span><span class='op'>$</span><span class='va'>x</span>, v2 <span class='op'>=</span> <span class='va'>suggests</span><span class='op'>$</span><span class='va'>y</span><span class='op'>)</span>
+<span class='co'># dra_utah_test is available at https://bit.ly/3c6UDKk</span>
+<span class='va'>blocklevel</span> <span class='op'>&lt;-</span> <span class='fu'>dra2r</span><span class='op'>(</span><span class='st'>'dra_utah_test.csv'</span>, state <span class='op'>=</span> <span class='st'>'UT'</span><span class='op'>)</span>
 <span class='op'>}</span>
-
-
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

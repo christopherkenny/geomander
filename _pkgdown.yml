@@ -29,6 +29,11 @@ reference:
   - geo_sort
   - suggest_component_connection
   - suggest_neighbors
+- title: "Format Data with Dave's Redistricting"
+  desc: "Functions to get maps into DRA or from DRA"
+- contents:
+  - dra2r
+  - r2dra
 - title: "Spatial Autocorrelation"
   desc: "Functions to measure local and global autocorrelation measures"
 - contents:

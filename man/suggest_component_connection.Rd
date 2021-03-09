@@ -26,6 +26,8 @@ set.seed(1)
 dists <- sample(1:2, 25, replace = TRUE)
 data(fl25)
 adj <- redist.adjacency(fl25)
-suggest_component_connection(fl25, adj, dists)
+suggests <- suggest_component_connection(fl25, adj, dists)
+
+adj <- adj \%>\% add_edge(v1 = suggests$x, v2 = suggests$y)
 }
 }

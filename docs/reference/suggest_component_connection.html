@@ -165,7 +165,9 @@
 <span class='va'>dists</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>25</span>, replace <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>fl25</span><span class='op'>)</span>
 <span class='va'>adj</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/redist/man/redist.adjacency.html'>redist.adjacency</a></span><span class='op'>(</span><span class='va'>fl25</span><span class='op'>)</span>
-<span class='fu'>suggest_component_connection</span><span class='op'>(</span><span class='va'>fl25</span>, <span class='va'>adj</span>, <span class='va'>dists</span><span class='op'>)</span>
+<span class='va'>suggests</span> <span class='op'>&lt;-</span> <span class='fu'>suggest_component_connection</span><span class='op'>(</span><span class='va'>fl25</span>, <span class='va'>adj</span>, <span class='va'>dists</span><span class='op'>)</span>
+
+<span class='va'>adj</span> <span class='op'>&lt;-</span> <span class='va'>adj</span> <span class='op'>%&gt;%</span> <span class='fu'><a href='add_edge.html'>add_edge</a></span><span class='op'>(</span>v1 <span class='op'>=</span> <span class='va'>suggests</span><span class='op'>$</span><span class='va'>x</span>, v2 <span class='op'>=</span> <span class='va'>suggests</span><span class='op'>$</span><span class='va'>y</span><span class='op'>)</span>
 <span class='op'>}</span>
 </div></pre>
   </div>

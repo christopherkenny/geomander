@@ -29,9 +29,10 @@ from the remainder of the geography, such as an island.
 data(va18sub)
 sub <- va18sub[1:91,]
 adj <- lapply(sf::st_relate(sub, pattern = 'F***1****'), function(x){x-1L})
-suggest_neighbors(sub, adj)
-}
+suggests <- suggest_neighbors(sub, adj)
 
+adj <- adj \%>\% add_edge(v1 = suggests$x, v2 = suggests$y)
+}
 
 
 }
