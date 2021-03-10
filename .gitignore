@@ -37,3 +37,6 @@ vignettes/*.pdf
 doc
 Meta
 *.csv
+
+# windows specific 
+src-i386/
