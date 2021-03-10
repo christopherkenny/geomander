@@ -36,3 +36,4 @@ vignettes/*.pdf
 *.knit.md
 doc
 Meta
+*.csv
