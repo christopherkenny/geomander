@@ -11,7 +11,7 @@ data("va18sub")
 }
 \description{
 This data contains a 116 precinct subset of Virginia from the 2018 Senate race.
-Constains results for counties Henrico (087) and Henry (089).
+Contains results for disjoint counties Henrico (087) and Henry (089).
 }
 \examples{
  \dontrun{data("va18sub")}

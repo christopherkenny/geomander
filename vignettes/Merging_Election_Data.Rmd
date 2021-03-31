@@ -12,7 +12,7 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-A common issue in electoral geography is that data needs to be tied to a spatial component, but the pieces required for an analysis are not available at the desired levels of geography. This vignette walks through two common tasks. The first is collecting population data for precinct-level data, assuming that all (or nearly all) blocks can be matched to exactly one precinct. The second example is taking precinct-level data, estimating it down to a block level, and then agreggating up to voting districts. The second example is useful when state precincts do not match census voting districts or for when voting districts or precincts have changed over time.
+A common issue in electoral geography is that data needs to be tied to a spatial component, but the pieces required for an analysis are not available at the desired levels of geography. This vignette walks through two common tasks. The first is collecting population data for precinct-level data, assuming that all (or nearly all) blocks can be matched to exactly one precinct. The second example is taking precinct-level data, estimating it down to a block level, and then aggregating up to voting districts. The second example is useful when state precincts do not match census voting districts or for when voting districts or precincts have changed over time.
 
 
 For most analyses, we want some combination of the below packages.
@@ -77,9 +77,9 @@ fulldata <- bind_cols(va18sub, prec)
 ```
 
 
-# Disaggregating and Reagreggating
+# Disaggregating and Reaggregating
 
-A second common task is transfering information from one level of geography to another. In this case, I use the same Virginia county subset and blocks, but the end goal is to estimate electoral data in voting districts from known data in precincts.
+A second common task is transferring information from one level of geography to another. In this case, I use the same Virginia county subset and blocks, but the end goal is to estimate electoral data in voting districts from known data in precincts.
 
 The first dataset is the Virginia two county subset as above, but only looking at one county:
 ```{r}

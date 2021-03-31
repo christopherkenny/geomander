@@ -87,7 +87,7 @@ suggest_neighbors <- function(shp, adjacency, idx, neighbors = 1){
 
 
 
-#' Compare Adajacency Lists
+#' Compare Adjacency Lists
 #'
 #' @param adj1 Required. A first adjacency list.
 #' @param adj2 Required. A second adjacency list.

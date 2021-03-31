@@ -7,7 +7,7 @@
 #' @param state the state postal code of the state
 #' @param precincts an sf dataframe of precinct shapes to link the output to
 #'
-#' @return sf dataframe either at the block level or preinct level
+#' @return sf dataframe either at the block level or precinct level
 #' @export
 #'
 #' @examples\dontrun{

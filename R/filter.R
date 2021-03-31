@@ -8,7 +8,7 @@
 #' @return sf data frame or logical vector if bool=TRUE
 #' @export
 #'
-#' @importFrom sf st_intersects
+#' @importFrom sf st_intersects st_union
 #' @examples \dontrun{
 #' data(towns)
 #' block <- create_block_table('NY', 'Rockland')
@@ -16,7 +16,7 @@
 #' }
 geo_filter <- function(from, to, bool = FALSE){
   
-  ints <- sf::st_intersects(x = from, y = to, sparse = FALSE)
+  ints <- sf::st_intersects(x = from, y = st_union(to), sparse = FALSE)
   
   if(bool){
     return(ints)
@@ -38,7 +38,7 @@ geo_filter <- function(from, to, bool = FALSE){
 #' @return sf data frame or logical vector if bool=TRUE
 #' @export
 #'
-#' @importFrom sf st_intersection st_area
+#' @importFrom sf st_intersection st_area st_union
 #' 
 #' @examples \dontrun{
 #' data(towns)
@@ -47,7 +47,7 @@ geo_filter <- function(from, to, bool = FALSE){
 #' }
 geo_trim <- function(from, to, thresh = 0.01, bool = FALSE){
   
-  ints <- sf::st_intersection(x = from, y = to)
+  ints <- sf::st_intersection(x = from, y = st_union(to))
   
   area <- sf::st_area(from)
   areaints <- sf::st_area(ints)

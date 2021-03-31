@@ -16,12 +16,12 @@ geo_estimate_up(from, to, value, method = "center")
 \item{method}{string from center, centroid, point, or area for matching levels}
 }
 \value{
-numeric vector with each value aggregated by grou
+numeric vector with each value aggregated by group
 }
 \description{
 Simple method for aggregating data up to a higher level This is most often useful
 for getting population data from a block level up to a precinct level.
-Geographic parter to estimate_up.
+Geographic partner to estimate_up.
 }
 \examples{
 \dontrun{

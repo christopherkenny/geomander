@@ -1,6 +1,6 @@
 #' Compute Standardized Getis Ord G*i
 #' 
-#' Returns the Geits Ord G*i in standardized form.
+#' Returns the Getis Ord G*i in standardized form.
 #' 
 #'
 #' @param shp sf data frame. Optional if adj or spatial_mat provided.

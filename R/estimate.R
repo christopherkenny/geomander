@@ -3,7 +3,7 @@
 #' Simple method for estimating data down to a lower level. This is most often useful
 #' for getting election data down from a precinct level to a block level in the case
 #' that a state or other jurisdiction split precincts when creating districts. Geographic
-#' parter to estimate_down.
+#' partner to estimate_down.
 #'
 #' @param from Larger geography level
 #' @param to smaller geography level
@@ -101,14 +101,14 @@ estimate_down <- function(wts, value, group){
 #'
 #' Simple method for aggregating data up to a higher level This is most often useful
 #' for getting population data from a block level up to a precinct level.
-#' Geographic parter to estimate_up.
+#' Geographic partner to estimate_up.
 #'
 #' @param from smaller geography level
 #' @param to larger geography level
 #' @param value numeric vector of length nrow(from). Defaults to 1. 
 #' @param method string from center, centroid, point, or area for matching levels
 #'
-#' @return numeric vector with each value aggregated by grou
+#' @return numeric vector with each value aggregated by group
 #' 
 #' @importFrom tibble tibble add_row
 #' @importFrom dplyr group_by ungroup slice pull left_join

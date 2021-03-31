@@ -15,7 +15,7 @@ a dataframe with columns Id and District, loaded from a DRA export.}
 \item{precincts}{an sf dataframe of precinct shapes to link the output to}
 }
 \value{
-sf dataframe either at the block level or preinct level
+sf dataframe either at the block level or precinct level
 }
 \description{
 Creates a block or precinct level dataset from DRA csv output.

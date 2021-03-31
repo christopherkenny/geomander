@@ -19,7 +19,7 @@ gstar_i(shp, adj, wts, spatial_mat)
 vector of G*i scores
 }
 \description{
-Returns the Geits Ord G*i in standardized form.
+Returns the Getis Ord G*i in standardized form.
 }
 \examples{
 \dontrun{

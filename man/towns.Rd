@@ -11,7 +11,7 @@ data("towns")
 }
 \description{
 This data contains 7 town boundaries for the towns which overlap
-North Rockland School District in NY,
+North Rockland School District in NY.
 }
 \examples{
 \dontrun{data("towns")}

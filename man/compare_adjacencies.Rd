@@ -2,7 +2,7 @@
 % Please edit documentation in R/adjacency.R
 \name{compare_adjacencies}
 \alias{compare_adjacencies}
-\title{Compare Adajacency Lists}
+\title{Compare Adjacency Lists}
 \usage{
 compare_adjacencies(adj1, adj2, shp, zero = TRUE)
 }
@@ -20,7 +20,7 @@ tibble with row indices to compare, and optionally columns which describe the
 DE-9IM relationship between differences.
 }
 \description{
-Compare Adajacency Lists
+Compare Adjacency Lists
 }
 \examples{
 \dontrun{

@@ -24,7 +24,7 @@ numeric vector with each value split by weight
 Simple method for estimating data down to a lower level. This is most often useful
 for getting election data down from a precinct level to a block level in the case
 that a state or other jurisdiction split precincts when creating districts. Geographic
-parter to estimate_down.
+partner to estimate_down.
 }
 \examples{
 \dontrun{

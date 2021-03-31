@@ -23,7 +23,7 @@ NULL
 #' va18sub
 #' 
 #' This data contains a 116 precinct subset of Virginia from the 2018 Senate race.
-#' Constains results for counties Henrico (087) and Henry (089).
+#' Contains results for disjoint counties Henrico (087) and Henry (089).
 #' 
 #' @name va18sub
 #' @usage data("va18sub")
@@ -41,7 +41,7 @@ NULL
 #' towns
 #' 
 #' This data contains 7 town boundaries for the towns which overlap
-#' North Rockland School District in NY,
+#' North Rockland School District in NY.
 #' 
 #' @name towns
 #' @usage data("towns")
