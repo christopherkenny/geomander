@@ -140,7 +140,7 @@ sims005 <- redist.smc(adjobj = adj,
                    popcons = 0.005, 
                    nsims = 500,
                    ndists = 7, 
-                   counties = blocks$TownNumber,
+                   counties = blocks$TownID,
                    silent = TRUE)
 
 cds <- as.matrix(sims005) %>% unique(MARGIN  = 2)
