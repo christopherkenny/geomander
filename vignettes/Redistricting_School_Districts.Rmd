@@ -137,7 +137,7 @@ So, finally, we have the data in a simulation-ready state! We can now use the ad
 ```{r}
 sims005 <- redist.smc(adjobj = adj, 
                    popvec = blocks$Total, 
-                   popcons = 0.005, 
+                   popcons = 0.01, 
                    nsims = 500,
                    ndists = 7, 
                    counties = blocks$TownID,
