@@ -29,6 +29,5 @@ Suggests:
   redist,
   knitr,
   rmarkdown
-VignetteBuilder: knitr
 LazyData: true
 Encoding: UTF-8
