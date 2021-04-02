@@ -1,8 +1,8 @@
 Package: geomander
 Type: Package
 Title: Geographic Tools for Studying Gerrymandering
-Version: 1.0.2
-Date: 2021-03-31
+Version: 1.0.3
+Date: 2021-04-01
 Authors@R: person("Christopher T.", "Kenny", email = "christopherkenny@fas.harvard.edu",
                   role = c("aut", "cre"), comment = c(ORCID = "0000-0002-9386-6860"))
 Description: A compilation of tools to complete common tasks for studying gerrymandering. This focuses on the geographic tool side of common problems, such as linking different levels of spatial units or estimating how to break up units.
