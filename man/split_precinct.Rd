@@ -21,7 +21,7 @@ VAP or population.}
 identifies each observation in split_by}
 }
 \value{
-
+sf data frame with precinct split
 }
 \description{
 States often split a precinct when they create districts but rarely provide the 
@@ -29,5 +29,5 @@ geography for the split precinct. This allows you to split a precinct using a
 lower geography, typically blocks.
 }
 \examples{
-
+ #TODO 
 }

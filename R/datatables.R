@@ -12,7 +12,7 @@
 #' 
 #' @importFrom tidycensus get_decennial
 #' @importFrom tigris blocks
-#' @importFrom dplyr filter select mutate all_of any_of left_join
+#' @importFrom dplyr filter select mutate all_of any_of left_join .data
 #' @importFrom tibble tibble
 #' @importFrom tidyr pivot_wider
 #' @importFrom stringr str_detect
@@ -200,7 +200,8 @@ create_tract_table <- function(state, county, geography = TRUE, year = 2019){
 #' 
 #' @examples \dontrun{
 #' data(towns)
-#' block <- create_block_table('NY', 'Rockland')
+#' # block <- create_block_table('NY', 'Rockland')
+#' data(rockland)
 #' matches <- geo_match(block, towns)
 #' block2prec(block, matches)
 #' }
@@ -324,10 +325,10 @@ block2prec <- function(block_table, matches, geometry = FALSE){
 #' @export
 #' 
 #' @examples \dontrun{
-#' #' data(towns)
+#' data(towns)
 #' towns$fips <- '087'
 #' block <- create_block_table('NY', 'Rockland')
-#' block2prec(block, towns, 'fips')
+#' block2prec_by_county(block, towns, 'fips')
 #' }
 block2prec_by_county <- function(block_table, precinct, precinct_county_fips){
   
@@ -349,11 +350,11 @@ block2prec_by_county <- function(block_table, precinct, precinct_county_fips){
     select(rowid, geometry, all_of(precinct_county_fips))
   
   prectb <- tibble()
-  countiesl <- unique(block_table$County)
+  countiesl <- unique(block_table$county)
   
   for(cty in 1:length(countiesl)){
 
-    bsub <- block_table %>% filter(County == countiesl[cty])
+    bsub <- block_table %>% filter(.data$county == countiesl[cty])
     psub <- precinct %>% filter(.data[[precinct_county_fips]] == countiesl[cty]) %>% 
       mutate(matches_id = row_number())
     

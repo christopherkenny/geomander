@@ -24,9 +24,9 @@ that every block is matched to a precinct which is in the same county.
 }
 \examples{
 \dontrun{
-#' data(towns)
+data(towns)
 towns$fips <- '087'
 block <- create_block_table('NY', 'Rockland')
-block2prec(block, towns, 'fips')
+block2prec_by_county(block, towns, 'fips')
 }
 }

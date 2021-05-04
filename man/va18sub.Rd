@@ -14,7 +14,8 @@ This data contains a 116 precinct subset of Virginia from the 2018 Senate race.
 Contains results for disjoint counties Henrico (087) and Henry (089).
 }
 \examples{
- \dontrun{data("va18sub")}
+ 
+data("va18sub")
 }
 \references{
 Voting and Election Science Team, 2019, "va_2018.zip", 2

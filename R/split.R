@@ -13,11 +13,11 @@
 #' @param split_by_id Optional. A string that names a column in split_by that 
 #' identifies each observation in split_by
 #'
-#' @return
+#' @return sf data frame with precinct split
 #' @export
 #'
 #' @examples
-#' 
+#'  #TODO 
 split_precinct <- function(lower, precinct, split_by, lower_wt, split_by_id){
   
   if(!missing(lower_wt)){
@@ -44,14 +44,14 @@ split_precinct <- function(lower, precinct, split_by, lower_wt, split_by_id){
   
   matches <- geo_match(from = lower, to = split_by)
   
-  out_geo <- lower %>% select(geometry) %>% mutate(new = matches) %>% 
-    group_by(new)
+  out_geo <- lower %>% select(.data$geometry) %>% mutate(new = matches) %>% 
+    group_by(.data$new)
   
   
   if(!missing(lower_wt)){
    out_wt <- tibble(new = matches, wt = lower_wt) %>% 
-     group_by(new) %>% 
-     summarize(wt = sum(lower_wt, na.rm = TRUE), .groups = 'drop')
+     group_by(.data$new) %>% 
+     summarize(wt = sum(.data$lower_wt, na.rm = TRUE), .groups = 'drop')
    
    out_geo <- left_join(out_geo, out_wt, by = c('new'))
   }

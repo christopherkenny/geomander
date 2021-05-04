@@ -23,7 +23,8 @@ the name block2prec.
 \examples{
 \dontrun{
 data(towns)
-block <- create_block_table('NY', 'Rockland')
+# block <- create_block_table('NY', 'Rockland')
+data(rockland)
 matches <- geo_match(block, towns)
 block2prec(block, matches)
 }

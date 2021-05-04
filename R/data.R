@@ -6,7 +6,8 @@
 #' @usage data("checkerboard")
 #' @format An sf dataframe with 64 observations
 #' 
-#' @examples \dontrun{data("checkerboard")}
+#' @examples 
+#' data("checkerboard")
 NULL
 
 #' Checkerboard Adjacency
@@ -17,7 +18,8 @@ NULL
 #' @usage data("checkerboard_adj")
 #' @format A list with 64 entries
 #' 
-#' @examples \dontrun{data("checkerboard_adj")}
+#' @examples 
+#' data("checkerboard_adj")
 NULL
 
 #' va18sub
@@ -34,7 +36,8 @@ NULL
 #' 018 Precinct-Level Election Results, 
 #' https://doi.org/10.7910/DVN/UBKYRU/FQDLOO, Harvard Dataverse, V4
 #' 
-#' @examples  \dontrun{data("va18sub")}
+#' @examples  
+#' data("va18sub")
 NULL
 
 
@@ -50,5 +53,24 @@ NULL
 #' @references 
 #' https://www.rocklandgis.com/portal/apps/sites/#/data/items/746ec7870a0b4f46b168e07369e79a27
 #' 
-#' @examples \dontrun{data("towns")}
+#' @examples 
+#' data("towns")
+NULL
+
+
+#' rockland
+#' 
+#' This data contains the blocks for Rockland County NY, with geographies simplified
+#' to allow for better examples. 
+#' 
+#' It can be recreated with:
+#' rockland <- create_block_table('NY', 'Rockland')
+#' rockland <- rmapshaper::ms_simplify(rockland)
+#' 
+#' @name rockland
+#' @usage data("rockland")
+#' @format An sf dataframe with 7 observations
+#' 
+#' @examples 
+#' data("rockland")
 NULL
