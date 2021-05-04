@@ -10,3 +10,4 @@
 ^\.github$
 ^CRAN-RELEASE$
 ^vignettes$
+^cran-comments\.md$

@@ -19,7 +19,9 @@
 #' @importFrom magrittr %>%
 #' @export
 #' 
-#' @examples \dontrun{
+#' @examples 
+#' \dontrun{
+#' # uses the Census API
 #' create_block_table(state = 'NY', county = 'Rockland', geography = F)
 #' }
 create_block_table <- function(state, county, geography = TRUE, year = 2010){
@@ -35,23 +37,32 @@ create_block_table <- function(state, county, geography = TRUE, year = 2010){
   
   fips <- tidycensus::fips_codes %>% filter(state == statepo)
   
-  vars <- c('P003001', 'P005003', 'P005004', 'P004003', 'P010001', 'P011005','P011006', 'P011002', 'PLACE')
+  vars <- c(pop = 'P003001', pop_white = 'P005003', pop_black = 'P005004', 
+            pop_hisp = 'P004003', pop_aian = 'P005005', pop_asian = 'P005006', 
+            pop_nhpi = 'P005007', pop_other = 'P005008', pop_two = 'P005009',
+            vap = 'P010001', vap_white = 'P011005', vap_black = 'P011006', 
+            vap_hisp = 'P011002', vap_aian = 'P011007', vap_asian = 'P011008',
+            vap_nhpi = 'P011009', vap_other = 'P011010', vap_two = 'P011011',
+            place = 'PLACE')
   
   
   if(missing(county)){
     out <- tibble()
     
     for(cty in fips$county){
-      block <- get_decennial(geography = 'block', state = state, year = year, geometry = FALSE, keep_geo_vars = FALSE, county = cty,
+      block <- get_decennial(geography = 'block', state = state, year = year, 
+                             geometry = FALSE, keep_geo_vars = FALSE, county = cty,
                              variables = vars)
       out <- rbind(out, block)
     }
   } else {
-    out <- get_decennial(geography = 'block', state = state, year = year, geometry = FALSE, keep_geo_vars = FALSE, county = county,
+    out <- get_decennial(geography = 'block', state = state, year = year, 
+                         geometry = FALSE, keep_geo_vars = FALSE, county = county,
                          variables = vars)
   }
   
-  out <- out %>% select(GEOID, variable, value) %>% pivot_wider(id_cols = GEOID, names_from = 'variable', values_from = 'value')
+  out <- out %>% select(GEOID, variable, value) %>% 
+    pivot_wider(id_cols = GEOID, names_from = 'variable', values_from = 'value')
   
   if(geography){
     if(!missing(county)){
@@ -65,19 +76,15 @@ create_block_table <- function(state, county, geography = TRUE, year = 2010){
                                        'STATEFP00', 'COUNTYFP00', 'TRACTCE00', 'BLOCKCE00', 'GEOID00',
                                        'waterpct', 'geometry')))
     names(blocks)[str_detect(names(blocks), pattern = 'GEOID')] <- 'GEOID'
+    names(blocks)[str_detect(names(blocks), pattern = 'STATE')] <- 'state'
+    names(blocks)[str_detect(names(blocks), pattern = 'COUNTY')] <- 'county'
+    names(blocks)[str_detect(names(blocks), pattern = 'TRACT')] <- 'tract'
+    names(blocks)[str_detect(names(blocks), pattern = 'BLOCK')] <- 'block'
 
-    out <- blocks %>% left_join(y = out)
+    out <- blocks %>% left_join(y = out, by = 'GEOID')
     
-    names(out) <- c('State', 'County', 'Tract', 'Block', 'GEOID', 'waterpct', 
-                     'Total', 'TotalWhite', 'TotalBlack', 'TotalHisp', 'VAP', 'VAPWhite', 'VAPBlack', 'VAPHisp', 'Place', 'geometry')
-    
-  } else {
-    names(out) <- c('GEOID', 'Total', 'TotalWhite', 'TotalBlack', 'TotalHisp', 'VAP', 'VAPWhite', 'VAPBlack', 'VAPHisp', 'Place')
   }
-  
-  out <- out %>% mutate(TotalOther = Total - TotalWhite - TotalBlack - TotalHisp,
-                        VAPOther = VAP - VAPWhite - VAPBlack - VAPHisp)
-  
+
   return(out)
 }
 

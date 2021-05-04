@@ -24,6 +24,7 @@ standard redistricting variables.
 }
 \examples{
 \dontrun{
+# uses the Census API
 create_block_table(state = 'NY', county = 'Rockland', geography = F)
 }
 }

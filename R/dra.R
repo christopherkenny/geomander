@@ -35,7 +35,7 @@ dra2r <- function(dra, state, precincts){
     # get the file extension
     ext <- stringr::str_sub(dra, start = -4)
     if(ext == '.csv'){
-      dra <- readr::read_csv(file = dra)
+      dra <- readr::read_csv(file = dra, col_types = c(Id = 'c', District = 'c'), col_names = TRUE)
     } else if(ext == 'json'){
       stop('Please export the map as a csv. json not currently supported, but may be in the future.')
     } else {

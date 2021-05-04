@@ -104,7 +104,7 @@ blocks %>%
 So, we want to make two particular edits to the outcome. First, we create a fake Orange County Town for the blocks that come from Orange County, though there are only a few dozen people who live in those blocks.
 ```{r}
 blocks <- blocks %>% mutate(TownID = matched) %>% 
-  mutate(TownID = ifelse(County != '087', 8, TownID)) 
+  mutate(TownID = ifelse(county != '087', 8, TownID)) 
 ```
 
 Second, we can see that one block in 7 was matched to 1 because it didn't properly intersect the towns and thus went for the closest town by distance between their centroids. The same issue happened for two blocks in Di
@@ -136,7 +136,7 @@ which(comp$component > 1)
 So, finally, we have the data in a simulation-ready state! We can now use the adjacency list created above with redist.adjacency to run a simulation using redist.smc. See [the redist package](http://kosukeimai.github.io/redist/) for more information about what's going on here.
 ```{r}
 sims005 <- redist.smc(adjobj = adj, 
-                   popvec = blocks$Total, 
+                   popvec = blocks$pop, 
                    popcons = 0.01, 
                    nsims = 500,
                    ndists = 7, 
@@ -146,7 +146,7 @@ sims005 <- redist.smc(adjobj = adj,
 
 cds <- as.matrix(sims005) %>% unique(MARGIN  = 2)
 
-par <- redist.parity(district_membership = cds, population = blocks$Total)
+par <- redist.parity(district_membership = cds, population = blocks$pop)
 
 comp <- redist.compactness(shp = blocks, district_membership = cds, adjacency = adj, measure = 'EdgesRemoved')
 
@@ -164,7 +164,7 @@ smry <- block2prec(blocks, matches = cds[,pick])
 
 Then we have the basic information we want and we can look at the VAP data to see that we have one majority minority Hispanic ward and one potential coalition ward.
 ```{r}
-smry %>% select(matches_id, starts_with('VAP'))
+smry %>% select(matches_id, starts_with('vap'))
 ```
 And finally, we can also use block2prec to join the geometries of the wards to plot:
 ```{r, message = FALSE, warning = FALSE}

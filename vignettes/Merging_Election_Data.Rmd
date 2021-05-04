@@ -65,7 +65,7 @@ prec <- block2prec(block_table = blocks, matches = matches)
 An alternative way to do this, especially when the edges of counties follow natural geographies like rivers, is to use the block2prec_by_county, which performs the above two steps, but only one county at a time. It returns the tables joined together.
 
 ```{r}
-prec_by_c <- block2prec_by_county(block_table = blocks, precinct = va18sub, precinct_county_fips = 'COUNTYFP')
+prec_by_c <- block2prec_by_county(block_table = blocks, precinct = va18sub, precinct_county_fips = 'county')
 ```
 
 In this case, it makes no difference, as the va18sub shapes line up very well with the block lines.
@@ -122,7 +122,7 @@ matches_v <- geo_match(from = blocks, to = vtd)
 Suppose then that we want to estimate votes for Tim Kaine, weighting by VAP.
 
 ```{r}
-disagg_kaine <- estimate_down(wts = blocks$VAP, value = va18sub$G18USSDKAI, group = matches_p)
+disagg_kaine <- estimate_down(wts = blocks$vap, value = va18sub$G18USSDKAI, group = matches_p)
 ```
 
 Then we can reverse this to get to the vtd level:
@@ -136,7 +136,7 @@ However, in cases where you only need to transfer one variable or you are more c
 
 We estimate down from va18sub to blocks and then up from blocks to vtd
 ```{r}
-disagg_kaine_geo <- geo_estimate_down(from = va18sub, to = blocks, wts = blocks$VAP, value = va18sub$G18USSDKAI)
+disagg_kaine_geo <- geo_estimate_down(from = va18sub, to = blocks, wts = blocks$vap, value = va18sub$G18USSDKAI)
 
 vtd_kaine_geo <- geo_estimate_up(from = blocks, to = vtd, value = disagg_kaine_geo)
 ```
