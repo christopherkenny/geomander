@@ -4,7 +4,7 @@
 \alias{rockland}
 \title{rockland}
 \format{
-An sf dataframe with 7 observations
+An sf dataframe with 4764 observations
 }
 \usage{
 data("rockland")

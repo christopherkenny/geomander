@@ -69,8 +69,25 @@ NULL
 #' 
 #' @name rockland
 #' @usage data("rockland")
-#' @format An sf dataframe with 7 observations
+#' @format An sf dataframe with 4764 observations
 #' 
 #' @examples 
 #' data("rockland")
+NULL
+
+#' precincts
+#' 
+#' This data contains the election districts (or precincts) for Rockland County 
+#' NY, with geographies simplified to allow for better examples. 
+#' 
+#' 
+#' @name precincts
+#' @usage data("precincts")
+#' @format An sf dataframe with 278 observations
+#' 
+#' @references 
+#' https://www.rocklandgis.com/portal/apps/sites/#/data/datasets/2d91f9db816c48318848ad66eb1a18e9
+#' 
+#' @examples 
+#' data("precincts")
 NULL
