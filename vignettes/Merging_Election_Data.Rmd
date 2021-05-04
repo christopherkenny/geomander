@@ -65,7 +65,7 @@ prec <- block2prec(block_table = blocks, matches = matches)
 An alternative way to do this, especially when the edges of counties follow natural geographies like rivers, is to use the block2prec_by_county, which performs the above two steps, but only one county at a time. It returns the tables joined together.
 
 ```{r}
-prec_by_c <- block2prec_by_county(block_table = blocks, precinct = va18sub, precinct_county_fips = 'county')
+prec_by_c <- block2prec_by_county(block_table = blocks, precinct = va18sub, precinct_county_fips = 'COUNTYFP')
 ```
 
 In this case, it makes no difference, as the va18sub shapes line up very well with the block lines.

@@ -44,6 +44,8 @@ Currently, geomander is only available from [GitHub](https://github.com/christop
 remotes::install_github('christopherkenny/geomander')
 ```
 
+Needs redist back on CRAN to submit. 
+
 ## Examples
 
 A very common task is aggregating block data to precincts.

@@ -133,33 +133,28 @@ comp <- check_contiguity(adjacency = adj, group = blocks$TownID)
 which(comp$component > 1)
 ```
 
-So, finally, we have the data in a simulation-ready state! We can now use the adjacency list created above with redist.adjacency to run a simulation using redist.smc. See [the redist package](http://kosukeimai.github.io/redist/) for more information about what's going on here.
+Finally, we have the data in a simulation-ready state! We can now use the adjacency list created above with redist.adjacency to run a simulation using redist.smc. See [the redist package](http://kosukeimai.github.io/redist/) for more information about what's going on here.
 ```{r}
-sims005 <- redist.smc(adjobj = adj, 
-                   popvec = blocks$pop, 
-                   popcons = 0.01, 
-                   nsims = 500,
-                   ndists = 7, 
-                   counties = blocks$TownID,
-                   max_oversample = 5,
-                   silent = TRUE)
+map <- redist_map(blocks, pop_tol = 0.01, ndists = 7, adj = adj)
 
-cds <- as.matrix(sims005) %>% unique(MARGIN  = 2)
+sims005 <- redist_smc(map, nsims = 500, counties = TownID, silent = TRUE)
 
-par <- redist.parity(district_membership = cds, population = blocks$pop)
+plans <- get_plans_matrix(sims005) %>% unique(MARGIN  = 2)
 
-comp <- redist.compactness(shp = blocks, district_membership = cds, adjacency = adj, measure = 'EdgesRemoved')
+par <- redist.parity(plans = plans, total_pop = blocks$pop)
 
-comp_m <- comp %>% group_by(nloop) %>% summarize(mean = mean(EdgesRemoved))
+comp <- redist.compactness(shp = blocks, plans = plans, adj = adj, measure = 'EdgesRemoved')
 
-pick <- tibble(parity = par) %>% bind_cols(comp_m) %>% slice_max(order_by = mean, n = 1) %>% pull(nloop)
+comp_m <- comp %>% group_by(draw) %>% summarize(mean = mean(EdgesRemoved))
+
+pick <- tibble(parity = par) %>% bind_cols(comp_m) %>% slice_max(order_by = mean, n = 1) %>% pull(draw)
 ```
 
 In short, the above uses a Sequential Monte Carlo algorithm to draw 500 compact districts that try to preserve towns. From those, I pick a map that is on average, pretty compact.
 
 Using that choice of districts, we can then summarize the block level data, using block2prec, but in this case it is summarizing to a ward level.
 ```{r}
-smry <- block2prec(blocks, matches = cds[,pick])
+smry <- block2prec(blocks, matches = plans[,pick])
 ```
 
 Then we have the basic information we want and we can look at the VAP data to see that we have one majority minority Hispanic ward and one potential coalition ward.
@@ -168,7 +163,7 @@ smry %>% select(matches_id, starts_with('vap'))
 ```
 And finally, we can also use block2prec to join the geometries of the wards to plot:
 ```{r, message = FALSE, warning = FALSE}
-block2prec(blocks, matches = cds[,pick], geometry = TRUE) %>% 
+block2prec(blocks, matches = plans[,pick], geometry = TRUE) %>% 
   ggplot() + 
   geom_sf() + 
   theme_void() +
