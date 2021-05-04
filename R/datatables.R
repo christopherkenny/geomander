@@ -236,7 +236,7 @@ block2prec <- function(block_table, matches, geometry = FALSE){
         vap_asian = sum(.data$vap_asian),
         vap_nhpi  = sum(.data$vap_nhpi),
         vap_other = sum(.data$vap_other),
-        vap_two   = sum(.data$vap_two)
+        vap_two   = sum(.data$vap_two),
         .groups = 'drop'
       )
   } else {
