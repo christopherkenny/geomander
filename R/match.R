@@ -8,7 +8,7 @@
 #'
 #' @return Integer Vector of matches length(to) with values in 1:nrow(from)
 #' @export
-#' @importFrom sf st_centroid st_point_on_surface st_nearest_feature st_intersection
+#' @importFrom sf st_centroid st_point_on_surface st_nearest_feature st_intersection st_make_valid
 #' 
 #' @examples \dontrun{
 #' data(checkerboard)
@@ -70,7 +70,8 @@ geo_match <- function(from, to, method = 'center', tiebreaker = TRUE){
   } else{
     to <- to %>% mutate(toid = row_number())
     from <- from %>% mutate(fromid = row_number())
-    all_inted <- st_intersection(x = to, y = from)
+    from <- st_make_valid(from)
+    suppressMessages(all_inted <- st_intersection(x = to, y = from))
     all_inted$area <- st_area(all_inted)
     ints <- all_inted %>% 
       group_by(fromid) %>% 
