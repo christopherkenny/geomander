@@ -22,7 +22,8 @@ Imports: Rcpp,
   tidyr,
   tigris,
   ggplot2,
-  readr
+  readr,
+  spdep
 Depends: 
     R (>= 2.10)
 Suggests:

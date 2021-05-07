@@ -154,3 +154,37 @@ compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE){
   
   return(ret)
 }
+
+
+#' Build Adjacency List
+#' 
+#' This is similar to the old version of redist's adjacency function which has been
+#' replaced by sf internals. This is faster but less reliable. This wraps spdep::poly2nb()
+#' and replaces the indicator for no adjacent precincts with a integer(0)
+#'
+#' @param shp sf dataframe
+#' @param zero Default is TRUE for zero indexed. FALSE gives a one indexed adjacency list.
+#' @param rook Default is TRUE for rook adjacency. FALSE gives queen adjacency
+#'
+#' @return list with nrow(shp) entries
+#' @export
+#' 
+#' @importFrom spdep poly2nb
+#' 
+#' @examples
+#' data(precincts)
+#' adj <- adjacency(precincts)
+adjacency <- function(shp, zero = TRUE, rook = TRUE){
+  
+  if(!inherits(shp, 'sf'))
+  adj <-spdep::poly2nb(shp, queen = !rook)
+  if(zero){
+    adj <- lapply(adj, function(x){x-1L})
+    adj <- lapply(adj, function(x){if(all(x == -1L)){integer(0)} else {x} })
+  } else {
+    adj <- lapply(adj, function(x){x-0L})
+    adj <- lapply(adj, function(x){if(all(x == -1L)){integer(0)} else {x} })
+  }
+
+  return(adj)
+}
