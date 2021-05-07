@@ -66,10 +66,12 @@ suggest_neighbors <- function(shp, adjacency, idx, neighbors = 1){
     idx <- which(lengths(adjacency) == 0)
   }
   
+  cents <- st_centerish(shp)
+  
   out <- tibble()
   for(i in idx){
     
-    nn <- suppressMessages(st_nn(x = shp[i,], y = shp[-i,], k = neighbors) %>% unlist())
+    nn <- suppressMessages(st_nn(x = cents[i,], y = cents[-i,], k = neighbors) %>% unlist())
     for(j in 1:length(nn)){
       if(nn[j] >= i){
         nn[j] <- nn[j] + 1
