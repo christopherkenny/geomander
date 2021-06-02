@@ -29,17 +29,31 @@ library(tigris)
 
 
 First, we want to build a block level dataset. The school district intersects two counties, though almost all of the population in the district comes from Rockland County. create_block_table allows you to build block level datasets with the primary variables needed for redistricting purposes - total population by race and voting age population (VAP) by race.
-```{r, results = 'hide', message = FALSE}
+```{r, results = 'hide', eval = FALSE, message = FALSE}
 blocksRockland <- create_block_table(state = 'NY', county = 'Rockland')
 blocksOrange <- create_block_table(state = 'NY', county = 'Orange')
 
 blocks <- bind_rows(blocksRockland, blocksOrange)
 ```
 
+For this vignette, rather than running the above, we use included data. `orange` is a subset of Orange County which intersects with the school district. Rockland is the entire block dataset. These polygons are simplified using `rmapshaper` to make them smaller.
+```{r}
+data("orange")
+data("rockland")
+blocks <- bind_rows(rockland, orange)
+```
+
+
 Next, we need the shape for North Rockland, which can be obtained from the R package tigris as below. The same idea holds for having target areas, such as counties or legislative districts, though they are less likely to directly use the block level data.
 ```{r, results = 'hide', message = FALSE}
 school <- school_districts(state = 'NY') %>% filter(str_detect(NAME, 'North Rockland'))
 ```
+As above, we use a saved version that doesn't need API access to download.
+```{r}
+data("nrcsd")
+school <- nrcsd
+```
+
 The immediate and common difficulty here is that we have nearly 15,000 blocks, but the target region, in this case the school district outlined in red is significantly smaller than that.
 ```{r}
 blocks %>% ggplot() + 
@@ -71,11 +85,12 @@ To me, it looks like we are subsetting correctly with this threshold, so we actu
 ```{r}
 blocks <- blocks %>% geo_trim(to = school)
 ```
-And indeed, just plotting the block geographies looks like the school district from before.
+And indeed, just plotting the block geographies looks like the school district from before. The edges will be a bit off due to polygon simplification.
 ```{r}
 blocks %>% ggplot() +
   geom_sf() +
-  theme_void()
+  theme_void() + 
+  geom_sf(data = school, color = 'red', fill = NA)
 ```
 
 Very often, at this step, we want to consider including information about other geographies, particularly towns, villages, or counties. In the package, for illustration purposes, I've included a small towns dataset from the [Rockland County GIS Office](https://www.rocklandgis.com/portal/apps/sites/#/data/items/746ec7870a0b4f46b168e07369e79a27).
@@ -119,11 +134,12 @@ comp <- check_contiguity(adjacency = adj, group = blocks$TownID)
 which(comp$component > 1)
 ```
 
+
 Then, using that information, we can figure out three of these need to be renamed.
 ```{r}
-blocks$TownID[406] <- 7
-blocks$TownID[581] <- 2
-blocks$TownID[585] <- 4
+blocks$TownID[409] <- 7
+blocks$TownID[586] <- 2
+blocks$TownID[591] <- 4
 ```
 
 Now all towns are completely connected or contiguous.

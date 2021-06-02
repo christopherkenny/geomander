@@ -16,7 +16,9 @@ create_block_table(state, county, geography = TRUE, year = 2010)
 \item{year}{year, must be 2010 at the moment. 2020 to be added once available. 2000 if rereleased.}
 }
 \value{
-dataframe with data for each block in the selected region
+dataframe with data for each block in the selected region. Data includes
+2 sets of columns for each race or ethnicity category: population (pop) and 
+voting age population (vap)
 }
 \description{
 Creates a block level dataset, using the decennial census information, with the 

@@ -8,7 +8,9 @@
 #' @param geography Defaults to TRUE. Whether to return the geography or not.
 #' @param year year, must be 2010 at the moment. 2020 to be added once available. 2000 if rereleased.
 #'
-#' @return dataframe with data for each block in the selected region
+#' @return dataframe with data for each block in the selected region. Data includes
+#' 2 sets of columns for each race or ethnicity category: population (pop) and 
+#' voting age population (vap)
 #' 
 #' @importFrom tidycensus get_decennial
 #' @importFrom tigris blocks
@@ -81,7 +83,7 @@ create_block_table <- function(state, county, geography = TRUE, year = 2010){
     names(blocks)[str_detect(names(blocks), pattern = 'TRACT')] <- 'tract'
     names(blocks)[str_detect(names(blocks), pattern = 'BLOCK')] <- 'block'
 
-    out <- blocks %>% left_join(y = out, by = 'GEOID')
+    out <- blocks %>% left_join(y = out, by = 'GEOID') %>% st_as_sf()
     
   }
 
@@ -96,10 +98,12 @@ create_block_table <- function(state, county, geography = TRUE, year = 2010){
 #' @param geography Defaults to TRUE. Whether to return the geography or not.
 #' @param year year, must be >= 2009 and <= 2019.
 #'
-#' @return dataframe with data for each tract in the selected region
+#' @return dataframe with data for each tract in the selected region. Data includes
+#' 3 sets of columns for each race or ethnicity category: population (pop), voting age
+#' population (vap), and citizen voting age population (cvap)
 #' @export
 #' @importFrom tidycensus get_acs
-#' @importFrom dplyr rename starts_with
+#' @importFrom dplyr rename starts_with .data
 #' @examples \dontrun{
 #' tract <- create_tract_table('NY', 'Rockland', year = 2018)
 #' }
@@ -116,16 +120,33 @@ create_tract_table <- function(state, county, geography = TRUE, year = 2019){
   fips <- tidycensus::fips_codes %>% filter(state == statepo)
   
   # totals + white + black + hisp / for total, vap, and cvap (by sex because acs...)
-  vars <- c(Total = 'B03002_001',  TotalWhite = 'B03002_003',  
-            TotalBlack = 'B03002_004', TotalHisp = 'B03002_012',
-            MVAP = 'B05003_008', MNVAP = 'B05003_012', 
-            FVAP = 'B05003_019',    FNVAP = 'B05003_023',
-            MVAPBlack = 'B05003B_008',  MNVAPBlack = 'B05003B_012',
-            FVAPBlack = 'B05003B_019', FNVAPBlack = 'B05003B_023',
-            MVAPWhite = 'B05003H_008', MNVAPWhite  = 'B05003H_012',
-            FVAPWhite  = 'B05003H_019', FNVAPWhite  = 'B05003H_023',
-            MVAPHisp = 'B05003I_008', MNVAPHisp = 'B05003I_012',
-            FVAPHisp = 'B05003I_019', FNVAPHisp = 'B05003I_023'
+  vars <- c(pop         = 'B03002_001',  
+            pop_white   = 'B03002_003',  
+            pop_black   = 'B03002_004',
+            pop_hisp    = 'B03002_012',
+            pop_aian    = 'B03002_005',
+            pop_asian   = 'B03002_006',
+            pop_nhpi    = 'B03002_007',
+            pop_other   = 'B03002_008',
+            pop_two     = 'B03002_009',
+            m_vap       = 'B05003_008',  m_nvap        = 'B05003_012', 
+            f_vap       = 'B05003_019',  f_nvap        = 'B05003_023',
+            m_vap_black = 'B05003B_008', m_nvap_black  = 'B05003B_012',
+            f_vap_black = 'B05003B_019', f_nvap_black  = 'B05003B_023',
+            m_vap_white = 'B05003H_008', m_nvap_white  = 'B05003H_012',
+            f_vap_white = 'B05003H_019', f_nvap_white  = 'B05003H_023',
+            m_vap_hisp  = 'B05003I_008', m_nvap_hisp   = 'B05003I_012',
+            f_vap_hisp  = 'B05003I_019', f_nvap_hisp   = 'B05003I_023',
+            m_vap_aian  = 'B05003C_008', m_nvap_aian   = 'B05003C_012',
+            f_vap_aian  = 'B05003C_019', f_nvap_aian   = 'B05003C_023',
+            m_vap_asian = 'B05003D_008', m_nvap_asian  = 'B05003D_012',
+            f_vap_asian = 'B05003D_019', f_nvap_asian  = 'B05003D_023',
+            m_vap_nhpi  = 'B05003E_008', m_nvap_nhpi   = 'B05003E_012',
+            f_vap_nhpi  = 'B05003E_019', f_nvap_nhpi   = 'B05003E_023',
+            m_vap_other = 'B05003F_008', m_nvap_other  = 'B05003F_012',
+            f_vap_other = 'B05003F_019', f_nvap_other  = 'B05003F_023',
+            m_vap_two   = 'B05003G_008', m_nvap_two    = 'B05003G_012',
+            f_vap_two   = 'B05003G_019', f_nvap_two    = 'B05003G_023'
             )
   
   
@@ -149,21 +170,26 @@ create_tract_table <- function(state, county, geography = TRUE, year = 2019){
     pivot_wider(id_cols = GEOID, names_from = 'variable', values_from = 'estimate')
 
   out <- out %>% mutate(
-    TotalOther = Total - TotalWhite - TotalBlack - TotalHisp,
-    VAP = MVAP + FVAP,
-    VAPWhite = MVAPWhite + FVAPWhite,
-    VAPBlack = MVAPBlack + FVAPBlack,
-    VAPHisp = MVAPHisp + FVAPHisp
+    vap = .data$m_vap + .data$f_vap,
+    vap_white = .data$m_vap_white + .data$f_vap_white,
+    vap_black = .data$m_vap_black + .data$f_vap_black,
+    vap_hisp  = .data$m_vap_hisp  + .data$f_vap_hisp,
+    vap_aian  = .data$m_vap_aian  + .data$f_vap_aian,
+    vap_asian = .data$m_vap_asian + .data$f_vap_asian,
+    vap_nhpi  = .data$m_vap_nhpi  + .data$f_vap_nhpi,
+    vap_other = .data$m_vap_other + .data$f_vap_other,
+    vap_two   = .data$m_vap_two   + .data$f_vap_two
   ) %>% mutate(
-    VAPOther = VAP - (VAPWhite + VAPBlack + VAPHisp)
-  ) %>% mutate(
-    CVAP = VAP - MNVAP - FNVAP,
-    CVAPWhite = VAPWhite - MNVAPWhite - FNVAPWhite,
-    CVAPBlack = VAPBlack - MNVAPBlack - FNVAPBlack,
-    CVAPHisp = VAPHisp - MNVAPHisp - FNVAPHisp,
-  ) %>% mutate(
-    CVAPOther = VAP - (CVAPWhite + CVAPBlack + CVAPHisp)
-  ) %>% select(-starts_with(c('M','F'))
+    cvap = .data$vap - .data$m_nvap - .data$f_nvap,
+    cvap_white = .data$vap_white - .data$m_nvap_white - .data$f_nvap_white,
+    cvap_black = .data$vap_black - .data$m_nvap_black - .data$f_nvap_black,
+    cvap_hisp  = .data$vap_hisp  - .data$m_nvap_hisp  - .data$f_nvap_hisp,
+    cvap_aian  = .data$vap_aian  - .data$m_nvap_aian  - .data$f_nvap_aian,
+    cvap_asian = .data$vap_asian - .data$m_nvap_asian - .data$f_nvap_asian,
+    cvap_nhpi  = .data$vap_nhpi  - .data$m_nvap_nhpi  - .data$f_nvap_nhpi,
+    cvap_other = .data$vap_other - .data$m_nvap_other - .data$f_nvap_other,
+    cvap_two   = .data$vap_two   - .data$m_nvap_two   - .data$f_nvap_two
+  ) %>% select(-starts_with(c('m','f'))
   )
   
   
@@ -174,10 +200,10 @@ create_tract_table <- function(state, county, geography = TRUE, year = 2019){
       tracts <- tigris::tracts(state = state, year = year) 
     }
     
-    tracts <- tracts %>% select(STATEFP, COUNTYFP, GEOID, geometry) %>% 
+    tracts <- tracts %>% select(.data$STATEFP, .data$COUNTYFP, .data$GEOID, .data$geometry) %>% 
       rename(State = STATEFP, County = COUNTYFP)
     
-    out <- out %>% left_join(tracts, by = 'GEOID')
+    out <- out %>% left_join(tracts, by = 'GEOID') %>% st_as_sf()
   }
   
   return(out)
@@ -374,11 +400,11 @@ block2prec_by_county <- function(block_table, precinct, precinct_county_fips){
 
 
 globalVariables(c('GEOID', 'variable', 'value', 'AWATER10', 'ALAND10', 'County',
-                  'State', 'Total', 'TotalBlack', 'TotalHisp', 'TotalOther', 
-                  'TotalWhite', 'VAP', 'rowid', 'geometry', '.data',
-                  'COUNTYFP', 'CVAPBlack', 'CVAPHisp', 'CVAPWhite', 'STATEFP', 
+                  'State', 'pop', 'pop_black', 'pop_hisp', 'pop_other', 
+                  'pop_white', 'vap', 'rowid', 'geometry', '.data',
+                  'COUNTYFP', 'cvap_black', 'cvap_hisp', 'cvap_white', 'STATEFP', 
                   'estimate', 
-                  'VAPBlack', 'VAPHisp', 'VAPOther', 'VAPWhite', 'matches_id',
-                  "MVAP", "MNVAP", "FVAP", "FNVAP", "MVAPBlack", "MNVAPBlack",
-                  "FVAPBlack",  "FNVAPBlack", "MVAPWhite",  "MNVAPWhite", "FVAPWhite",
-                  "FNVAPWhite", "MVAPHisp",   "MNVAPHisp", "FVAPHisp",   "FNVAPHisp"))
+                  'vap_black', 'vap_hisp', 'vap_other', 'vap_white', 'matches_id',
+                  "m_vap", "m_nvap", "f_vap", "f_nvap", "m_vap_black", "Mnvap_black",
+                  "f_vap_black",  "f_nvap_black", "m_vap_white",  "Mnvap_white", "f_vap_white",
+                  "f_nvap_white", "m_vap_hisp",   "Mnvap_hisp", "f_vap_hisp",   "f_nvap_hisp"))

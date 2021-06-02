@@ -90,4 +90,4 @@ disagg <- geo_estimate_down(from = va18sub, to = block, wts = block$VAP, value =
 
 ```
 
-For more information, see the documentation and vignettes, available at [christopherkenny.github.io/geomander/](christopherkenny.github.io/geomander/)
+For more information, see the documentation and vignettes, available at [https://christopherkenny.github.io/geomander/](https://christopherkenny.github.io/geomander/)

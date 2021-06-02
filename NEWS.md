@@ -1,3 +1,9 @@
+# geomander 1.0.5
+* adds orange dataset to bring back a vignette
+* brings back 1/2 vignettes
+* updates create_tract_table with better names
+* begins use of testthat
+
 # geomander 1.0.4
 * adds rockland dataset containing simplified geometry blocks and precincts
 * adds draft split_precinct function (functional but not 100% stable)

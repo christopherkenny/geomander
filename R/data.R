@@ -24,12 +24,12 @@ NULL
 
 #' va18sub
 #' 
-#' This data contains a 116 precinct subset of Virginia from the 2018 Senate race.
-#' Contains results for disjoint counties Henrico (087) and Henry (089).
+#' This data contains a 90 precinct subset of Virginia from the 2018 Senate race.
+#' Contains results for Henrico County
 #' 
 #' @name va18sub
 #' @usage data("va18sub")
-#' @format An sf dataframe with 116 observations
+#' @format An sf dataframe with 90 observations
 #' 
 #' @references 
 #' Voting and Election Science Team, 2019, "va_2018.zip", 2
@@ -65,7 +65,7 @@ NULL
 #' 
 #' It can be recreated with:
 #' rockland <- create_block_table('NY', 'Rockland')
-#' rockland <- rmapshaper::ms_simplify(rockland)
+#' rockland <- rmapshaper::ms_simplify(rockland, keep_shapes = TRUE)
 #' 
 #' @name rockland
 #' @usage data("rockland")
@@ -73,6 +73,23 @@ NULL
 #' 
 #' @examples 
 #' data("rockland")
+NULL
+
+#' orange
+#' 
+#' This data contains the blocks for Orange County NY, with geographies simplified
+#' to allow for better examples. 
+#' 
+#' It can be recreated with:
+#' orange <- create_block_table('NY', 'Orange')
+#' orange <- rmapshaper::ms_simplify(orange, keep_shapes = TRUE)
+#' 
+#' @name orange
+#' @usage data("orange")
+#' @format An sf dataframe with 10034 observations
+#' 
+#' @examples 
+#' data("orange")
 NULL
 
 #' precincts
@@ -91,3 +108,51 @@ NULL
 #' @examples 
 #' data("precincts")
 NULL
+
+
+#' nrcsd
+#' 
+#' The data contains the North Rockland Central School District.
+#' 
+#' @name nrcsd
+#' @usage data('nrcsd')
+#' @format An sf dataframe with 1 observation
+#' 
+#' @examples 
+#' data('nrcsd')
+NULL
+
+#' va_blocks
+#' 
+#' This data contains the blocks Henrico County, VA with geographies simplified
+#' to allow for better examples. 
+#' 
+#' blocks87 <- create_block_table(state = 'VA', county = '087')  
+#' va_blocks <- rmapshaper::ms_simplify(va_blocks, keep_shapes = TRUE)
+#' 
+#' @name va_blocks
+#' @usage data("va_blocks")
+#' @format An sf dataframe with 6354 observations
+#' 
+#' @examples 
+#' data("va_blocks")
+NULL
+
+#' va_vtd
+#' 
+#' This data contains the blocks for Henrico County, VA with geographies simplified
+#' to allow for better examples. 
+#' 
+#' va_vtd <- tigris::voting_districts(state = 'VA') %>% filter(COUNTYFP10 == '087')
+#' va_vtd <- rmapshaper::ms_simplify(va_vtd, keep_shapes = TRUE)
+#' 
+#' @name va_vtd
+#' @usage data("va_blocks")
+#' @format An sf dataframe with 93 observations
+#' 
+#' @examples 
+#' data("va_blocks")
+NULL
+
+
+

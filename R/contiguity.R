@@ -30,10 +30,10 @@ check_contiguity <- function(adjacency, group){
     for(i in 1:length(group)){
       groups[i] <- which(sorted == group[i])
     }
-  } else{
+  } else {
+    group <- 1L
     groups <- rep(1L, length(adjacency))
   }
-  
   
   out <- tibble(group = group, group_number = groups, component = contiguity(adjacency, groups))
   
@@ -46,7 +46,8 @@ check_contiguity <- function(adjacency, group){
 #'
 #' @param shp An sf shapefile
 #' @param adjacency adjacency list
-#' @param group array of group identifiers. Typically district numbers or county names.
+#' @param group array of group identifiers. Typically district numbers or county names. 
+#' Defaults to rep(1, length(adjacency)) if missing.
 #'
 #' @return tibble with two columns of suggested rows of shp to connect in adj
 #' @export
@@ -70,6 +71,9 @@ suggest_component_connection <- function(shp, adjacency, group){
   }
   if(missing(adjacency)){
     stop('Please provide an argument to adjacency.')
+  }
+  if(missing(group)){
+    group <- rep(1, length(adjacency))
   }
   
   components <- check_contiguity(adjacency = adjacency, group = group)

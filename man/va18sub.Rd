@@ -4,14 +4,14 @@
 \alias{va18sub}
 \title{va18sub}
 \format{
-An sf dataframe with 116 observations
+An sf dataframe with 90 observations
 }
 \usage{
 data("va18sub")
 }
 \description{
-This data contains a 116 precinct subset of Virginia from the 2018 Senate race.
-Contains results for disjoint counties Henrico (087) and Henry (089).
+This data contains a 90 precinct subset of Virginia from the 2018 Senate race.
+Contains results for Henrico County
 }
 \examples{
  

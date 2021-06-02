@@ -176,8 +176,12 @@ compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE){
 #' adj <- adjacency(precincts)
 adjacency <- function(shp, zero = TRUE, rook = TRUE){
   
-  if(!inherits(shp, 'sf'))
+  if(!inherits(shp, 'sf')){
+    stop('Input to `shp` must be an sf dataframe.')
+  }
+  
   adj <-spdep::poly2nb(shp, queen = !rook)
+  
   if(zero){
     adj <- lapply(adj, function(x){x-1L})
     adj <- lapply(adj, function(x){if(all(x == -1L)){integer(0)} else {x} })

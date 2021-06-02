@@ -30,21 +30,24 @@ library(sf)
 
 Many sources of electoral data are focused, as expected, on elections. As such, many lack the population data that can be necessary to place racial, turnout, and other population patterns in context.
 
-One of the best sources of electoral data is the [Voting and Election Science Team](https://dataverse.harvard.edu/dataverse/electionscience) for spatial analysis. Using two counties from the Virginia senate election in 2018, this example walks through an easy way to add population data to this by matching based on the geographies.
+One of the best sources of electoral data is the [Voting and Election Science Team](https://dataverse.harvard.edu/dataverse/electionscience) for spatial analysis. Using one county from the Virginia senate election in 2018, this example walks through an easy way to add population data to this by matching based on the geographies.
 
-First, we load in the two county subset included in the package.
+First, we load in the VA county subset included in the package.
 ```{r}
 data(va18sub)
 unique(va18sub$COUNTYFP)
 ```
-After noting the counties included, we can use create_block_table to collect the key population boxes needed for most redistricting analysis for these two counties.
+After noting the countiy included, we can use create_block_table to collect the key population boxes needed for most redistricting analysis.
 
-```{r, message = FALSE, results = 'hide'}
-blocks87 <- create_block_table(state = 'VA', county = '087')  
-blocks89 <- create_block_table(state = 'VA', county = '089')  
-blocks <- bind_rows(blocks87, blocks89)
+```{r, message = FALSE, results = 'hide', eval=FALSE}
+blocks <- create_block_table(state = 'VA', county = '087')  
 ```
 
+To avoid needing API access, we can use saved data. These polygons are simplified using `rmapshaper`.
+```{r}
+data("va_blocks")
+blocks <- va_blocks
+```
 
 
 A typical approach from here is to match the geography from the blocks to the precincts. In this case, the geographies of the blocks are expected to match up well with only one precinct match for each block. This is not necessarily the case for all states or data sources, so blindly matching can be dangerous. Below, I use the default matching, which is by st_centerish, which is the centroid of the shape if it is within the shape or a point on its surface otherwise. There are three other options that could have been used:
@@ -62,9 +65,9 @@ Then we can aggregate this up to the precinct level with block2prec.
 prec <- block2prec(block_table = blocks, matches = matches)
 ```
 
-An alternative way to do this, especially when the edges of counties follow natural geographies like rivers, is to use the block2prec_by_county, which performs the above two steps, but only one county at a time. It returns the tables joined together.
+An alternative way to do this, especially when the edges of counties follow natural geographies like rivers, is to use the block2prec_by_county, which performs the above two steps, but only one county at a time. It returns the tables joined together. Since there is only one county in this example, it is unnecessary.
 
-```{r}
+```{r, eval = FALSE}
 prec_by_c <- block2prec_by_county(block_table = blocks, precinct = va18sub, precinct_county_fips = 'COUNTYFP')
 ```
 
@@ -81,25 +84,30 @@ fulldata <- bind_cols(va18sub, prec)
 
 A second common task is transferring information from one level of geography to another. In this case, I use the same Virginia county subset and blocks, but the end goal is to estimate electoral data in voting districts from known data in precincts.
 
-The first dataset is the Virginia two county subset as above, but only looking at one county:
+The first dataset is the Virginia subset as above:
 ```{r}
 data(va18sub)
-va18sub <- va18sub %>% filter(COUNTYFP == '087')
 ```
 
 The second is the block dataset for County 087 (Henrico County).
-```{r, message = FALSE}
+```{r, message = FALSE, eval = FALSE}
 blocks <- create_block_table(state = 'VA', county = '087')  
 ```
 
-Third, we use tigris to get voting districts for the relevant Virginia counties.
+Third, we can use `tigris` to get voting districts for the relevant Virginia county.
 ```{r, results='hide', message = FALSE}
 vtd <- voting_districts(state = 'VA') %>% filter(COUNTYFP10 == '087')
+```
+As with other potential calls to the API, this data is also simplified and included.
+
+```{r}
+data("va_vtd")
+vtd <- va_vtd
 ```
 
 
 ```{r}
-vtd %>% filter(COUNTYFP10 == '087') %>% ggplot() +
+vtd %>% ggplot() +
   geom_sf() + 
   geom_sf(data = va18sub, color = 'red', fill = 'NA' )+
   theme_void()

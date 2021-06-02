@@ -16,7 +16,9 @@ create_tract_table(state, county, geography = TRUE, year = 2019)
 \item{year}{year, must be >= 2009 and <= 2019.}
 }
 \value{
-dataframe with data for each tract in the selected region
+dataframe with data for each tract in the selected region. Data includes
+3 sets of columns for each race or ethnicity category: population (pop), voting age
+population (vap), and citizen voting age population (cvap)
 }
 \description{
 Create Tract Level Data
