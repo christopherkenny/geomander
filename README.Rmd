@@ -44,8 +44,6 @@ Currently, geomander is only available from [GitHub](https://github.com/christop
 remotes::install_github('christopherkenny/geomander')
 ```
 
-Needs redist back on CRAN to submit. 
-
 ## Examples
 
 A very common task is aggregating block data to precincts.
@@ -58,7 +56,7 @@ library(tidyverse)
 data("va18sub")
 
 # subset to target area
-va18sub <- va18sub %>% filter(COUNTYFP == '087')
+va18sub <- va18sub
 
 # create block data
 block <- create_block_table(state = 'VA', county = '087')  
@@ -72,7 +70,7 @@ prec <- block2prec(block_table = block, matches = matches)
 ```
 
 Other important tasks include breaking data into pieces by blocks underlying them.
-```{r}
+```{r, message=FALSE, warning=FALSE}
 library(geomander)
 library(tidyverse)
  
@@ -81,13 +79,16 @@ data("va18sub")
 
 # subset to target area
 va18sub <- va18sub %>% filter(COUNTYFP == '087')
+```
 
-# create block data
+Then we can get common block data:
+```{r, results='hide', message=FALSE, warning=FALSE}
 block <- create_block_table(state = 'VA', county = '087')  
+```
 
-# Estimate down to blocks
-disagg <- geo_estimate_down(from = va18sub, to = block, wts = block$VAP, value = va18sub$G18USSRSTE)
-
+And estimate down to blocks
+```{r}
+disagg <- geo_estimate_down(from = va18sub, to = block, wts = block$vap, value = va18sub$G18USSRSTE)
 ```
 
 For more information, see the documentation and vignettes, available at [https://christopherkenny.github.io/geomander/](https://christopherkenny.github.io/geomander/)

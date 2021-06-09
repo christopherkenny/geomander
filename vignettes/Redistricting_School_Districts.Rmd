@@ -45,7 +45,7 @@ blocks <- bind_rows(rockland, orange)
 
 
 Next, we need the shape for North Rockland, which can be obtained from the R package tigris as below. The same idea holds for having target areas, such as counties or legislative districts, though they are less likely to directly use the block level data.
-```{r, results = 'hide', message = FALSE}
+```{r, results = 'hide', eval = FALSE, message = FALSE}
 school <- school_districts(state = 'NY') %>% filter(str_detect(NAME, 'North Rockland'))
 ```
 As above, we use a saved version that doesn't need API access to download.
@@ -149,7 +149,7 @@ comp <- check_contiguity(adjacency = adj, group = blocks$TownID)
 which(comp$component > 1)
 ```
 
-Finally, we have the data in a simulation-ready state! We can now use the adjacency list created above with redist.adjacency to run a simulation using redist.smc. See [the redist package](http://kosukeimai.github.io/redist/) for more information about what's going on here.
+Finally, we have the data in a simulation-ready state! We can now use the adjacency list created above with redist.adjacency to run a simulation using redist.smc. See [the redist package](https://alarm-redist.github.io/) for more information about what's going on here.
 ```{r}
 map <- redist_map(blocks, pop_tol = 0.01, ndists = 7, adj = adj)
 
