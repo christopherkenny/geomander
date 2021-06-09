@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Match Across Geographic Layers — geo_match • geomander</title>
+<title>va_vtd — va_vtd • geomander</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="Match Across Geographic Layers — geo_match" />
-<meta property="og:description" content="Match Across Geographic Layers" />
+<meta property="og:title" content="va_vtd — va_vtd" />
+<meta property="og:description" content="This data contains the blocks for Henrico County, VA with geographies simplified
+to allow for better examples." />
 
 
 
@@ -126,52 +127,29 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Match Across Geographic Layers</h1>
-    <small class="dont-index">Source: <a href='https://github.com/christopherkenny/geomander/blob/master/R/match.R'><code>R/match.R</code></a></small>
-    <div class="hidden name"><code>geo_match.Rd</code></div>
+    <h1>va_vtd</h1>
+    <small class="dont-index">Source: <a href='https://github.com/christopherkenny/geomander/blob/master/R/data.R'><code>R/data.R</code></a></small>
+    <div class="hidden name"><code>va_vtd.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Match Across Geographic Layers</p>
+    <p>This data contains the blocks for Henrico County, VA with geographies simplified
+to allow for better examples.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>geo_match</span><span class='op'>(</span><span class='va'>from</span>, <span class='va'>to</span>, method <span class='op'>=</span> <span class='st'>"center"</span>, tiebreaker <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"va_blocks"</span><span class='op'>)</span></pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>from</th>
-      <td><p>smaller geographic level to match up from</p></td>
-    </tr>
-    <tr>
-      <th>to</th>
-      <td><p>larger geographic level to be matched to</p></td>
-    </tr>
-    <tr>
-      <th>method</th>
-      <td><p>string from center, centroid, point, or area for matching method</p></td>
-    </tr>
-    <tr>
-      <th>tiebreaker</th>
-      <td><p>Should ties be broken? boolean. If FALSE, precincts with no 
-matches get value -1 and precincts with multiple matches get value -2.</p></td>
-    </tr>
-    </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>Integer Vector of matches length(to) with values in 1:nrow(from)</p>
+    <p>An sf dataframe with 93 observations</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>va_vtd &lt;- tigris::voting_districts(state = 'VA') <!-- %&gt;% filter(COUNTYFP10 == '087') -->
+va_vtd &lt;- rmapshaper::ms_simplify(va_vtd, keep_shapes = TRUE)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>checkerboard</span><span class='op'>)</span>
-<span class='va'>counties</span> <span class='op'>&lt;-</span> <span class='fu'>st_as_sf</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span><span class='op'>(</span><span class='fu'>st_union</span><span class='op'>(</span><span class='va'>checkerboard</span> <span class='op'>%&gt;%</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>i</span> <span class='op'>&lt;</span> <span class='fl'>4</span><span class='op'>)</span><span class='op'>)</span>, 
-<span class='fu'>st_union</span><span class='op'>(</span><span class='va'>checkerboard</span> <span class='op'>%&gt;%</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>i</span> <span class='op'>&gt;=</span> <span class='fl'>4</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='fu'>geo_match</span><span class='op'>(</span>from <span class='op'>=</span> <span class='va'>checkerboard</span>, to <span class='op'>=</span> <span class='va'>counties</span><span class='op'>)</span>
-
-<span class='op'>}</span>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"va_blocks"</span><span class='op'>)</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
