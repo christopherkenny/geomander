@@ -11,7 +11,8 @@ suggest_component_connection(shp, adjacency, group)
 
 \item{adjacency}{adjacency list}
 
-\item{group}{array of group identifiers. Typically district numbers or county names.}
+\item{group}{array of group identifiers. Typically district numbers or county names. 
+Defaults to rep(1, length(adjacency)) if missing.}
 }
 \value{
 tibble with two columns of suggested rows of shp to connect in adj

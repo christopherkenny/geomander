@@ -19,6 +19,6 @@ geo_sort <- function(shp){
   pt <- sf::st_point(x = c(bbox$xmin, bbox$ymax))
   suppressWarnings(cent <- sf::st_centroid(shp))
   dists <- sf::st_distance(pt, cent)
-  idx <- sort(dists, index.return = T)
+  idx <- sort(dists, index.return = TRUE)
   return(shp %>% dplyr::slice(idx$ix))
 }
