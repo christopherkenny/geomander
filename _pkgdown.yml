@@ -25,8 +25,11 @@ reference:
 - title: "Included Example Data"
 - contents:
   - has_concept("data")
+- title: "Plotting Functions"
+- contents:
+  - has_concept("plot")
 - title: "Leftovers"
   desc: Functions that don't really fit elsewhere
 - contents:
   - geomander-package
-  - lacks_concepts(c("estiamte", "datatable", "fix", "dra", "spatcorr", "data"))
+  - lacks_concepts(c("estiamte", "datatable", "fix", "estimate", "dra", "spatcorr", "data", "plot"))
