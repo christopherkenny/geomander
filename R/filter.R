@@ -61,7 +61,7 @@ geo_trim <- function(from, to, thresh = 0.01, bool = FALSE){
   area <- sf::st_area(from)
   poly <- attr(from, 'row.names') %in% attr(ints, 'row.names')
   areaints <- rep(0, nrow(from))
-  areaints[poly] <- st_area(st_make_valid(ints, NA_on_exception = TRUE))
+  areaints[poly] <- st_area(st_make_valid(ints)) #, NA_on_exception = TRUE in valid
   keep <- as.numeric(areaints/area) > thresh
   
   if(bool){
