@@ -1,3 +1,6 @@
+# geomander 1.0.6
+* updates for sf 1.0-0 compatibility
+
 # geomander 1.0.5
 * adds orange dataset to bring back a vignette
 * brings back 1/2 vignettes

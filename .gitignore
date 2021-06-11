@@ -40,3 +40,5 @@ Meta
 
 # windows specific 
 src-i386/
+/doc/
+/Meta/
