@@ -25,3 +25,4 @@ and replaces the indicator for no adjacent precincts with a integer(0)
 data(precincts)
 adj <- adjacency(precincts)
 }
+\concept{fix}

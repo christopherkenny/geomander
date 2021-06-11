@@ -28,3 +28,4 @@ Create Tract Level Data
 tract <- create_tract_table('NY', 'Rockland', year = 2018)
 }
 }
+\concept{datatable}

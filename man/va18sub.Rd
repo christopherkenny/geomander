@@ -22,3 +22,4 @@ Voting and Election Science Team, 2019, "va_2018.zip", 2
 018 Precinct-Level Election Results, 
 https://doi.org/10.7910/DVN/UBKYRU/FQDLOO, Harvard Dataverse, V4
 }
+\concept{data}

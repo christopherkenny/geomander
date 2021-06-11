@@ -10,14 +10,16 @@
 #' @export
 #' @importFrom sf st_centroid st_point_on_surface st_nearest_feature st_intersection st_make_valid
 #' 
-#' @examples \dontrun{
+#' @concept estimate
+#' 
+#' @examples
 #' data(checkerboard)
 #' counties <- st_as_sf(as.data.frame(rbind(st_union(checkerboard %>% filter(i < 4)), 
 #' st_union(checkerboard %>% filter(i >= 4)) )))
 #' 
 #' geo_match(from = checkerboard, to = counties)
+#' geo_match(from = checkerboard, to = counties, method = 'area')
 #' 
-#' }
 geo_match <- function(from, to, method = 'center', tiebreaker = TRUE){
   
   match.arg(arg = method, choices = c('center', 'centroid', 'point', 'area'))
@@ -65,22 +67,36 @@ geo_match <- function(from, to, method = 'center', tiebreaker = TRUE){
         
       }
     }
-    
-    
   } else{
     to <- to %>% mutate(toid = row_number())
     from <- from %>% mutate(fromid = row_number())
     from <- st_make_valid(from)
-    suppressMessages(all_inted <- st_intersection(x = to, y = from))
-    all_inted$area <- st_area(all_inted)
+    suppressWarnings(suppressMessages(all_inted <- st_intersection(x = to, y = from)))
+    suppressMessages(all_inted$area <- as.numeric(st_area(st_make_valid(all_inted))))
     ints <- all_inted %>% 
       group_by(fromid) %>% 
       slice(which.max(area)) %>% 
-      ungroup() %>% 
+      ungroup()
+    
+    ints <- tibble(fromid = 1:nrow(from)) %>% 
+      left_join(ints, by = 'fromid') %>% 
       pull(toid)
+    
+    if(any(is.na(ints))){
+      idx <- which(is.na(ints))
+      
+      if(tiebreaker){
+        suppressMessages(
+          suppressWarnings(nnb <- st_nearest_feature(x = st_centroid(from[idx,]), y = st_centroid(to)))
+        )
+        for(i in 1:length(idx)){
+          ints[idx[i]] <- nnb[i]
+        }
+      }
+    }
   }
-  return(as.integer(ints))
   
+  return(as.integer(ints))
 }
 
 globalVariables(c('fromid', 'toid', 'area'))

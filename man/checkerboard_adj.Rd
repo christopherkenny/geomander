@@ -15,3 +15,4 @@ This data contains a zero indexed adjacency list for the checkerboard dataset.
 \examples{
 data("checkerboard_adj")
 }
+\concept{data}

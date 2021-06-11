@@ -30,3 +30,4 @@ standard redistricting variables.
 create_block_table(state = 'NY', county = 'Rockland', geography = F)
 }
 }
+\concept{datatable}

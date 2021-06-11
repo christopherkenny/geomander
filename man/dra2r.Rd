@@ -22,7 +22,9 @@ Creates a block or precinct level dataset from DRA csv output.
 }
 \examples{
 \dontrun{
+# Needs Census Bureau API
 # dra_utah_test is available at https://bit.ly/3c6UDKk
 blocklevel <- dra2r('dra_utah_test.csv', state = 'UT')
 }
 }
+\concept{dra}

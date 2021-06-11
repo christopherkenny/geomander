@@ -2,7 +2,7 @@
 % Please edit documentation in R/contiguity.R
 \name{check_contiguity}
 \alias{check_contiguity}
-\title{Check Contiguity by group}
+\title{Check Contiguity by Group}
 \usage{
 check_contiguity(adjacency, group)
 }
@@ -16,16 +16,12 @@ tibble with a column for each of inputted group, created group number, and the
 identified connected component number
 }
 \description{
-Check Contiguity by group
+Check Contiguity by Group
 }
 \examples{
-\dontrun{
-library(redist)
-set.seed(1)
-dists <- sample(1:2, 25, replace = TRUE)
-data(fl25)
-adj <- redist.adjacency(fl25)
-check_contiguity(adj, dists)
+data(checkerboard)
+adj <- adjacency(checkerboard)
+check_contiguity(adj)
 
 }
-}
+\concept{fix}

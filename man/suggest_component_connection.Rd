@@ -7,7 +7,7 @@
 suggest_component_connection(shp, adjacency, group)
 }
 \arguments{
-\item{shp}{An sf shapefile}
+\item{shp}{An sf data frame}
 
 \item{adjacency}{adjacency list}
 
@@ -18,17 +18,13 @@ Defaults to rep(1, length(adjacency)) if missing.}
 tibble with two columns of suggested rows of shp to connect in adj
 }
 \description{
-Suggests nearest neighbors for connected a disconnected group.
+Suggests nearest neighbors for connecting a disconnected group.
 }
 \examples{
-\dontrun{
-library(redist)
-set.seed(1)
-dists <- sample(1:2, 25, replace = TRUE)
-data(fl25)
-adj <- redist.adjacency(fl25)
-suggests <- suggest_component_connection(fl25, adj, dists)
+data(checkerboard)
+checkerboard <- checkerboard \%>\% filter(i != 1, j != 1)
+adj <- adjacency(checkerboard)
+suggest_component_connection(checkerboard, adj)
 
-adj <- adj \%>\% add_edge(v1 = suggests$x, v2 = suggests$y)
 }
-}
+\concept{fix}

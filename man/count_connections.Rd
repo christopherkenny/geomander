@@ -18,10 +18,8 @@ matrix with the number of connections between precincts
 Count Times Precincts are Connected
 }
 \examples{
-\dontrun{
-library(redist)
-data(algdat.p10)
-count_connections(algdat.p10$cdmat)
-
+set.seed(1)
+dm <- matrix(sample(1:2, size = 100, TRUE), 10)
+count_connections(dm)
 }
-}
+\concept{leftover}

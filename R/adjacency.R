@@ -10,12 +10,13 @@
 #' @return adjacency list.
 #' @export
 #'
-#' @examples \dontrun{
+#' @concept fix
+#'
+#' @examples 
 #' data(towns)
-#' adj <- lapply(spdep::poly2nb(towns, queen = FALSE), function(x){x-1L})
+#' adj <- adjacency(towns)
 #' add_edge(adj, 2, 3)
 #' 
-#' }
 add_edge <- function(adjacency, v1, v2, zero = TRUE){
   if(length(v1) != length(v2)){
     stop('v1 and v2 lengths are different.')
@@ -45,21 +46,20 @@ add_edge <- function(adjacency, v1, v2, zero = TRUE){
 #' @param idx Optional. Which indices to suggest neighbors for. If blank, suggests for those
 #' with no neighbors.
 #' @param neighbors number of neighbors to suggest
-#'
+#' 
+#' @concept fix
+#' 
 #' @return tibble with two columns of suggested rows of shp to connect in adj
 #' @export
 #' @importFrom dplyr bind_rows
 #' @importFrom nngeo st_nn
 #' @importFrom tibble tibble
-#' @examples \dontrun{
+#' @examples 
 #' data(va18sub)
-#' sub <- va18sub[1:91,]
-#' adj <- lapply(sf::st_relate(sub, pattern = 'F***1****'), function(x){x-1L})
-#' suggests <- suggest_neighbors(sub, adj)
-#' 
+#' va18sub <- va18sub %>% filter(!VTDST %in% c('000516', '000510', '000505', '000518'))
+#' adj <- adjacency(va18sub)
+#' suggests <- suggest_neighbors(va18sub, adj)
 #' adj <- adj %>% add_edge(v1 = suggests$x, v2 = suggests$y)
-#' }
-#' 
 #' 
 suggest_neighbors <- function(shp, adjacency, idx, neighbors = 1){
   if(missing(idx)){
@@ -100,13 +100,14 @@ suggest_neighbors <- function(shp, adjacency, idx, neighbors = 1){
 #' DE-9IM relationship between differences.
 #' @export
 #' 
-#' @examples \dontrun{
-#' data(towns)
-#' spdep_rook <- spdep::poly2nb(towns, queen = F)
-#' sf_rook <- st_relate(towns, pattern = 'F***1****')
-#' compare_adjacencies(spdep_rook, sf_rook, zero = FALSE)
+#' @concept fix
 #' 
-#' }
+#' @examples 
+#' data(towns)
+#' rook <- adjacency(towns)
+#' sf_rook <- lapply(sf::st_relate(towns, pattern = 'F***1****'), function(x){x-1L})
+#' compare_adjacencies(rook, sf_rook, zero = FALSE)
+#' 
 compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE){
   
   if(missing(adj1) | missing(adj2)){
@@ -170,6 +171,8 @@ compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE){
 #' @export
 #' 
 #' @importFrom spdep poly2nb
+#' 
+#' @concept fix
 #' 
 #' @examples
 #' data(precincts)

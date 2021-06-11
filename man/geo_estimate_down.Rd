@@ -27,10 +27,11 @@ that a state or other jurisdiction split precincts when creating districts. Geog
 partner to estimate_down.
 }
 \examples{
-\dontrun{
-data("va18sub")
-va18sub <- va18sub \%>\% filter(COUNTYFP == '087')
-block <- create_block_table(state = 'VA', county = '087')  
-disagg <- geo_estimate_down(from = va18sub, to = block, wts = block$VAP, value = va18sub$G18USSRSTE)
+set.seed(1)
+data(checkerboard)
+counties <- checkerboard \%>\% group_by(id <= 32) \%>\% 
+summarize(geometry = st_union(geometry)) \%>\% mutate(pop = c(100,200))
+geo_estimate_down(from = counties, to = checkerboard, value = counties$pop)
+
 }
-}
+\concept{estimate}

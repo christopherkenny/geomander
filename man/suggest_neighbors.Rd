@@ -25,14 +25,11 @@ as a friend to add. This is useful for when a small number of precincts are disc
 from the remainder of the geography, such as an island.
 }
 \examples{
-\dontrun{
 data(va18sub)
-sub <- va18sub[1:91,]
-adj <- lapply(sf::st_relate(sub, pattern = 'F***1****'), function(x){x-1L})
-suggests <- suggest_neighbors(sub, adj)
-
+va18sub <- va18sub \%>\% filter(!VTDST \%in\% c('000516', '000510', '000505', '000518'))
+adj <- adjacency(va18sub)
+suggests <- suggest_neighbors(va18sub, adj)
 adj <- adj \%>\% add_edge(v1 = suggests$x, v2 = suggests$y)
-}
-
 
 }
+\concept{fix}

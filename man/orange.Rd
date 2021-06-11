@@ -21,3 +21,4 @@ orange <- rmapshaper::ms_simplify(orange, keep_shapes = TRUE)
 \examples{
 data("orange")
 }
+\concept{data}

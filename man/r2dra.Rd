@@ -25,6 +25,7 @@ with DRA. Projecting down to blocks can take a lot of time for larger states.
 }
 \examples{
 \dontrun{
+# Needs Census Bureau API
 cd <- tigris::congressional_districts() \%>\% filter(STATEFP == '49')
 cnty <- tigris::counties(state = 49)
 matchedcty <- geo_match(from = cnty, to = cd)
@@ -32,3 +33,4 @@ matchedcty <- geo_match(from = cnty, to = cd)
 r2dra(cnty, matchedcty, 'UT', 'r2dra_ex.csv')
 }
 }
+\concept{dra}

@@ -5,7 +5,7 @@
 #' @name checkerboard
 #' @usage data("checkerboard")
 #' @format An sf dataframe with 64 observations
-#' 
+#' @concept data
 #' @examples 
 #' data("checkerboard")
 NULL
@@ -17,7 +17,7 @@ NULL
 #' @name checkerboard_adj
 #' @usage data("checkerboard_adj")
 #' @format A list with 64 entries
-#' 
+#' @concept data
 #' @examples 
 #' data("checkerboard_adj")
 NULL
@@ -30,7 +30,7 @@ NULL
 #' @name va18sub
 #' @usage data("va18sub")
 #' @format An sf dataframe with 90 observations
-#' 
+#' @concept data
 #' @references 
 #' Voting and Election Science Team, 2019, "va_2018.zip", 2
 #' 018 Precinct-Level Election Results, 
@@ -49,7 +49,7 @@ NULL
 #' @name towns
 #' @usage data("towns")
 #' @format An sf dataframe with 7 observations
-#' 
+#' @concept data
 #' @references 
 #' https://www.rocklandgis.com/portal/apps/sites/#/data/items/746ec7870a0b4f46b168e07369e79a27
 #' 
@@ -70,7 +70,7 @@ NULL
 #' @name rockland
 #' @usage data("rockland")
 #' @format An sf dataframe with 4764 observations
-#' 
+#' @concept data
 #' @examples 
 #' data("rockland")
 NULL
@@ -87,7 +87,7 @@ NULL
 #' @name orange
 #' @usage data("orange")
 #' @format An sf dataframe with 10034 observations
-#' 
+#' @concept data
 #' @examples 
 #' data("orange")
 NULL
@@ -101,7 +101,7 @@ NULL
 #' @name precincts
 #' @usage data("precincts")
 #' @format An sf dataframe with 278 observations
-#' 
+#' @concept data
 #' @references 
 #' https://www.rocklandgis.com/portal/apps/sites/#/data/datasets/2d91f9db816c48318848ad66eb1a18e9
 #' 
@@ -117,7 +117,7 @@ NULL
 #' @name nrcsd
 #' @usage data('nrcsd')
 #' @format An sf dataframe with 1 observation
-#' 
+#' @concept data
 #' @examples 
 #' data('nrcsd')
 NULL
@@ -133,7 +133,7 @@ NULL
 #' @name va_blocks
 #' @usage data("va_blocks")
 #' @format An sf dataframe with 6354 observations
-#' 
+#' @concept data
 #' @examples 
 #' data("va_blocks")
 NULL
@@ -149,7 +149,7 @@ NULL
 #' @name va_vtd
 #' @usage data("va_blocks")
 #' @format An sf dataframe with 93 observations
-#' 
+#' @concept data
 #' @examples 
 #' data("va_blocks")
 NULL

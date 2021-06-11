@@ -24,10 +24,9 @@ adjacency list.
 Add Edges to an Adjacency List
 }
 \examples{
-\dontrun{
 data(towns)
-adj <- lapply(spdep::poly2nb(towns, queen = FALSE), function(x){x-1L})
+adj <- adjacency(towns)
 add_edge(adj, 2, 3)
 
 }
-}
+\concept{fix}

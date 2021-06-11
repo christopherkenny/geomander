@@ -1,4 +1,4 @@
-#' Check Contiguity by group
+#' Check Contiguity by Group
 #'
 #' @param adjacency adjacency list
 #' @param group array of group identifiers. Typically district numbers or county names.
@@ -6,17 +6,15 @@
 #' @return tibble with a column for each of inputted group, created group number, and the 
 #' identified connected component number
 #' 
+#' @concept fix
+#' 
 #' @export
 #' @importFrom tibble tibble
-#' @examples \dontrun{
-#' library(redist)
-#' set.seed(1)
-#' dists <- sample(1:2, 25, replace = TRUE)
-#' data(fl25)
-#' adj <- redist.adjacency(fl25)
-#' check_contiguity(adj, dists)
+#' @examples 
+#' data(checkerboard)
+#' adj <- adjacency(checkerboard)
+#' check_contiguity(adj)
 #' 
-#' }
 check_contiguity <- function(adjacency, group){
   if(missing(adjacency)){
     stop('Please provide an argument to adjacency.')
@@ -42,9 +40,9 @@ check_contiguity <- function(adjacency, group){
 
 #' Suggest Connections for Disconnected Groups
 #' 
-#' Suggests nearest neighbors for connected a disconnected group.
+#' Suggests nearest neighbors for connecting a disconnected group.
 #'
-#' @param shp An sf shapefile
+#' @param shp An sf data frame
 #' @param adjacency adjacency list
 #' @param group array of group identifiers. Typically district numbers or county names. 
 #' Defaults to rep(1, length(adjacency)) if missing.
@@ -55,16 +53,14 @@ check_contiguity <- function(adjacency, group){
 #' @importFrom dplyr row_number distinct filter mutate 
 #' @importFrom sf st_distance
 #'
-#' @examples \dontrun{
-#' library(redist)
-#' set.seed(1)
-#' dists <- sample(1:2, 25, replace = TRUE)
-#' data(fl25)
-#' adj <- redist.adjacency(fl25)
-#' suggests <- suggest_component_connection(fl25, adj, dists)
+#' @concept fix
+#'
+#' @examples 
+#' data(checkerboard)
+#' checkerboard <- checkerboard %>% filter(i != 1, j != 1)
+#' adj <- adjacency(checkerboard)
+#' suggest_component_connection(checkerboard, adj)
 #' 
-#' adj <- adj %>% add_edge(v1 = suggests$x, v2 = suggests$y)
-#' }
 suggest_component_connection <- function(shp, adjacency, group){
   if(missing(shp)){
     stop('Please provide an argument to shp')
@@ -95,7 +91,6 @@ suggest_component_connection <- function(shp, adjacency, group){
         out <- out %>% bind_rows(tibble(x = tempx$rownum[prop[1,1]], y = tempy$rownum[prop[1,2]]))
       }
     }
-
   }
   
   for(i in 1:nrow(out)){

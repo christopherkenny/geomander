@@ -21,11 +21,10 @@ Aggregates block table values up to a higher level, normally precincts, hence
 the name block2prec.
 }
 \examples{
-\dontrun{
-data(towns)
-# block <- create_block_table('NY', 'Rockland')
+set.seed(1)
 data(rockland)
-matches <- geo_match(block, towns)
-block2prec(block, matches)
+rockland$id <- sample(1:2, nrow(rockland), TRUE)
+block2prec(rockland, rockland$id)
+
 }
-}
+\concept{datatable}

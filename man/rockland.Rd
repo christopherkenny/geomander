@@ -21,3 +21,4 @@ rockland <- rmapshaper::ms_simplify(rockland, keep_shapes = TRUE)
 \examples{
 data("rockland")
 }
+\concept{data}

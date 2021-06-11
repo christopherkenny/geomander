@@ -20,7 +20,7 @@
 #' @importFrom stringr str_detect
 #' @importFrom magrittr %>%
 #' @export
-#' 
+#' @concept datatable
 #' @examples 
 #' \dontrun{
 #' # uses the Census API
@@ -104,6 +104,7 @@ create_block_table <- function(state, county, geography = TRUE, year = 2010){
 #' @export
 #' @importFrom tidycensus get_acs
 #' @importFrom dplyr rename starts_with .data
+#' @concept datatable
 #' @examples \dontrun{
 #' tract <- create_tract_table('NY', 'Rockland', year = 2018)
 #' }
@@ -223,14 +224,13 @@ create_tract_table <- function(state, county, geography = TRUE, year = 2019){
 #' @importFrom dplyr summarize arrange 
 #' @return dataframe with length(unique(matches)) rows
 #' @export
-#' 
-#' @examples \dontrun{
-#' data(towns)
-#' # block <- create_block_table('NY', 'Rockland')
+#' @concept datatable
+#' @examples 
+#' set.seed(1)
 #' data(rockland)
-#' matches <- geo_match(block, towns)
-#' block2prec(block, matches)
-#' }
+#' rockland$id <- sample(1:2, nrow(rockland), TRUE)
+#' block2prec(rockland, rockland$id)
+#' 
 block2prec <- function(block_table, matches, geometry = FALSE){
   if(missing(block_table)){
     stop("Please provide an argument to block_table.")
@@ -349,8 +349,9 @@ block2prec <- function(block_table, matches, geometry = FALSE){
 #' 
 #' @return dataframe with nrow(precinct) rows
 #' @export
-#' 
+#' @concept datatable
 #' @examples \dontrun{
+#' # Need Census API
 #' data(towns)
 #' towns$fips <- '087'
 #' block <- create_block_table('NY', 'Rockland')

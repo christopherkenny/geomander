@@ -11,7 +11,9 @@
 #' @importFrom ggplot2 ggsave geom_sf labs theme_void scale_fill_brewer ggplot aes
 #' @importFrom dplyr bind_cols
 #' 
-#' @examples \dontrun{
+#' @concept plot
+#' 
+#' @examples
 #' data("checkerboard")
 #' data("checkerboard_adj")
 #' 
@@ -21,7 +23,7 @@
 #' 
 #' p[[1]]
 #' p[[2]]
-#' }
+#' 
 geo_plot_group <- function(shp, adjacency, group, save = F, path = ''){
   if(missing(shp)){
     stop('Please provide an argument to shp.')
@@ -60,6 +62,34 @@ geo_plot_group <- function(shp, adjacency, group, save = F, path = ''){
   
   return(out)
   
+}
+
+#' Plots a Shape with Row Numbers as Text
+#'
+#' One liner to plot a shape with row numbers
+#'
+#' @param shp An sf shapefile
+#' 
+#' @concept plot
+#' 
+#' @return ggplot
+#' @export
+#' 
+#' @importFrom ggplot2 geom_sf_text
+#' @importFrom dplyr row_number
+#' 
+#' 
+#' @examples 
+#' data(checkerboard)
+#' geo_plot(checkerboard)
+#' 
+geo_plot <- function(shp){
+  shp %>% 
+    mutate(rn = row_number()) %>% 
+    ggplot() + 
+    geom_sf() + 
+    geom_sf_text(aes(label = rn)) + 
+    theme_void()
 }
 
 globalVariables('component')

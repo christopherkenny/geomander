@@ -16,8 +16,17 @@
 #' @return sf data frame with precinct split
 #' @export
 #'
+#' @concept fix
+#'
 #' @examples
-#'  #TODO 
+#' data(checkerboard)
+#' low <- checkerboard %>% slice(1:3, 9:11)
+#' prec <- checkerboard %>% slice(1:3) %>% summarize(geometry = st_union(geometry)) 
+#' dists <-  checkerboard %>% slice(1:3, 9:11) %>% mutate(dist = c(1,2,2,1,3,3)) %>% 
+#' group_by(dist) %>% summarize(geometry = st_union(geometry))
+#' 
+#' split_precinct(low, prec, dists, split_by_id = 'dist')
+#' 
 split_precinct <- function(lower, precinct, split_by, lower_wt, split_by_id){
   
   if(!missing(lower_wt)){
@@ -45,7 +54,7 @@ split_precinct <- function(lower, precinct, split_by, lower_wt, split_by_id){
   matches <- geo_match(from = lower, to = split_by)
   
   out_geo <- lower %>% select(.data$geometry) %>% mutate(new = matches) %>% 
-    group_by(.data$new)
+    group_by(.data$new) %>% summarize(geometry = st_union(.data$geometry))
   
   
   if(!missing(lower_wt)){

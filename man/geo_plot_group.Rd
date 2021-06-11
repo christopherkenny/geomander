@@ -24,7 +24,6 @@ list of ggplots
 Create Plots of Shapes by Group with Connected Components Colored
 }
 \examples{
-\dontrun{
 data("checkerboard")
 data("checkerboard_adj")
 
@@ -34,5 +33,6 @@ p <- geo_plot_group(checkerboard, checkerboard_adj, checkerboard$discont)
 
 p[[1]]
 p[[2]]
+
 }
-}
+\concept{plot}

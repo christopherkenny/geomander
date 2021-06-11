@@ -22,9 +22,9 @@ numeric vector
 Compute Local Geary's C
 }
 \examples{
-\dontrun{
 data("checkerboard")
 checkerboard <- checkerboard \%>\% mutate(m = as.numeric((id+i) \%\% 2 == 0))
-local_geary(shp = checkerboard, wts = checkerboard$m)
+local_gearys(shp = checkerboard, wts = checkerboard$m)
+
 }
-}
+\concept{spatcorr}

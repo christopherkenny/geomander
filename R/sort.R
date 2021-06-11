@@ -6,10 +6,13 @@
 #'
 #' @return sf dataframe
 #' @export
-#' @examples \dontrun{
-#' data(va18sub)
-#' geo_sort(va18sub)
-#' }
+#' 
+#' @concept fix
+#' 
+#' @examples 
+#' data(checkerboard)
+#' geo_sort(checkerboard)
+#' 
 geo_sort <- function(shp){
   if(missing(shp)){
     stop('shp is required.')

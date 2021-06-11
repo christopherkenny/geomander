@@ -5,13 +5,11 @@
 #'
 #' @return matrix with the number of connections between precincts
 #' @export
-#' 
-#' @examples \dontrun{
-#' library(redist)
-#' data(algdat.p10)
-#' count_connections(algdat.p10$cdmat)
-#' 
-#' }
+#' @concept leftover
+#' @examples 
+#' set.seed(1)
+#' dm <- matrix(sample(1:2, size = 100, TRUE), 10)
+#' count_connections(dm)
 count_connections <- function(dm, normalize = FALSE){
   mat <- countconnections(dm)
   mat <- mat + t(mat)

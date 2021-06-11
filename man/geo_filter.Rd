@@ -26,3 +26,4 @@ block <- create_block_table('NY', 'Rockland')
 geo_filter(block, towns)
 }
 }
+\concept{datatable}

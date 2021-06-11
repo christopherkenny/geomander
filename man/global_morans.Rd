@@ -24,9 +24,9 @@ from an adjacency or sf data frame, in which case the spatial_mat is a contiguit
 matrix. Users can also provide a spatial_mat argument directly.
 }
 \examples{
-\dontrun{
 data("checkerboard")
 checkerboard <- checkerboard \%>\% mutate(m = as.numeric((id+i) \%\% 2 == 0))
 global_morans(shp = checkerboard, wts = checkerboard$m)
+
 }
-}
+\concept{spatcorr}

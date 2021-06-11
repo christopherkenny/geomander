@@ -20,3 +20,4 @@ va_blocks <- rmapshaper::ms_simplify(va_blocks, keep_shapes = TRUE)
 \examples{
 data("va_blocks")
 }
+\concept{data}

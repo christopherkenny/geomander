@@ -8,11 +8,13 @@
 #' @return tibble
 #' @export
 #' 
-#' @examples \dontrun{
+#' @concept spatcorr
+#' 
+#' @examples 
 #' data("checkerboard")
 #' checkerboard <- checkerboard %>% mutate(m = as.numeric((id+i) %% 2 == 0))
 #' local_morans(shp = checkerboard, wts = checkerboard$m)
-#' }
+#' 
 local_morans <- function(shp, adj, wts, spatial_mat){
   if(missing(shp) & missing(adj) & missing(spatial_mat)){
     stop('Please supply an argument to at least one of shp or adj or spatial_mat.')
@@ -58,11 +60,13 @@ local_morans <- function(shp, adj, wts, spatial_mat){
 #' @return list
 #' @export
 #' 
-#' @examples \dontrun{
+#' @concept spatcorr
+#' 
+#' @examples 
 #' data("checkerboard")
 #' checkerboard <- checkerboard %>% mutate(m = as.numeric((id+i) %% 2 == 0))
 #' global_morans(shp = checkerboard, wts = checkerboard$m)
-#' }
+#' 
 global_morans <- function(shp, adj, wts, spatial_mat){
   if(missing(shp) & missing(adj) & missing(spatial_mat)){
     stop('Please supply an argument to at least one of shp or adj or spatial_mat.')

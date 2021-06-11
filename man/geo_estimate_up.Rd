@@ -24,10 +24,11 @@ for getting population data from a block level up to a precinct level.
 Geographic partner to estimate_up.
 }
 \examples{
-\dontrun{
-data("va18sub")
-va18sub <- va18sub \%>\% filter(COUNTYFP == '087')
-block <- create_block_table(state = 'VA', county = '087')  
-agg <- geo_estimate_down(from = block, to = va18shp, value = block$Total)
+set.seed(1)
+data(checkerboard)
+counties <- checkerboard \%>\% group_by(id <= 32) \%>\% 
+summarize(geometry = st_union(geometry)) \%>\% mutate(pop = c(100,200))
+geo_estimate_up(from = checkerboard, to = counties, value = checkerboard$i)
+
 }
-}
+\concept{estimate}

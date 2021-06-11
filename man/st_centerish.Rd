@@ -17,8 +17,8 @@ Returns points within the shape, near the center.
 Uses the centroid if that's in the shape, or point on surface if not.
 }
 \examples{
-\dontrun{
 data(towns)
 st_centerish(towns)
+
 }
-}
+\concept{leftover}

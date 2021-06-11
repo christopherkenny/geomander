@@ -12,18 +12,19 @@
 #' @param method string from center, centroid, point, or area for matching levels
 #'
 #' @return numeric vector with each value split by weight
-#' 
+#' @concept estimate
 #' @importFrom tibble tibble
 #' @importFrom dplyr group_by ungroup slice pull left_join
-#' 
+#'   
 #' @export
 #'
-#' @examples \dontrun{
-#' data("va18sub")
-#' va18sub <- va18sub %>% filter(COUNTYFP == '087')
-#' block <- create_block_table(state = 'VA', county = '087')  
-#' disagg <- geo_estimate_down(from = va18sub, to = block, wts = block$VAP, value = va18sub$G18USSRSTE)
-#' }
+#' @examples 
+#' set.seed(1)
+#' data(checkerboard)
+#' counties <- checkerboard %>% group_by(id <= 32) %>% 
+#' summarize(geometry = st_union(geometry)) %>% mutate(pop = c(100,200))
+#' geo_estimate_down(from = counties, to = checkerboard, value = counties$pop)
+#' 
 geo_estimate_down <- function(from, to, wts, value, method = 'center'){
   group <- geo_match(from = to, to = from, method = method)
   
@@ -31,7 +32,7 @@ geo_estimate_down <- function(from, to, wts, value, method = 'center'){
     wts <- 1
   }
   if(missing(value)){
-    value <- 1
+    value <- rep(1, nrow(from))
   }
   
   tb <- tibble(wts = wts, group = group) %>% 
@@ -63,15 +64,19 @@ geo_estimate_down <- function(from, to, wts, value, method = 'center'){
 #' 
 #' @importFrom tibble tibble
 #' @importFrom dplyr group_by ungroup slice pull left_join
+#' 
+#' @concept estimate
+#' 
 #' @export
 #'
-#' @examples \dontrun{
-#' data("va18sub")
-#' va18sub <- va18sub %>% filter(COUNTYFP == '087')
-#' block <- create_block_table(state = 'VA', county = '087')  
-#' groups <- geo_match(block, va18sub)
-#' disagg <- estimate_down(wts = block$VAP, value = va18sub$G18USSRSTE, group = groups)
-#' }
+#' @examples
+#' set.seed(1)
+#' data(checkerboard)
+#' counties <- checkerboard %>% group_by(id <= 32) %>% 
+#' summarize(geometry = st_union(geometry)) %>% mutate(pop = c(100,200))
+#' matches <- geo_match(checkerboard, counties)
+#' estimate_down(wts = rep(1, nrow(checkerboard)), value = counties$pop, group = matches)
+#' 
 estimate_down <- function(wts, value, group){
   
   if(missing(wts)){
@@ -113,14 +118,17 @@ estimate_down <- function(wts, value, group){
 #' @importFrom tibble tibble add_row
 #' @importFrom dplyr group_by ungroup slice pull left_join
 #' 
+#' @concept estimate
+#' 
 #' @export
 #'
-#' @examples \dontrun{
-#' data("va18sub")
-#' va18sub <- va18sub %>% filter(COUNTYFP == '087')
-#' block <- create_block_table(state = 'VA', county = '087')  
-#' agg <- geo_estimate_down(from = block, to = va18shp, value = block$Total)
-#' }
+#' @examples
+#' set.seed(1)
+#' data(checkerboard)
+#' counties <- checkerboard %>% group_by(id <= 32) %>% 
+#' summarize(geometry = st_union(geometry)) %>% mutate(pop = c(100,200))
+#' geo_estimate_up(from = checkerboard, to = counties, value = checkerboard$i)
+#' 
 geo_estimate_up <- function(from, to, value, method = 'center'){
   group <- geo_match(from = from, to = to, method = method)
   
@@ -159,14 +167,15 @@ geo_estimate_up <- function(from, to, value, method = 'center'){
 #' @importFrom tibble tibble add_row
 #' @importFrom dplyr group_by ungroup slice pull left_join 
 #' @export
-#'
-#' @examples \dontrun{
-#' data("va18sub")
-#' va18sub <- va18sub %>% filter(COUNTYFP == '087')
-#' block <- create_block_table(state = 'VA', county = '087')  
-#' groups <- geo_match(block, va18sub)
-#' agg <- geo_estimate_down(alue = block$Total, group = groups)
-#' }
+#' @concept estimate
+#' @examples
+#' set.seed(1)
+#' data(checkerboard)
+#' counties <- checkerboard %>% group_by(id <= 32) %>% 
+#' summarize(geometry = st_union(geometry)) %>% mutate(pop = c(100,200))
+#' matches <- geo_match(checkerboard, counties) 
+#' estimate_up(value = checkerboard$i, group = matches)
+#' 
 estimate_up <- function(value, group){
 
   if(missing(value)){

@@ -9,8 +9,9 @@
 #'
 #' @return sf dataframe either at the block level or precinct level
 #' @export
-#'
+#' @concept dra
 #' @examples\dontrun{
+#' # Needs Census Bureau API
 #' # dra_utah_test is available at https://bit.ly/3c6UDKk
 #' blocklevel <- dra2r('dra_utah_test.csv', state = 'UT')
 #' }
@@ -119,8 +120,9 @@ dra2r <- function(dra, state, precincts){
 #'
 #' @return tibble with columns Id, as used by DRA, identical to GEOID in census terms and District.
 #' @export
-#'
+#' @concept dra
 #' @examples \dontrun{
+#' # Needs Census Bureau API
 #' cd <- tigris::congressional_districts() %>% filter(STATEFP == '49')
 #' cnty <- tigris::counties(state = 49)
 #' matchedcty <- geo_match(from = cnty, to = cd)
@@ -176,8 +178,4 @@ r2dra <- function(precincts, plan, state, path){
   return(out)
 }
 
-
-
 globalVariables(c('District', 'District_DRA'))
-#test <- readr::read_csv('../../../Downloads/dra_utah_test.csv')
-

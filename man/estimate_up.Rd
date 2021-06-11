@@ -20,11 +20,12 @@ Non-geographic partner function to geo_estimate_up. Allows users to aggregate
 up without the costly matching operation if they've already matched.
 }
 \examples{
-\dontrun{
-data("va18sub")
-va18sub <- va18sub \%>\% filter(COUNTYFP == '087')
-block <- create_block_table(state = 'VA', county = '087')  
-groups <- geo_match(block, va18sub)
-agg <- geo_estimate_down(alue = block$Total, group = groups)
+set.seed(1)
+data(checkerboard)
+counties <- checkerboard \%>\% group_by(id <= 32) \%>\% 
+summarize(geometry = st_union(geometry)) \%>\% mutate(pop = c(100,200))
+matches <- geo_match(checkerboard, counties) 
+estimate_up(value = checkerboard$i, group = matches)
+
 }
-}
+\concept{estimate}

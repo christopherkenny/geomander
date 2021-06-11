@@ -15,3 +15,4 @@ The data contains the North Rockland Central School District.
 \examples{
 data('nrcsd')
 }
+\concept{data}
