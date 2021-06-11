@@ -24,10 +24,11 @@ for getting population data from a block level up to a precinct level.
 Geographic partner to estimate_up.
 }
 \examples{
-set.seed(1)
+library(dplyr)
+ set.seed(1)
 data(checkerboard)
 counties <- checkerboard \%>\% group_by(id <= 32) \%>\% 
-summarize(geometry = st_union(geometry)) \%>\% mutate(pop = c(100,200))
+summarize(geometry = sf::st_union(geometry)) \%>\% mutate(pop = c(100,200))
 geo_estimate_up(from = checkerboard, to = counties, value = checkerboard$i)
 
 }

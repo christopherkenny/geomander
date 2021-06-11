@@ -19,10 +19,11 @@
 #' @export
 #'
 #' @examples 
+#' library(dplyr)
 #' set.seed(1)
 #' data(checkerboard)
 #' counties <- checkerboard %>% group_by(id <= 32) %>% 
-#' summarize(geometry = st_union(geometry)) %>% mutate(pop = c(100,200))
+#' summarize(geometry = sf::st_union(geometry)) %>% mutate(pop = c(100,200))
 #' geo_estimate_down(from = counties, to = checkerboard, value = counties$pop)
 #' 
 geo_estimate_down <- function(from, to, wts, value, method = 'center'){
@@ -70,10 +71,11 @@ geo_estimate_down <- function(from, to, wts, value, method = 'center'){
 #' @export
 #'
 #' @examples
+#' library(dplyr)
 #' set.seed(1)
 #' data(checkerboard)
 #' counties <- checkerboard %>% group_by(id <= 32) %>% 
-#' summarize(geometry = st_union(geometry)) %>% mutate(pop = c(100,200))
+#' summarize(geometry = sf::st_union(geometry)) %>% mutate(pop = c(100,200))
 #' matches <- geo_match(checkerboard, counties)
 #' estimate_down(wts = rep(1, nrow(checkerboard)), value = counties$pop, group = matches)
 #' 
@@ -123,10 +125,11 @@ estimate_down <- function(wts, value, group){
 #' @export
 #'
 #' @examples
-#' set.seed(1)
+#' library(dplyr)
+#'  set.seed(1)
 #' data(checkerboard)
 #' counties <- checkerboard %>% group_by(id <= 32) %>% 
-#' summarize(geometry = st_union(geometry)) %>% mutate(pop = c(100,200))
+#' summarize(geometry = sf::st_union(geometry)) %>% mutate(pop = c(100,200))
 #' geo_estimate_up(from = checkerboard, to = counties, value = checkerboard$i)
 #' 
 geo_estimate_up <- function(from, to, value, method = 'center'){
@@ -169,10 +172,11 @@ geo_estimate_up <- function(from, to, value, method = 'center'){
 #' @export
 #' @concept estimate
 #' @examples
+#' library(dplyr)
 #' set.seed(1)
 #' data(checkerboard)
 #' counties <- checkerboard %>% group_by(id <= 32) %>% 
-#' summarize(geometry = st_union(geometry)) %>% mutate(pop = c(100,200))
+#' summarize(geometry = sf::st_union(geometry)) %>% mutate(pop = c(100,200))
 #' matches <- geo_match(checkerboard, counties) 
 #' estimate_up(value = checkerboard$i, group = matches)
 #' 

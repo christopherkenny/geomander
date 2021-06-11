@@ -88,7 +88,7 @@ geo_plot <- function(shp){
     mutate(rn = row_number()) %>% 
     ggplot() + 
     geom_sf() + 
-    geom_sf_text(aes(label = rn)) + 
+    geom_sf_text(aes(label = .data$rn)) + 
     theme_void()
 }
 

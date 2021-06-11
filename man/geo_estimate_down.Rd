@@ -27,10 +27,11 @@ that a state or other jurisdiction split precincts when creating districts. Geog
 partner to estimate_down.
 }
 \examples{
+library(dplyr)
 set.seed(1)
 data(checkerboard)
 counties <- checkerboard \%>\% group_by(id <= 32) \%>\% 
-summarize(geometry = st_union(geometry)) \%>\% mutate(pop = c(100,200))
+summarize(geometry = sf::st_union(geometry)) \%>\% mutate(pop = c(100,200))
 geo_estimate_down(from = counties, to = checkerboard, value = counties$pop)
 
 }

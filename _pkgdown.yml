@@ -5,52 +5,28 @@ reference:
 - title: "Estimating Across Geographic Levels"
   desc: "Functions for approximating values at different levels of geography"
 - contents:
-  - geo_estimate_down
-  - estimate_down 
-  - geo_estimate_up
-  - estimate_up 
-  - geo_match 
+  - has_concept("estimate")
 - title: "Buiding Datasets"
   desc: "Functions to help build and refine data" 
 - contents:
-  - create_block_table
-  - create_tract_table
-  - block2prec
-  - block2prec_by_county
-  - geo_filter
-  - geo_trim
+  - has_concept("datatable")
 - title: "Fixing Geographic Imperfections"
   desc: "Functions to help pretend that the geographies were properly connected"
 - contents:
-  - check_contiguity
-  - add_edge
-  - compare_adjacencies
-  - geo_plot_group
-  - geo_sort
-  - suggest_component_connection
-  - suggest_neighbors
+  -  has_concept("fix")
 - title: "Format Data with Dave's Redistricting"
   desc: "Functions to get maps into DRA or from DRA"
 - contents:
-  - dra2r
-  - r2dra
+  - has_concept("dra")
 - title: "Spatial Autocorrelation"
   desc: "Functions to measure local and global autocorrelation measures"
 - contents:
-  - global_geary
-  - global_morans
-  - gstar_i
-  - local_gearys
-  - local_morans
+  - has_concept("spatcorr")
 - title: "Included Example Data"
 - contents:
-  - checkerboard
-  - checkerboard_adj
-  - towns
-  - va18sub
+  - has_concept("data")
 - title: "Leftovers"
   desc: Functions that don't really fit elsewhere
 - contents:
-  - st_centerish
-  - count_connections
-  - geomander-package 
+  - geomander-package
+  - lacks_concepts(c("estiamte", "datatable", "fix", "dra", "spatcorr", "data"))

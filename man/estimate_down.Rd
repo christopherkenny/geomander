@@ -21,10 +21,11 @@ Non-geographic partner function to geo_estimate_down. Allows users to estimate
 down without the costly matching operation if they've already matched.
 }
 \examples{
+library(dplyr)
 set.seed(1)
 data(checkerboard)
 counties <- checkerboard \%>\% group_by(id <= 32) \%>\% 
-summarize(geometry = st_union(geometry)) \%>\% mutate(pop = c(100,200))
+summarize(geometry = sf::st_union(geometry)) \%>\% mutate(pop = c(100,200))
 matches <- geo_match(checkerboard, counties)
 estimate_down(wts = rep(1, nrow(checkerboard)), value = counties$pop, group = matches)
 

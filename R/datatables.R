@@ -24,7 +24,7 @@
 #' @examples 
 #' \dontrun{
 #' # uses the Census API
-#' create_block_table(state = 'NY', county = 'Rockland', geography = F)
+#' create_block_table(state = 'NY', county = 'Rockland', geography = FALSE)
 #' }
 create_block_table <- function(state, county, geography = TRUE, year = 2010){
   
@@ -106,6 +106,7 @@ create_block_table <- function(state, county, geography = TRUE, year = 2010){
 #' @importFrom dplyr rename starts_with .data
 #' @concept datatable
 #' @examples \dontrun{
+#' # Relies on Census Bureau API
 #' tract <- create_tract_table('NY', 'Rockland', year = 2018)
 #' }
 create_tract_table <- function(state, county, geography = TRUE, year = 2019){
@@ -329,11 +330,6 @@ block2prec <- function(block_table, matches, geometry = FALSE){
   
   return(ret)
 }
-
-
-
-
-
 
 
 #' Aggregate Block Table by Matches and County

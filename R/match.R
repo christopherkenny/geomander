@@ -13,9 +13,10 @@
 #' @concept estimate
 #' 
 #' @examples
+#' library(dplyr)
 #' data(checkerboard)
-#' counties <- st_as_sf(as.data.frame(rbind(st_union(checkerboard %>% filter(i < 4)), 
-#' st_union(checkerboard %>% filter(i >= 4)) )))
+#' counties <- sf::st_as_sf(as.data.frame(rbind(sf::st_union(checkerboard %>% filter(i < 4)), 
+#' sf::st_union(checkerboard %>% filter(i >= 4)) )))
 #' 
 #' geo_match(from = checkerboard, to = counties)
 #' geo_match(from = checkerboard, to = counties, method = 'area')

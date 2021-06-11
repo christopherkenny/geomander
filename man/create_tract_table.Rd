@@ -25,6 +25,7 @@ Create Tract Level Data
 }
 \examples{
 \dontrun{
+# Relies on Census Bureau API
 tract <- create_tract_table('NY', 'Rockland', year = 2018)
 }
 }
