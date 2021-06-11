@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.7</span>
       </span>
     </div>
 
@@ -150,18 +150,9 @@
 <p><img src="Redistricting_School_Districts_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
 <p>To me, it looks like we are subsetting correctly with this threshold, so we actually trim away this time.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">block</span> <span class="op">&lt;-</span> <span class="va">block</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/geo_trim.html">geo_trim</a></span><span class="op">(</span>to <span class="op">=</span> <span class="va">school</span><span class="op">)</span></code></pre></div>
-<pre><code>## Warning: attribute variables are assumed to be spatially constant throughout all
-## geometries</code></pre>
-<p>And indeed, just plotting the block geographies looks like the school district from before. The edges will be a bit off due to polygon simplification.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">block</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">school</span>, color <span class="op">=</span> <span class="st">'red'</span>, fill <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></code></pre></div>
-<p><img src="Redistricting_School_Districts_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
+<code class="sourceCode R"><span class="va">block</span> <span class="op">&lt;-</span> <span class="va">block</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">trim</span><span class="op">)</span></code></pre></div>
 <p>Very often, at this step, we want to consider including information about other geographies, particularly towns, villages, or counties. In the package, for illustration purposes, I’ve included a small towns dataset from the <a href="https://www.rocklandgis.com/portal/apps/sites/#/data/items/746ec7870a0b4f46b168e07369e79a27">Rockland County GIS Office</a>.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"towns"</span><span class="op">)</span>
 
 <span class="va">block</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
@@ -169,23 +160,23 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">towns</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">ID</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="Redistricting_School_Districts_files/figure-html/data-1.png" width="700"></p>
-<p>From this, we can then try to match our blocks to towns. I use the default setting, which relies on st_centerish, which comes from st_centroid when the centroid is within the shape and otherwise relies on st_point_on_surface to ensure that we are only matching by points within a shape.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">matched</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/geo_match.html">geo_match</a></span><span class="op">(</span>from <span class="op">=</span> <span class="va">block</span>, to <span class="op">=</span> <span class="va">towns</span><span class="op">)</span></code></pre></div>
+<p>From this, we can then try to match our blocks to towns. I use the centroid option, which often works the most quickly. The default method, ‘center’ is slower, but more accurate.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">matched</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/geo_match.html">geo_match</a></span><span class="op">(</span>from <span class="op">=</span> <span class="va">block</span>, to <span class="op">=</span> <span class="va">towns</span>, method <span class="op">=</span> <span class="st">'centroid'</span><span class="op">)</span></code></pre></div>
 <p>Now, I’ve used the default tiebreaker setting, which assigns all blocks to a town, even if they do not overlap.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">block</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">matched</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">'Match'</span><span class="op">)</span></code></pre></div>
-<p><img src="Redistricting_School_Districts_files/figure-html/unnamed-chunk-12-1.png" width="700"> So, we want to make two particular edits to the outcome. First, we create a fake Orange County Town for the blocks that come from Orange County, though there are only a few dozen people who live in those blocks.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<p><img src="Redistricting_School_Districts_files/figure-html/unnamed-chunk-11-1.png" width="700"> So, we want to make two particular edits to the outcome. First, we create a fake Orange County Town for the blocks that come from Orange County, though there are only a few dozen people who live in those blocks.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">block</span> <span class="op">&lt;-</span> <span class="va">block</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>TownID <span class="op">=</span> <span class="va">matched</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>TownID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">county</span> <span class="op">!=</span> <span class="st">'087'</span>, <span class="fl">8</span>, <span class="va">TownID</span><span class="op">)</span><span class="op">)</span> </code></pre></div>
 <p>Second, we can see that one block in 7 was matched to 1 because it didn’t properly intersect the towns and thus went for the closest town by distance between their centroids. A similar issue occured for two other blocks.</p>
 <p>Now, to figure out what’s going on and try to clean it up, we can build an adjacency graph for each block by town and see which pieces are discontinuous.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">adj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://alarm-redist.github.io/redist/reference/redist.adjacency.html">redist.adjacency</a></span><span class="op">(</span>shp <span class="op">=</span> <span class="va">block</span><span class="op">)</span>
 
 <span class="va">comp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/check_contiguity.html">check_contiguity</a></span><span class="op">(</span>adjacency <span class="op">=</span> <span class="va">adj</span>, group <span class="op">=</span> <span class="va">block</span><span class="op">$</span><span class="va">TownID</span><span class="op">)</span>
@@ -193,22 +184,22 @@
 <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">comp</span><span class="op">$</span><span class="va">component</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 576 586 591</code></pre>
 <p>Then, using that information, we can figure out three of these need to be renamed.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">block</span><span class="op">$</span><span class="va">TownID</span><span class="op">[</span><span class="fl">409</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">7</span>
 <span class="va">block</span><span class="op">$</span><span class="va">TownID</span><span class="op">[</span><span class="fl">586</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">2</span>
 <span class="va">block</span><span class="op">$</span><span class="va">TownID</span><span class="op">[</span><span class="fl">591</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">4</span></code></pre></div>
 <p>Now all towns are completely connected or contiguous.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">comp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/check_contiguity.html">check_contiguity</a></span><span class="op">(</span>adjacency <span class="op">=</span> <span class="va">adj</span>, group <span class="op">=</span> <span class="va">block</span><span class="op">$</span><span class="va">TownID</span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">comp</span><span class="op">$</span><span class="va">component</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span></code></pre></div>
 <pre><code>## integer(0)</code></pre>
 <p>Finally, we have the data in a simulation-ready state! We can now use the adjacency list created above with redist.adjacency to run a simulation using redist.smc. See <a href="https://alarm-redist.github.io/">the redist package</a> for more information about what’s going on here.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">map</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://alarm-redist.github.io/redist/reference/redist_map.html">redist_map</a></span><span class="op">(</span><span class="va">block</span>, pop_tol <span class="op">=</span> <span class="fl">0.01</span>, ndists <span class="op">=</span> <span class="fl">7</span>, adj <span class="op">=</span> <span class="va">adj</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">map</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://alarm-redist.github.io/redist/reference/redist_map.html">redist_map</a></span><span class="op">(</span><span class="va">block</span>, pop_tol <span class="op">=</span> <span class="fl">0.02</span>, ndists <span class="op">=</span> <span class="fl">7</span>, adj <span class="op">=</span> <span class="va">adj</span><span class="op">)</span></code></pre></div>
 <pre><code>## Projecting to CRS 3857</code></pre>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sims005</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://alarm-redist.github.io/redist/reference/redist_smc.html">redist_smc</a></span><span class="op">(</span><span class="va">map</span>, nsims <span class="op">=</span> <span class="fl">500</span>, counties <span class="op">=</span> <span class="va">TownID</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">sims005</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://alarm-redist.github.io/redist/reference/redist_smc.html">redist_smc</a></span><span class="op">(</span><span class="va">map</span>, nsims <span class="op">=</span> <span class="fl">50</span>, counties <span class="op">=</span> <span class="va">TownID</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 
 <span class="va">plans</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://alarm-redist.github.io/redist/reference/get_plans_matrix.html">get_plans_matrix</a></span><span class="op">(</span><span class="va">sims005</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span>MARGIN  <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
 
@@ -219,32 +210,30 @@
 <span class="va">comp_m</span> <span class="op">&lt;-</span> <span class="va">comp</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">draw</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">EdgesRemoved</span><span class="op">)</span><span class="op">)</span>
 
 <span class="va">pick</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>parity <span class="op">=</span> <span class="va">par</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_cols</a></span><span class="op">(</span><span class="va">comp_m</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html">slice_max</a></span><span class="op">(</span>order_by <span class="op">=</span> <span class="va">mean</span>, n <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">draw</span><span class="op">)</span></code></pre></div>
-<p>In short, the above uses a Sequential Monte Carlo algorithm to draw 500 compact districts that try to preserve towns. From those, I pick a map that is on average, pretty compact.</p>
-<p>Using that choice of districts, we can then summarize the block level data, using block2prec, but in this case it is summarizing to a ward level.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">smry</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/block2prec.html">block2prec</a></span><span class="op">(</span><span class="va">block</span>, matches <span class="op">=</span> <span class="va">plans</span><span class="op">[</span>,<span class="va">pick</span><span class="op">]</span><span class="op">)</span></code></pre></div>
+<p>In short, the above uses a Sequential Monte Carlo algorithm to draw 50 compact districts that try to preserve towns. From those, I pick a map that is on average, pretty compact. You would typically aim for about 100 times this number of simulations to start. This is shortened for vignette compilation time.</p>
 <p>Then we have the basic information we want and we can look at the VAP data to see that we have one majority minority Hispanic ward and one potential coalition ward.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">smry</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">matches_id</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html">starts_with</a></span><span class="op">(</span><span class="st">'vap'</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 7 x 10
-##   matches_id   vap vap_hisp vap_white vap_black vap_aian vap_asian vap_nhpi
-##        &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-## 1          1  5086     3174      1263       460       10       120        1
-## 2          2  5344      704      4313       155        9       104        1
-## 3          3  5163      472      4378       135        0       138        1
-## 4          4  5421      910      3387       733        3       312        0
-## 5          5  5116     2882      1193       781        8       200        1
-## 6          6  5058     2036      2095       642        7       195        1
-## 7          7  5272      854      3801       360        9       201        0
-## # ... with 2 more variables: vap_other &lt;dbl&gt;, vap_two &lt;dbl&gt;</code></pre>
-<p>And finally, we can also use block2prec to join the geometries of the wards to plot:</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/block2prec.html">block2prec</a></span><span class="op">(</span><span class="va">block</span>, matches <span class="op">=</span> <span class="va">plans</span><span class="op">[</span>,<span class="va">pick</span><span class="op">]</span>, geometry <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf_label</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">matches_id</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="Redistricting_School_Districts_files/figure-html/unnamed-chunk-20-1.png" width="700"></p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">block</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>district <span class="op">=</span> <span class="va">plans</span><span class="op">[</span>,<span class="va">pick</span><span class="op">]</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">district</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html">across</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html">starts_with</a></span><span class="op">(</span><span class="st">'vap'</span><span class="op">)</span>, <span class="va">sum</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<pre><code>## Simple feature collection with 7 features and 10 fields
+## Geometry type: POLYGON
+## Dimension:     XY
+## Bounding box:  xmin: -74.1146 ymin: 41.17523 xmax: -73.9217 ymax: 41.32983
+## Geodetic CRS:  NAD83
+## # A tibble: 7 x 11
+##   district   vap vap_white vap_black vap_hisp vap_aian vap_asian vap_nhpi
+##      &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1        1  4919       856       477     3407       14       108        1
+## 2        2  5367      3366       676      985        6       275        0
+## 3        3  5268      4355       152      619        9        92        2
+## 4        4  5290      4084       335      557        6       248        0
+## 5        5  5231      3869       238      937        0       130        0
+## 6        6  5173      1757       493     2736        3       127        0
+## 7        7  5212      2143       895     1791        8       290        2
+## # ... with 3 more variables: vap_other &lt;dbl&gt;, vap_two &lt;dbl&gt;,
+## #   geometry &lt;POLYGON [°]&gt;</code></pre>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
