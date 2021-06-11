@@ -40,13 +40,13 @@ unique(va18sub$COUNTYFP)
 After noting the countiy included, we can use create_block_table to collect the key population boxes needed for most redistricting analysis.
 
 ```{r, message = FALSE, results = 'hide', eval=FALSE}
-blocks <- create_block_table(state = 'VA', county = '087')  
+block <- create_block_table(state = 'VA', county = '087')  
 ```
 
 To avoid needing API access, we can use saved data. These polygons are simplified using `rmapshaper`.
 ```{r}
 data("va_blocks")
-blocks <- va_blocks
+block <- va_blocks
 ```
 
 
@@ -57,18 +57,18 @@ A typical approach from here is to match the geography from the blocks to the pr
   
 But proceeding with the default:
 ```{r}
-matches <- geo_match(from = blocks, to = va18sub)
+matches <- geo_match(from = block, to = va18sub)
 ```
 
 Then we can aggregate this up to the precinct level with block2prec.
 ```{r}
-prec <- block2prec(block_table = blocks, matches = matches)
+prec <- block2prec(block_table = block, matches = matches)
 ```
 
 An alternative way to do this, especially when the edges of counties follow natural geographies like rivers, is to use the block2prec_by_county, which performs the above two steps, but only one county at a time. It returns the tables joined together. Since there is only one county in this example, it is unnecessary.
 
 ```{r, eval = FALSE}
-prec_by_c <- block2prec_by_county(block_table = blocks, precinct = va18sub, precinct_county_fips = 'COUNTYFP')
+prec_by_c <- block2prec_by_county(block_table = block, precinct = va18sub, precinct_county_fips = 'COUNTYFP')
 ```
 
 In this case, it makes no difference, as the va18sub shapes line up very well with the block lines.
@@ -91,11 +91,11 @@ data(va18sub)
 
 The second is the block dataset for County 087 (Henrico County).
 ```{r, message = FALSE, eval = FALSE}
-blocks <- create_block_table(state = 'VA', county = '087')  
+block <- create_block_table(state = 'VA', county = '087')  
 ```
 
 Third, we can use `tigris` to get voting districts for the relevant Virginia county.
-```{r, results='hide', message = FALSE}
+```{r, results='hide', eval = FALSE, message = FALSE}
 vtd <- voting_districts(state = 'VA') %>% filter(COUNTYFP10 == '087')
 ```
 As with other potential calls to the API, this data is also simplified and included.
@@ -118,19 +118,19 @@ Now, an always hopeful bit is that the lines are generally close to each other, 
 
 Next, we need a vector of matches to precinct data (va18sub) from blocks.
 ```{r}
-matches_p <- geo_match(from = blocks, to = va18sub)
+matches_p <- geo_match(from = block, to = va18sub)
 ```
 
 And similarly, a vector of matches to voting district data (vtd) from blocks.
 ```{r}
-matches_v <- geo_match(from = blocks, to = vtd)
+matches_v <- geo_match(from = block, to = vtd)
 ```
 
 
 Suppose then that we want to estimate votes for Tim Kaine, weighting by VAP.
 
 ```{r}
-disagg_kaine <- estimate_down(wts = blocks$vap, value = va18sub$G18USSDKAI, group = matches_p)
+disagg_kaine <- estimate_down(wts = block$vap, value = va18sub$G18USSDKAI, group = matches_p)
 ```
 
 Then we can reverse this to get to the vtd level:
@@ -144,9 +144,9 @@ However, in cases where you only need to transfer one variable or you are more c
 
 We estimate down from va18sub to blocks and then up from blocks to vtd
 ```{r}
-disagg_kaine_geo <- geo_estimate_down(from = va18sub, to = blocks, wts = blocks$vap, value = va18sub$G18USSDKAI)
+disagg_kaine_geo <- geo_estimate_down(from = va18sub, to = block, wts = block$vap, value = va18sub$G18USSDKAI)
 
-vtd_kaine_geo <- geo_estimate_up(from = blocks, to = vtd, value = disagg_kaine_geo)
+vtd_kaine_geo <- geo_estimate_up(from = block, to = vtd, value = disagg_kaine_geo)
 ```
 
 
