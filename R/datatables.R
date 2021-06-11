@@ -248,7 +248,7 @@ block2prec <- function(block_table, matches, geometry = FALSE){
       dplyr::summarize(
         state = ifelse(length(unique(.data$state)) == 1, unique(.data$state), NA),
         county = ifelse(length(unique(.data$county)) == 1, unique(.data$county), NA),
-        pop = sum(.data$pop),
+        pop       = sum(.data$pop),
         pop_white = sum(.data$pop_white),
         pop_black = sum(.data$pop_black),
         pop_hisp  = sum(.data$pop_hisp),
@@ -274,7 +274,7 @@ block2prec <- function(block_table, matches, geometry = FALSE){
       dplyr::summarize(
         state = ifelse(length(unique(.data$state)) == 1, unique(.data$state), NA),
         county = ifelse(length(unique(.data$county)) == 1, unique(.data$county), NA),
-        pop = sum(.data$pop),
+        pop       = sum(.data$pop),
         pop_white = sum(.data$pop_white),
         pop_black = sum(.data$pop_black),
         pop_hisp  = sum(.data$pop_hisp),
