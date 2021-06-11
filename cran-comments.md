@@ -19,3 +19,4 @@
 * Fixed MIT License information
 * GitHub URL/URIs updated in vignette and README.
 * Updates to work with sf 1.0-0 and s2 1.0.5
+* Shortened vignettes and replaced more precise method with faster method to get vignette rebuild time down

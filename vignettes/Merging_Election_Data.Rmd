@@ -55,9 +55,9 @@ A typical approach from here is to match the geography from the blocks to the pr
   - point: a point on the surface of the shape
   - area: the intersection that has the largest area (this is most useful when you expect that boundaries don't line up well)
   
-But proceeding with the default:
+Using centroid matching:
 ```{r}
-matches <- geo_match(from = block, to = va18sub)
+matches <- geo_match(from = block, to = va18sub, method = 'centroid')
 ```
 
 Then we can aggregate this up to the precinct level with block2prec.
@@ -118,12 +118,12 @@ Now, an always hopeful bit is that the lines are generally close to each other, 
 
 Next, we need a vector of matches to precinct data (va18sub) from blocks.
 ```{r}
-matches_p <- geo_match(from = block, to = va18sub)
+matches_p <- geo_match(from = block, to = va18sub, method = 'centroid')
 ```
 
 And similarly, a vector of matches to voting district data (vtd) from blocks.
 ```{r}
-matches_v <- geo_match(from = block, to = vtd)
+matches_v <- geo_match(from = block, to = vtd, method = 'centroid')
 ```
 
 
@@ -144,9 +144,11 @@ However, in cases where you only need to transfer one variable or you are more c
 
 We estimate down from va18sub to blocks and then up from blocks to vtd
 ```{r}
-disagg_kaine_geo <- geo_estimate_down(from = va18sub, to = block, wts = block$vap, value = va18sub$G18USSDKAI)
+disagg_kaine_geo <- geo_estimate_down(from = va18sub, to = block, wts = block$vap, 
+                                      value = va18sub$G18USSDKAI, method = 'centroid')
 
-vtd_kaine_geo <- geo_estimate_up(from = block, to = vtd, value = disagg_kaine_geo)
+vtd_kaine_geo <- geo_estimate_up(from = block, to = vtd, value = disagg_kaine_geo, method = 
+                                   'centroid')
 ```
 
 
