@@ -244,7 +244,8 @@ block2prec <- function(block_table, matches, geometry = FALSE){
   
   if(!geometry){
     ret <- block_table %>% sf::st_drop_geometry() %>% 
-      group_by(matches_id) %>% summarize(
+      group_by(matches_id) %>% 
+      dplyr::summarize(
         state = ifelse(length(unique(.data$state)) == 1, unique(.data$state), NA),
         county = ifelse(length(unique(.data$county)) == 1, unique(.data$county), NA),
         pop = sum(.data$pop),
@@ -269,7 +270,8 @@ block2prec <- function(block_table, matches, geometry = FALSE){
       )
   } else {
     ret <- block_table %>% 
-      group_by(matches_id) %>% summarize(
+      group_by(matches_id) %>% 
+      dplyr::summarize(
         state = ifelse(length(unique(.data$state)) == 1, unique(.data$state), NA),
         county = ifelse(length(unique(.data$county)) == 1, unique(.data$county), NA),
         pop = sum(.data$pop),
