@@ -29,6 +29,8 @@ geography for the split precinct. This allows you to split a precinct using a
 lower geography, typically blocks.
 }
 \examples{
+library(dplyr)
+library(sf)
 data(checkerboard)
 low <- checkerboard \%>\% slice(1:3, 9:11)
 prec <- checkerboard \%>\% slice(1:3) \%>\% summarize(geometry = st_union(geometry)) 

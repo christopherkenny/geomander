@@ -19,6 +19,8 @@
 #' @concept fix
 #'
 #' @examples
+#' library(dplyr)
+#' library(sf)
 #' data(checkerboard)
 #' low <- checkerboard %>% slice(1:3, 9:11)
 #' prec <- checkerboard %>% slice(1:3) %>% summarize(geometry = st_union(geometry)) 
