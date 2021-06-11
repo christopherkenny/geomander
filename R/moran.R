@@ -11,6 +11,7 @@
 #' @concept spatcorr
 #' 
 #' @examples 
+#' library(dplyr)
 #' data("checkerboard")
 #' checkerboard <- checkerboard %>% mutate(m = as.numeric((id+i) %% 2 == 0))
 #' local_morans(shp = checkerboard, wts = checkerboard$m)
@@ -63,6 +64,7 @@ local_morans <- function(shp, adj, wts, spatial_mat){
 #' @concept spatcorr
 #' 
 #' @examples 
+#' library(dplyr)
 #' data("checkerboard")
 #' checkerboard <- checkerboard %>% mutate(m = as.numeric((id+i) %% 2 == 0))
 #' global_morans(shp = checkerboard, wts = checkerboard$m)

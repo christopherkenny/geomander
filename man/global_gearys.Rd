@@ -24,6 +24,7 @@ from an adjacency or sf data frame, in which case the spatial_mat is a contiguit
 matrix. Users can also provide a spatial_mat argument directly.
 }
 \examples{
+library(dplyr)
 data("checkerboard")
 checkerboard <- checkerboard \%>\% mutate(m = as.numeric((id+i) \%\% 2 == 0))
 global_gearys(shp = checkerboard, wts = checkerboard$m)

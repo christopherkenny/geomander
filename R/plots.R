@@ -14,6 +14,7 @@
 #' @concept plot
 #' 
 #' @examples
+#' library(dplyr)
 #' data("checkerboard")
 #' data("checkerboard_adj")
 #' 

@@ -13,6 +13,7 @@
 #' @return vector of G*i scores
 #' @export
 #' @examples
+#' library(dplyr)
 #' data("checkerboard")
 #' checkerboard <- checkerboard %>% mutate(m = as.numeric((id+i) %% 2 == 0))
 #' gstar_i(shp = checkerboard, wts = checkerboard$m)

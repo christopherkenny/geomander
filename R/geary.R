@@ -11,6 +11,7 @@
 #' @concept spatcorr 
 #' 
 #' @examples
+#' library(dplyr)
 #' data("checkerboard")
 #' checkerboard <- checkerboard %>% mutate(m = as.numeric((id+i) %% 2 == 0))
 #' local_gearys(shp = checkerboard, wts = checkerboard$m)
@@ -63,6 +64,7 @@ local_gearys <- function(shp, adj, wts, spatial_mat){
 #' @return double
 #' @export
 #' @examples
+#' library(dplyr)
 #' data("checkerboard")
 #' checkerboard <- checkerboard %>% mutate(m = as.numeric((id+i) %% 2 == 0))
 #' global_gearys(shp = checkerboard, wts = checkerboard$m)

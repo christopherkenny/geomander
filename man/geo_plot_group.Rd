@@ -24,6 +24,7 @@ list of ggplots
 Create Plots of Shapes by Group with Connected Components Colored
 }
 \examples{
+library(dplyr)
 data("checkerboard")
 data("checkerboard_adj")
 
