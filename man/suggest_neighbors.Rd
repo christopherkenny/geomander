@@ -25,6 +25,7 @@ as a friend to add. This is useful for when a small number of precincts are disc
 from the remainder of the geography, such as an island.
 }
 \examples{
+library(dplyr)
 data(va18sub)
 va18sub <- va18sub \%>\% filter(!VTDST \%in\% c('000516', '000510', '000505', '000518'))
 adj <- adjacency(va18sub)

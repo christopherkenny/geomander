@@ -56,6 +56,7 @@ check_contiguity <- function(adjacency, group){
 #' @concept fix
 #'
 #' @examples 
+#' library(dplyr)
 #' data(checkerboard)
 #' checkerboard <- checkerboard %>% filter(i != 1, j != 1)
 #' adj <- adjacency(checkerboard)

@@ -55,6 +55,7 @@ add_edge <- function(adjacency, v1, v2, zero = TRUE){
 #' @importFrom nngeo st_nn
 #' @importFrom tibble tibble
 #' @examples 
+#' library(dplyr)
 #' data(va18sub)
 #' va18sub <- va18sub %>% filter(!VTDST %in% c('000516', '000510', '000505', '000518'))
 #' adj <- adjacency(va18sub)
