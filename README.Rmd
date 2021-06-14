@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 Focuses on creating data sets and other tools that help make understanding gerrymandering faster and easier. Designed for easy preparation to run simulation analysis with the R package redist, but is aimed at the geographic aspects of redistricting, not partitioning methods. Most of these tools are gathered from seminar papers and do not correspond to a single publication.
 
 ## Installation
-<!---
+
 You can install the released version of geomander from [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
@@ -36,13 +36,8 @@ And the development version from [GitHub](https://github.com/) with:
 # install.packages("devtools")
 devtools::install_github("christopherkenny/geomander")
 ```
---->
 
-Currently, geomander is only available from [GitHub](https://github.com/christopherkenny/geomander) and can be installed with:
-```r
-# install.packages('remotes')
-remotes::install_github('christopherkenny/geomander')
-```
+
 
 ## Examples
 
