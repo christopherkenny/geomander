@@ -11,7 +11,7 @@ URL: https://christopherkenny.github.io/geomander/
 BugReports: https://github.com/christopherkenny/geomander/issues
 RoxygenNote: 7.1.1
 LinkingTo: Rcpp
-Imports: Rcpp,
+Imports:
   dplyr,
   magrittr,
   nngeo,
