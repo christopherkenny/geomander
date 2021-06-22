@@ -39,6 +39,13 @@ create_block_table <- function(state, county, geography = TRUE, year = 2010){
   
   fips <- tidycensus::fips_codes %>% filter(state == statepo)
   
+  if(statepo == 'AK' & year <= 2010){
+    fips <- fips %>% filter(county_code != '158')
+  }
+  if(statepo == 'SD' & year <= 2010){
+    fips <- fips %>% filter(county_code != '102')
+  }
+  
   vars <- c(pop = 'P003001', pop_white = 'P005003', pop_black = 'P005004', 
             pop_hisp = 'P004003', pop_aian = 'P005005', pop_asian = 'P005006', 
             pop_nhpi = 'P005007', pop_other = 'P005008', pop_two = 'P005009',

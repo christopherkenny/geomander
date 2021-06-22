@@ -1,3 +1,12 @@
+# geomander 1.0.9
+* Address SD and AK create_block_table assumptions
+
+# geomander 1.0.8
+* downgrade CRS for solaris 2005 build
+
+# geomander 1.0.7 
+* Shortens vignettes for CRAN build speed
+
 # geomander 1.0.6
 * updates for sf 1.0-0 compatibility
 * makes sure all examples run
