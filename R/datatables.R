@@ -204,15 +204,19 @@ create_tract_table <- function(state, county, geography = TRUE, year = 2019){
   
   if(geography){
     if(!missing(county)){
-      tracts <- tigris::tracts(state = state, year = year, county = county) 
+      tract <- tigris::tracts(state = state, year = year, county = county) 
     } else {
-      tracts <- tigris::tracts(state = state, year = year) 
+      tract <- tigris::tracts(state = state, year = year) 
     }
-    
-    tracts <- tracts %>% select(.data$STATEFP, .data$COUNTYFP, .data$GEOID, .data$geometry) %>% 
+    names(tract)[which(str_detect(names(tract), pattern = 'GEOID'))[1]] <- 'GEOID'
+    names(tract)[which(str_detect(names(tract), pattern = 'STATE'))[1]] <- 'state'
+    names(tract)[which(str_detect(names(tract), pattern = 'COUNTY'))[1]] <- 'county'
+    names(tract)[which(str_detect(names(tract), pattern = 'TRACT'))[1]] <- 'tract'
+
+    tract <- tract %>% select(.data$STATEFP, .data$COUNTYFP, .data$GEOID, .data$geometry)  %>% 
       rename(State = STATEFP, County = COUNTYFP)
     
-    out <- out %>% left_join(tracts, by = 'GEOID') %>% st_as_sf()
+    out <- out %>% left_join(tract, by = 'GEOID') %>% st_as_sf()
   }
   
   return(out)
