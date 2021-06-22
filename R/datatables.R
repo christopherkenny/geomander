@@ -211,6 +211,112 @@ create_tract_table <- function(state, county, geography = TRUE, year = 2019){
   return(out)
 }
 
+#' Create Block Group Level Data
+#'
+#' @param state Required. Two letter state postal code.
+#' @param county Optional. Name of county.  If not provided, returns block groups for the entire state.
+#' @param geography Defaults to TRUE. Whether to return the geography or not.
+#' @param year year, must be >= 2009 and <= 2019.
+#'
+#' @return dataframe with data for each block group in the selected region. Data includes
+#' 2 sets of columns for each race or ethnicity category: population (pop), voting age
+#' population (vap)
+#' @export
+#' @importFrom tidycensus get_acs
+#' @importFrom dplyr rename starts_with .data
+#' @concept datatable
+#' @examples \dontrun{
+#' # Relies on Census Bureau API
+#' bg <- create_block_group_table('NY', 'Rockland', year = 2018)
+#' }
+create_block_group_table <- function(state, county, geography = TRUE, year = 2019){
+  if(! state %in% datasets::state.abb){
+    stop('Please provide a two letter postal abbreviation for the state.')
+  }
+  statepo <- state
+  
+  
+  fips <- tidycensus::fips_codes %>% filter(state == statepo)
+  
+  # totals + white + black + hisp / for total, vap, and cvap (by sex because acs...)
+  vars <- c(pop         = 'B03002_001',  
+            pop_white   = 'B03002_003',  
+            pop_black   = 'B03002_004',
+            pop_hisp    = 'B03002_012',
+            pop_aian    = 'B03002_005',
+            pop_asian   = 'B03002_006',
+            pop_nhpi    = 'B03002_007',
+            pop_other   = 'B03002_008',
+            pop_two     = 'B03002_009',
+            m_vap       = 'B05003_008',
+            f_vap       = 'B05003_019',
+            m_vap_black = 'B05003B_008',
+            f_vap_black = 'B05003B_019',
+            m_vap_white = 'B05003H_008',
+            f_vap_white = 'B05003H_019',
+            m_vap_hisp  = 'B05003I_008',
+            f_vap_hisp  = 'B05003I_019',
+            m_vap_aian  = 'B05003C_008',
+            f_vap_aian  = 'B05003C_019',
+            m_vap_asian = 'B05003D_008',
+            f_vap_asian = 'B05003D_019',
+            m_vap_nhpi  = 'B05003E_008',
+            f_vap_nhpi  = 'B05003E_019',
+            m_vap_other = 'B05003F_008',
+            f_vap_other = 'B05003F_019',
+            m_vap_two   = 'B05003G_008',
+            f_vap_two   = 'B05003G_019'
+  )
+  
+  
+  if(missing(county)){
+    out <- tibble()
+    
+    for(cty in fips$county){
+      block <- tidycensus::get_acs(geography = 'block group', state = state, year = year, 
+                                   geometry = FALSE, keep_geo_vars = FALSE, county = cty,
+                                   variables = vars)
+      out <- rbind(out, block)
+    }
+    
+  } else {
+    out <- tidycensus::get_acs(geography = 'block group', state = state, year = year, 
+                               geometry = FALSE, keep_geo_vars = FALSE, county = county, 
+                               variables = vars)
+  }
+  
+  out <- out %>% select(GEOID, variable, estimate) %>% 
+    pivot_wider(id_cols = GEOID, names_from = 'variable', values_from = 'estimate')
+  
+  out <- out %>% mutate(
+    vap = .data$m_vap + .data$f_vap,
+    vap_white = .data$m_vap_white + .data$f_vap_white,
+    vap_black = .data$m_vap_black + .data$f_vap_black,
+    vap_hisp  = .data$m_vap_hisp  + .data$f_vap_hisp,
+    vap_aian  = .data$m_vap_aian  + .data$f_vap_aian,
+    vap_asian = .data$m_vap_asian + .data$f_vap_asian,
+    vap_nhpi  = .data$m_vap_nhpi  + .data$f_vap_nhpi,
+    vap_other = .data$m_vap_other + .data$f_vap_other,
+    vap_two   = .data$m_vap_two   + .data$f_vap_two
+  ) %>% select(-starts_with(c('m','f'))
+  )
+  
+  
+  if(geography){
+    if(!missing(county)){
+      bgs <- tigris::block_groups(state = state, year = year, county = county) 
+    } else {
+      bgs <- tigris::block_groups(state = state, year = year) 
+    }
+    
+    bgs <- bgs %>% select(.data$STATEFP, .data$COUNTYFP, .data$GEOID, .data$geometry) %>% 
+      rename(State = STATEFP, County = COUNTYFP)
+    
+    out <- out %>% left_join(bgs, by = 'GEOID') %>% st_as_sf()
+  }
+  
+  return(out)
+}
 
 #'  Aggregate Block Table by Matches
 #'
