@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>rockland — rockland • geomander</title>
+<title>Create Block Group Level Data — create_block_group_table • geomander</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,8 @@
 
 
 
-<meta property="og:title" content="rockland — rockland" />
-<meta property="og:description" content="This data contains the blocks for Rockland County NY, with geographies simplified
-to allow for better examples." />
+<meta property="og:title" content="Create Block Group Level Data — create_block_group_table" />
+<meta property="og:description" content="Create Block Group Level Data" />
 
 
 
@@ -127,30 +126,49 @@ to allow for better examples." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>rockland</h1>
-    <small class="dont-index">Source: <a href='https://github.com/christopherkenny/geomander/blob/master/R/data.R'><code>R/data.R</code></a></small>
-    <div class="hidden name"><code>rockland.Rd</code></div>
+    <h1>Create Block Group Level Data</h1>
+    <small class="dont-index">Source: <a href='https://github.com/christopherkenny/geomander/blob/master/R/datatables.R'><code>R/datatables.R</code></a></small>
+    <div class="hidden name"><code>create_block_group_table.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This data contains the blocks for Rockland County NY, with geographies simplified
-to allow for better examples.</p>
+    <p>Create Block Group Level Data</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"rockland"</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>create_block_group_table</span><span class='op'>(</span><span class='va'>state</span>, <span class='va'>county</span>, geography <span class='op'>=</span> <span class='cn'>TRUE</span>, year <span class='op'>=</span> <span class='fl'>2019</span><span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>state</th>
+      <td><p>Required. Two letter state postal code.</p></td>
+    </tr>
+    <tr>
+      <th>county</th>
+      <td><p>Optional. Name of county.  If not provided, returns block groups for the entire state.</p></td>
+    </tr>
+    <tr>
+      <th>geography</th>
+      <td><p>Defaults to TRUE. Whether to return the geography or not.</p></td>
+    </tr>
+    <tr>
+      <th>year</th>
+      <td><p>year, must be &gt;= 2009 and &lt;= 2019.</p></td>
+    </tr>
+    </table>
 
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An sf dataframe with 4764 observations</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>It can be recreated with:
-rockland &lt;- create_block_table('NY', 'Rockland')
-rockland &lt;- rmapshaper::ms_simplify(rockland, keep_shapes = TRUE)</p>
+    <p>dataframe with data for each block group in the selected region. Data includes
+2 sets of columns for each race or ethnicity category: population (pop), voting age
+population (vap)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"rockland"</span><span class='op'>)</span>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='co'># Relies on Census Bureau API</span>
+<span class='va'>bg</span> <span class='op'>&lt;-</span> <span class='fu'>create_block_group_table</span><span class='op'>(</span><span class='st'>'NY'</span>, <span class='st'>'Rockland'</span>, year <span class='op'>=</span> <span class='fl'>2018</span><span class='op'>)</span>
+<span class='op'>}</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
