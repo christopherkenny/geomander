@@ -6,7 +6,7 @@
 #' @param state Required. Two letter state postal code.
 #' @param county Optional. Name of county.  If not provided, returns blocks for the entire state.
 #' @param geography Defaults to TRUE. Whether to return the geography or not.
-#' @param year year, must be 2010 at the moment. 2020 to be added once available. 2000 if rereleased.
+#' @param year year, must be 2000, 2010, or 2020 once released.
 #'
 #' @return dataframe with data for each block in the selected region. Data includes
 #' 2 sets of columns for each race or ethnicity category: population (pop) and 
@@ -33,17 +33,8 @@ create_block_table <- function(state, county, geography = TRUE, year = 2010){
   }
   statepo <- state
   
-  if(year != 2010){
-    stop('Only 2010 is currently supported due to SF3 2000 issues and delay of 2020 data.')
-  }
-  
-  fips <- tidycensus::fips_codes %>% filter(state == statepo)
-  
-  if(statepo == 'AK' & year <= 2010){
-    fips <- fips %>% filter(county_code != '158')
-  }
-  if(statepo == 'SD' & year <= 2010){
-    fips <- fips %>% filter(county_code != '102')
+  if(year < 2000 || year %% 10 != 0){
+    warning('Only 2010 and 2020 () are currently supported. 2000 may or may not work.')
   }
   
   vars <- c(pop = 'P003001', pop_white = 'P005003', pop_black = 'P005004', 
@@ -55,20 +46,47 @@ create_block_table <- function(state, county, geography = TRUE, year = 2010){
             place = 'PLACE')
   
   
-  if(missing(county)){
-    out <- tibble()
+  if(year == 2000){
     
-    for(cty in fips$county){
-      block <- get_decennial(geography = 'block', state = state, year = year, 
-                             geometry = FALSE, keep_geo_vars = FALSE, county = cty,
-                             variables = vars)
-      out <- rbind(out, block)
-    }
+    vars_pop <- c(pop      = 'P004001', pop_white = 'P004005', pop_black = 'P004006', 
+                  pop_hisp = 'P004002', pop_aian  = 'P004007', pop_asian = 'P004008', 
+                  pop_nhpi = 'P004009', pop_other = 'P004010', pop_two   = 'P004011')
+    
+    vars_vap <- c(vap      = 'P006001', vap_white = 'P006005', vap_black = 'P006006', 
+                  vap_hisp = 'P006002', vap_aian  = 'P006007', vap_asian = 'P006008',
+                  vap_nhpi = 'P006009', vap_other = 'P006010', vap_two   = 'P006011')
+    
+      
+      if(missing(county)){
+        out_pop <- get_decennial(geography = 'block', state = state, year = year, 
+                                 geometry = FALSE, keep_geo_vars = FALSE,
+                                 variables = vars_pop)
+        out_vap <- get_decennial(geography = 'block', state = state, year = year, 
+                                 geometry = FALSE, keep_geo_vars = FALSE,
+                                 variables = vars_vap)
+        out <- bind_rows(out_pop, out_vap)
+      } else {
+        out_pop <- get_decennial(geography = 'block', state = state, year = year, 
+                                 geometry = FALSE, keep_geo_vars = FALSE,
+                                 variables = vars_pop)
+        out_vap <- get_decennial(geography = 'block', state = state, year = year, 
+                                 geometry = FALSE, keep_geo_vars = FALSE,
+                                 variables = vars_vap)
+        out <- bind_rows(out_pop, out_vap)
+      }
   } else {
-    out <- get_decennial(geography = 'block', state = state, year = year, 
-                         geometry = FALSE, keep_geo_vars = FALSE, county = county,
-                         variables = vars)
+    if(missing(county)){
+      out <- get_decennial(geography = 'block', state = state, year = year, 
+                           geometry = FALSE, keep_geo_vars = FALSE,
+                           variables = vars)
+    } else {
+      out <- get_decennial(geography = 'block', state = state, year = year, 
+                           geometry = FALSE, keep_geo_vars = FALSE, county = county,
+                           variables = vars)
+    }
   }
+  
+
   
   out <- out %>% select(GEOID, variable, value) %>% 
     pivot_wider(id_cols = GEOID, names_from = 'variable', values_from = 'value')
@@ -123,7 +141,7 @@ create_tract_table <- function(state, county, geography = TRUE, year = 2019){
   statepo <- state
   
   if(year < 2009 | year > 2019){
-    stop('Only years in 2009:2019 inclusive are currently supported.')
+    warning('Only years in 2009:2019 inclusive are currently supported.')
   }
   
   fips <- tidycensus::fips_codes %>% filter(state == statepo)
