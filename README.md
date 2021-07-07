@@ -9,6 +9,7 @@
 [![R-CMD-check](https://github.com/christopherkenny/geomander/workflows/R-CMD-check/badge.svg)](https://github.com/christopherkenny/geomander/actions)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/geomander)](https://CRAN.R-project.org/package=geomander)
+![CRAN downloads](http://cranlogs.r-pkg.org/badges/grand-total/geomander)
 <!-- badges: end -->
 
 Focuses on creating data sets and other tools that help make
