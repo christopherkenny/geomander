@@ -32,4 +32,4 @@ reference:
   desc: Functions that don't really fit elsewhere
 - contents:
   - geomander-package
-  - lacks_concepts(c("estiamte", "datatable", "fix", "estimate", "dra", "spatcorr", "data", "plot"))
+  - lacks_concepts(c("estimate", "datatable", "fix", "estimate", "dra", "spatcorr", "data", "plot"))

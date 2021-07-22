@@ -44,7 +44,7 @@ devtools::install_github("christopherkenny/geomander")
 
 A very common task is aggregating block data to precincts.
 
-```{r example}
+```{r example, results = 'hide'}
 library(geomander)
 library(tidyverse)
  
