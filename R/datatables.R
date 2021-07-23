@@ -1,6 +1,6 @@
 #' Create Block Level Data
-#' 
-#' Creates a block level dataset, using the decennial census information, with the 
+#'
+#' Creates a block level dataset, using the decennial census information, with the
 #' standard redistricting variables.
 #'
 #' @param state Required. Two letter state postal code.
@@ -9,9 +9,9 @@
 #' @param year year, must be 2000, 2010, or 2020 once released.
 #'
 #' @return dataframe with data for each block in the selected region. Data includes
-#' 2 sets of columns for each race or ethnicity category: population (pop) and 
+#' 2 sets of columns for each race or ethnicity category: population (pop) and
 #' voting age population (vap)
-#' 
+#'
 #' @importFrom tidycensus get_decennial
 #' @importFrom tigris blocks
 #' @importFrom dplyr filter select mutate all_of any_of left_join .data
@@ -21,83 +21,83 @@
 #' @importFrom magrittr %>%
 #' @export
 #' @concept datatable
-#' @examples 
+#' @examples
 #' \dontrun{
 #' # uses the Census API
 #' create_block_table(state = 'NY', county = 'Rockland', geography = FALSE)
 #' }
 create_block_table <- function(state, county, geography = TRUE, year = 2010){
-  
+
   if(! state %in% datasets::state.abb){
     stop('Please provide a two letter postal abbreviation for the state.')
   }
   statepo <- state
-  
+
   if(year < 2000 || year %% 10 != 0){
-    warning('Only 2010 and 2020 () are currently supported. 2000 may or may not work.')
+    warning('Only 2010 and 2020 are currently supported. 2000 may or may not work.')
   }
-  
-  vars <- c(pop = 'P003001', pop_white = 'P005003', pop_black = 'P005004', 
-            pop_hisp = 'P004003', pop_aian = 'P005005', pop_asian = 'P005006', 
+
+  vars <- c(pop = 'P003001', pop_white = 'P005003', pop_black = 'P005004',
+            pop_hisp = 'P004003', pop_aian = 'P005005', pop_asian = 'P005006',
             pop_nhpi = 'P005007', pop_other = 'P005008', pop_two = 'P005009',
-            vap = 'P010001', vap_white = 'P011005', vap_black = 'P011006', 
+            vap = 'P010001', vap_white = 'P011005', vap_black = 'P011006',
             vap_hisp = 'P011002', vap_aian = 'P011007', vap_asian = 'P011008',
             vap_nhpi = 'P011009', vap_other = 'P011010', vap_two = 'P011011',
             place = 'PLACE')
-  
-  
+
+
   if(year == 2000){
-    
-    vars_pop <- c(pop      = 'P004001', pop_white = 'P004005', pop_black = 'P004006', 
-                  pop_hisp = 'P004002', pop_aian  = 'P004007', pop_asian = 'P004008', 
+
+    vars_pop <- c(pop      = 'P004001', pop_white = 'P004005', pop_black = 'P004006',
+                  pop_hisp = 'P004002', pop_aian  = 'P004007', pop_asian = 'P004008',
                   pop_nhpi = 'P004009', pop_other = 'P004010', pop_two   = 'P004011')
-    
-    vars_vap <- c(vap      = 'P006001', vap_white = 'P006005', vap_black = 'P006006', 
+
+    vars_vap <- c(vap      = 'P006001', vap_white = 'P006005', vap_black = 'P006006',
                   vap_hisp = 'P006002', vap_aian  = 'P006007', vap_asian = 'P006008',
                   vap_nhpi = 'P006009', vap_other = 'P006010', vap_two   = 'P006011')
-    
-      
+
+
       if(missing(county)){
-        out_pop <- get_decennial(geography = 'block', state = state, year = year, 
+        out_pop <- get_decennial(geography = 'block', state = state, year = year,
                                  geometry = FALSE, keep_geo_vars = FALSE,
                                  variables = vars_pop)
-        out_vap <- get_decennial(geography = 'block', state = state, year = year, 
+        out_vap <- get_decennial(geography = 'block', state = state, year = year,
                                  geometry = FALSE, keep_geo_vars = FALSE,
                                  variables = vars_vap)
         out <- bind_rows(out_pop, out_vap)
       } else {
-        out_pop <- get_decennial(geography = 'block', state = state, year = year, 
+        out_pop <- get_decennial(geography = 'block', state = state, year = year,
                                  geometry = FALSE, keep_geo_vars = FALSE,
                                  variables = vars_pop)
-        out_vap <- get_decennial(geography = 'block', state = state, year = year, 
+        out_vap <- get_decennial(geography = 'block', state = state, year = year,
                                  geometry = FALSE, keep_geo_vars = FALSE,
                                  variables = vars_vap)
         out <- bind_rows(out_pop, out_vap)
       }
   } else {
     if(missing(county)){
-      out <- get_decennial(geography = 'block', state = state, year = year, 
+      out <- get_decennial(geography = 'block', state = state, year = year,
                            geometry = FALSE, keep_geo_vars = FALSE,
                            variables = vars)
     } else {
-      out <- get_decennial(geography = 'block', state = state, year = year, 
+      out <- get_decennial(geography = 'block', state = state, year = year,
                            geometry = FALSE, keep_geo_vars = FALSE, county = county,
                            variables = vars)
     }
   }
-  
 
-  
-  out <- out %>% select(GEOID, variable, value) %>% 
+
+
+  out <- out %>% select(GEOID, variable, value) %>%
     pivot_wider(id_cols = GEOID, names_from = 'variable', values_from = 'value')
-  
+
   if(geography){
     if(!missing(county)){
-      blocks <- tigris::blocks(state = state, year = year, county = county) 
+      blocks <- tigris::blocks(state = state, year = year, county = county)
     } else {
-      blocks <- tigris::blocks(state = state, year = year) 
+      blocks <- tigris::blocks(state = state, year = year)
     }
-    
+
     blocks <- blocks %>% mutate(waterpct = AWATER10/(ALAND10+AWATER10))
     blocks <- blocks %>% select(any_of(c('STATEFP10', 'COUNTYFP10', 'TRACTCE10', 'BLOCKCE10', 'GEOID10',
                                        'STATEFP00', 'COUNTYFP00', 'TRACTCE00', 'BLOCKCE00', 'GEOID00',
@@ -109,7 +109,7 @@ create_block_table <- function(state, county, geography = TRUE, year = 2010){
     names(blocks)[str_detect(names(blocks), pattern = 'BLOCK')] <- 'block'
 
     out <- blocks %>% left_join(y = out, by = 'GEOID') %>% st_as_sf()
-    
+
   }
 
   return(out)
@@ -139,16 +139,16 @@ create_tract_table <- function(state, county, geography = TRUE, year = 2019){
     stop('Please provide a two letter postal abbreviation for the state.')
   }
   statepo <- state
-  
+
   if(year < 2009 | year > 2019){
     warning('Only years in 2009:2019 inclusive are currently supported.')
   }
-  
+
   fips <- tidycensus::fips_codes %>% filter(state == statepo)
-  
+
   # totals + white + black + hisp / for total, vap, and cvap (by sex because acs...)
-  vars <- c(pop         = 'B03002_001',  
-            pop_white   = 'B03002_003',  
+  vars <- c(pop         = 'B03002_001',
+            pop_white   = 'B03002_003',
             pop_black   = 'B03002_004',
             pop_hisp    = 'B03002_012',
             pop_aian    = 'B03002_005',
@@ -156,7 +156,7 @@ create_tract_table <- function(state, county, geography = TRUE, year = 2019){
             pop_nhpi    = 'B03002_007',
             pop_other   = 'B03002_008',
             pop_two     = 'B03002_009',
-            m_vap       = 'B05003_008',  m_nvap        = 'B05003_012', 
+            m_vap       = 'B05003_008',  m_nvap        = 'B05003_012',
             f_vap       = 'B05003_019',  f_nvap        = 'B05003_023',
             m_vap_black = 'B05003B_008', m_nvap_black  = 'B05003B_012',
             f_vap_black = 'B05003B_019', f_nvap_black  = 'B05003B_023',
@@ -175,25 +175,25 @@ create_tract_table <- function(state, county, geography = TRUE, year = 2019){
             m_vap_two   = 'B05003G_008', m_nvap_two    = 'B05003G_012',
             f_vap_two   = 'B05003G_019', f_nvap_two    = 'B05003G_023'
             )
-  
-  
+
+
   if(missing(county)){
     out <- tibble()
-    
+
     for(cty in fips$county){
-      block <- get_acs(geography = 'tract', state = state, year = year, 
+      block <- get_acs(geography = 'tract', state = state, year = year,
                              geometry = FALSE, keep_geo_vars = FALSE, county = cty,
                              variables = vars)
       out <- rbind(out, block)
     }
-    
+
   } else {
-    out <- get_acs(geography = 'tract', state = state, year = year, 
-                         geometry = FALSE, keep_geo_vars = FALSE, county = county, 
+    out <- get_acs(geography = 'tract', state = state, year = year,
+                         geometry = FALSE, keep_geo_vars = FALSE, county = county,
                          variables = vars)
   }
-  
-  out <- out %>% select(GEOID, variable, estimate) %>% 
+
+  out <- out %>% select(GEOID, variable, estimate) %>%
     pivot_wider(id_cols = GEOID, names_from = 'variable', values_from = 'estimate')
 
   out <- out %>% mutate(
@@ -218,25 +218,25 @@ create_tract_table <- function(state, county, geography = TRUE, year = 2019){
     cvap_two   = .data$vap_two   - .data$m_nvap_two   - .data$f_nvap_two
   ) %>% select(-starts_with(c('m','f'))
   )
-  
-  
+
+
   if(geography){
     if(!missing(county)){
-      tract <- tigris::tracts(state = state, year = year, county = county) 
+      tract <- tigris::tracts(state = state, year = year, county = county)
     } else {
-      tract <- tigris::tracts(state = state, year = year) 
+      tract <- tigris::tracts(state = state, year = year)
     }
     names(tract)[which(str_detect(names(tract), pattern = 'GEOID'))[1]] <- 'GEOID'
     names(tract)[which(str_detect(names(tract), pattern = 'STATE'))[1]] <- 'state'
     names(tract)[which(str_detect(names(tract), pattern = 'COUNTY'))[1]] <- 'county'
     names(tract)[which(str_detect(names(tract), pattern = 'TRACT'))[1]] <- 'tract'
 
-    tract <- tract %>% select(.data$STATEFP, .data$COUNTYFP, .data$GEOID, .data$geometry)  %>% 
+    tract <- tract %>% select(.data$STATEFP, .data$COUNTYFP, .data$GEOID, .data$geometry)  %>%
       rename(State = STATEFP, County = COUNTYFP)
-    
+
     out <- out %>% left_join(tract, by = 'GEOID') %>% st_as_sf()
   }
-  
+
   return(out)
 }
 
@@ -263,13 +263,13 @@ create_block_group_table <- function(state, county, geography = TRUE, year = 201
     stop('Please provide a two letter postal abbreviation for the state.')
   }
   statepo <- state
-  
-  
+
+
   fips <- tidycensus::fips_codes %>% filter(state == statepo)
-  
+
   # totals + white + black + hisp / for total, vap, and cvap (by sex because acs...)
-  vars <- c(pop         = 'B03002_001',  
-            pop_white   = 'B03002_003',  
+  vars <- c(pop         = 'B03002_001',
+            pop_white   = 'B03002_003',
             pop_black   = 'B03002_004',
             pop_hisp    = 'B03002_012',
             pop_aian    = 'B03002_005',
@@ -296,27 +296,27 @@ create_block_group_table <- function(state, county, geography = TRUE, year = 201
             m_vap_two   = 'B05003G_008',
             f_vap_two   = 'B05003G_019'
   )
-  
-  
+
+
   if(missing(county)){
     out <- tibble()
-    
+
     for(cty in fips$county){
-      block <- tidycensus::get_acs(geography = 'block group', state = state, year = year, 
+      block <- tidycensus::get_acs(geography = 'block group', state = state, year = year,
                                    geometry = FALSE, keep_geo_vars = FALSE, county = cty,
                                    variables = vars)
       out <- rbind(out, block)
     }
-    
+
   } else {
-    out <- tidycensus::get_acs(geography = 'block group', state = state, year = year, 
-                               geometry = FALSE, keep_geo_vars = FALSE, county = county, 
+    out <- tidycensus::get_acs(geography = 'block group', state = state, year = year,
+                               geometry = FALSE, keep_geo_vars = FALSE, county = county,
                                variables = vars)
   }
-  
-  out <- out %>% select(GEOID, variable, estimate) %>% 
+
+  out <- out %>% select(GEOID, variable, estimate) %>%
     pivot_wider(id_cols = GEOID, names_from = 'variable', values_from = 'estimate')
-  
+
   out <- out %>% mutate(
     vap = .data$m_vap + .data$f_vap,
     vap_white = .data$m_vap_white + .data$f_vap_white,
@@ -329,44 +329,44 @@ create_block_group_table <- function(state, county, geography = TRUE, year = 201
     vap_two   = .data$m_vap_two   + .data$f_vap_two
   ) %>% select(-starts_with(c('m','f'))
   )
-  
-  
+
+
   if(geography){
     if(!missing(county)){
-      bgs <- tigris::block_groups(state = state, year = year, county = county) 
+      bgs <- tigris::block_groups(state = state, year = year, county = county)
     } else {
-      bgs <- tigris::block_groups(state = state, year = year) 
+      bgs <- tigris::block_groups(state = state, year = year)
     }
-    
-    bgs <- bgs %>% select(.data$STATEFP, .data$COUNTYFP, .data$GEOID, .data$geometry) %>% 
+
+    bgs <- bgs %>% select(.data$STATEFP, .data$COUNTYFP, .data$GEOID, .data$geometry) %>%
       rename(State = STATEFP, County = COUNTYFP)
-    
+
     out <- out %>% left_join(bgs, by = 'GEOID') %>% st_as_sf()
   }
-  
+
   return(out)
 }
 
 #'  Aggregate Block Table by Matches
 #'
 #' Aggregates block table values up to a higher level, normally precincts, hence
-#' the name block2prec. 
+#' the name block2prec.
 #'
 #' @param block_table Required. Block table output from create_block_table
 #' @param matches Required. Grouping variable to aggregate up by, typically made with geo_match
 #' @param geometry Boolean. Whether to keep geometry or not.
 #'
 #' @importFrom sf st_union st_as_sf st_drop_geometry
-#' @importFrom dplyr summarize arrange 
+#' @importFrom dplyr summarize arrange
 #' @return dataframe with length(unique(matches)) rows
 #' @export
 #' @concept datatable
-#' @examples 
+#' @examples
 #' set.seed(1)
 #' data(rockland)
 #' rockland$id <- sample(1:2, nrow(rockland), TRUE)
 #' block2prec(rockland, rockland$id)
-#' 
+#'
 block2prec <- function(block_table, matches, geometry = FALSE){
   if(missing(block_table)){
     stop("Please provide an argument to block_table.")
@@ -374,12 +374,12 @@ block2prec <- function(block_table, matches, geometry = FALSE){
   if(missing(matches)){
     stop("Please provide an argument to matches")
   }
-  
+
   block_table <- block_table %>% mutate(matches_id = matches)
-  
+
   if(!geometry){
-    ret <- block_table %>% sf::st_drop_geometry() %>% 
-      group_by(matches_id) %>% 
+    ret <- block_table %>% sf::st_drop_geometry() %>%
+      group_by(matches_id) %>%
       dplyr::summarize(
         state = ifelse(length(unique(.data$state)) == 1, unique(.data$state), NA),
         county = ifelse(length(unique(.data$county)) == 1, unique(.data$county), NA),
@@ -404,8 +404,8 @@ block2prec <- function(block_table, matches, geometry = FALSE){
         .groups = 'drop'
       )
   } else {
-    ret <- block_table %>% 
-      group_by(matches_id) %>% 
+    ret <- block_table %>%
+      group_by(matches_id) %>%
       dplyr::summarize(
         state = ifelse(length(unique(.data$state)) == 1, unique(.data$state), NA),
         county = ifelse(length(unique(.data$county)) == 1, unique(.data$county), NA),
@@ -427,17 +427,17 @@ block2prec <- function(block_table, matches, geometry = FALSE){
         vap_nhpi  = sum(.data$vap_nhpi),
         vap_other = sum(.data$vap_other),
         vap_two   = sum(.data$vap_two),
-        geometry = st_union(geometry), 
+        geometry = st_union(geometry),
         .groups = 'drop'
       ) %>% st_as_sf()
   }
-  
+
   ret <- ret %>% arrange(matches_id)
-  
+
   if(nrow(ret) != max(matches)){
     for(i in 1:max(matches)){
       if(ret$matches_id[i] != i){
-        ret <- ret %>% add_row(matches_id = i, 
+        ret <- ret %>% add_row(matches_id = i,
                                state = ifelse(length(unique(.data$state)) == 1, unique(.data$state), NA),
                                county = ifelse(length(unique(.data$county)) == 1, unique(.data$county), NA),
                                pop       = 0,
@@ -463,14 +463,14 @@ block2prec <- function(block_table, matches, geometry = FALSE){
 
     }
   }
-  
-  
+
+
   return(ret)
 }
 
 
 #' Aggregate Block Table by Matches and County
-#' 
+#'
 #' Performs the same type of operation as block2prec, but subsets a precinct geometry
 #' based on a County fips column. This helps get around the problem that county geometries
 #' often have borders that follow rivers and lead to funny shaped blocks. This guarantees
@@ -478,8 +478,8 @@ block2prec <- function(block_table, matches, geometry = FALSE){
 #'
 #' @param block_table Required. Block table output from create_block_table
 #' @param precinct sf dataframe of shapefiles to match to.
-#' @param precinct_county_fips Column within precincts 
-#' 
+#' @param precinct_county_fips Column within precincts
+#'
 #' @return dataframe with nrow(precinct) rows
 #' @export
 #' @concept datatable
@@ -491,7 +491,7 @@ block2prec <- function(block_table, matches, geometry = FALSE){
 #' block2prec_by_county(block, towns, 'fips')
 #' }
 block2prec_by_county <- function(block_table, precinct, precinct_county_fips){
-  
+
   if(missing(block_table)){
     stop('Please provide an argument to block_table.')
   }
@@ -504,40 +504,40 @@ block2prec_by_county <- function(block_table, precinct, precinct_county_fips){
   if(!precinct_county_fips %in% names(precinct)){
     stop('precinct_county_fips is not the name of a column in precinct.')
   }
-  
-  
-  precinct <- precinct %>% mutate(rowid = row_number()) %>% 
+
+
+  precinct <- precinct %>% mutate(rowid = row_number()) %>%
     select(rowid, geometry, all_of(precinct_county_fips))
-  
+
   prectb <- tibble()
   countiesl <- unique(block_table$county)
-  
+
   for(cty in 1:length(countiesl)){
 
     bsub <- block_table %>% filter(.data$county == countiesl[cty])
-    psub <- precinct %>% filter(.data[[precinct_county_fips]] == countiesl[cty]) %>% 
+    psub <- precinct %>% filter(.data[[precinct_county_fips]] == countiesl[cty]) %>%
       mutate(matches_id = row_number())
-    
+
     matches <- geo_match(from = bsub, to = psub)
     prectemp <- block2prec(bsub, matches = matches)
-    
-    prectemp <- prectemp %>% left_join(y = psub %>% sf::st_drop_geometry() 
+
+    prectemp <- prectemp %>% left_join(y = psub %>% sf::st_drop_geometry()
                                        %>% select(rowid, matches_id), by = 'matches_id')
-    
+
     prectb <- prectb %>% bind_rows(prectemp)
   }
-  
+
   prectb <- prectb %>% arrange(rowid) %>% mutate(matches_id = rowid) %>% select(-rowid)
-  
+
   return(prectb)
 }
 
 
 globalVariables(c('GEOID', 'variable', 'value', 'AWATER10', 'ALAND10', 'County',
-                  'State', 'pop', 'pop_black', 'pop_hisp', 'pop_other', 
+                  'State', 'pop', 'pop_black', 'pop_hisp', 'pop_other',
                   'pop_white', 'vap', 'rowid', 'geometry', '.data',
-                  'COUNTYFP', 'cvap_black', 'cvap_hisp', 'cvap_white', 'STATEFP', 
-                  'estimate', 
+                  'COUNTYFP', 'cvap_black', 'cvap_hisp', 'cvap_white', 'STATEFP',
+                  'estimate',
                   'vap_black', 'vap_hisp', 'vap_other', 'vap_white', 'matches_id',
                   "m_vap", "m_nvap", "f_vap", "f_nvap", "m_vap_black", "Mnvap_black",
                   "f_vap_black",  "f_nvap_black", "m_vap_white",  "Mnvap_white", "f_vap_white",
