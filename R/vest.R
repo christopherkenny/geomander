@@ -29,9 +29,10 @@ get_vest <- function(state, year, path = tempdir(), clean_names = TRUE) {
     writeBin(con = tf)
   zip::unzip(tf, exdir = path)
   
-  up_path <- stringr::str_starts(stringr::str_glue('{abb}_{year}'))
+  poss <-  sf::st_layers(dsn = path)[[1]]
+  up_path <- poss[stringr::str_starts(string = poss, stringr::str_glue('{abb}_{year}'))]
   
-  out <- sf::st_read(path, layer = up_path)
+  out <- sf::st_read(dsn = paste0(path, '/', up_path,'.shp'))
   
   if (clean_names) {
     out <- out %>% clean_vest()
