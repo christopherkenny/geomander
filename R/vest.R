@@ -24,12 +24,14 @@ get_vest <- function(state, year, path = tempdir(), clean_names = TRUE) {
   
   
   tf <- tempfile(fileext = '.zip')
-  dataverse::get_file_by_name(filename = file_name, dataset = doi, 
+  x <- dataverse::get_file_by_name(filename = file_name, dataset = doi, 
                               server = 'dataverse.harvard.edu') %>% 
     writeBin(con = tf)
   zip::unzip(tf, exdir = path)
   
-  out <- sf::st_read(path, layer = stringr::str_glue('{abb}_{year}'))
+  up_path <- stringr::str_starts(stringr::str_glue('{abb}_{year}'))
+  
+  out <- sf::st_read(path, layer = up_path)
   
   if (clean_names) {
     out <- out %>% clean_vest()
