@@ -94,7 +94,7 @@ estimate_down <- function(wts, value, group){
     ungroup() %>% 
     mutate(cont = wts/GTot)
   
-  tb2 <- tibble(group = 1:max(group), value = value)
+  tb2 <- tibble(group = 1:length(value), value = value)
   
   tb <- tb %>% left_join(tb2, by = 'group') %>% mutate(out = cont*value)
   
