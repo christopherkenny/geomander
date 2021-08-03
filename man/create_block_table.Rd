@@ -4,16 +4,27 @@
 \alias{create_block_table}
 \title{Create Block Level Data}
 \usage{
-create_block_table(state, county, geography = TRUE, year = 2010)
+create_block_table(
+  state,
+  county = NULL,
+  geometry = TRUE,
+  year = 2010,
+  mem = FALSE,
+  geography
+)
 }
 \arguments{
 \item{state}{Required. Two letter state postal code.}
 
 \item{county}{Optional. Name of county.  If not provided, returns blocks for the entire state.}
 
-\item{geography}{Defaults to TRUE. Whether to return the geography or not.}
+\item{geometry}{Defaults to TRUE. Whether to return the geometry or not.}
 
 \item{year}{year, must be 2000, 2010, or 2020 once released.}
+
+\item{mem}{Default is FALSE. Set TRUE to use memoized backend.}
+
+\item{geography}{Deprecated. Use geometry.}
 }
 \value{
 dataframe with data for each block in the selected region. Data includes
@@ -27,7 +38,7 @@ standard redistricting variables.
 \examples{
 \dontrun{
 # uses the Census API
-create_block_table(state = 'NY', county = 'Rockland', geography = FALSE)
+create_block_table(state = 'NY', county = 'Rockland', geometry = FALSE)
 }
 }
 \concept{datatable}
