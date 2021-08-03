@@ -15,7 +15,7 @@ Imports:
   dplyr,
   magrittr,
   nngeo,
-  sf,
+  sf (>= 1.0.0),
   stringr,
   tibble,
   tidycensus,
