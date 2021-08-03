@@ -23,7 +23,8 @@ Imports:
   tigris,
   ggplot2,
   readr,
-  spdep
+  spdep,
+  Rcpp
 Depends: 
     R (>= 2.10)
 Suggests:
