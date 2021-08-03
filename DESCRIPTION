@@ -24,7 +24,7 @@ Imports:
   ggplot2,
   readr,
   spdep,
-  Rcpp
+  Rcpp (>= 1.0.7)
 Depends: 
     R (>= 2.10)
 Suggests:
