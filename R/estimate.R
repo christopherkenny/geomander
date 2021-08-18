@@ -40,7 +40,7 @@ geo_estimate_down <- function(from, to, wts, value, method = 'center'){
     dplyr::group_by(group) %>% 
     dplyr::mutate(GTot = sum(wts)) %>% 
     dplyr::ungroup() %>% 
-    dplyr::mutate(dplyr::if_else(GTot == 0, wts = 1, wts = wts)) %>% 
+    dplyr::mutate(dplyr::if_else(GTot == 0, 1, wts)) %>% 
     dplyr::group_by(group) %>% 
     dplyr::mutate(GTot = sum(wts)) %>% 
     dplyr::ungroup() %>% 
