@@ -26,7 +26,8 @@ Imports:
     spdep,
     zip,
     dataverse,
-    censable
+    censable,
+  Rcpp (>= 1.0.7)
 Depends: 
     R (>= 2.10)
 Suggests:
