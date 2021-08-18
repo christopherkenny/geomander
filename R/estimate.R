@@ -37,16 +37,23 @@ geo_estimate_down <- function(from, to, wts, value, method = 'center'){
   }
   
   tb <- tibble(wts = wts, group = group) %>% 
-    group_by(group) %>% 
-    mutate(GTot = sum(wts)) %>% 
-    ungroup() %>% 
-    mutate(cont = wts/GTot)
+    dplyr::group_by(group) %>% 
+    dplyr::mutate(GTot = sum(wts)) %>% 
+    dplyr::ungroup() %>% 
+    dplyr::mutate(dplyr::if_else(GTot == 0, 1, wts)) %>% 
+    dplyr::group_by(group) %>% 
+    dplyr::mutate(GTot = sum(wts)) %>% 
+    dplyr::ungroup() %>% 
+    dplyr::mutate(cont = wts/GTot)
   
   tb2 <- tibble(group = 1:length(value), value = value)
   
-  tb <- tb %>% left_join(tb2, by = 'group') %>% mutate(out = cont*value)
+  tb <- tb %>% 
+    dplyr::left_join(tb2, by = 'group') %>% 
+    dplyr::mutate(out = cont*value)
   
-  tb <- tb %>% mutate(out = ifelse(is.na(out), 0, out))
+  tb <- tb %>% 
+    dplyr::mutate(out = ifelse(is.na(out), 0, out))
   
   return(tb$out)
 }
@@ -89,16 +96,23 @@ estimate_down <- function(wts, value, group){
   }
   
   tb <- tibble(wts = wts, group = group) %>% 
-    group_by(group) %>% 
-    mutate(GTot = sum(wts)) %>% 
-    ungroup() %>% 
-    mutate(cont = wts/GTot)
+    dplyr::group_by(group) %>% 
+    dplyr::mutate(GTot = sum(wts)) %>% 
+    dplyr::ungroup() %>% 
+    dplyr::mutate(wts = dplyr::if_else(GTot == 0, 1, wts)) %>% 
+    dplyr::group_by(group) %>% 
+    dplyr::mutate(GTot = sum(wts)) %>% 
+    dplyr::ungroup() %>% 
+    dplyr::mutate(cont = wts/GTot)
   
-  tb2 <- tibble(group = 1:max(group), value = value)
+  tb2 <- tibble(group = 1:length(value), value = value)
   
-  tb <- tb %>% left_join(tb2, by = 'group') %>% mutate(out = cont*value)
+  tb <- tb %>% 
+    dplyr::left_join(tb2, by = 'group') %>% 
+    dplyr::mutate(out = cont*value)
   
-  tb <- tb %>% mutate(out = ifelse(is.na(out), 0, out))
+  tb <- tb %>% 
+    dplyr::mutate(out = ifelse(is.na(out), 0, out))
   
   return(tb$out)
 }

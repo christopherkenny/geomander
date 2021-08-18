@@ -4,16 +4,27 @@
 \alias{create_tract_table}
 \title{Create Tract Level Data}
 \usage{
-create_tract_table(state, county, geography = TRUE, year = 2019)
+create_tract_table(
+  state,
+  county,
+  geometry = TRUE,
+  year = 2019,
+  mem = FALSE,
+  geography
+)
 }
 \arguments{
 \item{state}{Required. Two letter state postal code.}
 
 \item{county}{Optional. Name of county.  If not provided, returns tracts for the entire state.}
 
-\item{geography}{Defaults to TRUE. Whether to return the geography or not.}
+\item{geometry}{Defaults to TRUE. Whether to return the geography or not.}
 
 \item{year}{year, must be >= 2009 and <= 2019.}
+
+\item{mem}{Default is FALSE. Set TRUE to use memoized backend.}
+
+\item{geography}{Deprecated. Use geometry.}
 }
 \value{
 dataframe with data for each tract in the selected region. Data includes

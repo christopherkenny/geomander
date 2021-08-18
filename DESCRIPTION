@@ -1,7 +1,7 @@
 Package: geomander
 Type: Package
 Title: Geographic Tools for Studying Gerrymandering
-Version: 1.1.0
+Version: 1.1.0.9000
 Date: 2021-07-02
 Authors@R: person("Christopher T.", "Kenny", email = "christopherkenny@fas.harvard.edu",
                   role = c("aut", "cre"), comment = c(ORCID = "0000-0002-9386-6860"))
@@ -12,18 +12,21 @@ BugReports: https://github.com/christopherkenny/geomander/issues
 RoxygenNote: 7.1.1
 LinkingTo: Rcpp
 Imports:
-  dplyr,
-  magrittr,
-  nngeo,
-  sf (>= 1.0.0),
-  stringr,
-  tibble,
-  tidycensus,
-  tidyr,
-  tigris,
-  ggplot2,
-  readr,
-  spdep,
+    dplyr,
+    magrittr,
+    nngeo,
+    sf,
+    stringr,
+    tibble,
+    tidycensus,
+    tidyr,
+    tigris,
+    ggplot2,
+    readr,
+    spdep,
+    zip,
+    dataverse,
+    censable,
   Rcpp (>= 1.0.7)
 Depends: 
     R (>= 2.10)
