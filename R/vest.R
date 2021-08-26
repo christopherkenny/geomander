@@ -62,14 +62,16 @@ clean_vest <- function(data) {
     off <- tolower(stringr::str_sub(noms[gen[i]], 4, 6))
     yr <- stringr::str_sub(noms[gen[i]], 2, 3)
     party <- vest_party(noms[gen[i]])
-    noms[gen[i]] <- stringr::str_glue('{off}_{yr}_{party}')
+    cand <- tolower(stringr::str_sub(noms[gen[i]], 8, 10))
+    noms[gen[i]] <- stringr::str_glue('{off}_{yr}_{party}_{cand}')
   }
   
   for (i in seq_along(run)) {
-    off <- tolower(stringr::str_sub(noms[gen[i]], 4, 6))
-    yr <- paste0('r', stringr::str_sub(noms[gen[i]], 2, 3))
-    party <- vest_party(noms[gen[i]])
-    noms[run[i]] <- stringr::str_glue('{off}_{yr}_{party}')
+    off <- tolower(stringr::str_sub(noms[run[i]], 4, 6))
+    yr <- paste0('r', stringr::str_sub(noms[run[i]], 2, 3))
+    party <- vest_party(noms[run[i]])
+    cand <- tolower(stringr::str_sub(noms[run[i]], 8, 10))
+    noms[run[i]] <- stringr::str_glue('{off}_{yr}_{party}_{cand}')
   }
   
   names(data) <- noms
