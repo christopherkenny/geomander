@@ -14,11 +14,11 @@ get_alarm <- function(state, geometry = TRUE, file = tempfile(fileext = '.csv'))
   state <- tolower(censable::match_abb(state))
   end_path <- paste0(state, '_2020_vtd.csv')
   out <- NULL
-  try({out <- download.file(url = paste0(base_path, end_path), file)})
+  try({out <- utils::download.file(url = paste0(base_path, end_path), file)})
   
   if (is.null(out)) {
     end_path <- paste0(state, '_2020_block.csv')
-    try({out <- download.file(url = paste0(base_path, end_path), file)})
+    try({out <- utils::download.file(url = paste0(base_path, end_path), file)})
     if (is.null(out)) {
       stop(stringr::str_glue('State {state} not found in ALARM Data.'))
     }
@@ -28,7 +28,7 @@ get_alarm <- function(state, geometry = TRUE, file = tempfile(fileext = '.csv'))
  
   if (geometry) {
     geo <- PL94171::pl_get_vtd(toupper(state)) %>% 
-      dplyr::select(GEOID20, geometry)
+      dplyr::select(.data$GEOID20, .data$geometry)
     tb <- tb %>% 
       dplyr::left_join(geo, by = 'GEOID20')
   }
