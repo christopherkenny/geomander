@@ -35,6 +35,40 @@ add_edge <- function(adjacency, v1, v2, zero = TRUE){
   return(adjacency)
 }
 
+#' Subtract Edges from an Adjacency List
+#'
+#' @param adjacency list of adjacent precincts
+#' @param v1 integer or integer array for first vertex to connect.
+#' If array, connects each to corresponding entry in v2.
+#' @param v2 integer or integer array for second vertex to connect.
+#' If array, connects each to corresponding entry in v1.
+#' @param zero boolean, TRUE if `adjacency` is zero indexed. False if one indexed.
+#'
+#' @md
+#' @return adjacency list.
+#'
+#' data(towns)
+#' adj <- adjacency(towns)
+#' add_edge(adj, 2, 3)
+subtract_edge <- function(adjacency, v1, v2, zero = TRUE) {
+  
+  if (length(v1) != length(v2)) {
+    stop('v1 and v2 lengths are different.')
+  }
+  
+  for (i in seq_along(v1)) {
+    if (zero) {
+      adjacency[[v1[i]]] <- setdiff(adjacency[[v1[i]]], v2[i] - 1)
+      adjacency[[v2[i]]] <- setdiff(adjacency[[v2[i]]], v1[i] - 1)
+    } else {
+      adjacency[[v1[i]]] <- setdiff(adjacency[[v1[i]]], v2[i])
+      adjacency[[v2[i]]] <- setdiff(adjacency[[v2[i]]], v1[i])
+    }
+  }
+  
+  adjacency
+}
+
 #' Suggest Neighbors for Lonely Precincts
 #'
 #' For precincts which have no adjacent precincts, this suggests the nearest precinct

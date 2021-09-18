@@ -3,6 +3,7 @@
 * Update variables to allow 2000 support in `create_block_table()`
 * Add VEST import tools
 * Fix edge case where no geo_match for final entries in `estimate_down()`
+* Add ALARM import tools
 
 # geomander 1.0.9
 * Address SD and AK create_block_table assumptions
