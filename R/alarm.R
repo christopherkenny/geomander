@@ -28,8 +28,10 @@ get_alarm <- function(state, geometry = TRUE, file = tempfile(fileext = '.csv'))
  
   if (geometry) {
     geo <- PL94171::pl_get_vtd(toupper(state)) %>% 
-      dplyr::select(.data$GEOID20, .data$geometry)
+      dplyr::select(.data$GEOID20, .data$geometry) %>% 
+      dplyr::mutate(GEOID20 = as.character(.data$GEOID20))
     tb <- tb %>% 
+      dplyr::mutate(GEOID20 = as.character(.data$GEOID20)) %>% 
       dplyr::left_join(geo, by = 'GEOID20')
   }
   
