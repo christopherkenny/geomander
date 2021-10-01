@@ -32,7 +32,8 @@ get_alarm <- function(state, geometry = TRUE, file = tempfile(fileext = '.csv'))
       dplyr::mutate(GEOID20 = as.character(.data$GEOID20))
     tb <- tb %>% 
       dplyr::mutate(GEOID20 = as.character(.data$GEOID20)) %>% 
-      dplyr::left_join(geo, by = 'GEOID20')
+      dplyr::left_join(geo, by = 'GEOID20') %>% 
+      sf::st_as_sf()
   }
   
   tb 
