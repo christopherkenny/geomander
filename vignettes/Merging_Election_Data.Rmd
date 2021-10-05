@@ -40,7 +40,7 @@ unique(va18sub$COUNTYFP)
 After noting the countiy included, we can use create_block_table to collect the key population boxes needed for most redistricting analysis.
 
 ```{r, message = FALSE, results = 'hide', eval=FALSE}
-block <- create_block_table(state = 'VA', county = '087')  
+block <- create_block_table(state = 'VA', county = '087', year = 2010)  
 ```
 
 To avoid needing API access, we can use saved data. These polygons are simplified using `rmapshaper`.

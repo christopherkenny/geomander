@@ -6,7 +6,7 @@
 #' @param state Required. Two letter state postal code.
 #' @param county Optional. Name of county.  If not provided, returns blocks for the entire state.
 #' @param geometry Defaults to TRUE. Whether to return the geometry or not.
-#' @param year year, must be 2000, 2010, or 2020 once released.
+#' @param year year, must be 2000, 2010, or 2020
 #' @param mem Default is FALSE. Set TRUE to use memoized backend.
 #' @param geography Deprecated. Use geometry.
 #' 
@@ -26,7 +26,7 @@
 #' # uses the Census API
 #' create_block_table(state = 'NY', county = 'Rockland', geometry = FALSE)
 #' }
-create_block_table <- function(state, county = NULL, geometry = TRUE, year = 2010, mem = FALSE, 
+create_block_table <- function(state, county = NULL, geometry = TRUE, year = 2020, mem = FALSE, 
                                geography){
   
   if (!missing(geography)) {
@@ -136,92 +136,35 @@ block2prec <- function(block_table, matches, geometry = FALSE){
   
   if(!geometry){
     ret <- block_table %>% sf::st_drop_geometry() %>%
-      group_by(matches_id) %>%
-      dplyr::summarize(
-        state = ifelse(length(unique(.data$state)) == 1, unique(.data$state), NA),
-        county = ifelse(length(unique(.data$county)) == 1, unique(.data$county), NA),
-        pop       = sum(.data$pop),
-        pop_white = sum(.data$pop_white),
-        pop_black = sum(.data$pop_black),
-        pop_hisp  = sum(.data$pop_hisp),
-        pop_aian  = sum(.data$pop_aian),
-        pop_asian = sum(.data$pop_asian),
-        pop_nhpi  = sum(.data$pop_nhpi),
-        pop_other = sum(.data$pop_other),
-        pop_two   = sum(.data$pop_two),
-        vap       = sum(.data$vap),
-        vap_hisp  = sum(.data$vap_hisp),
-        vap_white = sum(.data$vap_white),
-        vap_black = sum(.data$vap_black),
-        vap_aian  = sum(.data$vap_aian),
-        vap_asian = sum(.data$vap_asian),
-        vap_nhpi  = sum(.data$vap_nhpi),
-        vap_other = sum(.data$vap_other),
-        vap_two   = sum(.data$vap_two),
+      dplyr::group_by(matches_id) %>%
+      dplyr::summarize(dplyr::across(where(is.numeric), sum),
+                       dplyr::across(where(function(x)length(unique(x)) == 1), unique),
         .groups = 'drop'
       )
   } else {
     ret <- block_table %>%
-      group_by(matches_id) %>%
-      dplyr::summarize(
-        state = ifelse(length(unique(.data$state)) == 1, unique(.data$state), NA),
-        county = ifelse(length(unique(.data$county)) == 1, unique(.data$county), NA),
-        pop       = sum(.data$pop),
-        pop_white = sum(.data$pop_white),
-        pop_black = sum(.data$pop_black),
-        pop_hisp  = sum(.data$pop_hisp),
-        pop_aian  = sum(.data$pop_aian),
-        pop_asian = sum(.data$pop_asian),
-        pop_nhpi  = sum(.data$pop_nhpi),
-        pop_other = sum(.data$pop_other),
-        pop_two   = sum(.data$pop_two),
-        vap       = sum(.data$vap),
-        vap_hisp  = sum(.data$vap_hisp),
-        vap_white = sum(.data$vap_white),
-        vap_black = sum(.data$vap_black),
-        vap_aian  = sum(.data$vap_aian),
-        vap_asian = sum(.data$vap_asian),
-        vap_nhpi  = sum(.data$vap_nhpi),
-        vap_other = sum(.data$vap_other),
-        vap_two   = sum(.data$vap_two),
-        geometry = st_union(geometry),
-        .groups = 'drop'
-      ) %>% st_as_sf()
+      dplyr::group_by(matches_id) %>%
+      dplyr::summarize(dplyr::across(where(is.numeric), sum),
+                       dplyr::across(where(function(x)length(unique(x)) == 1), unique),
+                       geometry = st_union(geometry),
+                       .groups = 'drop'
+      ) %>% 
+      sf::st_as_sf()
   }
   
   ret <- ret %>% arrange(matches_id)
-  
+  missed <- c()
   if(nrow(ret) != max(matches)){
     for(i in 1:max(matches)){
       if(ret$matches_id[i] != i){
         ret <- ret %>% add_row(matches_id = i,
-                               state = ifelse(length(unique(.data$state)) == 1, unique(.data$state), NA),
-                               county = ifelse(length(unique(.data$county)) == 1, unique(.data$county), NA),
-                               pop       = 0,
-                               pop_white = 0,
-                               pop_black = 0,
-                               pop_hisp  = 0,
-                               pop_aian  = 0,
-                               pop_asian = 0,
-                               pop_nhpi  = 0,
-                               pop_other = 0,
-                               pop_two   = 0,
-                               vap       = 0,
-                               vap_hisp  = 0,
-                               vap_white = 0,
-                               vap_black = 0,
-                               vap_aian  = 0,
-                               vap_asian = 0,
-                               vap_nhpi  = 0,
-                               vap_other = 0,
-                               vap_two   = 0,
                                .after = (i-1))
+        missed <- c(missed, i)
       }
-      
     }
+    ret <- update_tb(ret, missed) 
   }
-  
-  
+
   return(ret)
 }
 
@@ -290,6 +233,41 @@ block2prec_by_county <- function(block_table, precinct, precinct_county_fips){
 }
 
 
+update_tb <- function(ret, missed) {
+  expected <- tibble::tibble(
+    matches_id = missed,
+    state = ifelse(length(unique(ret$state, na.rm = TRUE)) == 1, unique(ret$state, na.rm = TRUE), NA),
+    county = ifelse(length(unique(ret$county, na.rm = TRUE)) == 1, unique(ret$county, na.rm = TRUE), NA),
+    pop       = 0,
+    pop_white = 0,
+    pop_black = 0,
+    pop_hisp  = 0,
+    pop_aian  = 0,
+    pop_asian = 0,
+    pop_nhpi  = 0,
+    pop_other = 0,
+    pop_two   = 0,
+    vap       = 0,
+    vap_hisp  = 0,
+    vap_white = 0,
+    vap_black = 0,
+    vap_aian  = 0,
+    vap_asian = 0,
+    vap_nhpi  = 0,
+    vap_other = 0,
+    vap_two   = 0
+    )
+  
+  expected <- expected %>% 
+    dplyr::select(dplyr::any_of(base::intersect(names(expected), names(ret))))
+  
+  if (ncol(expected) == 0){
+    return(ret)
+  }
+  cat(missed)
+  dplyr::rows_patch(x = ret, y = expected, by = 'matches_id')
+}
+
 globalVariables(c('GEOID', 'variable', 'value', 'AWATER10', 'ALAND10', 'County',
                   'State', 'pop', 'pop_black', 'pop_hisp', 'pop_other',
                   'pop_white', 'vap', 'rowid', 'geometry', '.data',
@@ -298,4 +276,5 @@ globalVariables(c('GEOID', 'variable', 'value', 'AWATER10', 'ALAND10', 'County',
                   'vap_black', 'vap_hisp', 'vap_other', 'vap_white', 'matches_id',
                   "m_vap", "m_nvap", "f_vap", "f_nvap", "m_vap_black", "Mnvap_black",
                   "f_vap_black",  "f_nvap_black", "m_vap_white",  "Mnvap_white", "f_vap_white",
-                  "f_nvap_white", "m_vap_hisp",   "Mnvap_hisp", "f_vap_hisp",   "f_nvap_hisp"))
+                  "f_nvap_white", "m_vap_hisp",   "Mnvap_hisp", "f_vap_hisp",   "f_nvap_hisp",
+                  'where'))

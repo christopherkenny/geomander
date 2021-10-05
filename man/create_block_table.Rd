@@ -8,7 +8,7 @@ create_block_table(
   state,
   county = NULL,
   geometry = TRUE,
-  year = 2010,
+  year = 2020,
   mem = FALSE,
   geography
 )
@@ -20,7 +20,7 @@ create_block_table(
 
 \item{geometry}{Defaults to TRUE. Whether to return the geometry or not.}
 
-\item{year}{year, must be 2000, 2010, or 2020 once released.}
+\item{year}{year, must be 2000, 2010, or 2020}
 
 \item{mem}{Default is FALSE. Set TRUE to use memoized backend.}
 

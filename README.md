@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# geomander
+# geomander <img src='man/figures/logo.png' align="right" height="139" />
 
 <!-- badges: start -->
 
@@ -37,31 +37,34 @@ devtools::install_github("christopherkenny/geomander")
 
 ## Examples
 
+For speed, I recommend setting the following:
+
+``` r
+sf::sf_use_s2(FALSE)
+#> Spherical geometry (s2) switched off
+```
+
 A very common task is aggregating block data to precincts.
 
 ``` r
 library(geomander)
 library(tidyverse)
-#> -- Attaching packages --------------------------------------- tidyverse 1.3.1 --
-#> v ggplot2 3.3.5     v purrr   0.3.4
-#> v tibble  3.1.2     v dplyr   1.0.7
-#> v tidyr   1.1.3     v stringr 1.4.0
-#> v readr   1.4.0     v forcats 0.5.1
-#> -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+#> ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
+#> ✓ ggplot2 3.3.5     ✓ purrr   0.3.4
+#> ✓ tibble  3.1.5     ✓ dplyr   1.0.7
+#> ✓ tidyr   1.1.4     ✓ stringr 1.4.0
+#> ✓ readr   2.0.2     ✓ forcats 0.5.1
+#> ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 #> x dplyr::filter() masks stats::filter()
 #> x dplyr::lag()    masks stats::lag()
- 
 # load precincts
-data("va18sub")
-
-# subset to target area
-va18sub <- va18sub
+data('va18sub')
 
 # create block data
 block <- create_block_table(state = 'VA', county = '087')  
 #> Getting data from the 2010 decennial Census
+#> Downloading feature geometry from the Census website.  To cache shapefiles for use in future sessions, set `options(tigris_use_cache = TRUE)`.
 #> Using Census Summary File 1
-
 # match the geographies
 matches <- geo_match(from = block, to = va18sub)
 
@@ -96,4 +99,4 @@ disagg <- geo_estimate_down(from = va18sub, to = block, wts = block$vap, value =
 ```
 
 For more information, see the documentation and vignettes, available at
-<https://christopherkenny.github.io/geomander/>
+<https://www.christophertkenny.com/geomander/>

@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# geomander
+# geomander <img src='man/figures/logo.png' align="right" height="139" />
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/christopherkenny/geomander/workflows/R-CMD-check/badge.svg)](https://github.com/christopherkenny/geomander/actions)
@@ -42,6 +42,12 @@ devtools::install_github("christopherkenny/geomander")
 
 ## Examples
 
+For speed, I recommend setting the following:
+```{r}
+sf::sf_use_s2(FALSE)
+```
+
+
 A very common task is aggregating block data to precincts.
 
 ```{r example, results = 'hide'}
@@ -49,10 +55,7 @@ library(geomander)
 library(tidyverse)
  
 # load precincts
-data("va18sub")
-
-# subset to target area
-va18sub <- va18sub
+data('va18sub')
 
 # create block data
 block <- create_block_table(state = 'VA', county = '087')  
@@ -62,7 +65,6 @@ matches <- geo_match(from = block, to = va18sub)
 
 # Aggregate
 prec <- block2prec(block_table = block, matches = matches)
-
 ```
 
 Other important tasks include breaking data into pieces by blocks underlying them.
@@ -87,4 +89,4 @@ And estimate down to blocks
 disagg <- geo_estimate_down(from = va18sub, to = block, wts = block$vap, value = va18sub$G18USSRSTE)
 ```
 
-For more information, see the documentation and vignettes, available at [https://christopherkenny.github.io/geomander/](https://christopherkenny.github.io/geomander/)
+For more information, see the documentation and vignettes, available at [https://www.christophertkenny.com/geomander/](https://www.christophertkenny.com/geomander/)

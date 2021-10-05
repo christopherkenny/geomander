@@ -1,5 +1,9 @@
 #' Get ALARM Dataset
 #'
+#' Get's a dataset from the Algorithm-Assisted Redistricting Methodology Project.
+#' The current supported data is the 2020 retabulations of the VEST data, which 
+#' can be downloaded with `get_vest`.
+#'
 #' @param state two letter state abbreviation
 #' @param geometry Default is TRUE. Add geomeetry to the data?
 #' @param file file path to save ALARM csv
@@ -8,7 +12,10 @@
 #' @export
 #'
 #' @examples
+#' \donttest{
+#' # Takes a few seconds t
 #' ak <- get_alarm('AK')
+#' }
 get_alarm <- function(state, geometry = TRUE, file = tempfile(fileext = '.csv')) {
   base_path <- 'https://raw.githubusercontent.com/christopherkenny/census-2020/elections/census-vest-2020/'
   state <- tolower(censable::match_abb(state))
@@ -27,7 +34,7 @@ get_alarm <- function(state, geometry = TRUE, file = tempfile(fileext = '.csv'))
   tb <- readr::read_csv(file = file, lazy = FALSE)
  
   if (geometry) {
-    geo <- PL94171::pl_get_vtd(toupper(state)) %>% 
+    geo <- tigris::voting_districts(state = state) %>% 
       dplyr::select(.data$GEOID20, .data$geometry) %>% 
       dplyr::mutate(GEOID20 = as.character(.data$GEOID20))
     tb <- tb %>% 

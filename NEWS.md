@@ -1,3 +1,11 @@
+# geomander 1.1.2
+* Fixes website redirects for CRAN.
+* Improves flexibility in `block2prec`.
+* Updates default year to 2020 for `create_block_table()`.
+
+# geomander 1.1.1
+* Replace `PL94171` import with `tigris`.
+
 # geomander 1.1.0
 * Collapse county calls into one for `create_block_table()`
 * Update variables to allow 2000 support in `create_block_table()`
