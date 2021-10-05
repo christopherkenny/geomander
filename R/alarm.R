@@ -53,7 +53,10 @@ get_alarm <- function(state, geometry = TRUE, file = tempfile(fileext = '.csv'))
 #' @export
 #'
 #' @examples
+#' \donttest{
+#' # relies on internet availability
 #' alarm_states()
+#' }
 alarm_states <- function() {
   con <- 'https://api.github.com/repos/christopherkenny/census-2020/git/trees/813facc1aca4b5d6a84bdae3efcf61b953d633cb'
   tf <- tempfile(fileext = '.json')
