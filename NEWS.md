@@ -2,6 +2,7 @@
 * Fixes website redirects for CRAN.
 * Improves flexibility in `block2prec`.
 * Updates default year to 2020 for `create_block_table()`.
+* Adds a polygon contiguity check. Slower than the standard contiguity check, but covers more edge cases.
 
 # geomander 1.1.1
 * Replace `PL94171` import with `tigris`.

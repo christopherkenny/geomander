@@ -38,6 +38,40 @@ check_contiguity <- function(adjacency, group){
   return(out) 
 }
 
+
+#' Check Polygon Contiguity
+#' 
+#' Cast `shp` to component polygons, build the adjacency, and check the contiguity.
+#' Avoids issues where a precinct is actually a multipolygon
+#' 
+#' @param shp An sf data frame
+#' @param group unqouted name of group identifier in shp
+#' @return tibble with a column for each of inputted group, created group number, and the 
+#' identified connected component number
+#' 
+#' @concept fix
+#' 
+#' @export
+#' 
+#' @examples 
+#' data(checkerboard)
+#' check_contiguity(checkerboard, i)
+#' 
+check_polygon_contiguity <- function(shp, group) {
+  shp <- shp %>% 
+    dplyr::select({{ group }}) %>% 
+    sf::st_cast('POLYGON') %>% 
+    sf::st_as_sf() %>% 
+    suppressWarnings()
+  
+  adj <- adjacency(shp)
+  
+  check_contiguity(adjacency = adj, group = shp %>% 
+                     sf::st_drop_geometry() %>% 
+                     dplyr::pull({{ group }})
+  )
+}
+
 #' Suggest Connections for Disconnected Groups
 #' 
 #' Suggests nearest neighbors for connecting a disconnected group.
