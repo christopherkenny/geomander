@@ -55,7 +55,7 @@ check_contiguity <- function(adjacency, group){
 #' 
 #' @examples 
 #' data(checkerboard)
-#' check_contiguity(checkerboard, i)
+#' check_polygon_contiguity(checkerboard, i)
 #' 
 check_polygon_contiguity <- function(shp, group) {
   shp <- shp %>% 

@@ -21,7 +21,7 @@ Avoids issues where a precinct is actually a multipolygon
 }
 \examples{
 data(checkerboard)
-check_contiguity(checkerboard, i)
+check_polygon_contiguity(checkerboard, i)
 
 }
 \concept{fix}
