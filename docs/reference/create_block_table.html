@@ -40,7 +40,7 @@
 
 
 <meta property="og:title" content="Create Block Level Data — create_block_table" />
-<meta property="og:description" content="Creates a block level dataset, using the decennial census information, with the 
+<meta property="og:description" content="Creates a block level dataset, using the decennial census information, with the
 standard redistricting variables." />
 
 
@@ -73,7 +73,7 @@ standard redistricting variables." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.2</span>
       </span>
     </div>
 
@@ -133,11 +133,18 @@ standard redistricting variables." />
     </div>
 
     <div class="ref-description">
-    <p>Creates a block level dataset, using the decennial census information, with the 
+    <p>Creates a block level dataset, using the decennial census information, with the
 standard redistricting variables.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>create_block_table</span><span class='op'>(</span><span class='va'>state</span>, <span class='va'>county</span>, geography <span class='op'>=</span> <span class='cn'>TRUE</span>, year <span class='op'>=</span> <span class='fl'>2010</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>create_block_table</span><span class='op'>(</span>
+  <span class='va'>state</span>,
+  county <span class='op'>=</span> <span class='cn'>NULL</span>,
+  geometry <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  year <span class='op'>=</span> <span class='fl'>2020</span>,
+  mem <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>geography</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -151,25 +158,33 @@ standard redistricting variables.</p>
       <td><p>Optional. Name of county.  If not provided, returns blocks for the entire state.</p></td>
     </tr>
     <tr>
-      <th>geography</th>
-      <td><p>Defaults to TRUE. Whether to return the geography or not.</p></td>
+      <th>geometry</th>
+      <td><p>Defaults to TRUE. Whether to return the geometry or not.</p></td>
     </tr>
     <tr>
       <th>year</th>
-      <td><p>year, must be 2010 at the moment. 2020 to be added once available. 2000 if rereleased.</p></td>
+      <td><p>year, must be 2000, 2010, or 2020</p></td>
+    </tr>
+    <tr>
+      <th>mem</th>
+      <td><p>Default is FALSE. Set TRUE to use memoized backend.</p></td>
+    </tr>
+    <tr>
+      <th>geography</th>
+      <td><p>Deprecated. Use geometry.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>dataframe with data for each block in the selected region. Data includes
-2 sets of columns for each race or ethnicity category: population (pop) and 
+2 sets of columns for each race or ethnicity category: population (pop) and
 voting age population (vap)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># uses the Census API</span>
-<span class='fu'>create_block_table</span><span class='op'>(</span>state <span class='op'>=</span> <span class='st'>'NY'</span>, county <span class='op'>=</span> <span class='st'>'Rockland'</span>, geography <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='fu'>create_block_table</span><span class='op'>(</span>state <span class='op'>=</span> <span class='st'>'NY'</span>, county <span class='op'>=</span> <span class='st'>'Rockland'</span>, geometry <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 <span class='op'>}</span>
 </div></pre>
   </div>

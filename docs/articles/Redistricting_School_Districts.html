@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.2</span>
       </span>
     </div>
 
@@ -82,7 +82,7 @@
 
       
 
-      </header><script src="Redistricting_School_Districts_files/header-attrs-2.8/header-attrs.js"></script><div class="row">
+      </header><script src="Redistricting_School_Districts_files/header-attrs-2.11/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Redistricting School Districts</h1>
@@ -98,7 +98,7 @@
     
 <p>The primary motivation behind this package is to make data preparation steps easier for redistricting simulation methods within R. This vignette covers a few key tasks, primarily building a block level dataset of population data, subsetting by spatial relationship, and then running a basic simulation. This is shown in the context of dividing North Rockland Central School District in NY into 7 wards at the block level.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://christopherkenny.github.io/geomander/">geomander</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.christophertkenny.com/geomander/">geomander</a></span><span class="op">)</span>
 
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
@@ -222,16 +222,16 @@
 ## Dimension:     XY
 ## Bounding box:  xmin: -74.1146 ymin: 41.17523 xmax: -73.9217 ymax: 41.32983
 ## Geodetic CRS:  NAD83
-## # A tibble: 7 x 11
+## # A tibble: 7 × 11
 ##   district   vap vap_white vap_black vap_hisp vap_aian vap_asian vap_nhpi
 ##      &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-## 1        1  5430      3733       502      868        6       261        0
-## 2        2  4881       773       350     3624       11        74        0
-## 3        3  5257      4327       133      642        3        97        1
-## 4        4  5098      4174       186      529        3       161        0
-## 5        5  5377      3145       686     1204        5       262        2
-## 6        6  5243      1559       881     2497        7       238        1
-## 7        7  5174      2719       528     1668       11       177        1
+## 1        1  4812       736       364     3578       11        72        0
+## 2        2  5321      1689       872     2453        7       240        2
+## 3        3  5473      3824       481      800        5       299        0
+## 4        4  5344      4332       192      602        3       170        0
+## 5        5  5234      3065       611     1279        5       217        1
+## 6        6  5117      2450       623     1760       11       185        1
+## 7        7  5159      4334       123      560        4        87        1
 ## # … with 3 more variables: vap_other &lt;dbl&gt;, vap_two &lt;dbl&gt;,
 ## #   geometry &lt;POLYGON [°]&gt;</code></pre>
   </div>

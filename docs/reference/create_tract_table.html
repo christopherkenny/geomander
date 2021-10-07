@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.2</span>
       </span>
     </div>
 
@@ -135,7 +135,14 @@
     <p>Create Tract Level Data</p>
     </div>
 
-    <pre class="usage"><span class='fu'>create_tract_table</span><span class='op'>(</span><span class='va'>state</span>, <span class='va'>county</span>, geography <span class='op'>=</span> <span class='cn'>TRUE</span>, year <span class='op'>=</span> <span class='fl'>2019</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>create_tract_table</span><span class='op'>(</span>
+  <span class='va'>state</span>,
+  <span class='va'>county</span>,
+  geometry <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  year <span class='op'>=</span> <span class='fl'>2019</span>,
+  mem <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>geography</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -149,12 +156,20 @@
       <td><p>Optional. Name of county.  If not provided, returns tracts for the entire state.</p></td>
     </tr>
     <tr>
-      <th>geography</th>
+      <th>geometry</th>
       <td><p>Defaults to TRUE. Whether to return the geography or not.</p></td>
     </tr>
     <tr>
       <th>year</th>
       <td><p>year, must be &gt;= 2009 and &lt;= 2019.</p></td>
+    </tr>
+    <tr>
+      <th>mem</th>
+      <td><p>Default is FALSE. Set TRUE to use memoized backend.</p></td>
+    </tr>
+    <tr>
+      <th>geography</th>
+      <td><p>Deprecated. Use geometry.</p></td>
     </tr>
     </table>
 

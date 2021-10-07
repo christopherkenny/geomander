@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.2</span>
       </span>
     </div>
 
@@ -82,7 +82,7 @@
 
       
 
-      </header><script src="Merging_Election_Data_files/header-attrs-2.8/header-attrs.js"></script><div class="row">
+      </header><script src="Merging_Election_Data_files/header-attrs-2.11/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Merging Election Data</h1>
@@ -99,7 +99,7 @@
 <p>A common issue in electoral geography is that data needs to be tied to a spatial component, but the pieces required for an analysis are not available at the desired levels of geography. This vignette walks through two common tasks. The first is collecting population data for precinct-level data, assuming that all (or nearly all) blocks can be matched to exactly one precinct. The second example is taking precinct-level data, estimating it down to a block level, and then aggregating up to voting districts. The second example is useful when state precincts do not match census voting districts or for when voting districts or precincts have changed over time.</p>
 <p>For most analyses, we want some combination of the below packages.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://christopherkenny.github.io/geomander/">geomander</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.christophertkenny.com/geomander/">geomander</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/walkerke/tigris">tigris</a></span><span class="op">)</span>
@@ -116,7 +116,7 @@
 <pre><code>## [1] "087"</code></pre>
 <p>After noting the countiy included, we can use create_block_table to collect the key population boxes needed for most redistricting analysis.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">block</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_block_table.html">create_block_table</a></span><span class="op">(</span>state <span class="op">=</span> <span class="st">'VA'</span>, county <span class="op">=</span> <span class="st">'087'</span><span class="op">)</span>  </code></pre></div>
+<code class="sourceCode R"><span class="va">block</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_block_table.html">create_block_table</a></span><span class="op">(</span>state <span class="op">=</span> <span class="st">'VA'</span>, county <span class="op">=</span> <span class="st">'087'</span>, year <span class="op">=</span> <span class="fl">2010</span><span class="op">)</span>  </code></pre></div>
 <p>To avoid needing API access, we can use saved data. These polygons are simplified using <code>rmapshaper</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"va_blocks"</span><span class="op">)</span>

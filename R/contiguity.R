@@ -45,7 +45,10 @@ check_contiguity <- function(adjacency, group){
 #' Avoids issues where a precinct is actually a multipolygon
 #' 
 #' @param shp An sf data frame
-#' @param group unqouted name of group identifier in shp
+#' @param group unquoted name of group identifier in shp. 
+#' Typically, this is district assignment. If you're looking for dis-contiguous precincts,
+#' this should be a row number.
+#' 
 #' @return tibble with a column for each of inputted group, created group number, and the 
 #' identified connected component number
 #' 
@@ -58,6 +61,13 @@ check_contiguity <- function(adjacency, group){
 #' check_polygon_contiguity(checkerboard, i)
 #' 
 check_polygon_contiguity <- function(shp, group) {
+  if(missing(shp)){
+    stop('Please provide an argument to shp')
+  }
+  if(missing(group)) {
+    stop('Please provide an argument to `group`.')
+  }
+  
   shp <- shp %>% 
     dplyr::select({{ group }}) %>% 
     sf::st_cast('POLYGON') %>% 

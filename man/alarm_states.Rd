@@ -13,8 +13,8 @@ character abbreviations for states
 List Available States from ALARM Data
 }
 \examples{
-\donttest{
-# relies on internet availability
+\dontrun{
+# relies on internet availability and interactivity on some systems
 alarm_states()
 }
 }

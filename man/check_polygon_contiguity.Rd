@@ -9,7 +9,9 @@ check_polygon_contiguity(shp, group)
 \arguments{
 \item{shp}{An sf data frame}
 
-\item{group}{unqouted name of group identifier in shp}
+\item{group}{unquoted name of group identifier in shp. 
+Typically, this is district assignment. If you're looking for dis-contiguous precincts,
+this should be a row number.}
 }
 \value{
 tibble with a column for each of inputted group, created group number, and the 

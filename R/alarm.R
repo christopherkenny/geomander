@@ -53,8 +53,8 @@ get_alarm <- function(state, geometry = TRUE, file = tempfile(fileext = '.csv'))
 #' @export
 #'
 #' @examples
-#' \donttest{
-#' # relies on internet availability
+#' \dontrun{
+#' # relies on internet availability and interactivity on some systems
 #' alarm_states()
 #' }
 alarm_states <- function() {

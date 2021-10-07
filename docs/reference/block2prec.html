@@ -73,7 +73,7 @@ the name block2prec." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.2</span>
       </span>
     </div>
 
@@ -165,15 +165,15 @@ the name block2prec.</p>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>rockland</span><span class='op'>)</span>
 <span class='va'>rockland</span><span class='op'>$</span><span class='va'>id</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>rockland</span><span class='op'>)</span>, <span class='cn'>TRUE</span><span class='op'>)</span>
 <span class='fu'>block2prec</span><span class='op'>(</span><span class='va'>rockland</span>, <span class='va'>rockland</span><span class='op'>$</span><span class='va'>id</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 2 x 21</span>
-#&gt;   matches_id state county    pop pop_white pop_black pop_hisp pop_aian pop_asian
-#&gt;        <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
-#&gt; <span style='color: #BCBCBC;'>1</span>          1 36    087    <span style='text-decoration: underline;'>163</span>089    <span style='text-decoration: underline;'>103</span>643     <span style='text-decoration: underline;'>19</span>762    <span style='text-decoration: underline;'>26</span>685      275     <span style='text-decoration: underline;'>10</span>073
-#&gt; <span style='color: #BCBCBC;'>2</span>          2 36    087    <span style='text-decoration: underline;'>148</span>598    <span style='text-decoration: underline;'>100</span>027     <span style='text-decoration: underline;'>14</span>861    <span style='text-decoration: underline;'>22</span>098      212      <span style='text-decoration: underline;'>9</span>026
-#&gt; <span style='color: #949494;'># … with 12 more variables: pop_nhpi &lt;dbl&gt;, pop_other &lt;dbl&gt;, pop_two &lt;dbl&gt;,</span>
-#&gt; <span style='color: #949494;'>#   vap &lt;dbl&gt;, vap_hisp &lt;dbl&gt;, vap_white &lt;dbl&gt;, vap_black &lt;dbl&gt;,</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 2 × 24</span>
+#&gt;   matches_id waterpct    pop pop_white pop_black pop_hisp pop_aian pop_asian
+#&gt;        <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
+#&gt; <span style='color: #BCBCBC;'>1</span>          1     54.9 <span style='text-decoration: underline;'>163</span>089    <span style='text-decoration: underline;'>103</span>643     <span style='text-decoration: underline;'>19</span>762    <span style='text-decoration: underline;'>26</span>685      275     <span style='text-decoration: underline;'>10</span>073
+#&gt; <span style='color: #BCBCBC;'>2</span>          2     71.2 <span style='text-decoration: underline;'>148</span>598    <span style='text-decoration: underline;'>100</span>027     <span style='text-decoration: underline;'>14</span>861    <span style='text-decoration: underline;'>22</span>098      212      <span style='text-decoration: underline;'>9</span>026
+#&gt; <span style='color: #949494;'># … with 16 more variables: pop_nhpi &lt;dbl&gt;, pop_other &lt;dbl&gt;, pop_two &lt;dbl&gt;,</span>
+#&gt; <span style='color: #949494;'>#   vap &lt;dbl&gt;, vap_white &lt;dbl&gt;, vap_black &lt;dbl&gt;, vap_hisp &lt;dbl&gt;,</span>
 #&gt; <span style='color: #949494;'>#   vap_aian &lt;dbl&gt;, vap_asian &lt;dbl&gt;, vap_nhpi &lt;dbl&gt;, vap_other &lt;dbl&gt;,</span>
-#&gt; <span style='color: #949494;'>#   vap_two &lt;dbl&gt;</span></div><div class='input'>
+#&gt; <span style='color: #949494;'>#   vap_two &lt;dbl&gt;, place &lt;dbl&gt;, id &lt;int&gt;, state &lt;chr&gt;, county &lt;chr&gt;</span></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
