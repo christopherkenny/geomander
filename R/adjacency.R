@@ -44,6 +44,7 @@ add_edge <- function(adjacency, v1, v2, zero = TRUE){
 #' If array, connects each to corresponding entry in v1.
 #' @param zero boolean, TRUE if `adjacency` is zero indexed. False if one indexed.
 #'
+#' @export
 #' @md
 #' @return adjacency list.
 #'
