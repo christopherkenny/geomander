@@ -1,6 +1,6 @@
 nn_geos <- function(x, y, k = 1) {
   dists <- geos::geos_distance(x, y)
-  which(dists %in% min_k(dists, k))
+  which(dists %in% min_k(dists, k))[seq_len(k)]
 }
 
 min_k <- function(v, k) {
