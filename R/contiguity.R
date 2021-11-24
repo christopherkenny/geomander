@@ -9,7 +9,6 @@
 #' @concept fix
 #' 
 #' @export
-#' @importFrom tibble tibble
 #' @examples 
 #' data(checkerboard)
 #' adj <- adjacency(checkerboard)
@@ -33,9 +32,7 @@ check_contiguity <- function(adjacency, group){
     groups <- rep(1L, length(adjacency))
   }
   
-  out <- tibble(group = group, group_number = groups, component = contiguity(adjacency, groups))
-  
-  return(out) 
+  tibble(group = group, group_number = groups, component = contiguity(adjacency, groups))
 }
 
 

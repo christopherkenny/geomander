@@ -10,34 +10,37 @@
 #' 
 #' @concept leftover
 #' 
-#' @importFrom sf st_geometry st_geometry<- st_within st_centroid st_point_on_surface
 #' @examples
 #' data(towns)
 #' st_centerish(towns)
 #' 
 st_centerish <- function(shp){
   
-  suppressWarnings( cent <- st_centroid(shp) )
+  cent <- geos::geos_centroid(shp)
   
   if(nrow(shp) > 1){
-
-    outside <- sapply(1:nrow(shp), 
-                      function(x){suppressMessages(st_within(x = cent[x,], y = shp[x,], sparse = FALSE))})
-    suppressWarnings( pts <- st_point_on_surface(shp[outside, ]) )
-    suppressWarnings( st_geometry(cent[outside,]) <- st_geometry(pts) )
+    
+    outside <- !geos::geos_within(cent, shp)
+    
+    if (any(outside)) {
+      pts <- geos::geos_point_on_surface(shp[outside, ])
+      cent[outside] <- pts
+    }
     
   } else {
     
+    outside <- !geos::geos_within(x = cent, y = shp)
     
-    outside <- as.logical(st_within(x = cent, y = shp, sparse = FALSE))
     if(is.na(outside)){
       outside <- TRUE
     }
     
-    suppressWarnings( st_geometry(cent[outside]) <- st_geometry(st_point_on_surface(shp[outside])) )
-    
+    if (outside) {
+      cent <- geos::geos_point_on_surface(shp)
+    }
     
   }
 
-  return(cent)
+  sf::st_geometry(shp) <- sf::st_as_sfc(cent)
+  shp
 }

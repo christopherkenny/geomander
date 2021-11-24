@@ -87,8 +87,6 @@ subtract_edge <- function(adjacency, v1, v2, zero = TRUE) {
 #' @return tibble with two columns of suggested rows of shp to connect in adj
 #' @export
 #' @importFrom dplyr bind_rows
-#' @importFrom nngeo st_nn
-#' @importFrom tibble tibble
 #' @examples 
 #' library(dplyr)
 #' data(va18sub)
@@ -107,7 +105,7 @@ suggest_neighbors <- function(shp, adjacency, idx, neighbors = 1){
   out <- tibble()
   for(i in idx){
     
-    nn <- suppressMessages(st_nn(x = cents[i,], y = cents[-i,], k = neighbors) %>% unlist())
+    nn <- nn_geos(x = cents[i,], y = cents[-i,], k = neighbors)
     for(j in 1:length(nn)){
       if(nn[j] >= i){
         nn[j] <- nn[j] + 1
@@ -118,8 +116,7 @@ suggest_neighbors <- function(shp, adjacency, idx, neighbors = 1){
     out <- bind_rows(out, tibble(x = i, y = nn))
   }
   
-  return(out)
-  
+  out
 }
 
 
@@ -181,15 +178,13 @@ compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE){
         temp2 <- shp %>% slice(ret$y[i])
         
         ret$relation[i] <- st_relate(temp1, temp2)
-        suppressWarnings(ret$class[i] <- class(st_geometry(st_intersection(shp[ret$x[i],], 
+        suppressWarnings(ret$class[i] <- class(sf::st_geometry(st_intersection(shp[ret$x[i],], 
                                                           shp[ret$y[i],])))[1])
       }
     }
   }
   
-
-  
-  return(ret)
+  ret
 }
 
 
@@ -229,5 +224,5 @@ adjacency <- function(shp, zero = TRUE, rook = TRUE){
     adj <- lapply(adj, function(x){if(all(x == -1L)){integer(0)} else {x} })
   }
 
-  return(adj)
+  adj
 }
