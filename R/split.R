@@ -19,18 +19,17 @@
 #' @concept fix
 #'
 #' @examples
-#' library(dplyr)
 #' library(sf)
 #' data(checkerboard)
-#' low <- checkerboard %>% slice(1:3, 9:11)
+#' low <- checkerboard %>% dplyr::slice(1:3, 9:11)
 #' prec <- checkerboard %>%
-#'   slice(1:3) %>%
-#'   summarize(geometry = st_union(geometry))
+#'   dplyr::slice(1:3) %>%
+#'   dplyr::summarize(geometry = sf::st_union(geometry))
 #' dists <- checkerboard %>%
-#'   slice(1:3, 9:11) %>%
-#'   mutate(dist = c(1, 2, 2, 1, 3, 3)) %>%
-#'   group_by(dist) %>%
-#'   summarize(geometry = st_union(geometry))
+#'   dplyr::slice(1:3, 9:11) %>%
+#'   dplyr::mutate(dist = c(1, 2, 2, 1, 3, 3)) %>%
+#'   dplyr::group_by(dist) %>%
+#'   dplyr::summarize(geometry = sf::st_union(geometry))
 #'
 #' split_precinct(low, prec, dists, split_by_id = 'dist')
 split_precinct <- function(lower, precinct, split_by, lower_wt, split_by_id) {
@@ -56,23 +55,24 @@ split_precinct <- function(lower, precinct, split_by, lower_wt, split_by_id) {
     geo_filter(precinct) %>%
     geo_trim(precinct)
 
-  split_by <- split_by %>% geo_filter(precinct)
+  split_by <- split_by %>% 
+    geo_filter(precinct)
 
   matches <- geo_match(from = lower, to = split_by)
 
   out_geo <- lower %>%
-    select(.data$geometry) %>%
-    mutate(new = matches) %>%
-    group_by(.data$new) %>%
-    summarize(geometry = st_union(.data$geometry))
+    dplyr::select(.data$geometry) %>%
+    dplyr::mutate(new = matches) %>%
+    dplyr::group_by(.data$new) %>%
+    dplyr::summarize(geometry = sf::st_union(.data$geometry))
 
 
   if (!missing(lower_wt)) {
     out_wt <- tibble(new = matches, wt = lower_wt) %>%
-      group_by(.data$new) %>%
-      summarize(wt = sum(.data$lower_wt, na.rm = TRUE), .groups = 'drop')
+      dplyr::group_by(.data$new) %>%
+      dplyr::summarize(wt = sum(.data$lower_wt, na.rm = TRUE), .groups = 'drop')
 
-    out_geo <- left_join(out_geo, out_wt, by = c('new'))
+    out_geo <- dplyr::left_join(out_geo, out_wt, by = c('new'))
   }
 
   if (!missing(split_by_id)) {
@@ -83,5 +83,5 @@ split_precinct <- function(lower, precinct, split_by, lower_wt, split_by_id) {
     }
   }
 
-  return(out_geo)
+  out_geo
 }

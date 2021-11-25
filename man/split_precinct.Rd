@@ -29,18 +29,17 @@ geography for the split precinct. This allows you to split a precinct using a
 lower geography, typically blocks.
 }
 \examples{
-library(dplyr)
 library(sf)
 data(checkerboard)
-low <- checkerboard \%>\% slice(1:3, 9:11)
+low <- checkerboard \%>\% dplyr::slice(1:3, 9:11)
 prec <- checkerboard \%>\%
-  slice(1:3) \%>\%
-  summarize(geometry = st_union(geometry))
+  dplyr::slice(1:3) \%>\%
+  dplyr::summarize(geometry = sf::st_union(geometry))
 dists <- checkerboard \%>\%
-  slice(1:3, 9:11) \%>\%
-  mutate(dist = c(1, 2, 2, 1, 3, 3)) \%>\%
-  group_by(dist) \%>\%
-  summarize(geometry = st_union(geometry))
+  dplyr::slice(1:3, 9:11) \%>\%
+  dplyr::mutate(dist = c(1, 2, 2, 1, 3, 3)) \%>\%
+  dplyr::group_by(dist) \%>\%
+  dplyr::summarize(geometry = sf::st_union(geometry))
 
 split_precinct(low, prec, dists, split_by_id = 'dist')
 }

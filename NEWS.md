@@ -1,3 +1,10 @@
+# geomander 2.0.0
+* `check_contiguity()` orders by most frequent component, so less common components have higher numbers.
+* Uses `geos` for geographic computations over `sf` to avoid `s2` where possible and introduce speed improvements.
+* Uses `cli` package for progress reporting.
+* `adjacency` renamed to `adj` to match `redist` naming.
+* Updates `r2dra` and `dra2r` to work off of 2020 geometries.
+
 # geomander 1.1.2
 * Fixes website redirects for CRAN.
 * Improves flexibility in `block2prec`.

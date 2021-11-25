@@ -14,16 +14,22 @@ geo_filter(from, to, bool = FALSE)
 \item{bool}{Optional, defaults to FALSE. Should this just return a logical vector?}
 }
 \value{
-sf data frame or logical vector if bool=TRUE
+sf data frame or logical vector if bool == TRUE
 }
 \description{
 Filter to Intersecting Pieces
 }
 \examples{
 \dontrun{
+# Needs Census Bureau API
 data(towns)
 block <- create_block_table('NY', 'Rockland')
 geo_filter(block, towns)
 }
+
+data(towns)
+data(rockland)
+sub <- geo_filter(rockland, towns)
+
 }
 \concept{datatable}

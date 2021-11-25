@@ -54,7 +54,7 @@ geo_estimate_down <- function(from, to, wts, value, method = 'center') {
   tb <- tb %>%
     dplyr::mutate(out = ifelse(is.na(out), 0, out))
 
-  return(tb$out)
+  tb$out
 }
 
 
@@ -113,7 +113,7 @@ estimate_down <- function(wts, value, group) {
   tb <- tb %>%
     dplyr::mutate(out = ifelse(is.na(out), 0, out))
 
-  return(tb$out)
+  tb$out
 }
 
 
@@ -165,7 +165,7 @@ geo_estimate_up <- function(from, to, value, method = 'center') {
     }
   }
 
-  return(tb$value)
+  tb$value
 }
 
 #' Estimate Up Levels
@@ -199,19 +199,20 @@ estimate_up <- function(value, group) {
   }
 
   tb <- tibble(value = value, group = group) %>%
-    group_by(group) %>%
-    summarize(value = sum(value)) %>%
-    arrange(group)
+    dplyr::group_by(group) %>%
+    dplyr::summarize(value = sum(value)) %>%
+    dplyr::arrange(group)
 
   if (nrow(tb) < max(group)) {
     for (i in 1:max(group)) {
       if (tb$group[i] != i) {
-        tb <- tb %>% add_row(group = i, value = 0, .after = (i - 1))
+        tb <- tb %>% 
+          dplyr::add_row(group = i, value = 0, .after = (i - 1))
       }
     }
   }
 
-  return(tb$value)
+  tb$value
 }
 
 

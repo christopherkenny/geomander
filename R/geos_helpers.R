@@ -1,0 +1,40 @@
+largest_intersection_geos <- function(x, y) {
+  l <- geos::geos_intersects_matrix(x, y)
+
+  a <- lapply(seq_along(l), function(i) {
+    sapply(l[[i]], function(j) {
+      geos::geos_area(geos::geos_intersection(x[i, ], y[j, ]))
+    })
+  })
+
+  vapply(seq_along(l), function(i) {
+    o <- l[[i]][which.max(a[[i]])]
+    if (length(o) == 0) {
+      o <- NA_real_
+    }
+    o
+  }, 0)
+}
+
+nn_geos <- function(x, y, k = 1) {
+  dists <- geos::geos_distance(x, y)
+  which(dists %in% min_k(dists, k))[seq_len(k)]
+}
+
+dist_mat_geos <- function(x, y) {
+  out <- matrix(0, nrow(x), nrow(y))
+  
+  x <- geos::geos_centroid(x)
+  y <- geos::geos_centroid(y)
+  
+  
+  for (i in seq_along(x)) {
+    out[i, ] <- geos::geos_distance(x[[i]], y)
+  }
+  
+  out
+}
+
+bbox_geos <- function(x) {
+  geos::geos_envelope(geos::geos_unary_union(geos::geos_make_collection(x)))
+}

@@ -21,7 +21,7 @@ local_morans <- function(shp, adj, wts, spatial_mat) {
   }
 
   if (missing(adj) & missing(spatial_mat)) {
-    adj <- st_relate(shp, shp, pattern = 'F***1****')
+    adj <- adjacency(shp)
     adj <- lapply(adj, FUN = function(x) {
       x - 1L
     })
@@ -74,7 +74,7 @@ global_morans <- function(shp, adj, wts, spatial_mat) {
   }
 
   if (missing(adj) & missing(spatial_mat)) {
-    adj <- st_relate(shp, shp, pattern = 'F***1****')
+    adj <- adjacency(shp)
     adj <- lapply(adj, FUN = function(x) {
       x - 1L
     })
@@ -95,5 +95,5 @@ global_morans <- function(shp, adj, wts, spatial_mat) {
 
   out <- globalmoran(wts, mat)
 
-  return(out)
+  out
 }

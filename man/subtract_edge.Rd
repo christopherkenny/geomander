@@ -4,10 +4,10 @@
 \alias{subtract_edge}
 \title{Subtract Edges from an Adjacency List}
 \usage{
-subtract_edge(adjacency, v1, v2, zero = TRUE)
+subtract_edge(adj, v1, v2, zero = TRUE)
 }
 \arguments{
-\item{adjacency}{list of adjacent precincts}
+\item{adj}{list of adjacent precincts}
 
 \item{v1}{integer or integer array for first vertex to connect.
 If array, connects each to corresponding entry in v2.}
@@ -15,14 +15,14 @@ If array, connects each to corresponding entry in v2.}
 \item{v2}{integer or integer array for second vertex to connect.
 If array, connects each to corresponding entry in v1.}
 
-\item{zero}{boolean, TRUE if \code{adjacency} is zero indexed. False if one indexed.}
+\item{zero}{boolean, TRUE if \code{adj} is zero indexed. False if one indexed.}
 }
 \value{
 adjacency list.
 
 data(towns)
 adj <- adjacency(towns)
-add_edge(adj, 2, 3)
+subtract_edge(adj, 2, 3)
 }
 \description{
 Subtract Edges from an Adjacency List

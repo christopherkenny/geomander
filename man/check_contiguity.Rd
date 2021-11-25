@@ -22,5 +22,6 @@ Check Contiguity by Group
 data(checkerboard)
 adj <- adjacency(checkerboard)
 check_contiguity(adj)
+
 }
 \concept{fix}

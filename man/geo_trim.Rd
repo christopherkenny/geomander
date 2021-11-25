@@ -29,11 +29,10 @@ block <- create_block_table('NY', 'Rockland')
 geo_trim(block, towns, thresh = 0.05)
 }
 
-\donttest{
 data(towns)
 data(rockland)
 sub <- geo_filter(rockland, towns)
 rem <- geo_trim(sub, towns, thresh = 0.05)
-}
+
 }
 \concept{datatable}

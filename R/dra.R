@@ -65,8 +65,8 @@ dra2r <- function(dra, state, precincts) {
 
   # match to precincts if provided
   if (!missing(precincts)) {
-    if (st_crs(shp) != st_crs(precincts)) {
-      shp <- st_transform(shp, st_crs(precincts))
+    if (sf::st_crs(shp) != sf::st_crs(precincts)) {
+      shp <- sf::st_transform(shp, sf::st_crs(precincts))
     }
 
     precincts <- precincts %>% mutate(matches = row_number())
@@ -97,7 +97,7 @@ dra2r <- function(dra, state, precincts) {
     return(precincts)
   }
 
-  return(shp)
+  shp
 }
 
 
@@ -149,8 +149,8 @@ r2dra <- function(precincts, plan, state, path) {
 
   shp <- tigris::blocks(state)
 
-  if (st_crs(shp) != st_crs(precincts)) {
-    shp <- st_transform(shp, st_crs(precincts))
+  if (sf::st_crs(shp) != sf::st_crs(precincts)) {
+    shp <- sf::st_transform(shp, sf::st_crs(precincts))
   }
 
   matches <- geo_match(from = shp, to = precincts)
@@ -173,7 +173,7 @@ r2dra <- function(precincts, plan, state, path) {
     }
   }
 
-  return(out)
+  out
 }
 
 globalVariables(c('District', 'District_DRA'))

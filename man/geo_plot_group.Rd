@@ -4,7 +4,7 @@
 \alias{geo_plot_group}
 \title{Create Plots of Shapes by Group with Connected Components Colored}
 \usage{
-geo_plot_group(shp, adjacency, group, save = F, path = "")
+geo_plot_group(shp, adjacency, group, save = FALSE, path = "")
 }
 \arguments{
 \item{shp}{An sf shapefile}

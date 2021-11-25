@@ -145,7 +145,7 @@ block2prec <- function(block_table, matches, geometry = FALSE) {
       dplyr::group_by(matches_id) %>%
       dplyr::summarize(dplyr::across(where(is.numeric), sum),
         dplyr::across(where(function(x) length(unique(x)) == 1), unique),
-        geometry = st_union(geometry),
+        geometry = sf::st_union(geometry),
         .groups = 'drop'
       ) %>%
       sf::st_as_sf()
@@ -166,7 +166,7 @@ block2prec <- function(block_table, matches, geometry = FALSE) {
     ret <- update_tb(ret, missed)
   }
 
-  return(ret)
+  ret
 }
 
 
@@ -233,7 +233,7 @@ block2prec_by_county <- function(block_table, precinct, precinct_county_fips) {
     mutate(matches_id = rowid) %>%
     select(-rowid)
 
-  return(prectb)
+  prectb
 }
 
 
@@ -268,7 +268,7 @@ update_tb <- function(ret, missed) {
   if (ncol(expected) == 0) {
     return(ret)
   }
-  cat(missed)
+  
   dplyr::rows_patch(x = ret, y = expected, by = 'matches_id')
 }
 

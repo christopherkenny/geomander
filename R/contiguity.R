@@ -13,6 +13,7 @@
 #' data(checkerboard)
 #' adj <- adjacency(checkerboard)
 #' check_contiguity(adj)
+#' 
 check_contiguity <- function(adjacency, group) {
   if (missing(adjacency)) {
     stop('Please provide an argument to adjacency.')
@@ -31,7 +32,24 @@ check_contiguity <- function(adjacency, group) {
     groups <- rep(1L, length(adjacency))
   }
 
-  tibble(group = group, group_number = groups, component = contiguity(adjacency, groups))
+  out <- tibble(group = group, 
+                group_number = groups, 
+                component = contiguity(adjacency, groups))
+  
+  if (max(out$component) == 1) {
+    return(out)
+  } else {
+    out <- out %>%
+      dplyr::group_by(.data$group_number) %>%
+      dplyr::mutate(ranks = list(as.numeric(names(sort(table(component),
+                                                       decreasing = TRUE))))) %>%
+      dplyr::rowwise() %>% 
+      dplyr::mutate(component = which(component == .data$ranks)) %>% 
+      dplyr::ungroup() %>% 
+      dplyr::select(-.data$ranks)
+  }
+  
+  out
 }
 
 
@@ -96,6 +114,7 @@ check_polygon_contiguity <- function(shp, group) {
 #' checkerboard <- checkerboard %>% filter(i != 1, j != 1)
 #' adj <- adjacency(checkerboard)
 #' suggest_component_connection(checkerboard, adj)
+#' 
 suggest_component_connection <- function(shp, adjacency, group) {
   if (missing(shp)) {
     stop('Please provide an argument to shp')
@@ -121,9 +140,12 @@ suggest_component_connection <- function(shp, adjacency, group) {
         # shp %>% filter(group == g, components$component == c)
         tempy <- cents[group == g & components$component != c, ]
         # shp %>% filter(group == g, components$component != c)
-        dists <- sf::st_distance(x = tempx, y = tempy)
+        dists <- dist_mat_geos(x = tempx, y = tempy)
         prop <- arrayInd(which.min(dists), dim(dists))
-        out <- out %>% bind_rows(tibble(x = tempx$rownum[prop[1, 1]], y = tempy$rownum[prop[1, 2]]))
+        out <- out %>% 
+          bind_rows(tibble(x = tempx$rownum[prop[1, 1]], 
+                           y = tempy$rownum[prop[1, 2]])
+          )
       }
     }
   }
@@ -136,5 +158,5 @@ suggest_component_connection <- function(shp, adjacency, group) {
     }
   }
 
-  return(distinct(out))
+  distinct(out)
 }

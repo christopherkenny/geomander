@@ -22,45 +22,47 @@
 #'
 #' p[[1]]
 #' p[[2]]
-geo_plot_group <- function(shp, adjacency, group, save = F, path = '') {
+geo_plot_group <- function(shp, adjacency, group, save = FALSE, path = '') {
   if (missing(shp)) {
     stop('Please provide an argument to shp.')
   }
-
+  
   if (missing(adjacency)) {
     stop('Please provide an argument to adjacency.')
   }
-
+  
   if (missing(group)) {
     group <- rep(1L, nrow(shp))
   }
-
+  
   components <- check_contiguity(adjacency = adjacency, group = group)
-
+  
   shp <- shp %>%
-    bind_cols(components) %>%
-    mutate(rownum = row_number())
-
-
+    dplyr::bind_cols(components) %>%
+    dplyr::mutate(rownum = row_number())
+  
+  
   out <- list()
   for (g in 1:length(unique(group))) {
     gc <- unique(group)[g]
-
-    temp <- shp %>% filter(group == gc)
-
-    p <- temp %>% ggplot(aes(fill = as.character(component))) +
-      geom_sf() +
-      labs(fill = 'Conn Comp', title = gc) +
-      theme_void() +
-      scale_fill_brewer(type = 'qual', palette = 'Dark2')
-
+    
+    temp <- shp %>% 
+      dplyr::filter(group == gc)
+    
+    p <- temp %>% 
+      ggplot2::ggplot(aes(fill = as.character(component))) +
+      ggplot2::geom_sf() +
+      ggplot2::labs(fill = 'Conn Comp', title = gc) +
+      ggplot2::theme_void() +
+      ggplot2::scale_fill_brewer(type = 'qual', palette = 'Dark2')
+    
     out[[g]] <- p
     if (save) {
-      ggsave(filename = paste0(path, 'group_plot_', gc, '.png'))
+      ggsave(filename = paste0(path, 'group_plot_', gc, '.png'), plot = p)
     }
   }
-
-  return(out)
+  
+  out
 }
 
 #' Plots a Shape with Row Numbers as Text
@@ -74,20 +76,17 @@ geo_plot_group <- function(shp, adjacency, group, save = F, path = '') {
 #' @return ggplot
 #' @export
 #'
-#' @importFrom ggplot2 geom_sf_text
-#' @importFrom dplyr row_number
-#'
-#'
 #' @examples
 #' data(checkerboard)
 #' geo_plot(checkerboard)
+#' 
 geo_plot <- function(shp) {
   shp %>%
-    mutate(rn = row_number()) %>%
-    ggplot() +
-    geom_sf() +
-    geom_sf_text(aes(label = .data$rn)) +
-    theme_void()
+    dplyr::mutate(rn = dplyr::row_number()) %>%
+    ggplot2::ggplot() +
+    ggplot2::geom_sf() +
+    ggplot2::geom_sf_text(aes(label = .data$rn)) +
+    ggplot2::theme_void()
 }
 
 globalVariables('component')

@@ -1,6 +1,6 @@
 #' Add Edges to an Adjacency List
 #'
-#' @param adjacency list of adjacent precincts
+#' @param adj list of adjacent precincts
 #' @param v1 integer or integer array for first vertex to connect.
 #' If array, connects each to corresponding entry in v2.
 #' @param v2 integer or integer array for second vertex to connect.
@@ -16,32 +16,31 @@
 #' data(towns)
 #' adj <- adjacency(towns)
 #' add_edge(adj, 2, 3)
-add_edge <- function(adjacency, v1, v2, zero = TRUE) {
+#' 
+add_edge <- function(adj, v1, v2, zero = TRUE) {
+  
   if (length(v1) != length(v2)) {
-    stop('v1 and v2 lengths are different.')
+    cli::cli_abort('{.arg v1} and {.arg v2} lengths are different.')
   }
 
+  zero <- as.integer(zero) 
+  
   for (i in 1:length(v1)) {
-    if (zero) {
-      adjacency[[v1[i]]] <- c(adjacency[[v1[i]]], v2[i] - 1)
-      adjacency[[v2[i]]] <- c(adjacency[[v2[i]]], v1[i] - 1)
-    } else {
-      adjacency[[v1[i]]] <- c(adjacency[[v1[i]]], v2[i])
-      adjacency[[v2[i]]] <- c(adjacency[[v2[i]]], v1[i])
-    }
+      adj[[v1[i]]] <- c(adj[[v1[i]]], v2[i] - 1)
+      adj[[v2[i]]] <- c(adj[[v2[i]]], v1[i] - 1)
   }
 
-  return(adjacency)
+  adj
 }
 
 #' Subtract Edges from an Adjacency List
 #'
-#' @param adjacency list of adjacent precincts
+#' @param adj list of adjacent precincts
 #' @param v1 integer or integer array for first vertex to connect.
 #' If array, connects each to corresponding entry in v2.
 #' @param v2 integer or integer array for second vertex to connect.
 #' If array, connects each to corresponding entry in v1.
-#' @param zero boolean, TRUE if `adjacency` is zero indexed. False if one indexed.
+#' @param zero boolean, TRUE if `adj` is zero indexed. False if one indexed.
 #'
 #' @export
 #' @md
@@ -49,20 +48,19 @@ add_edge <- function(adjacency, v1, v2, zero = TRUE) {
 #'
 #' data(towns)
 #' adj <- adjacency(towns)
-#' add_edge(adj, 2, 3)
-subtract_edge <- function(adjacency, v1, v2, zero = TRUE) {
+#' subtract_edge(adj, 2, 3)
+#' 
+subtract_edge <- function(adj, v1, v2, zero = TRUE) {
+  
   if (length(v1) != length(v2)) {
-    stop('v1 and v2 lengths are different.')
+    cli::cli_abort('{.arg v1} and {.arg v2} lengths are different.')
   }
+  
+  zero <- as.integer(zero)
 
   for (i in seq_along(v1)) {
-    if (zero) {
-      adjacency[[v1[i]]] <- setdiff(adjacency[[v1[i]]], v2[i] - 1)
-      adjacency[[v2[i]]] <- setdiff(adjacency[[v2[i]]], v1[i] - 1)
-    } else {
-      adjacency[[v1[i]]] <- setdiff(adjacency[[v1[i]]], v2[i])
-      adjacency[[v2[i]]] <- setdiff(adjacency[[v2[i]]], v1[i])
-    }
+      adjacency[[v1[i]]] <- setdiff(adjacency[[v1[i]]], v2[i] - zero)
+      adjacency[[v2[i]]] <- setdiff(adjacency[[v2[i]]], v1[i] - zero)
   }
 
   adjacency
@@ -75,7 +73,7 @@ subtract_edge <- function(adjacency, v1, v2, zero = TRUE) {
 #' from the remainder of the geography, such as an island.
 #'
 #' @param shp an sf shapefile
-#' @param adjacency an adjacency list
+#' @param adj an adjacency list
 #' @param idx Optional. Which indices to suggest neighbors for. If blank, suggests for those
 #' with no neighbors.
 #' @param neighbors number of neighbors to suggest
@@ -92,9 +90,10 @@ subtract_edge <- function(adjacency, v1, v2, zero = TRUE) {
 #' adj <- adjacency(va18sub)
 #' suggests <- suggest_neighbors(va18sub, adj)
 #' adj <- adj %>% add_edge(v1 = suggests$x, v2 = suggests$y)
-suggest_neighbors <- function(shp, adjacency, idx, neighbors = 1) {
+#' 
+suggest_neighbors <- function(shp, adj, idx, neighbors = 1) {
   if (missing(idx)) {
-    idx <- which(lengths(adjacency) == 0)
+    idx <- which(lengths(adj) == 0)
   }
 
   cents <- st_centerish(shp)
@@ -107,16 +106,11 @@ suggest_neighbors <- function(shp, adjacency, idx, neighbors = 1) {
         nn[j] <- nn[j] + 1
       }
     }
-
-
     out <- bind_rows(out, tibble(x = i, y = nn))
   }
 
   out
 }
-
-
-
 
 #' Compare Adjacency Lists
 #'
@@ -140,11 +134,11 @@ suggest_neighbors <- function(shp, adjacency, idx, neighbors = 1) {
 #' compare_adjacencies(rook, sf_rook, zero = FALSE)
 compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE) {
   if (missing(adj1) | missing(adj2)) {
-    stop('Please provide an argument to both adj1 and adj2.')
+    cli::cli_abort('Please provide an argument to both {.arg adj1} and {.arg adj2}.')
   }
 
   if (length(adj1) != length(adj2)) {
-    stop('Adjacencies have different lengths.')
+    cli::cli_abort('{.arg adj1} and {.arg adj2} have different lengths.')
   }
 
   ret <- tibble()
@@ -176,8 +170,8 @@ compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE) {
         temp1 <- shp %>% slice(ret$x[i])
         temp2 <- shp %>% slice(ret$y[i])
 
-        ret$relation[i] <- st_relate(temp1, temp2)
-        suppressWarnings(ret$class[i] <- class(sf::st_geometry(st_intersection(
+        ret$relation[i] <- sf::st_relate(temp1, temp2)
+        suppressWarnings(ret$class[i] <- class(sf::st_geometry(sf::st_intersection(
           shp[ret$x[i], ],
           shp[ret$y[i], ]
         )))[1])
@@ -207,9 +201,10 @@ compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE) {
 #' @examples
 #' data(precincts)
 #' adj <- adjacency(precincts)
+#' 
 adjacency <- function(shp, zero = TRUE, rook = TRUE) {
   if (!inherits(shp, 'sf')) {
-    stop('Input to `shp` must be an sf dataframe.')
+    cli::cli_abort('Input to {.arg shp} must be an sf dataframe.')
   }
 
   adj <- spdep::poly2nb(shp, queen = !rook)

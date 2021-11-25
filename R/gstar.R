@@ -23,7 +23,7 @@ gstar_i <- function(shp, adj, wts, spatial_mat) {
   }
 
   if (missing(adj) & missing(spatial_mat)) {
-    adj <- st_relate(shp, shp, pattern = 'F***1****')
+    adj <- sf::st_relate(shp, shp, pattern = 'F***1****')
     adj <- lapply(adj, FUN = function(x) {
       x - 1L
     })
