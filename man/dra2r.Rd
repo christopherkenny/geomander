@@ -7,7 +7,7 @@
 dra2r(dra, state, precincts)
 }
 \arguments{
-\item{dra}{The path to an exported csv or 
+\item{dra}{The path to an exported csv or
 a dataframe with columns Id and District, loaded from a DRA export.}
 
 \item{state}{the state postal code of the state}

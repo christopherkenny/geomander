@@ -8,7 +8,6 @@
 #'
 #' @return Integer Vector of matches length(to) with values in 1:nrow(from)
 #' @export
-#' @importFrom sf st_centroid st_point_on_surface st_nearest_feature st_intersection st_make_valid
 #'
 #' @concept estimate
 #'
@@ -66,7 +65,7 @@ geo_match <- function(from, to, method = 'center', tiebreaker = TRUE) {
   } else {
     to <- to %>% mutate(toid = row_number())
     from <- from %>% mutate(fromid = row_number())
-    #from <- geos::geos_make_valid(from)
+    # from <- geos::geos_make_valid(from)
     ints <- largest_intersection_geos(x = from, y = to)
 
     if (any(is.na(ints))) {

@@ -14,10 +14,10 @@ This data contains the blocks Henrico County, VA with geographies simplified
 to allow for better examples.
 }
 \details{
-blocks87 <- create_block_table(state = 'VA', county = '087')  
+blocks87 <- create_block_table(state = 'VA', county = '087')
 va_blocks <- rmapshaper::ms_simplify(va_blocks, keep_shapes = TRUE)
 }
 \examples{
-data("va_blocks")
+data('va_blocks')
 }
 \concept{data}

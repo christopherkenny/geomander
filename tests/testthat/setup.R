@@ -1,2 +1,2 @@
-data("checkerboard")
-data("checkerboard_adj")
+data('checkerboard')
+data('checkerboard_adj')

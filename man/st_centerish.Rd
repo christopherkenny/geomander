@@ -19,6 +19,5 @@ Uses the centroid if that's in the shape, or point on surface if not.
 \examples{
 data(towns)
 st_centerish(towns)
-
 }
 \concept{leftover}

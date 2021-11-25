@@ -17,17 +17,18 @@ estimate_down(wts, value, group)
 numeric vector with each value split by weight
 }
 \description{
-Non-geographic partner function to geo_estimate_down. Allows users to estimate 
+Non-geographic partner function to geo_estimate_down. Allows users to estimate
 down without the costly matching operation if they've already matched.
 }
 \examples{
 library(dplyr)
 set.seed(1)
 data(checkerboard)
-counties <- checkerboard \%>\% group_by(id <= 32) \%>\% 
-summarize(geometry = sf::st_union(geometry)) \%>\% mutate(pop = c(100,200))
+counties <- checkerboard \%>\%
+  group_by(id <= 32) \%>\%
+  summarize(geometry = sf::st_union(geometry)) \%>\%
+  mutate(pop = c(100, 200))
 matches <- geo_match(checkerboard, counties)
 estimate_down(wts = rep(1, nrow(checkerboard)), value = counties$pop, group = matches)
-
 }
 \concept{estimate}

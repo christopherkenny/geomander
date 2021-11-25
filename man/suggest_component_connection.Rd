@@ -11,7 +11,7 @@ suggest_component_connection(shp, adjacency, group)
 
 \item{adjacency}{adjacency list}
 
-\item{group}{array of group identifiers. Typically district numbers or county names. 
+\item{group}{array of group identifiers. Typically district numbers or county names.
 Defaults to rep(1, length(adjacency)) if missing.}
 }
 \value{
@@ -26,6 +26,5 @@ data(checkerboard)
 checkerboard <- checkerboard \%>\% filter(i != 1, j != 1)
 adj <- adjacency(checkerboard)
 suggest_component_connection(checkerboard, adj)
-
 }
 \concept{fix}

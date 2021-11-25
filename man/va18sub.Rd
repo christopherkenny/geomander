@@ -14,12 +14,11 @@ This data contains a 90 precinct subset of Virginia from the 2018 Senate race.
 Contains results for Henrico County
 }
 \examples{
- 
-data("va18sub")
+data('va18sub')
 }
 \references{
 Voting and Election Science Team, 2019, "va_2018.zip", 2
-018 Precinct-Level Election Results, 
+018 Precinct-Level Election Results,
 https://doi.org/10.7910/DVN/UBKYRU/FQDLOO, Harvard Dataverse, V4
 }
 \concept{data}

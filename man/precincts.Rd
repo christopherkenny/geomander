@@ -10,11 +10,11 @@ An sf dataframe with 278 observations
 data("precincts")
 }
 \description{
-This data contains the election districts (or precincts) for Rockland County 
+This data contains the election districts (or precincts) for Rockland County
 NY, with geographies simplified to allow for better examples.
 }
 \examples{
-data("precincts")
+data('precincts')
 }
 \references{
 https://www.rocklandgis.com/portal/apps/sites/#/data/datasets/2d91f9db816c48318848ad66eb1a18e9

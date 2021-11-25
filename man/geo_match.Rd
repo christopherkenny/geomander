@@ -13,7 +13,7 @@ geo_match(from, to, method = "center", tiebreaker = TRUE)
 
 \item{method}{string from center, centroid, point, or area for matching method}
 
-\item{tiebreaker}{Should ties be broken? boolean. If FALSE, precincts with no 
+\item{tiebreaker}{Should ties be broken? boolean. If FALSE, precincts with no
 matches get value -1 and precincts with multiple matches get value -2.}
 }
 \value{
@@ -25,11 +25,12 @@ Match Across Geographic Layers
 \examples{
 library(dplyr)
 data(checkerboard)
-counties <- sf::st_as_sf(as.data.frame(rbind(sf::st_union(checkerboard \%>\% filter(i < 4)), 
-sf::st_union(checkerboard \%>\% filter(i >= 4)) )))
+counties <- sf::st_as_sf(as.data.frame(rbind(
+  sf::st_union(checkerboard \%>\% filter(i < 4)),
+  sf::st_union(checkerboard \%>\% filter(i >= 4))
+)))
 
 geo_match(from = checkerboard, to = counties)
 geo_match(from = checkerboard, to = counties, method = 'area')
-
 }
 \concept{estimate}

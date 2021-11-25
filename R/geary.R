@@ -5,46 +5,46 @@
 #' @param wts Required. Numeric vector with weights to use for Moran's I.
 #' @param spatial_mat matrix of spatial weights. Not required if shp or adj provided.
 #'
-#' @return numeric vector 
+#' @return numeric vector
 #' @export
-#' 
-#' @concept spatcorr 
-#' 
+#'
+#' @concept spatcorr
+#'
 #' @examples
 #' library(dplyr)
-#' data("checkerboard")
-#' checkerboard <- checkerboard %>% mutate(m = as.numeric((id+i) %% 2 == 0))
+#' data('checkerboard')
+#' checkerboard <- checkerboard %>% mutate(m = as.numeric((id + i) %% 2 == 0))
 #' local_gearys(shp = checkerboard, wts = checkerboard$m)
-#' 
-local_gearys <- function(shp, adj, wts, spatial_mat){
-  if(missing(shp) & missing(adj) & missing(spatial_mat)){
+local_gearys <- function(shp, adj, wts, spatial_mat) {
+  if (missing(shp) & missing(adj) & missing(spatial_mat)) {
     stop('Please supply an argument to at least one of shp or adj or spatial_mat.')
   }
-  
-  if(missing(adj) & missing(spatial_mat)){
+
+  if (missing(adj) & missing(spatial_mat)) {
     adj <- st_relate(shp, shp, pattern = 'F***1****')
-    adj <- lapply(adj, FUN = function(x){x-1L})
+    adj <- lapply(adj, FUN = function(x) {
+      x - 1L
+    })
   }
-  
-  if(missing(spatial_mat)){
+
+  if (missing(spatial_mat)) {
     mat <- adjlist2matrix(adj)
   } else {
-    if(nrow(mat) != ncol(mat)){
+    if (nrow(mat) != ncol(mat)) {
       stop('spatial_mat must be square.')
     }
-    
-    if(length(wts) != nrow(spatial_mat)){
+
+    if (length(wts) != nrow(spatial_mat)) {
       stop('wts and spatial_mat have different lengths.')
     }
   }
-  
-  
+
+
   out <- localgeary(wts, mat)
-  
-  
+
+
   out <- tibble(geary = out)
   return(out)
-  
 }
 
 
@@ -65,35 +65,35 @@ local_gearys <- function(shp, adj, wts, spatial_mat){
 #' @export
 #' @examples
 #' library(dplyr)
-#' data("checkerboard")
-#' checkerboard <- checkerboard %>% mutate(m = as.numeric((id+i) %% 2 == 0))
+#' data('checkerboard')
+#' checkerboard <- checkerboard %>% mutate(m = as.numeric((id + i) %% 2 == 0))
 #' global_gearys(shp = checkerboard, wts = checkerboard$m)
-#' 
-global_gearys <- function(shp, adj, wts, spatial_mat){
-  if(missing(shp) & missing(adj) & missing(spatial_mat)){
+global_gearys <- function(shp, adj, wts, spatial_mat) {
+  if (missing(shp) & missing(adj) & missing(spatial_mat)) {
     stop('Please supply an argument to at least one of shp or adj or spatial_mat.')
   }
-  
-  if(missing(adj) & missing(spatial_mat)){
+
+  if (missing(adj) & missing(spatial_mat)) {
     adj <- st_relate(shp, shp, pattern = 'F***1****')
-    adj <- lapply(adj, FUN = function(x){x-1L})
+    adj <- lapply(adj, FUN = function(x) {
+      x - 1L
+    })
   }
-  
-  if(missing(spatial_mat)){
+
+  if (missing(spatial_mat)) {
     mat <- adjlist2matrix(adj)
   } else {
-    if(nrow(mat) != ncol(mat)){
+    if (nrow(mat) != ncol(mat)) {
       stop('spatial_mat must be square.')
     }
-    
-    if(length(wts) != nrow(spatial_mat)){
+
+    if (length(wts) != nrow(spatial_mat)) {
       stop('wts and spatial_mat have different lengths.')
     }
   }
-  
-  
+
+
   out <- globalgeary(wts, mat)
-  
+
   return(out)
-  
 }

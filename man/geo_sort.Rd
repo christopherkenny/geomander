@@ -18,6 +18,5 @@ Reorders precincts by distance from the NW corner of the bounding box.
 \examples{
 data(checkerboard)
 geo_sort(checkerboard)
-
 }
 \concept{fix}

@@ -18,6 +18,5 @@ One liner to plot a shape with row numbers
 \examples{
 data(checkerboard)
 geo_plot(checkerboard)
-
 }
 \concept{plot}

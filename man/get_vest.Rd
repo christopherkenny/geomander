@@ -13,7 +13,7 @@ get_vest(state, year, path = tempdir(), clean_names = TRUE)
 
 \item{path}{folder to put shape in. Default is \code{tempdir()}}
 
-\item{clean_names}{Clean names. Default is \code{TRUE}. If \code{FALSE}, 
+\item{clean_names}{Clean names. Default is \code{TRUE}. If \code{FALSE},
 returns default names.}
 }
 \value{

@@ -12,7 +12,7 @@ check_contiguity(adjacency, group)
 \item{group}{array of group identifiers. Typically district numbers or county names.}
 }
 \value{
-tibble with a column for each of inputted group, created group number, and the 
+tibble with a column for each of inputted group, created group number, and the
 identified connected component number
 }
 \description{
@@ -22,6 +22,5 @@ Check Contiguity by Group
 data(checkerboard)
 adj <- adjacency(checkerboard)
 check_contiguity(adj)
-
 }
 \concept{fix}

@@ -18,7 +18,7 @@ tibble with election data and optional geometry
 }
 \description{
 Get's a dataset from the Algorithm-Assisted Redistricting Methodology Project.
-The current supported data is the 2020 retabulations of the VEST data, which 
+The current supported data is the 2020 retabulations of the VEST data, which
 can be downloaded with `get_vest`.
 }
 \examples{

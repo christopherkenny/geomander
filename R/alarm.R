@@ -1,7 +1,7 @@
 #' Get ALARM Dataset
 #'
 #' Get's a dataset from the Algorithm-Assisted Redistricting Methodology Project.
-#' The current supported data is the 2020 retabulations of the VEST data, which 
+#' The current supported data is the 2020 retabulations of the VEST data, which
 #' can be downloaded with `get_vest`.
 #'
 #' @param state two letter state abbreviation
@@ -21,29 +21,33 @@ get_alarm <- function(state, geometry = TRUE, file = tempfile(fileext = '.csv'))
   state <- tolower(censable::match_abb(state))
   end_path <- paste0(state, '_2020_vtd.csv')
   out <- NULL
-  try({out <- utils::download.file(url = paste0(base_path, end_path), file)})
-  
+  try({
+    out <- utils::download.file(url = paste0(base_path, end_path), file)
+  })
+
   if (is.null(out)) {
     end_path <- paste0(state, '_2020_block.csv')
-    try({out <- utils::download.file(url = paste0(base_path, end_path), file)})
+    try({
+      out <- utils::download.file(url = paste0(base_path, end_path), file)
+    })
     if (is.null(out)) {
       stop(stringr::str_glue('State {state} not found in ALARM Data.'))
     }
   }
-  
+
   tb <- readr::read_csv(file = file, lazy = FALSE)
- 
+
   if (geometry) {
-    geo <- tigris::voting_districts(state = state) %>% 
-      dplyr::select(.data$GEOID20, .data$geometry) %>% 
+    geo <- tigris::voting_districts(state = state) %>%
+      dplyr::select(.data$GEOID20, .data$geometry) %>%
       dplyr::mutate(GEOID20 = as.character(.data$GEOID20))
-    tb <- tb %>% 
-      dplyr::mutate(GEOID20 = as.character(.data$GEOID20)) %>% 
-      dplyr::left_join(geo, by = 'GEOID20') %>% 
+    tb <- tb %>%
+      dplyr::mutate(GEOID20 = as.character(.data$GEOID20)) %>%
+      dplyr::left_join(geo, by = 'GEOID20') %>%
       sf::st_as_sf()
   }
-  
-  tb 
+
+  tb
 }
 
 

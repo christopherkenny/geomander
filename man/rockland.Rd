@@ -19,6 +19,6 @@ rockland <- create_block_table('NY', 'Rockland')
 rockland <- rmapshaper::ms_simplify(rockland, keep_shapes = TRUE)
 }
 \examples{
-data("rockland")
+data('rockland')
 }
 \concept{data}

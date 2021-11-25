@@ -31,6 +31,5 @@ va18sub <- va18sub \%>\% filter(!VTDST \%in\% c('000516', '000510', '000505', '0
 adj <- adjacency(va18sub)
 suggests <- suggest_neighbors(va18sub, adj)
 adj <- adj \%>\% add_edge(v1 = suggests$x, v2 = suggests$y)
-
 }
 \concept{fix}

@@ -25,9 +25,8 @@ matrix. Users can also provide a spatial_mat argument directly.
 }
 \examples{
 library(dplyr)
-data("checkerboard")
-checkerboard <- checkerboard \%>\% mutate(m = as.numeric((id+i) \%\% 2 == 0))
+data('checkerboard')
+checkerboard <- checkerboard \%>\% mutate(m = as.numeric((id + i) \%\% 2 == 0))
 global_gearys(shp = checkerboard, wts = checkerboard$m)
-
 }
 \concept{spatcorr}

@@ -9,7 +9,7 @@ r2dra(precincts, plan, state, path)
 \arguments{
 \item{precincts}{Required. an sf dataframe of precinct shapes}
 
-\item{plan}{Required. Either a vector of district assignments 
+\item{plan}{Required. Either a vector of district assignments
 or the name of a column in precincts with district assignments.}
 
 \item{state}{Required. the state postal code of the state}

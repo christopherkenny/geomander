@@ -1,23 +1,22 @@
 #' Sort Precincts
-#' 
+#'
 #' Reorders precincts by distance from the NW corner of the bounding box.
 #'
 #' @param shp sf dataframe, required.
 #'
 #' @return sf dataframe
 #' @export
-#' 
+#'
 #' @concept fix
-#' 
-#' @examples 
+#'
+#' @examples
 #' data(checkerboard)
 #' geo_sort(checkerboard)
-#' 
-geo_sort <- function(shp){
-  if(missing(shp)){
+geo_sort <- function(shp) {
+  if (missing(shp)) {
     stop('shp is required.')
   }
-  
+
   bbox <- sf::st_bbox(shp)
   pt <- sf::st_point(x = c(bbox$xmin, bbox$ymax))
   suppressWarnings(cent <- sf::st_centroid(shp))
