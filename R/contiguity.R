@@ -1,6 +1,6 @@
 #' Check Contiguity by Group
 #'
-#' @param adjacency adjacency list
+#' @param adj adjacency list
 #' @param group array of group identifiers. Typically district numbers or county names.
 #'
 #' @return tibble with a column for each of inputted group, created group number, and the
@@ -14,13 +14,13 @@
 #' adj <- adjacency(checkerboard)
 #' check_contiguity(adj)
 #' 
-check_contiguity <- function(adjacency, group) {
-  if (missing(adjacency)) {
-    stop('Please provide an argument to adjacency.')
+check_contiguity <- function(adj, group) {
+  if (missing(adj)) {
+    cli::cli_abort('Please provide an argument to {.arg adj}.')
   }
   if (!missing(group)) {
-    if (length(adjacency) != length(group)) {
-      stop('Adjacency and group are different lengths.')
+    if (length(adj) != length(group)) {
+      cli::cli_abort('{.arg adj} and {.arg group} are different lengths.')
     }
     groups <- rep(0, length(group))
     sorted <- sort(unique(group))
@@ -29,12 +29,12 @@ check_contiguity <- function(adjacency, group) {
     }
   } else {
     group <- 1L
-    groups <- rep(1L, length(adjacency))
+    groups <- rep(1L, length(adj))
   }
 
   out <- tibble(group = group, 
                 group_number = groups, 
-                component = contiguity(adjacency, groups))
+                component = contiguity(adj, groups))
   
   if (max(out$component) == 1) {
     return(out)
@@ -75,10 +75,10 @@ check_contiguity <- function(adjacency, group) {
 #' check_polygon_contiguity(checkerboard, i)
 check_polygon_contiguity <- function(shp, group) {
   if (missing(shp)) {
-    stop('Please provide an argument to shp')
+    cli::cli_abort('Please provide an argument to {.arg shp}.')
   }
   if (missing(group)) {
-    stop('Please provide an argument to `group`.')
+    cli::cli_abort('Please provide an argument to {.arg group}.')
   }
 
   shp <- shp %>%
@@ -89,7 +89,7 @@ check_polygon_contiguity <- function(shp, group) {
 
   adj <- adjacency(shp)
 
-  check_contiguity(adjacency = adj, group = shp %>%
+  check_contiguity(adj = adj, group = shp %>%
     sf::st_drop_geometry() %>%
     dplyr::pull({{ group }}))
 }
@@ -99,9 +99,9 @@ check_polygon_contiguity <- function(shp, group) {
 #' Suggests nearest neighbors for connecting a disconnected group.
 #'
 #' @param shp An sf data frame
-#' @param adjacency adjacency list
+#' @param adj adjacency list
 #' @param group array of group identifiers. Typically district numbers or county names.
-#' Defaults to rep(1, length(adjacency)) if missing.
+#' Defaults to rep(1, length(adj)) if missing.
 #'
 #' @return tibble with two columns of suggested rows of shp to connect in adj
 #' @export
@@ -115,18 +115,18 @@ check_polygon_contiguity <- function(shp, group) {
 #' adj <- adjacency(checkerboard)
 #' suggest_component_connection(checkerboard, adj)
 #' 
-suggest_component_connection <- function(shp, adjacency, group) {
+suggest_component_connection <- function(shp, adj, group) {
   if (missing(shp)) {
-    stop('Please provide an argument to shp')
+    cli::cli_abort('Please provide an argument to {.arg shp}')
   }
-  if (missing(adjacency)) {
-    stop('Please provide an argument to adjacency.')
+  if (missing(adj)) {
+    cli::cli_abort('Please provide an argument to {.arg adj}.')
   }
   if (missing(group)) {
-    group <- rep(1, length(adjacency))
+    group <- rep(1, length(adj))
   }
 
-  components <- check_contiguity(adjacency = adjacency, group = group)
+  components <- check_contiguity(adj = adj, group = group)
 
   shp <- shp %>% mutate(rownum = row_number())
 

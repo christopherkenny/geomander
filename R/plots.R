@@ -1,7 +1,7 @@
 #' Create Plots of Shapes by Group with Connected Components Colored
 #'
 #' @param shp An sf shapefile
-#' @param adjacency adjacency list
+#' @param adj adjacency list
 #' @param group array of group identifiers. Typically district numbers or county names.
 #' @param save Boolean, whether to save or not.
 #' @param path Path to save, only used if save is TRUE. Defaults to working directory.
@@ -22,20 +22,20 @@
 #'
 #' p[[1]]
 #' p[[2]]
-geo_plot_group <- function(shp, adjacency, group, save = FALSE, path = '') {
+geo_plot_group <- function(shp, adj, group, save = FALSE, path = '') {
   if (missing(shp)) {
-    stop('Please provide an argument to shp.')
+    cli::cli_abort('Please provide an argument to {.arg shp}.')
   }
   
-  if (missing(adjacency)) {
-    stop('Please provide an argument to adjacency.')
+  if (missing(adj)) {
+    cli::cli_abort('Please provide an argument to {.arg adj}.')
   }
   
   if (missing(group)) {
     group <- rep(1L, nrow(shp))
   }
   
-  components <- check_contiguity(adjacency = adjacency, group = group)
+  components <- check_contiguity(adj = adj, group = group)
   
   shp <- shp %>%
     dplyr::bind_cols(components) %>%

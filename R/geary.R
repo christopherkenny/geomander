@@ -17,34 +17,26 @@
 #' local_gearys(shp = checkerboard, wts = checkerboard$m)
 local_gearys <- function(shp, adj, wts, spatial_mat) {
   if (missing(shp) & missing(adj) & missing(spatial_mat)) {
-    stop('Please supply an argument to at least one of shp or adj or spatial_mat.')
+    cli::cli_abort('Please supply an argument to at least one of shp or adj or spatial_mat.')
   }
 
   if (missing(adj) & missing(spatial_mat)) {
     adj <- adjacency(shp)
-    adj <- lapply(adj, FUN = function(x) {
-      x - 1L
-    })
   }
 
   if (missing(spatial_mat)) {
     mat <- adjlist2matrix(adj)
   } else {
     if (nrow(mat) != ncol(mat)) {
-      stop('spatial_mat must be square.')
+      cli::cli_abort('spatial_mat must be square.')
     }
 
     if (length(wts) != nrow(spatial_mat)) {
-      stop('wts and spatial_mat have different lengths.')
+      cli::cli_abort('wts and spatial_mat have different lengths.')
     }
   }
-
-
-  out <- localgeary(wts, mat)
-
-
-  out <- tibble(geary = out)
-  return(out)
+  
+  tibble(geary = localgeary(wts, mat))
 }
 
 
@@ -70,30 +62,27 @@ local_gearys <- function(shp, adj, wts, spatial_mat) {
 #' global_gearys(shp = checkerboard, wts = checkerboard$m)
 global_gearys <- function(shp, adj, wts, spatial_mat) {
   if (missing(shp) & missing(adj) & missing(spatial_mat)) {
-    stop('Please supply an argument to at least one of shp or adj or spatial_mat.')
+    cli::cli_abort('Please supply an argument to at least one of {.arg shp} or {.arg adj} or {.arg spatial_mat}.')
   }
 
   if (missing(adj) & missing(spatial_mat)) {
     adj <- adjacency(shp)
-    adj <- lapply(adj, FUN = function(x) {
-      x - 1L
-    })
   }
 
   if (missing(spatial_mat)) {
     mat <- adjlist2matrix(adj)
   } else {
     if (nrow(mat) != ncol(mat)) {
-      stop('spatial_mat must be square.')
+      cli::cli_abort('{.arg spatial_mat} must be square.')
     }
 
     if (length(wts) != nrow(spatial_mat)) {
-      stop('wts and spatial_mat have different lengths.')
+      cli::cli_abort('{.arg wts} and {.arg spatial_mat} have different lengths.')
     }
   }
 
 
   out <- globalgeary(wts, mat)
 
-  return(out)
+  out
 }

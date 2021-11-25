@@ -27,7 +27,8 @@ Imports:
     dataverse,
     censable,
     Rcpp (>= 1.0.7),
-    geos
+    geos,
+    cli
 Depends: 
     R (>= 2.10)
 Suggests:

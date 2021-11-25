@@ -15,7 +15,7 @@
 geo_sort <- function(shp) {
   
   if (missing(shp)) {
-    stop('shp is required.')
+    cli::cli_abort('{.arg shp} is required.')
   }
 
   bbox <- bbox_geos(shp)

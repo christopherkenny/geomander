@@ -19,10 +19,10 @@ dra2r <- function(dra, state, precincts) {
 
   # check inputs
   if (missing(dra)) {
-    stop('Please provide an argument to `dra`.')
+    cli::cli_abort('Please provide an argument to {.arg dra}.')
   }
   if (missing(state)) {
-    stop('Please provide a postal code, fips code, or name to state.')
+    cli::cli_abort('Please provide a postal code, fips code, or name to state.')
   }
 
   # make dra into a dataframe
@@ -30,7 +30,7 @@ dra2r <- function(dra, state, precincts) {
 
     # check that it's pointing to a good thing:
     if (!file.exists(dra)) {
-      stop('dra supplied as character, but does not point to a valid file.')
+      cli::cli_abort('{.arg dra} supplied as character, but does not point to a valid file.')
     }
 
     # get the file extension
@@ -38,30 +38,30 @@ dra2r <- function(dra, state, precincts) {
     if (ext == '.csv') {
       dra <- readr::read_csv(file = dra, col_types = c(Id = 'c', District = 'c'), col_names = TRUE)
     } else if (ext == 'json') {
-      stop('Please export the map as a csv. json not currently supported, but may be in the future.')
+      cli::cli_abort('Please export the map as a csv. json not currently supported, but may be in the future.')
     } else {
-      stop('dra points to a valid file, but not a csv. Please point to a csv export of the map.')
+      cli::cli_abort('dra points to a valid file, but not a csv. Please point to a csv export of the map.')
     }
 
 
     if (!('Id' %in% names(dra) & 'District' %in% names(dra))) {
-      stop('dra points to a file where `Id` and/or `District` column not present.')
+      cli::cli_abort('{.arg dra} points to a file where {.var Id} and/or {.var District} column not present.')
     }
   } else {
     if (!('Id' %in% names(dra) & 'District' %in% names(dra))) {
-      stop('dra provided as dataframe, but `Id` and/or `District` column not present.')
+      cli::cli_abort('{.arg dra} provided as dataframe, but {.var Id} and/or {.var District} column not present.')
     }
   }
 
   # rename District column
-  dra <- dra %>% rename(District_DRA = District)
+  dra <- dra %>% dplyr::rename(District_DRA = District)
 
   # get the block file to match it to
   shp <- tigris::blocks(state)
   shp$GEOID10 <- as.double(shp$GEOID10)
 
   # join them together
-  shp <- shp %>% left_join(dra, by = c('GEOID10' = 'Id'))
+  shp <- shp %>% dplyr::left_join(dra, by = c('GEOID10' = 'Id'))
 
   # match to precincts if provided
   if (!missing(precincts)) {
@@ -69,41 +69,36 @@ dra2r <- function(dra, state, precincts) {
       shp <- sf::st_transform(shp, sf::st_crs(precincts))
     }
 
-    precincts <- precincts %>% mutate(matches = row_number())
+    precincts <- precincts %>% dplyr::mutate(matches = row_number())
 
     matches <- geo_match(from = shp, to = precincts)
 
-    shp <- shp %>% mutate(matches = matches)
+    shp <- shp %>% dplyr::mutate(matches = matches)
 
     shp <- shp %>%
       sf::st_drop_geometry() %>%
-      select(matches, District_DRA)
+      dplyr::select(matches, District_DRA)
 
     # get the most likely match
     shp <- shp %>%
-      group_by(matches, District_DRA) %>%
-      mutate(n = n()) %>%
-      ungroup() %>%
-      group_by(matches) %>%
-      arrange(desc(n)) %>%
-      slice(1) %>%
-      ungroup() %>%
-      select(-n)
+      dplyr::group_by(matches, District_DRA) %>%
+      dplyr::mutate(n = n()) %>%
+      dplyr::ungroup() %>%
+      dplyr::group_by(matches) %>%
+      dplyr::arrange(desc(n)) %>%
+      dplyr::slice(1) %>%
+      dplyr::ungroup() %>%
+      dplyr::select(-n)
 
     precincts <- precincts %>%
-      left_join(shp, by = 'matches') %>%
-      select(-matches)
+      dplyr::left_join(shp, by = 'matches') %>%
+      dplyr::select(-matches)
 
     return(precincts)
   }
 
   shp
 }
-
-
-
-
-
 
 #' R to DRA
 #'
@@ -129,17 +124,17 @@ dra2r <- function(dra, state, precincts) {
 #' }
 r2dra <- function(precincts, plan, state, path) {
   if (missing(precincts)) {
-    stop('precincts is a required input.')
+    cli::cli_abort('precincts is a required input.')
   }
   if (missing(plan)) {
-    stop('plan is a required input.')
+    cli::cli_abort('plan is a required input.')
   }
   if (missing(state)) {
-    stop('state is a required input.')
+    cli::cli_abort('state is a required input.')
   }
 
   if (!'sf' %in% class(precincts)) {
-    stop('precincts must be an sf dataframe')
+    cli::cli_abort('precincts must be an sf dataframe')
   }
 
   if ('character' %in% class(plan)) {
@@ -169,7 +164,7 @@ r2dra <- function(precincts, plan, state, path) {
       suc <- try(readr::write_csv(x = out, file = paste0(path, '.csv')), silent = TRUE)
     }
     if (!'data.frame' %in% class(suc)) {
-      warning('save to path failed. Returning dataframe to be saved manually.')
+      cli::cli_warn('save to path failed. Returning dataframe to be saved manually.')
     }
   }
 

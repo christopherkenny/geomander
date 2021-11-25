@@ -31,7 +31,7 @@ get_alarm <- function(state, geometry = TRUE, file = tempfile(fileext = '.csv'))
       out <- utils::download.file(url = paste0(base_path, end_path), file)
     })
     if (is.null(out)) {
-      stop(stringr::str_glue('State {state} not found in ALARM Data.'))
+      cli::cli_abort('State {state} not found in ALARM Data.')
     }
   }
 

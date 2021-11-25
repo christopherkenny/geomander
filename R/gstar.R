@@ -19,30 +19,24 @@
 #' gstar_i(shp = checkerboard, wts = checkerboard$m)
 gstar_i <- function(shp, adj, wts, spatial_mat) {
   if (missing(shp) & missing(adj) & missing(spatial_mat)) {
-    stop('Please supply an argument to at least one of shp or adj or spatial_mat.')
+    cli::cli_abort('Please supply an argument to at least one of {.arg shp} or {.arg adj} or {.arg spatial_mat}.')
   }
 
   if (missing(adj) & missing(spatial_mat)) {
-    adj <- sf::st_relate(shp, shp, pattern = 'F***1****')
-    adj <- lapply(adj, FUN = function(x) {
-      x - 1L
-    })
+    adj <- adjacency(shp)
   }
 
   if (missing(spatial_mat)) {
     mat <- adjlist2matrix(adj)
   } else {
     if (nrow(mat) != ncol(mat)) {
-      stop('spatial_mat must be square.')
+      cli::cli_abort('spatial_mat must be square.')
     }
 
     if (length(wts) != nrow(spatial_mat)) {
-      stop('wts and spatial_mat have different lengths.')
+      cli::cli_abort('wts and spatial_mat have different lengths.')
     }
   }
-
-
-  out <- localgstar(wts, mat)
-
-  return(out)
+  
+  localgstar(wts, mat)
 }

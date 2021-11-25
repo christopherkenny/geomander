@@ -123,7 +123,7 @@ Now, to figure out what's going on and try to clean it up, we can build an adjac
 ```{r, message = FALSE}
 adj <- redist.adjacency(shp = block)
 
-comp <- check_contiguity(adjacency = adj, group = block$TownID)
+comp <- check_contiguity(adj = adj, group = block$TownID)
 
 which(comp$component > 1)
 ```
@@ -138,7 +138,7 @@ block$TownID[591] <- 4
 
 Now all towns are completely connected or contiguous.
 ```{r}
-comp <- check_contiguity(adjacency = adj, group = block$TownID)
+comp <- check_contiguity(adj = adj, group = block$TownID)
 
 which(comp$component > 1)
 ```

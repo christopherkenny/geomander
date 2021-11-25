@@ -25,5 +25,6 @@ set.seed(1)
 data(rockland)
 rockland$id <- sample(1:2, nrow(rockland), TRUE)
 block2prec(rockland, rockland$id)
+
 }
 \concept{datatable}

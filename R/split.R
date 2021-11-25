@@ -35,20 +35,20 @@
 split_precinct <- function(lower, precinct, split_by, lower_wt, split_by_id) {
   if (!missing(lower_wt)) {
     if (length(lower_wt) != nrow(lower)) {
-      stop('`lower_wt` must have the same number of entries as `lower`')
+      cli::cli_abort('{.arg lower_wt} must have the same number of entries as {.arg lower}')
     }
 
     if (!is.numeric(lower_wt)) {
-      stop('`lower_wt` must be a numeric vector to allow for weighting.')
+      cli::cli_abort('{.arg lower_wt} must be a numeric vector to allow for weighting.')
     }
   }
 
   if (nrow(precinct) != 1) {
-    stop('Please provide only one geography to `precinct`.')
+    cli::cli_abort('Please provide only one geography to {.arg precinct}.')
   }
 
   if (nrow(split_by) < 2) {
-    stop('`split_by` requires at least two geographies to consider.')
+    cli::cli_abort('{.arg split_by} requires at least two geographies to consider.')
   }
 
   lower <- lower %>%
@@ -79,7 +79,7 @@ split_precinct <- function(lower, precinct, split_by, lower_wt, split_by_id) {
     if (split_by_id %in% names(split_by)) {
       out_geo$id <- split_by[[split_by_id]][out_geo$new]
     } else {
-      warning('`split_by_id` provided, but no column with that name found.')
+      cli::cli_warn('{.arg split_by_id} provided, but no column with that name found.')
     }
   }
 

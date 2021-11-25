@@ -31,11 +31,11 @@ create_block_table <- function(state, county = NULL, geometry = TRUE, year = 202
   statepo <- censable::match_abb(state)
 
   if (length(statepo) == 0) {
-    stop('Please provide a two letter postal abbreviation for the state.')
+    cli::cli_abort('Please provide a two letter postal abbreviation for the {.arg state}.')
   }
 
   if (year < 2000 || year %% 10 != 0) {
-    warning('Only 2010 and 2020 are currently supported. 2000 may or may not work.')
+    cli::cli_warn('Only 2010 and 2020 are currently supported. 2000 may or may not work.')
   }
 
   if (mem) {
@@ -83,11 +83,11 @@ create_tract_table <- function(state, county, geometry = TRUE, year = 2019,
   statepo <- censable::match_abb(state)
 
   if (length(statepo) == 0) {
-    stop('Please provide a two letter postal abbreviation for the state.')
+    cli::cli_abort('Please provide a two letter postal abbreviation for the state.')
   }
 
   if (year < 2009 | year > 2019) {
-    warning('Only years in 2009:2019 inclusive are currently supported.')
+    cli::cli_warn('Only years in 2009:2019 inclusive are currently supported.')
   }
 
   if (mem) {
@@ -122,12 +122,13 @@ create_tract_table <- function(state, county, geometry = TRUE, year = 2019,
 #' data(rockland)
 #' rockland$id <- sample(1:2, nrow(rockland), TRUE)
 #' block2prec(rockland, rockland$id)
+#' 
 block2prec <- function(block_table, matches, geometry = FALSE) {
   if (missing(block_table)) {
-    stop('Please provide an argument to block_table.')
+    cli::cli_abort('Please provide an argument to {.arg block_table}.')
   }
   if (missing(matches)) {
-    stop('Please provide an argument to matches')
+    cli::cli_abort('Please provide an argument to {.arg matches}.')
   }
 
   block_table <- block_table %>% mutate(matches_id = matches)
@@ -193,16 +194,16 @@ block2prec <- function(block_table, matches, geometry = FALSE) {
 #' }
 block2prec_by_county <- function(block_table, precinct, precinct_county_fips) {
   if (missing(block_table)) {
-    stop('Please provide an argument to block_table.')
+    cli::cli_abort('Please provide an argument to {.arg block_table}.')
   }
   if (missing(precinct)) {
-    stop('Please provide an argument to precincts.')
+    cli::cli_abort('Please provide an argument to {.arg precinct}.')
   }
   if (missing(precinct_county_fips)) {
-    stop('Please provide an argument to precinct_county_fips.')
+    cli::cli_abort('Please provide an argument to {.argprecinct_county_fips}.')
   }
   if (!precinct_county_fips %in% names(precinct)) {
-    stop('precinct_county_fips is not the name of a column in precinct.')
+    cli::cli_abort('{.arg precinct_county_fips} is not the name of a column in precinct.')
   }
 
 
