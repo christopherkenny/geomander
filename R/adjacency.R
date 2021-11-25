@@ -61,11 +61,11 @@ subtract_edge <- function(adj, v1, v2, zero = TRUE) {
   zero <- as.integer(zero)
 
   for (i in seq_along(v1)) {
-      adjacency[[v1[i]]] <- setdiff(adjacency[[v1[i]]], v2[i] - zero)
-      adjacency[[v2[i]]] <- setdiff(adjacency[[v2[i]]], v1[i] - zero)
+      adj[[v1[i]]] <- setdiff(adj[[v1[i]]], v2[i] - zero)
+      adj[[v2[i]]] <- setdiff(adj[[v2[i]]], v1[i] - zero)
   }
 
-  adjacency
+  adj
 }
 
 #' Suggest Neighbors for Lonely Precincts

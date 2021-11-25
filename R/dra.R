@@ -3,7 +3,7 @@
 #' Creates a block or precinct level dataset from DRA csv output.
 #'
 #' @param dra The path to an exported csv or
-#' a dataframe with columns Id and District, loaded from a DRA export.
+#' a dataframe with columns GEOID20 and District, loaded from a DRA export.
 #' @param state the state postal code of the state
 #' @param precincts an sf dataframe of precinct shapes to link the output to
 #'
@@ -36,7 +36,7 @@ dra2r <- function(dra, state, precincts) {
     # get the file extension
     ext <- stringr::str_sub(dra, start = -4)
     if (ext == '.csv') {
-      dra <- readr::read_csv(file = dra, col_types = c(Id = 'c', District = 'c'), col_names = TRUE)
+      dra <- readr::read_csv(file = dra, col_types = c(GEOID20 = 'c', District = 'c'), col_names = TRUE)
     } else if (ext == 'json') {
       cli::cli_abort('Please export the map as a csv. json not currently supported, but may be in the future.')
     } else {
@@ -44,12 +44,12 @@ dra2r <- function(dra, state, precincts) {
     }
 
 
-    if (!('Id' %in% names(dra) & 'District' %in% names(dra))) {
-      cli::cli_abort('{.arg dra} points to a file where {.var Id} and/or {.var District} column not present.')
+    if (!('GEOID20' %in% names(dra) & 'District' %in% names(dra))) {
+      cli::cli_abort('{.arg dra} points to a file where {.var GEOID20} and/or {.var District} column not present.')
     }
   } else {
-    if (!('Id' %in% names(dra) & 'District' %in% names(dra))) {
-      cli::cli_abort('{.arg dra} provided as dataframe, but {.var Id} and/or {.var District} column not present.')
+    if (!('GEOID20' %in% names(dra) & 'District' %in% names(dra))) {
+      cli::cli_abort('{.arg dra} provided as dataframe, but {.var GEOID20} and/or {.var District} column not present.')
     }
   }
 
@@ -57,11 +57,10 @@ dra2r <- function(dra, state, precincts) {
   dra <- dra %>% dplyr::rename(District_DRA = District)
 
   # get the block file to match it to
-  shp <- tigris::blocks(state)
-  shp$GEOID10 <- as.double(shp$GEOID10)
+  shp <- tigris::blocks(state, year = 2020)
 
   # join them together
-  shp <- shp %>% dplyr::left_join(dra, by = c('GEOID10' = 'Id'))
+  shp <- shp %>% dplyr::left_join(dra, by = 'GEOID20')
 
   # match to precincts if provided
   if (!missing(precincts)) {
@@ -123,26 +122,26 @@ dra2r <- function(dra, state, precincts) {
 #' r2dra(cnty, matchedcty, 'UT', 'r2dra_ex.csv')
 #' }
 r2dra <- function(precincts, plan, state, path) {
+  
   if (missing(precincts)) {
-    cli::cli_abort('precincts is a required input.')
+    cli::cli_abort('{.arg precincts} is a required input.')
   }
-  if (missing(plan)) {
-    cli::cli_abort('plan is a required input.')
-  }
-  if (missing(state)) {
-    cli::cli_abort('state is a required input.')
-  }
-
   if (!'sf' %in% class(precincts)) {
-    cli::cli_abort('precincts must be an sf dataframe')
+    cli::cli_abort('{.arg precincts} must be an sf dataframe')
   }
-
+  
+  if (missing(plan)) {
+    cli::cli_abort('{.arg plan} is a required input.')
+  }
   if ('character' %in% class(plan)) {
     plan <- precincts[[plan]]
   }
-
-
-  shp <- tigris::blocks(state)
+  
+  if (missing(state)) {
+    cli::cli_abort('{.arg state} is a required input.')
+  }
+  
+  shp <- tigris::blocks(state, year = 2020)
 
   if (sf::st_crs(shp) != sf::st_crs(precincts)) {
     shp <- sf::st_transform(shp, sf::st_crs(precincts))
@@ -152,7 +151,7 @@ r2dra <- function(precincts, plan, state, path) {
 
   dist <- plan[matches]
 
-  out <- tibble(Id = shp$GEOID, District = dist)
+  out <- tibble(GEOID20 = shp$GEOID20, District = dist)
 
   # return if no path
   if (missing(path)) {
