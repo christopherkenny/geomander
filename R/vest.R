@@ -29,7 +29,7 @@ get_vest <- function(state, year, path = tempdir(), clean_names = TRUE) {
     server = 'dataverse.harvard.edu'
   ) %>%
     writeBin(con = tf)
-  zip::unzip(tf, exdir = path)
+  utils::unzip(tf, exdir = path)
 
   poss <- sf::st_layers(dsn = path)[[1]]
   up_path <- poss[stringr::str_starts(string = poss, stringr::str_glue('{abb}_{year}'))]
