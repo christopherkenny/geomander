@@ -28,3 +28,4 @@ Get VEST Dataset
 shp <- get_vest('CO', 2020)
 }
 }
+\concept{datasets}

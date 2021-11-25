@@ -1,4 +1,3 @@
-
 #' Get VEST Dataset
 #'
 #' @param state two letter state abbreviation
@@ -10,6 +9,7 @@
 #' @return sf tibble
 #' @export
 #'
+#' @concept datasets
 #' @examples
 #' \dontrun{
 #' # Requires Dataverse API
@@ -43,13 +43,14 @@ get_vest <- function(state, year, path = tempdir(), clean_names = TRUE) {
   out
 }
 
-
 #' Clean Vest Names
 #'
 #' @param data sf tibble from VEST
 #'
 #' @return data with cleaned names
 #' @export
+#'
+#' @concept datasets
 #' @examples
 #' data(va18sub)
 #' va <- clean_vest(va18sub)
@@ -86,7 +87,8 @@ clean_vest <- function(data) {
 #'
 #' @return character abbreviations for states
 #' @export
-#'
+#' 
+#' @concept datasets
 #' @examples
 #' \dontrun{
 #' # Requires Dataverse API
@@ -137,7 +139,6 @@ vest_party <- function(str) {
 
   p
 }
-
 
 #' Vest Abbreviations
 #' @keywords internal

@@ -10,6 +10,10 @@ reference:
   desc: "Functions to help build and refine data" 
 - contents:
   - has_concept("datatable")
+- title: "Downloading Datasets"
+  desc: "Functions to help download common datasets" 
+- contents:
+  - has_concept("datasets")
 - title: "Fixing Geographic Imperfections"
   desc: "Functions to help pretend that the geographies were properly connected"
 - contents:

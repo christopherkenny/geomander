@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.9.9.9000</span>
       </span>
     </div>
 
@@ -129,6 +129,20 @@
       <small>Source: <a href='https://github.com/christopherkenny/geomander/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="geomander-200" class="section level1">
+<h1 class="page-header" data-toc-text="2.0.0">
+<a href="#geomander-200" class="anchor"></a>geomander 2.0.0<small> Unreleased </small>
+</h1>
+<ul>
+<li>
+<code><a href="../reference/check_contiguity.html">check_contiguity()</a></code> orders by most frequent component, so less common components have higher numbers.</li>
+<li>Uses <code>geos</code> for geographic computations over <code>sf</code> to avoid <code>s2</code> where possible and introduce speed improvements.</li>
+<li>Uses <code>cli</code> package for progress reporting.</li>
+<li>
+<code>adjacency</code> renamed to <code>adj</code> to match <code>redist</code> naming.</li>
+<li>Updates <code>r2dra</code> and <code>dra2r</code> to work off of 2020 geometries.</li>
+</ul>
+</div>
     <div id="geomander-112" class="section level1">
 <h1 class="page-header" data-toc-text="1.1.2">
 <a href="#geomander-112" class="anchor"></a>geomander 1.1.2<small> Unreleased </small>

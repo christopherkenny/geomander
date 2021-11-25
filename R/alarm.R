@@ -11,6 +11,7 @@
 #' @return tibble with election data and optional geometry
 #' @export
 #'
+#' @concept datasets
 #' @examples
 #' \donttest{
 #' # Takes a few seconds t
@@ -56,6 +57,7 @@ get_alarm <- function(state, geometry = TRUE, file = tempfile(fileext = '.csv'))
 #' @return character abbreviations for states
 #' @export
 #'
+#' @concept datasets
 #' @examples
 #' \dontrun{
 #' # relies on internet availability and interactivity on some systems

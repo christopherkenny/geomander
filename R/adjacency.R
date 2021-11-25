@@ -45,7 +45,9 @@ add_edge <- function(adj, v1, v2, zero = TRUE) {
 #' @export
 #' @md
 #' @return adjacency list.
-#'
+#' 
+#' @concept fix
+#' @examples
 #' data(towns)
 #' adj <- adjacency(towns)
 #' subtract_edge(adj, 2, 3)

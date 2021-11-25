@@ -19,11 +19,14 @@ If array, connects each to corresponding entry in v1.}
 }
 \value{
 adjacency list.
-
-data(towns)
-adj <- adjacency(towns)
-subtract_edge(adj, 2, 3)
 }
 \description{
 Subtract Edges from an Adjacency List
 }
+\examples{
+data(towns)
+adj <- adjacency(towns)
+subtract_edge(adj, 2, 3)
+
+}
+\concept{fix}
