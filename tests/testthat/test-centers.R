@@ -1,5 +1,5 @@
 test_that('centerish works', {
-  act <- st_centerish(checkerboard)$geometry
+  act <- st_centerish(checkerboard, epsg = FALSE)$geometry
 
   expected <- structure(list(
     structure(c(0.5, 0.5), class = c('XY', 'POINT', 'sfg')),

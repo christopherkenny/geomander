@@ -1,5 +1,5 @@
 test_that('adjacency works', {
-  actual <- adjacency(checkerboard)
+  actual <- adjacency(checkerboard, epsg = FALSE)
 
   expect_equal(actual, checkerboard_adj)
 })

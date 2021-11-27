@@ -3,7 +3,7 @@ largest_intersection_geos <- function(x, y) {
 
   a <- lapply(seq_along(l), function(i) {
     sapply(l[[i]], function(j) {
-      geos::geos_area(geos::geos_intersection(x[i, ], y[j, ]))
+      geos::geos_area(geos::geos_intersection(x[[i]], y[[j]]))
     })
   })
 

@@ -71,8 +71,8 @@ geo_match <- function(from, to, method = 'center', tiebreaker = TRUE, epsg = 385
   } else {
     to <- to %>% mutate(toid = row_number())
     from <- from %>% mutate(fromid = row_number())
-    # from <- geos::geos_make_valid(from)
-    ints <- largest_intersection_geos(x = from, y = to)
+    ints <- largest_intersection_geos(x = geos::geos_make_valid(from), 
+                                      y = geos::geos_make_valid(to))
 
     if (any(is.na(ints))) {
       idx <- which(is.na(ints))
