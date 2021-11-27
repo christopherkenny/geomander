@@ -15,3 +15,5 @@ NULL
 #' @importFrom stringr str_detect
 #' @importFrom readr read_csv write_csv
 NULL
+
+globalVariables(c('.'))

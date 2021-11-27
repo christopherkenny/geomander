@@ -23,6 +23,14 @@ reference:
   desc: "Functions to get maps into DRA or from DRA"
 - contents:
   - has_concept("dra")
+- title: "Center of Shape"
+  desc: "Adjusted centroids to ensure that the point is in the shape"
+- contents:
+  - has_concept("center")
+- title: "Tools for working with borders"
+  desc: "Functions that deal with two sides of a seam between two administrative units"
+- contents:
+  - has_concept("seam")
 - title: "Spatial Autocorrelation"
   desc: "Functions to measure local and global autocorrelation measures"
 - contents:
