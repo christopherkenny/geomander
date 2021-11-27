@@ -27,10 +27,10 @@ geo_match <- function(from, to, method = 'center', tiebreaker = TRUE, epsg = 385
   match.arg(arg = method, choices = c('center', 'centroid', 'point', 'area'))
 
   if (missing(from)) {
-    stop('Please provide an argument to {.arg from}.')
+    cli::cli_abort('Please provide an argument to {.arg from}.')
   }
   if (missing(to)) {
-    stop('Please provide an argument to {.arg to}.')
+    cli::cli_abort('Please provide an argument to {.arg to}.')
   }
   
   pairs <- make_planar_pair(from, to, epsg = epsg)
@@ -39,7 +39,7 @@ geo_match <- function(from, to, method = 'center', tiebreaker = TRUE, epsg = 385
 
   if (method %in% c('center', 'centroid', 'point')) {
     if (method == 'center') {
-      op <- st_centerish
+      op <- function(x) st_centerish(x, epsg = epsg)
     } else if (method == 'centroid') {
       op <- geos::geos_centroid
     } else {
