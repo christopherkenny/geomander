@@ -15,6 +15,7 @@
 #' @examples
 #' data(towns)
 #' st_centerish(towns)
+#' 
 st_centerish <- function(shp, epsg = 3857) {
   
   shp <- make_planar_pair(x = shp, epsg = epsg)$x
@@ -25,11 +26,10 @@ st_centerish <- function(shp, epsg = 3857) {
     outside <- !geos::geos_within(cent, shp)
 
     if (any(outside)) {
-      pts <- geos::geos_point_on_surface(shp[outside, ])
-      cent[outside] <- pts
+      cent[outside] <- geos::geos_point_on_surface(shp[outside, ])
     }
   } else {
-    outside <- !geos::geos_within(x = cent, y = shp)
+    outside <- !geos::geos_within(geom1 = cent, geom2 = shp)
 
     if (is.na(outside)) {
       outside <- TRUE

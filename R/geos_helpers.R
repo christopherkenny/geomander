@@ -16,6 +16,23 @@ largest_intersection_geos <- function(x, y) {
   }, 0)
 }
 
+area_intersection_geos <- function(x, y) {
+  l <- geos::geos_intersects_matrix(x, y)
+  
+  a <- lapply(seq_along(l), function(i) {
+    sapply(l[[i]], function(j) {
+      geos::geos_area(geos::geos_intersection(x[[i]], y[[j]])) / geos::geos_area(y[[j]])
+    })
+  })
+  
+  lapply(seq_along(a),
+         function(i){
+           x <- a[[i]]
+           names(x) <- as.character(l[[i]])
+           x
+         })
+}
+
 nn_geos <- function(x, y, k = 1) {
   dists <- geos::geos_distance(x, y)
   which(dists %in% min_k(dists, k))[seq_len(k)]

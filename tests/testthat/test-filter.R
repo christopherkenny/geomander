@@ -1,3 +1,12 @@
-test_that("multiplication works", {
-  expect_equal(2 * 2, 4)
+test_that("geo_filter works", {
+  nr <- geo_filter(rockland, nrcsd)
+  
+  expect_equal(nrow(nr), 722)
+})
+
+
+test_that('geo_trim works', {
+  nr <- geo_filter(rockland, nrcsd)
+  nr <- geo_trim(nr, nrcsd)
+  expect_equal(nrow(nr), 689)
 })
