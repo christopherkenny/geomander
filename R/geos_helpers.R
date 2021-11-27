@@ -2,9 +2,7 @@ largest_intersection_geos <- function(x, y) {
   l <- geos::geos_intersects_matrix(x, y)
 
   a <- lapply(seq_along(l), function(i) {
-    sapply(l[[i]], function(j) {
-      geos::geos_area(geos::geos_intersection(x[[i]], y[[j]]))
-    })
+      geos::geos_area(geos::geos_intersection(x[[i]], y[[l[[i]]]]))
   })
 
   vapply(seq_along(l), function(i) {
@@ -20,9 +18,7 @@ area_intersection_geos <- function(x, y) {
   l <- geos::geos_intersects_matrix(x, y)
   
   a <- lapply(seq_along(l), function(i) {
-    sapply(l[[i]], function(j) {
-      geos::geos_area(geos::geos_intersection(x[[i]], y[[j]])) / geos::geos_area(y[[j]])
-    })
+      geos::geos_area(geos::geos_intersection(x[[i]], y[[l[[i]]]])) / geos::geos_area(y[[l[[i]]]])
   })
   
   lapply(seq_along(a),
