@@ -39,16 +39,15 @@ bbox_geos <- function(x) {
   geos::geos_envelope(geos::geos_unary_union(geos::geos_make_collection(x)))
 }
 
-# slightly slower than the redist sf-based version
 adj_geos <- function(shp) {
   
   shp <- geos::as_geos_geometry(shp)
-  strtree <- geos::geos_strtree(shp)
-  nby <- geos::geos_strtree_query(strtree, shp)
+  nby <- geos::geos_strtree_query(geos::geos_strtree(shp), shp)
   
   lapply(seq_len(length(shp)),
          function(i) {
-           union(nby[[i]][geos::geos_relate_pattern(shp[[i]], shp[[nby[[i]]]], 'F***1****')],
-                 nby[[i]][geos::geos_relate_pattern(shp[[i]], shp[[nby[[i]]]], '2121**2*2')]) - 1L
+           x <- geos::geos_relate(shp[[i]], shp[[nby[[i]]]])
+           nby[[i]][geos::geos_relate_pattern_match(x, 'F***1****') | 
+                      geos::geos_relate_pattern_match(x, '2121**2*2')] - 1L
          })
 }
