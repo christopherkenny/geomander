@@ -4,7 +4,7 @@
 \alias{split_precinct}
 \title{Split a Precinct}
 \usage{
-split_precinct(lower, precinct, split_by, lower_wt, split_by_id)
+split_precinct(lower, precinct, split_by, lower_wt, split_by_id, epsg = 3857)
 }
 \arguments{
 \item{lower}{The lower geography that makes up the precinct, this is often a
@@ -19,6 +19,8 @@ VAP or population.}
 
 \item{split_by_id}{Optional. A string that names a column in split_by that
 identifies each observation in split_by}
+
+\item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
 sf data frame with precinct split

@@ -62,6 +62,8 @@ check_contiguity <- function(adj, group) {
 #' @param group unquoted name of group identifier in shp.
 #' Typically, this is district assignment. If you're looking for dis-contiguous precincts,
 #' this should be a row number.
+#' @templateVar epsg TRUE
+#' @template template
 #'
 #' @return tibble with a column for each of inputted group, created group number, and the
 #' identified connected component number
@@ -73,7 +75,7 @@ check_contiguity <- function(adj, group) {
 #' @examples
 #' data(checkerboard)
 #' check_polygon_contiguity(checkerboard, i)
-check_polygon_contiguity <- function(shp, group) {
+check_polygon_contiguity <- function(shp, group, epsg = 3857) {
   if (missing(shp)) {
     cli::cli_abort('Please provide an argument to {.arg shp}.')
   }
@@ -81,6 +83,8 @@ check_polygon_contiguity <- function(shp, group) {
     cli::cli_abort('Please provide an argument to {.arg group}.')
   }
 
+  shp <- make_planar_pair(x = shp, epsg = 3857)$x
+  
   shp <- shp %>%
     dplyr::select({{ group }}) %>%
     sf::st_cast('POLYGON') %>%
@@ -102,6 +106,8 @@ check_polygon_contiguity <- function(shp, group) {
 #' @param adj adjacency list
 #' @param group array of group identifiers. Typically district numbers or county names.
 #' Defaults to rep(1, length(adj)) if missing.
+#' @templateVar epsg TRUE
+#' @template template
 #'
 #' @return tibble with two columns of suggested rows of shp to connect in adj
 #' @export
@@ -115,7 +121,7 @@ check_polygon_contiguity <- function(shp, group) {
 #' adj <- adjacency(checkerboard)
 #' suggest_component_connection(checkerboard, adj)
 #' 
-suggest_component_connection <- function(shp, adj, group) {
+suggest_component_connection <- function(shp, adj, group, epsg = 3857) {
   if (missing(shp)) {
     cli::cli_abort('Please provide an argument to {.arg shp}')
   }
@@ -128,22 +134,21 @@ suggest_component_connection <- function(shp, adj, group) {
 
   components <- check_contiguity(adj = adj, group = group)
 
+  shp <- make_planar_pair(x = shp, epsg = 3857)$x
   shp <- shp %>% mutate(rownum = row_number())
 
   out <- tibble()
-  for (g in 1:length(unique(group))) {
+  for (g in seq_len(length(unique(group)))) {
     sub <- components$component[group == g]
     if (max(sub) > 1) {
       cents <- st_centerish(shp)
       for (c in 1:max(sub)) {
         tempx <- cents[group == g & components$component == c, ]
-        # shp %>% filter(group == g, components$component == c)
         tempy <- cents[group == g & components$component != c, ]
-        # shp %>% filter(group == g, components$component != c)
         dists <- dist_mat_geos(x = tempx, y = tempy)
         prop <- arrayInd(which.min(dists), dim(dists))
         out <- out %>% 
-          bind_rows(tibble(x = tempx$rownum[prop[1, 1]], 
+          dplyr::bind_rows(tibble(x = tempx$rownum[prop[1, 1]], 
                            y = tempy$rownum[prop[1, 2]])
           )
       }

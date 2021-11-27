@@ -4,7 +4,7 @@
 \alias{get_vest}
 \title{Get VEST Dataset}
 \usage{
-get_vest(state, year, path = tempdir(), clean_names = TRUE)
+get_vest(state, year, path = tempdir(), clean_names = TRUE, epsg = 3857)
 }
 \arguments{
 \item{state}{two letter state abbreviation}
@@ -15,6 +15,8 @@ get_vest(state, year, path = tempdir(), clean_names = TRUE)
 
 \item{clean_names}{Clean names. Default is \code{TRUE}. If \code{FALSE},
 returns default names.}
+
+\item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
 sf tibble

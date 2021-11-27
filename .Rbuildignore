@@ -11,3 +11,4 @@
 ^\.github$
 ^CRAN-RELEASE$
 ^cran-comments\.md$
+man-roxygen

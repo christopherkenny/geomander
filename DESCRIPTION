@@ -17,7 +17,6 @@ Imports:
     sf,
     stringr,
     tibble,
-    tidycensus,
     tidyr,
     tigris (>= 1.5),
     ggplot2,

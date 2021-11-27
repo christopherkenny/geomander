@@ -7,6 +7,8 @@
 #' @param state two letter state abbreviation
 #' @param geometry Default is TRUE. Add geomeetry to the data?
 #' @param file file path to save ALARM csv
+#' @templateVar epsg TRUE
+#' @template template
 #'
 #' @return tibble with election data and optional geometry
 #' @export
@@ -14,10 +16,10 @@
 #' @concept datasets
 #' @examples
 #' \donttest{
-#' # Takes a few seconds t
+#' # Takes a few seconds to run
 #' ak <- get_alarm('AK')
 #' }
-get_alarm <- function(state, geometry = TRUE, file = tempfile(fileext = '.csv')) {
+get_alarm <- function(state, geometry = TRUE, file = tempfile(fileext = '.csv'), epsg = 3857) {
   base_path <- 'https://raw.githubusercontent.com/christopherkenny/census-2020/elections/census-vest-2020/'
   state <- tolower(censable::match_abb(state))
   end_path <- paste0(state, '_2020_vtd.csv')
@@ -46,6 +48,8 @@ get_alarm <- function(state, geometry = TRUE, file = tempfile(fileext = '.csv'))
       dplyr::mutate(GEOID20 = as.character(.data$GEOID20)) %>%
       dplyr::left_join(geo, by = 'GEOID20') %>%
       sf::st_as_sf()
+    
+    tb <- make_planar_pair(tb, epsg = epsg)$x
   }
 
   tb

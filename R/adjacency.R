@@ -194,7 +194,9 @@ compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE) {
 #' @param shp sf dataframe
 #' @param zero Default is TRUE for zero indexed. FALSE gives a one indexed adjacency list.
 #' @param rook Default is TRUE for rook adjacency. FALSE gives queen adjacency
-#'
+#' @templateVar epsg TRUE
+#' @template template
+#' 
 #' @return list with nrow(shp) entries
 #' @export
 #'
@@ -204,10 +206,12 @@ compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE) {
 #' data(precincts)
 #' adj <- adjacency(precincts)
 #' 
-adjacency <- function(shp, zero = TRUE, rook = TRUE) {
+adjacency <- function(shp, zero = TRUE, rook = TRUE, epsg = 3857) {
   if (!inherits(shp, 'sf')) {
     cli::cli_abort('Input to {.arg shp} must be an sf dataframe.')
   }
+  
+  shp <- make_planar_pair(shp, epsg = epsg)$x
 
   adj <- spdep::poly2nb(shp, queen = !rook)
 

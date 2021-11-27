@@ -4,7 +4,7 @@
 \alias{geo_match}
 \title{Match Across Geographic Layers}
 \usage{
-geo_match(from, to, method = "center", tiebreaker = TRUE)
+geo_match(from, to, method = "center", tiebreaker = TRUE, epsg = 3857)
 }
 \arguments{
 \item{from}{smaller geographic level to match up from}
@@ -15,6 +15,8 @@ geo_match(from, to, method = "center", tiebreaker = TRUE)
 
 \item{tiebreaker}{Should ties be broken? boolean. If FALSE, precincts with no
 matches get value -1 and precincts with multiple matches get value -2.}
+
+\item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
 Integer Vector of matches length(to) with values in 1:nrow(from)

@@ -12,6 +12,8 @@
 #' VAP or population.
 #' @param split_by_id Optional. A string that names a column in split_by that
 #' identifies each observation in split_by
+#' @templateVar epsg TRUE
+#' @template template
 #'
 #' @return sf data frame with precinct split
 #' @export
@@ -32,7 +34,7 @@
 #'   dplyr::summarize(geometry = sf::st_union(geometry))
 #'
 #' split_precinct(low, prec, dists, split_by_id = 'dist')
-split_precinct <- function(lower, precinct, split_by, lower_wt, split_by_id) {
+split_precinct <- function(lower, precinct, split_by, lower_wt, split_by_id, epsg = 3857) {
   if (!missing(lower_wt)) {
     if (length(lower_wt) != nrow(lower)) {
       cli::cli_abort('{.arg lower_wt} must have the same number of entries as {.arg lower}')
@@ -50,15 +52,21 @@ split_precinct <- function(lower, precinct, split_by, lower_wt, split_by_id) {
   if (nrow(split_by) < 2) {
     cli::cli_abort('{.arg split_by} requires at least two geographies to consider.')
   }
-
+  
+  pairs <- make_planar_pair(lower, precinct, epsg = epsg)
+  lower <- pairs$x
+  precinct <- pairs$y
+  pairs <- make_planar_pair(lower, split_by, epsg = epsg)
+  split_by <- pairs$y
+  
   lower <- lower %>%
-    geo_filter(precinct) %>%
-    geo_trim(precinct)
+    geo_filter(precinct, epsg = FALSE) %>%
+    geo_trim(precinct, epsg = FALSE)
 
   split_by <- split_by %>% 
-    geo_filter(precinct)
+    geo_filter(precinct, epsg = FALSE)
 
-  matches <- geo_match(from = lower, to = split_by)
+  matches <- geo_match(from = lower, to = split_by, epsg = FALSE)
 
   out_geo <- lower %>%
     dplyr::select(.data$geometry) %>%

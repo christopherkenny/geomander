@@ -4,7 +4,7 @@
 \alias{check_polygon_contiguity}
 \title{Check Polygon Contiguity}
 \usage{
-check_polygon_contiguity(shp, group)
+check_polygon_contiguity(shp, group, epsg = 3857)
 }
 \arguments{
 \item{shp}{An sf data frame}
@@ -12,6 +12,8 @@ check_polygon_contiguity(shp, group)
 \item{group}{unquoted name of group identifier in shp.
 Typically, this is district assignment. If you're looking for dis-contiguous precincts,
 this should be a row number.}
+
+\item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
 tibble with a column for each of inputted group, created group number, and the

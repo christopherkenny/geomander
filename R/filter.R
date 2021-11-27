@@ -4,6 +4,8 @@
 #' @param from Required. sf dataframe. the geography to subset
 #' @param to Required. sf dataframe. the geography that from must intersect
 #' @param bool Optional, defaults to FALSE. Should this just return a logical vector?
+#' @templateVar epsg TRUE
+#' @template  template
 #'
 #' @return sf data frame or logical vector if bool == TRUE
 #' @export
@@ -22,7 +24,10 @@
 #' data(rockland)
 #' sub <- geo_filter(rockland, towns)
 #' 
-geo_filter <- function(from, to, bool = FALSE) {
+geo_filter <- function(from, to, bool = FALSE, epsg = 3857) {
+  pairs <- make_planar_pair(from, to, epsg = epsg)
+  from <- pairs$x
+  to <- pairs$y
   ints <- geos::geos_intersects(from, 
                                 geos::geos_unary_union(geos::geos_make_collection(to)))
 
@@ -40,7 +45,9 @@ geo_filter <- function(from, to, bool = FALSE) {
 #' @param to Required. sf dataframe. the geography that from must intersect
 #' @param thresh Percent as decimal of an area to trim away. Default is .01, which is 1\%.
 #' @param bool Optional, defaults to FALSE. Should this just return a logical vector?
-#'
+#' @templateVar epsg TRUE
+#' @template  template
+#' 
 #' @return sf data frame or logical vector if bool=TRUE
 #' @export
 #'
@@ -57,7 +64,11 @@ geo_filter <- function(from, to, bool = FALSE) {
 #' sub <- geo_filter(rockland, towns)
 #' rem <- geo_trim(sub, towns, thresh = 0.05)
 #' 
-geo_trim <- function(from, to, thresh = 0.01, bool = FALSE) {
+geo_trim <- function(from, to, thresh = 0.01, bool = FALSE, epsg = 3857) {
+  pairs <- make_planar_pair(from, to, epsg = epsg)
+  from <- pairs$x
+  to <- pairs$y
+  
   ints <- geos::geos_intersection(from, geos::geos_unary_union(geos::geos_make_collection(to)))
   area <- geos::geos_area(from)
   areaints <- rep(0, nrow(from))

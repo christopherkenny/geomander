@@ -4,7 +4,7 @@
 \alias{dra2r}
 \title{DRA to R}
 \usage{
-dra2r(dra, state, precincts)
+dra2r(dra, state, precincts, epsg = 3857)
 }
 \arguments{
 \item{dra}{The path to an exported csv or
@@ -13,6 +13,8 @@ a dataframe with columns GEOID20 and District, loaded from a DRA export.}
 \item{state}{the state postal code of the state}
 
 \item{precincts}{an sf dataframe of precinct shapes to link the output to}
+
+\item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
 sf dataframe either at the block level or precinct level

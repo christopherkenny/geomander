@@ -10,6 +10,7 @@ create_tract_table(
   geometry = TRUE,
   year = 2019,
   mem = FALSE,
+  epsg = 3857,
   geography
 )
 }
@@ -23,6 +24,8 @@ create_tract_table(
 \item{year}{year, must be >= 2009 and <= 2019.}
 
 \item{mem}{Default is FALSE. Set TRUE to use memoized backend.}
+
+\item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 
 \item{geography}{Deprecated. Use geometry.}
 }

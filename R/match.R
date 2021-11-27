@@ -5,6 +5,8 @@
 #' @param method string from center, centroid, point, or area for matching method
 #' @param tiebreaker Should ties be broken? boolean. If FALSE, precincts with no
 #' matches get value -1 and precincts with multiple matches get value -2.
+#' @templateVar epsg TRUE
+#' @template template
 #'
 #' @return Integer Vector of matches length(to) with values in 1:nrow(from)
 #' @export
@@ -21,7 +23,7 @@
 #'
 #' geo_match(from = checkerboard, to = counties)
 #' geo_match(from = checkerboard, to = counties, method = 'area')
-geo_match <- function(from, to, method = 'center', tiebreaker = TRUE) {
+geo_match <- function(from, to, method = 'center', tiebreaker = TRUE, epsg = 3857) {
   match.arg(arg = method, choices = c('center', 'centroid', 'point', 'area'))
 
   if (missing(from)) {
@@ -30,6 +32,10 @@ geo_match <- function(from, to, method = 'center', tiebreaker = TRUE) {
   if (missing(to)) {
     stop('Please provide an argument to {.arg to}.')
   }
+  
+  pairs <- make_planar_pair(from, to, epsg = epsg)
+  from <- pairs$x
+  to <- pairs$y
 
   if (method %in% c('center', 'centroid', 'point')) {
     if (method == 'center') {

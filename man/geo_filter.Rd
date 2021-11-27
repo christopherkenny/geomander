@@ -4,7 +4,7 @@
 \alias{geo_filter}
 \title{Filter to Intersecting Pieces}
 \usage{
-geo_filter(from, to, bool = FALSE)
+geo_filter(from, to, bool = FALSE, epsg = 3857)
 }
 \arguments{
 \item{from}{Required. sf dataframe. the geography to subset}
@@ -12,6 +12,8 @@ geo_filter(from, to, bool = FALSE)
 \item{to}{Required. sf dataframe. the geography that from must intersect}
 
 \item{bool}{Optional, defaults to FALSE. Should this just return a logical vector?}
+
+\item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
 sf data frame or logical vector if bool == TRUE

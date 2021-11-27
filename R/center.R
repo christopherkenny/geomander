@@ -4,6 +4,8 @@
 #' Uses the centroid if that's in the shape, or point on surface if not.
 #'
 #' @param shp An sf dataframe
+#' @templateVar epsg TRUE
+#' @template template
 #'
 #' @return An sf dataframe where geometry is the center(ish) of each shape in shp
 #' @export
@@ -13,7 +15,10 @@
 #' @examples
 #' data(towns)
 #' st_centerish(towns)
-st_centerish <- function(shp) {
+st_centerish <- function(shp, epsg = 3857) {
+  
+  shp <- make_planar_pair(x = shp, epsg = epsg)$x
+  
   cent <- geos::geos_centroid(shp)
 
   if (nrow(shp) > 1) {

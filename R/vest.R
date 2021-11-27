@@ -5,6 +5,8 @@
 #' @param path folder to put shape in. Default is \code{tempdir()}
 #' @param clean_names Clean names. Default is \code{TRUE}. If \code{FALSE},
 #' returns default names.
+#' @templateVar epsg TRUE
+#' @template template
 #'
 #' @return sf tibble
 #' @export
@@ -15,7 +17,7 @@
 #' # Requires Dataverse API
 #' shp <- get_vest('CO', 2020)
 #' }
-get_vest <- function(state, year, path = tempdir(), clean_names = TRUE) {
+get_vest <- function(state, year, path = tempdir(), clean_names = TRUE, epsg = 3857) {
   abb <- tolower(censable::match_abb(state))
 
   file_name <- stringr::str_glue('{abb}_{year}.zip')
@@ -39,8 +41,8 @@ get_vest <- function(state, year, path = tempdir(), clean_names = TRUE) {
   if (clean_names) {
     out <- out %>% clean_vest()
   }
-
-  out
+  
+  make_planar_pair(out, epsg = epsg)$x
 }
 
 #' Clean Vest Names

@@ -4,6 +4,8 @@
 #' @param adj zero indexed adjacency list. Optional if shp or spatial_mat provided.
 #' @param wts Required. Numeric vector with weights to use for Moran's I.
 #' @param spatial_mat matrix of spatial weights. Optional if shp or adj provided.
+#' @templateVar epsg TRUE
+#' @template template
 #'
 #' @return tibble
 #' @export
@@ -15,13 +17,13 @@
 #' data('checkerboard')
 #' checkerboard <- checkerboard %>% mutate(m = as.numeric((id + i) %% 2 == 0))
 #' local_morans(shp = checkerboard, wts = checkerboard$m)
-local_morans <- function(shp, adj, wts, spatial_mat) {
+local_morans <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
   if (missing(shp) & missing(adj) & missing(spatial_mat)) {
     cli::cli_abort('Please supply an argument to at least one of {.arg shp} or {.arg adj} or {.arg spatial_mat}.')
   }
 
   if (missing(adj) & missing(spatial_mat)) {
-    adj <- adjacency(shp)
+    adj <- adjacency(shp, epsg = epsg)
   }
 
   if (missing(spatial_mat)) {
@@ -51,6 +53,8 @@ local_morans <- function(shp, adj, wts, spatial_mat) {
 #' @param adj zero indexed adjacency list. Optional if shp or spatial_mat provided.
 #' @param wts Required. Numeric vector with weights to use for Moran's I.
 #' @param spatial_mat matrix of spatial weights. Optional if shp or adj provided.
+#' @templateVar epsg TRUE
+#' @template template
 #'
 #' @return list
 #' @export
@@ -62,13 +66,13 @@ local_morans <- function(shp, adj, wts, spatial_mat) {
 #' data('checkerboard')
 #' checkerboard <- checkerboard %>% mutate(m = as.numeric((id + i) %% 2 == 0))
 #' global_morans(shp = checkerboard, wts = checkerboard$m)
-global_morans <- function(shp, adj, wts, spatial_mat) {
+global_morans <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
   if (missing(shp) & missing(adj) & missing(spatial_mat)) {
     cli::cli_abort('Please supply an argument to at least one of {.arg shp} or {.arg adj} or {.arg spatial_mat}.')
   }
 
   if (missing(adj) & missing(spatial_mat)) {
-    adj <- adjacency(shp)
+    adj <- adjacency(shp, epsg = epsg)
   }
 
   if (missing(spatial_mat)) {

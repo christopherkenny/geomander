@@ -4,6 +4,7 @@
 * Uses `cli` package for progress reporting.
 * `adjacency` renamed to `adj` to match `redist` naming.
 * Updates `r2dra` and `dra2r` to work off of 2020 geometries.
+* Majority of functions gain `epsg` argument to project for accuracy relative to projection.
 
 # geomander 1.1.2
 * Fixes website redirects for CRAN.

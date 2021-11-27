@@ -4,6 +4,8 @@
 #' @param adj zero indexed adjacency list. Optional if shp or spatial_mat provided.
 #' @param wts Required. Numeric vector with weights to use for Moran's I.
 #' @param spatial_mat matrix of spatial weights. Not required if shp or adj provided.
+#' @templateVar epsg TRUE
+#' @template template
 #'
 #' @return numeric vector
 #' @export
@@ -15,13 +17,13 @@
 #' data('checkerboard')
 #' checkerboard <- checkerboard %>% mutate(m = as.numeric((id + i) %% 2 == 0))
 #' local_gearys(shp = checkerboard, wts = checkerboard$m)
-local_gearys <- function(shp, adj, wts, spatial_mat) {
+local_gearys <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
   if (missing(shp) & missing(adj) & missing(spatial_mat)) {
     cli::cli_abort('Please supply an argument to at least one of shp or adj or spatial_mat.')
   }
 
   if (missing(adj) & missing(spatial_mat)) {
-    adj <- adjacency(shp)
+    adj <- adjacency(shp, epsg = epsg)
   }
 
   if (missing(spatial_mat)) {
@@ -50,6 +52,8 @@ local_gearys <- function(shp, adj, wts, spatial_mat) {
 #' @param adj zero indexed adjacency list. Optional if shp or spatial_mat provided.
 #' @param wts Required. Numeric vector with weights to use for Moran's I.
 #' @param spatial_mat matrix of spatial weights. Optional if shp or adj provided.
+#' @templateVar epsg TRUE
+#' @template template
 #'
 #' @concept spatcorr
 #'
@@ -60,13 +64,13 @@ local_gearys <- function(shp, adj, wts, spatial_mat) {
 #' data('checkerboard')
 #' checkerboard <- checkerboard %>% mutate(m = as.numeric((id + i) %% 2 == 0))
 #' global_gearys(shp = checkerboard, wts = checkerboard$m)
-global_gearys <- function(shp, adj, wts, spatial_mat) {
+global_gearys <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
   if (missing(shp) & missing(adj) & missing(spatial_mat)) {
     cli::cli_abort('Please supply an argument to at least one of {.arg shp} or {.arg adj} or {.arg spatial_mat}.')
   }
 
   if (missing(adj) & missing(spatial_mat)) {
-    adj <- adjacency(shp)
+    adj <- adjacency(shp, epsg = epsg)
   }
 
   if (missing(spatial_mat)) {

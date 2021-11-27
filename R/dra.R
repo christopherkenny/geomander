@@ -6,6 +6,8 @@
 #' a dataframe with columns GEOID20 and District, loaded from a DRA export.
 #' @param state the state postal code of the state
 #' @param precincts an sf dataframe of precinct shapes to link the output to
+#' @templateVar epsg TRUE
+#' @template template
 #'
 #' @return sf dataframe either at the block level or precinct level
 #' @export
@@ -15,7 +17,7 @@
 #' # dra_utah_test is available at https://bit.ly/3c6UDKk
 #' blocklevel <- dra2r('dra_utah_test.csv', state = 'UT')
 #' }
-dra2r <- function(dra, state, precincts) {
+dra2r <- function(dra, state, precincts, epsg = 3857) {
 
   # check inputs
   if (missing(dra)) {
@@ -64,13 +66,11 @@ dra2r <- function(dra, state, precincts) {
 
   # match to precincts if provided
   if (!missing(precincts)) {
-    if (sf::st_crs(shp) != sf::st_crs(precincts)) {
-      shp <- sf::st_transform(shp, sf::st_crs(precincts))
-    }
+    pairs <- make_planar_pair(precincts, shp)
+    precincts <- pairs$x
+    shp <- pairs$y
 
-    precincts <- precincts %>% dplyr::mutate(matches = row_number())
-
-    matches <- geo_match(from = shp, to = precincts)
+    matches <- geo_match(from = shp, to = precincts, epsg = FALSE)
 
     shp <- shp %>% dplyr::mutate(matches = matches)
 
@@ -96,7 +96,7 @@ dra2r <- function(dra, state, precincts) {
     return(precincts)
   }
 
-  shp
+  make_planar_pair(shp, epsg = epsg)$x
 }
 
 #' R to DRA
@@ -109,6 +109,8 @@ dra2r <- function(dra, state, precincts) {
 #' or the name of a column in precincts with district assignments.
 #' @param state Required. the state postal code of the state
 #' @param path Optional. A path to try to save to. Warns if saving failed.
+#' @templateVar epsg TRUE
+#' @template template
 #'
 #' @return tibble with columns Id, as used by DRA, identical to GEOID in census terms and District.
 #' @export
@@ -121,7 +123,7 @@ dra2r <- function(dra, state, precincts) {
 #' # use counties as precincts and let the plan be their center match:
 #' r2dra(cnty, matchedcty, 'UT', 'r2dra_ex.csv')
 #' }
-r2dra <- function(precincts, plan, state, path) {
+r2dra <- function(precincts, plan, state, path, epsg = 3857) {
   
   if (missing(precincts)) {
     cli::cli_abort('{.arg precincts} is a required input.')
@@ -142,12 +144,12 @@ r2dra <- function(precincts, plan, state, path) {
   }
   
   shp <- tigris::blocks(state, year = 2020)
+  
+  pairs <- make_planar_pair(precincts, shp)
+  precincts <- pairs$x
+  shp <- pairs$y
 
-  if (sf::st_crs(shp) != sf::st_crs(precincts)) {
-    shp <- sf::st_transform(shp, sf::st_crs(precincts))
-  }
-
-  matches <- geo_match(from = shp, to = precincts)
+  matches <- geo_match(from = shp, to = precincts, epsg = FALSE)
 
   dist <- plan[matches]
 

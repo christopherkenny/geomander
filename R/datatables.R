@@ -8,7 +8,9 @@
 #' @param geometry Defaults to TRUE. Whether to return the geometry or not.
 #' @param year year, must be 2000, 2010, or 2020
 #' @param mem Default is FALSE. Set TRUE to use memoized backend.
+#' @templateVar epsg TRUE
 #' @param geography Deprecated. Use geometry.
+#' @template template
 #'
 #' @return dataframe with data for each block in the selected region. Data includes
 #' 2 sets of columns for each race or ethnicity category: population (pop) and
@@ -21,8 +23,8 @@
 #' # uses the Census API
 #' create_block_table(state = 'NY', county = 'Rockland', geometry = FALSE)
 #' }
-create_block_table <- function(state, county = NULL, geometry = TRUE, year = 2020, mem = FALSE,
-                               geography) {
+create_block_table <- function(state, county = NULL, geometry = TRUE, year = 2020, 
+                               mem = FALSE, epsg = 3857, geography) {
   if (!missing(geography)) {
     .Deprecated('geometry', msg = 'Use `geometry` rather than `geography`.')
     geometry <- geography
@@ -49,6 +51,10 @@ create_block_table <- function(state, county = NULL, geometry = TRUE, year = 202
       geometry = geometry, year = year, groups = 'all'
     )
   }
+  
+  if (geometry) {
+    out <- make_planar_pair(out, epsg = epsg)$x
+  }
 
   out
 }
@@ -61,7 +67,9 @@ create_block_table <- function(state, county = NULL, geometry = TRUE, year = 202
 #' @param geometry Defaults to TRUE. Whether to return the geography or not.
 #' @param year year, must be >= 2009 and <= 2019.
 #' @param mem Default is FALSE. Set TRUE to use memoized backend.
+#' @templateVar epsg TRUE
 #' @param geography Deprecated. Use geometry.
+#' @template template
 #'
 #' @return dataframe with data for each tract in the selected region. Data includes
 #' 3 sets of columns for each race or ethnicity category: population (pop), voting age
@@ -74,7 +82,7 @@ create_block_table <- function(state, county = NULL, geometry = TRUE, year = 202
 #' tract <- create_tract_table('NY', 'Rockland', year = 2018)
 #' }
 create_tract_table <- function(state, county, geometry = TRUE, year = 2019,
-                               mem = FALSE, geography) {
+                               mem = FALSE, epsg = 3857, geography) {
   if (!missing(geography)) {
     .Deprecated('geometry', msg = 'Use `geometry` rather than `geography`.')
     geometry <- geography
@@ -101,6 +109,10 @@ create_tract_table <- function(state, county, geometry = TRUE, year = 2019,
       geometry = geometry, year = year, groups = 'all'
     )
   }
+  
+  if (geometry) {
+    out <- make_planar_pair(out, epsg = epsg)$x
+  }
 
   out
 }
@@ -113,7 +125,7 @@ create_tract_table <- function(state, county, geometry = TRUE, year = 2019,
 #' @param block_table Required. Block table output from create_block_table
 #' @param matches Required. Grouping variable to aggregate up by, typically made with geo_match
 #' @param geometry Boolean. Whether to keep geometry or not.
-#'
+#' 
 #' @return dataframe with length(unique(matches)) rows
 #' @export
 #' @concept datatable
@@ -130,7 +142,7 @@ block2prec <- function(block_table, matches, geometry = FALSE) {
   if (missing(matches)) {
     cli::cli_abort('Please provide an argument to {.arg matches}.')
   }
-
+  
   block_table <- block_table %>% mutate(matches_id = matches)
 
   if (!geometry) {
@@ -181,6 +193,8 @@ block2prec <- function(block_table, matches, geometry = FALSE) {
 #' @param block_table Required. Block table output from create_block_table
 #' @param precinct sf dataframe of shapefiles to match to.
 #' @param precinct_county_fips Column within precincts
+#' @templateVar epsg TRUE
+#' @template template
 #'
 #' @return dataframe with nrow(precinct) rows
 #' @export
@@ -192,7 +206,7 @@ block2prec <- function(block_table, matches, geometry = FALSE) {
 #' block <- create_block_table('NY', 'Rockland')
 #' block2prec_by_county(block, towns, 'fips')
 #' }
-block2prec_by_county <- function(block_table, precinct, precinct_county_fips) {
+block2prec_by_county <- function(block_table, precinct, precinct_county_fips, epsg = 3857) {
   if (missing(block_table)) {
     cli::cli_abort('Please provide an argument to {.arg block_table}.')
   }
@@ -206,6 +220,9 @@ block2prec_by_county <- function(block_table, precinct, precinct_county_fips) {
     cli::cli_abort('{.arg precinct_county_fips} is not the name of a column in precinct.')
   }
 
+  pairs <- make_planar_pair(block_table, precinct, epsg = epsg)
+  block_table <- pairs$x
+  precinct <- pairs$y
 
   precinct <- precinct %>%
     mutate(rowid = row_number()) %>%
@@ -220,21 +237,21 @@ block2prec_by_county <- function(block_table, precinct, precinct_county_fips) {
       filter(.data[[precinct_county_fips]] == countiesl[cty]) %>%
       mutate(matches_id = row_number())
 
-    matches <- geo_match(from = bsub, to = psub)
+    matches <- geo_match(from = bsub, to = psub, epsg = FALSE)
     prectemp <- block2prec(bsub, matches = matches)
 
-    prectemp <- prectemp %>% left_join(y = psub %>% sf::st_drop_geometry()
-      %>% select(rowid, matches_id), by = 'matches_id')
+    prectemp <- prectemp %>% 
+      dplyr::left_join(y = psub %>% sf::st_drop_geometry() %>% 
+                  dplyr::select(rowid, matches_id), by = 'matches_id')
 
-    prectb <- prectb %>% bind_rows(prectemp)
+    prectb <- prectb %>% 
+      dplyr::bind_rows(prectemp)
   }
 
-  prectb <- prectb %>%
-    arrange(rowid) %>%
-    mutate(matches_id = rowid) %>%
-    select(-rowid)
-
-  prectb
+  prectb %>%
+    dplyr::arrange(rowid) %>%
+    dplyr::mutate(matches_id = rowid) %>%
+    dplyr::select(-rowid)
 }
 
 

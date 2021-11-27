@@ -10,6 +10,8 @@
 #' @param wts numeric vector of length nrow(to). Defaults to 1. Typically population or VAP, as a weight to give each precinct.
 #' @param value numeric vector of length nrow(from). Defaults to 1. Typically electoral outcomes, as a value to estimate down into blocks.
 #' @param method string from center, centroid, point, or area for matching levels
+#' @templateVar epsg TRUE
+#' @template  template
 #'
 #' @return numeric vector with each value split by weight
 #' @concept estimate
@@ -25,8 +27,8 @@
 #'   summarize(geometry = sf::st_union(geometry)) %>%
 #'   mutate(pop = c(100, 200))
 #' geo_estimate_down(from = counties, to = checkerboard, value = counties$pop)
-geo_estimate_down <- function(from, to, wts, value, method = 'center') {
-  group <- geo_match(from = to, to = from, method = method)
+geo_estimate_down <- function(from, to, wts, value, method = 'center', epsg = 3857) {
+  group <- geo_match(from = to, to = from, method = method, epsg = epsg)
 
   if (missing(wts)) {
     wts <- 1
@@ -127,6 +129,8 @@ estimate_down <- function(wts, value, group) {
 #' @param to larger geography level
 #' @param value numeric vector of length nrow(from). Defaults to 1.
 #' @param method string from center, centroid, point, or area for matching levels
+#' @templateVar epsg TRUE
+#' @template  template
 #'
 #' @return numeric vector with each value aggregated by group
 #'
@@ -146,8 +150,8 @@ estimate_down <- function(wts, value, group) {
 #'   summarize(geometry = sf::st_union(geometry)) %>%
 #'   mutate(pop = c(100, 200))
 #' geo_estimate_up(from = checkerboard, to = counties, value = checkerboard$i)
-geo_estimate_up <- function(from, to, value, method = 'center') {
-  group <- geo_match(from = from, to = to, method = method)
+geo_estimate_up <- function(from, to, value, method = 'center', epsg = 3857) {
+  group <- geo_match(from = from, to = to, method = method, epsg = epsg)
 
   if (missing(value)) {
     value <- 1

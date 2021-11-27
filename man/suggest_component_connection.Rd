@@ -4,7 +4,7 @@
 \alias{suggest_component_connection}
 \title{Suggest Connections for Disconnected Groups}
 \usage{
-suggest_component_connection(shp, adj, group)
+suggest_component_connection(shp, adj, group, epsg = 3857)
 }
 \arguments{
 \item{shp}{An sf data frame}
@@ -13,6 +13,8 @@ suggest_component_connection(shp, adj, group)
 
 \item{group}{array of group identifiers. Typically district numbers or county names.
 Defaults to rep(1, length(adj)) if missing.}
+
+\item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
 tibble with two columns of suggested rows of shp to connect in adj
