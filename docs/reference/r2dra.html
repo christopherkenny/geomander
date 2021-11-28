@@ -73,7 +73,7 @@ with DRA. Projecting down to blocks can take a lot of time for larger states." /
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.9.9.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -137,7 +137,7 @@ with DRA. Projecting down to blocks can take a lot of time for larger states." /
 with DRA. Projecting down to blocks can take a lot of time for larger states.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>r2dra</span><span class='op'>(</span><span class='va'>precincts</span>, <span class='va'>plan</span>, <span class='va'>state</span>, <span class='va'>path</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>r2dra</span><span class='op'>(</span><span class='va'>precincts</span>, <span class='va'>plan</span>, <span class='va'>state</span>, <span class='va'>path</span>, epsg <span class='op'>=</span> <span class='fl'>3857</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -158,6 +158,10 @@ or the name of a column in precincts with district assignments.</p></td>
     <tr>
       <th>path</th>
       <td><p>Optional. A path to try to save to. Warns if saving failed.</p></td>
+    </tr>
+    <tr>
+      <th>epsg</th>
+      <td><p>numeric EPSG code to planarize to. Default is 3857.</p></td>
     </tr>
     </table>
 

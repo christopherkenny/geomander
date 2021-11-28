@@ -74,7 +74,7 @@ matrix. Users can also provide a spatial_mat argument directly." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.9.9.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -139,7 +139,7 @@ from an adjacency or sf data frame, in which case the spatial_mat is a contiguit
 matrix. Users can also provide a spatial_mat argument directly.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>global_gearys</span><span class='op'>(</span><span class='va'>shp</span>, <span class='va'>adj</span>, <span class='va'>wts</span>, <span class='va'>spatial_mat</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>global_gearys</span><span class='op'>(</span><span class='va'>shp</span>, <span class='va'>adj</span>, <span class='va'>wts</span>, <span class='va'>spatial_mat</span>, epsg <span class='op'>=</span> <span class='fl'>3857</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -160,6 +160,10 @@ matrix. Users can also provide a spatial_mat argument directly.</p>
       <th>spatial_mat</th>
       <td><p>matrix of spatial weights. Optional if shp or adj provided.</p></td>
     </tr>
+    <tr>
+      <th>epsg</th>
+      <td><p>numeric EPSG code to planarize to. Default is 3857.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -171,7 +175,7 @@ matrix. Users can also provide a spatial_mat argument directly.</p>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>'checkerboard'</span><span class='op'>)</span>
 <span class='va'>checkerboard</span> <span class='op'>&lt;-</span> <span class='va'>checkerboard</span> <span class='op'>%&gt;%</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>m <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span><span class='op'>(</span><span class='op'>(</span><span class='va'>id</span> <span class='op'>+</span> <span class='va'>i</span><span class='op'>)</span> <span class='op'>%%</span> <span class='fl'>2</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span><span class='op'>)</span>
 <span class='fu'>global_gearys</span><span class='op'>(</span>shp <span class='op'>=</span> <span class='va'>checkerboard</span>, wts <span class='op'>=</span> <span class='va'>checkerboard</span><span class='op'>$</span><span class='va'>m</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 1.96875</div></pre>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: Planarizing skipped. <span style='color: #262626; background-color: #DADADA;'>`x`</span> missing CRS.</span></div><div class='output co'>#&gt; [1] 1.96875</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

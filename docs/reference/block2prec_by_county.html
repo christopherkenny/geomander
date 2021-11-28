@@ -75,7 +75,7 @@ that every block is matched to a precinct which is in the same county." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.9.9.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -141,7 +141,7 @@ often have borders that follow rivers and lead to funny shaped blocks. This guar
 that every block is matched to a precinct which is in the same county.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>block2prec_by_county</span><span class='op'>(</span><span class='va'>block_table</span>, <span class='va'>precinct</span>, <span class='va'>precinct_county_fips</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>block2prec_by_county</span><span class='op'>(</span><span class='va'>block_table</span>, <span class='va'>precinct</span>, <span class='va'>precinct_county_fips</span>, epsg <span class='op'>=</span> <span class='fl'>3857</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -157,6 +157,10 @@ that every block is matched to a precinct which is in the same county.</p>
     <tr>
       <th>precinct_county_fips</th>
       <td><p>Column within precincts</p></td>
+    </tr>
+    <tr>
+      <th>epsg</th>
+      <td><p>numeric EPSG code to planarize to. Default is 3857.</p></td>
     </tr>
     </table>
 

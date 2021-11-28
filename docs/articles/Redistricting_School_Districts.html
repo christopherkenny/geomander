@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.9.9.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -194,12 +194,11 @@
 <pre><code>## [1]   6 190 272</code></pre>
 <p>Finally, we have the data in a simulation-ready state! We can now use the adjacency list created above with redist.adjacency to run a simulation using redist.smc. See <a href="https://alarm-redist.github.io/">the redist package</a> for more information about what’s going on here.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">map</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://alarm-redist.github.io/redist/reference/redist_map.html">redist_map</a></span><span class="op">(</span><span class="va">block</span>, pop_tol <span class="op">=</span> <span class="fl">0.02</span>, ndists <span class="op">=</span> <span class="fl">7</span>, adj <span class="op">=</span> <span class="va">adj</span><span class="op">)</span></code></pre></div>
-<pre><code>## Projecting to CRS 3857</code></pre>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sims005</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://alarm-redist.github.io/redist/reference/redist_smc.html">redist_smc</a></span><span class="op">(</span><span class="va">map</span>, nsims <span class="op">=</span> <span class="fl">50</span>, counties <span class="op">=</span> <span class="va">TownID</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">map</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://alarm-redist.github.io/redist/reference/redist_map.html">redist_map</a></span><span class="op">(</span><span class="va">block</span>, pop_tol <span class="op">=</span> <span class="fl">0.02</span>, ndists <span class="op">=</span> <span class="fl">7</span>, adj <span class="op">=</span> <span class="va">adj</span><span class="op">)</span>
+
+<span class="va">sims005</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://alarm-redist.github.io/redist/reference/redist_smc.html">redist_smc</a></span><span class="op">(</span><span class="va">map</span>, nsims <span class="op">=</span> <span class="fl">50</span>, counties <span class="op">=</span> <span class="va">TownID</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <pre><code>## Warning: Counties were not contiguous; expect additional splits.</code></pre>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">plans</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://alarm-redist.github.io/redist/reference/get_plans_matrix.html">get_plans_matrix</a></span><span class="op">(</span><span class="va">sims005</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span>MARGIN  <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
 
 <span class="va">par</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://alarm-redist.github.io/redist/reference/redist.parity.html">redist.parity</a></span><span class="op">(</span>plans <span class="op">=</span> <span class="va">plans</span>, total_pop <span class="op">=</span> <span class="va">block</span><span class="op">$</span><span class="va">pop</span><span class="op">)</span>
@@ -208,13 +207,13 @@
 <pre><code>## </code></pre>
 <pre><code>## An earlier bug incorrectly doubled the number of removed edges.
 ## This message is displayed once per session.</code></pre>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">comp_m</span> <span class="op">&lt;-</span> <span class="va">comp</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">draw</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">EdgesRemoved</span><span class="op">)</span><span class="op">)</span>
 
 <span class="va">pick</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>parity <span class="op">=</span> <span class="va">par</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_cols</a></span><span class="op">(</span><span class="va">comp_m</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html">slice_max</a></span><span class="op">(</span>order_by <span class="op">=</span> <span class="va">mean</span>, n <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">draw</span><span class="op">)</span></code></pre></div>
 <p>In short, the above uses a Sequential Monte Carlo algorithm to draw 50 compact districts that try to preserve towns. From those, I pick a map that is on average, pretty compact. You would typically aim for about 100 times this number of simulations to start. This is shortened for vignette compilation time.</p>
 <p>Then we have the basic information we want and we can look at the VAP data to see that we have one majority minority Hispanic ward and one potential coalition ward.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">block</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>district <span class="op">=</span> <span class="va">plans</span><span class="op">[</span>,<span class="va">pick</span><span class="op">]</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">district</span><span class="op">)</span> <span class="op">%&gt;%</span> 
@@ -222,20 +221,20 @@
 <pre><code>## Simple feature collection with 7 features and 10 fields
 ## Geometry type: POLYGON
 ## Dimension:     XY
-## Bounding box:  xmin: -74.1146 ymin: 41.17523 xmax: -73.9217 ymax: 41.32983
-## Geodetic CRS:  NAD83
+## Bounding box:  xmin: -8250400 ymin: 5038222 xmax: -8228926 ymax: 5061114
+## Projected CRS: WGS 84 / Pseudo-Mercator
 ## # A tibble: 7 × 11
 ##   district   vap vap_white vap_black vap_hisp vap_aian vap_asian vap_nhpi
 ##      &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-## 1        1  5406      4351       144      724        5       132        0
-## 2        2  5066      1119       430     3370       11        85        0
-## 3        3  4975      1483       532     2741        6       150        1
-## 4        4  5228      1906       931     2029        7       274        2
-## 5        5  5074      4261       171      466        3       127        1
-## 6        6  5418      3445       704      910        7       286        0
-## 7        7  5293      3865       354      792        7       216        1
+## 1        1  5153      4216       169      529        8       185        1
+## 2        2  5380      4500       163      565        4        95        0
+## 3        3  5445      3496       685      874        8       310        0
+## 4        4  5088      1212       473     3226       13       102        1
+## 5        5  5112      1919       397     2619        4       125        1
+## 6        6  5222      3370       428     1173        1       192        1
+## 7        7  5060      1717       951     2046        8       261        1
 ## # … with 3 more variables: vap_other &lt;dbl&gt;, vap_two &lt;dbl&gt;,
-## #   geometry &lt;POLYGON [°]&gt;</code></pre>
+## #   geometry &lt;POLYGON [m]&gt;</code></pre>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

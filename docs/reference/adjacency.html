@@ -74,7 +74,7 @@ and replaces the indicator for no adjacent precincts with a integer(0)" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.9.9.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -139,7 +139,7 @@ replaced by sf internals. This is faster but less reliable. This wraps spdep::po
 and replaces the indicator for no adjacent precincts with a integer(0)</p>
     </div>
 
-    <pre class="usage"><span class='fu'>adjacency</span><span class='op'>(</span><span class='va'>shp</span>, zero <span class='op'>=</span> <span class='cn'>TRUE</span>, rook <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>adjacency</span><span class='op'>(</span><span class='va'>shp</span>, zero <span class='op'>=</span> <span class='cn'>TRUE</span>, rook <span class='op'>=</span> <span class='cn'>TRUE</span>, epsg <span class='op'>=</span> <span class='fl'>3857</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -155,6 +155,10 @@ and replaces the indicator for no adjacent precincts with a integer(0)</p>
     <tr>
       <th>rook</th>
       <td><p>Default is TRUE for rook adjacency. FALSE gives queen adjacency</p></td>
+    </tr>
+    <tr>
+      <th>epsg</th>
+      <td><p>numeric EPSG code to planarize to. Default is 3857.</p></td>
     </tr>
     </table>
 

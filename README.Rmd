@@ -42,12 +42,6 @@ devtools::install_github("christopherkenny/geomander")
 
 ## Examples
 
-For speed, I recommend setting the following:
-```{r}
-sf::sf_use_s2(FALSE)
-```
-
-
 A very common task is aggregating block data to precincts.
 
 ```{r example, results = 'hide'}

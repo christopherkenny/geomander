@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.9.9.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -135,7 +135,7 @@
     <p>Suggests nearest neighbors for connecting a disconnected group.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>suggest_component_connection</span><span class='op'>(</span><span class='va'>shp</span>, <span class='va'>adj</span>, <span class='va'>group</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>suggest_component_connection</span><span class='op'>(</span><span class='va'>shp</span>, <span class='va'>adj</span>, <span class='va'>group</span>, epsg <span class='op'>=</span> <span class='fl'>3857</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -153,6 +153,10 @@
       <td><p>array of group identifiers. Typically district numbers or county names.
 Defaults to rep(1, length(adj)) if missing.</p></td>
     </tr>
+    <tr>
+      <th>epsg</th>
+      <td><p>numeric EPSG code to planarize to. Default is 3857.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -164,8 +168,8 @@ Defaults to rep(1, length(adj)) if missing.</p></td>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>checkerboard</span><span class='op'>)</span>
 <span class='va'>checkerboard</span> <span class='op'>&lt;-</span> <span class='va'>checkerboard</span> <span class='op'>%&gt;%</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>i</span> <span class='op'>!=</span> <span class='fl'>1</span>, <span class='va'>j</span> <span class='op'>!=</span> <span class='fl'>1</span><span class='op'>)</span>
 <span class='va'>adj</span> <span class='op'>&lt;-</span> <span class='fu'><a href='adjacency.html'>adjacency</a></span><span class='op'>(</span><span class='va'>checkerboard</span><span class='op'>)</span>
-<span class='fu'>suggest_component_connection</span><span class='op'>(</span><span class='va'>checkerboard</span>, <span class='va'>adj</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 3 × 2</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: Planarizing skipped. <span style='color: #262626; background-color: #DADADA;'>`x`</span> missing CRS.</span></div><div class='input'><span class='fu'>suggest_component_connection</span><span class='op'>(</span><span class='va'>checkerboard</span>, <span class='va'>adj</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: Planarizing skipped. <span style='color: #262626; background-color: #DADADA;'>`x`</span> missing CRS.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Planarizing skipped. <span style='color: #262626; background-color: #DADADA;'>`x`</span> missing CRS.</span></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 3 × 2</span>
 #&gt;       x     y
 #&gt;   <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>
 #&gt; <span style='color: #BCBCBC;'>1</span>     2     9
