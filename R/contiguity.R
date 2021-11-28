@@ -163,5 +163,5 @@ suggest_component_connection <- function(shp, adj, group, epsg = 3857) {
     }
   }
 
-  distinct(out)
+  dplyr::distinct(out)
 }
