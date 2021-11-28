@@ -4,7 +4,7 @@
 \alias{local_morans}
 \title{Compute Local Moran's I}
 \usage{
-local_morans(shp, adj, wts, spatial_mat)
+local_morans(shp, adj, wts, spatial_mat, epsg = 3857)
 }
 \arguments{
 \item{shp}{sf data frame. Optional if adj or spatial_mat provided.}
@@ -14,6 +14,8 @@ local_morans(shp, adj, wts, spatial_mat)
 \item{wts}{Required. Numeric vector with weights to use for Moran's I.}
 
 \item{spatial_mat}{matrix of spatial weights. Optional if shp or adj provided.}
+
+\item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
 tibble
@@ -23,9 +25,8 @@ Compute Local Moran's I
 }
 \examples{
 library(dplyr)
-data("checkerboard")
-checkerboard <- checkerboard \%>\% mutate(m = as.numeric((id+i) \%\% 2 == 0))
+data('checkerboard')
+checkerboard <- checkerboard \%>\% mutate(m = as.numeric((id + i) \%\% 2 == 0))
 local_morans(shp = checkerboard, wts = checkerboard$m)
-
 }
 \concept{spatcorr}

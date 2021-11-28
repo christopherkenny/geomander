@@ -9,7 +9,7 @@ estimate_up(value, group)
 \arguments{
 \item{value}{numeric vector. Defaults to 1. Typically population values.}
 
-\item{group}{matches of length(value) that correspond to row indices of value. 
+\item{group}{matches of length(value) that correspond to row indices of value.
 Often, this input is the output of geo_match.}
 }
 \value{
@@ -23,10 +23,11 @@ up without the costly matching operation if they've already matched.
 library(dplyr)
 set.seed(1)
 data(checkerboard)
-counties <- checkerboard \%>\% group_by(id <= 32) \%>\% 
-summarize(geometry = sf::st_union(geometry)) \%>\% mutate(pop = c(100,200))
-matches <- geo_match(checkerboard, counties) 
+counties <- checkerboard \%>\%
+  group_by(id <= 32) \%>\%
+  summarize(geometry = sf::st_union(geometry)) \%>\%
+  mutate(pop = c(100, 200))
+matches <- geo_match(checkerboard, counties)
 estimate_up(value = checkerboard$i, group = matches)
-
 }
 \concept{estimate}

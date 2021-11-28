@@ -4,7 +4,7 @@
 \alias{geo_estimate_down}
 \title{Estimate Down Geography Levels}
 \usage{
-geo_estimate_down(from, to, wts, value, method = "center")
+geo_estimate_down(from, to, wts, value, method = "center", epsg = 3857)
 }
 \arguments{
 \item{from}{Larger geography level}
@@ -16,6 +16,8 @@ geo_estimate_down(from, to, wts, value, method = "center")
 \item{value}{numeric vector of length nrow(from). Defaults to 1. Typically electoral outcomes, as a value to estimate down into blocks.}
 
 \item{method}{string from center, centroid, point, or area for matching levels}
+
+\item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
 numeric vector with each value split by weight
@@ -30,9 +32,10 @@ partner to estimate_down.
 library(dplyr)
 set.seed(1)
 data(checkerboard)
-counties <- checkerboard \%>\% group_by(id <= 32) \%>\% 
-summarize(geometry = sf::st_union(geometry)) \%>\% mutate(pop = c(100,200))
+counties <- checkerboard \%>\%
+  group_by(id <= 32) \%>\%
+  summarize(geometry = sf::st_union(geometry)) \%>\%
+  mutate(pop = c(100, 200))
 geo_estimate_down(from = counties, to = checkerboard, value = counties$pop)
-
 }
 \concept{estimate}

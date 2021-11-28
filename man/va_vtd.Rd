@@ -18,6 +18,6 @@ va_vtd <- tigris::voting_districts(state = 'VA') %>% filter(COUNTYFP10 == '087')
 va_vtd <- rmapshaper::ms_simplify(va_vtd, keep_shapes = TRUE)
 }
 \examples{
-data("va_blocks")
+data('va_blocks')
 }
 \concept{data}

@@ -13,6 +13,6 @@ data("checkerboard")
 This data set contains 64 squares in an 8x8 grid, like a checkerboard.
 }
 \examples{
-data("checkerboard")
+data('checkerboard')
 }
 \concept{data}

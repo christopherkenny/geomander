@@ -4,10 +4,12 @@
 \alias{geo_sort}
 \title{Sort Precincts}
 \usage{
-geo_sort(shp)
+geo_sort(shp, epsg = 3857)
 }
 \arguments{
 \item{shp}{sf dataframe, required.}
+
+\item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
 sf dataframe
@@ -18,6 +20,5 @@ Reorders precincts by distance from the NW corner of the bounding box.
 \examples{
 data(checkerboard)
 geo_sort(checkerboard)
-
 }
 \concept{fix}

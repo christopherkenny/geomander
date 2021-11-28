@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -135,15 +135,15 @@
     <p>Creates a block or precinct level dataset from DRA csv output.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>dra2r</span><span class='op'>(</span><span class='va'>dra</span>, <span class='va'>state</span>, <span class='va'>precincts</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>dra2r</span><span class='op'>(</span><span class='va'>dra</span>, <span class='va'>state</span>, <span class='va'>precincts</span>, epsg <span class='op'>=</span> <span class='fl'>3857</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>dra</th>
-      <td><p>The path to an exported csv or 
-a dataframe with columns Id and District, loaded from a DRA export.</p></td>
+      <td><p>The path to an exported csv or
+a dataframe with columns GEOID20 and District, loaded from a DRA export.</p></td>
     </tr>
     <tr>
       <th>state</th>
@@ -152,6 +152,10 @@ a dataframe with columns Id and District, loaded from a DRA export.</p></td>
     <tr>
       <th>precincts</th>
       <td><p>an sf dataframe of precinct shapes to link the output to</p></td>
+    </tr>
+    <tr>
+      <th>epsg</th>
+      <td><p>numeric EPSG code to planarize to. Default is 3857.</p></td>
     </tr>
     </table>
 

@@ -4,12 +4,12 @@
 \alias{add_edge}
 \title{Add Edges to an Adjacency List}
 \usage{
-add_edge(adjacency, v1, v2, zero = TRUE)
+add_edge(adj, v1, v2, zero = TRUE)
 }
 \arguments{
-\item{adjacency}{list of adjacent precincts}
+\item{adj}{list of adjacent precincts}
 
-\item{v1}{integer or integer array for first vertex to connect. 
+\item{v1}{integer or integer array for first vertex to connect.
 If array, connects each to corresponding entry in v2.}
 
 \item{v2}{integer or integer array for second vertex to connect.

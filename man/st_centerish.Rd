@@ -4,10 +4,12 @@
 \alias{st_centerish}
 \title{Get the kind of center of each shape}
 \usage{
-st_centerish(shp)
+st_centerish(shp, epsg = 3857)
 }
 \arguments{
 \item{shp}{An sf dataframe}
+
+\item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
 An sf dataframe where geometry is the center(ish) of each shape in shp
@@ -21,4 +23,4 @@ data(towns)
 st_centerish(towns)
 
 }
-\concept{leftover}
+\concept{center}

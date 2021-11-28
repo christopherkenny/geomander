@@ -4,7 +4,7 @@
 \alias{local_gearys}
 \title{Compute Local Geary's C}
 \usage{
-local_gearys(shp, adj, wts, spatial_mat)
+local_gearys(shp, adj, wts, spatial_mat, epsg = 3857)
 }
 \arguments{
 \item{shp}{sf data frame. Optional if adj or spatial_mat provided.}
@@ -14,6 +14,8 @@ local_gearys(shp, adj, wts, spatial_mat)
 \item{wts}{Required. Numeric vector with weights to use for Moran's I.}
 
 \item{spatial_mat}{matrix of spatial weights. Not required if shp or adj provided.}
+
+\item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
 numeric vector
@@ -23,9 +25,8 @@ Compute Local Geary's C
 }
 \examples{
 library(dplyr)
-data("checkerboard")
-checkerboard <- checkerboard \%>\% mutate(m = as.numeric((id+i) \%\% 2 == 0))
+data('checkerboard')
+checkerboard <- checkerboard \%>\% mutate(m = as.numeric((id + i) \%\% 2 == 0))
 local_gearys(shp = checkerboard, wts = checkerboard$m)
-
 }
 \concept{spatcorr}

@@ -4,28 +4,38 @@
 #' @param from Required. sf dataframe. the geography to subset
 #' @param to Required. sf dataframe. the geography that from must intersect
 #' @param bool Optional, defaults to FALSE. Should this just return a logical vector?
+#' @templateVar epsg TRUE
+#' @template  template
 #'
-#' @return sf data frame or logical vector if bool=TRUE
+#' @return sf data frame or logical vector if bool == TRUE
 #' @export
 #'
 #' @concept datatable
-#' @importFrom sf st_intersects st_union
-#' @examples \dontrun{
+#'
+#' @examples 
+#' \dontrun{
+#' # Needs Census Bureau API
 #' data(towns)
 #' block <- create_block_table('NY', 'Rockland')
 #' geo_filter(block, towns)
 #' }
-geo_filter <- function(from, to, bool = FALSE){
-  
-  ints <- sf::st_intersects(x = from, y = st_union(to), sparse = FALSE)
-  
-  if(bool){
+#' 
+#' data(towns)
+#' data(rockland)
+#' sub <- geo_filter(rockland, towns)
+#' 
+geo_filter <- function(from, to, bool = FALSE, epsg = 3857) {
+  pairs <- make_planar_pair(from, to, epsg = epsg)
+  from <- pairs$x
+  to <- pairs$y
+  ints <- geos::geos_intersects(from, 
+                                geos::geos_unary_union(geos::geos_make_collection(to)))
+
+  if (bool) {
     return(ints)
   }
-  
-  from <- from[ints,]
 
-  return(from)
+  from[ints, ]
 }
 
 
@@ -35,11 +45,11 @@ geo_filter <- function(from, to, bool = FALSE){
 #' @param to Required. sf dataframe. the geography that from must intersect
 #' @param thresh Percent as decimal of an area to trim away. Default is .01, which is 1\%.
 #' @param bool Optional, defaults to FALSE. Should this just return a logical vector?
-#'
+#' @templateVar epsg TRUE
+#' @template  template
+#' 
 #' @return sf data frame or logical vector if bool=TRUE
 #' @export
-#'
-#' @importFrom sf st_intersection st_area st_union
 #'
 #' @concept datatable
 #' @examples \dontrun{
@@ -48,27 +58,28 @@ geo_filter <- function(from, to, bool = FALSE){
 #' block <- create_block_table('NY', 'Rockland')
 #' geo_trim(block, towns, thresh = 0.05)
 #' }
-#' 
-#' \donttest{
+#'
 #' data(towns)
 #' data(rockland)
 #' sub <- geo_filter(rockland, towns)
 #' rem <- geo_trim(sub, towns, thresh = 0.05)
-#' }
-geo_trim <- function(from, to, thresh = 0.01, bool = FALSE){
-
-  ints <- sf::st_intersection(x = from, y = st_union(to))
-  area <- sf::st_area(from)
-  poly <- attr(from, 'row.names') %in% attr(ints, 'row.names')
-  areaints <- rep(0, nrow(from))
-  areaints[poly] <- st_area(st_make_valid(ints)) #, NA_on_exception = TRUE in valid
-  keep <- as.numeric(areaints/area) > thresh
+#' 
+geo_trim <- function(from, to, thresh = 0.01, bool = FALSE, epsg = 3857) {
+  pairs <- make_planar_pair(from, to, epsg = epsg)
+  from <- pairs$x
+  to <- pairs$y
   
-  if(bool){
+  ints <- geos::geos_intersection(from, geos::geos_unary_union(geos::geos_make_collection(to)))
+  area <- geos::geos_area(from)
+  areaints <- rep(0, nrow(from))
+  areaints <- geos::geos_area(geos::geos_make_valid(ints)) # , NA_on_exception = TRUE in valid
+  keep <- as.numeric(areaints / area) > thresh
+  
+  keep[is.na(keep)] <- FALSE
+
+  if (bool) {
     return(keep)
   }
-  
-  from <- from[keep,]
-  
-  return(from)
+
+  from[keep, ]
 }

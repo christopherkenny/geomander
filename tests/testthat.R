@@ -1,4 +1,4 @@
 library(testthat)
 library(geomander)
 
-test_check("geomander")
+test_check('geomander')

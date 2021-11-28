@@ -4,7 +4,7 @@
 \alias{block2prec_by_county}
 \title{Aggregate Block Table by Matches and County}
 \usage{
-block2prec_by_county(block_table, precinct, precinct_county_fips)
+block2prec_by_county(block_table, precinct, precinct_county_fips, epsg = 3857)
 }
 \arguments{
 \item{block_table}{Required. Block table output from create_block_table}
@@ -12,6 +12,8 @@ block2prec_by_county(block_table, precinct, precinct_county_fips)
 \item{precinct}{sf dataframe of shapefiles to match to.}
 
 \item{precinct_county_fips}{Column within precincts}
+
+\item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
 dataframe with nrow(precinct) rows

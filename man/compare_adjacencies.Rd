@@ -16,7 +16,7 @@ compare_adjacencies(adj1, adj2, shp, zero = TRUE)
 \item{zero}{Boolean. Defaults to TRUE. Are adj1 and adj2 zero indexed?}
 }
 \value{
-tibble with row indices to compare, and optionally columns which describe the 
+tibble with row indices to compare, and optionally columns which describe the
 DE-9IM relationship between differences.
 }
 \description{
@@ -25,8 +25,9 @@ Compare Adjacency Lists
 \examples{
 data(towns)
 rook <- adjacency(towns)
-sf_rook <- lapply(sf::st_relate(towns, pattern = 'F***1****'), function(x){x-1L})
+sf_rook <- lapply(sf::st_relate(towns, pattern = 'F***1****'), function(x) {
+  x - 1L
+})
 compare_adjacencies(rook, sf_rook, zero = FALSE)
-
 }
 \concept{fix}

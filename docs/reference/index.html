@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -231,6 +231,49 @@
     </tbody><tbody>
       <tr>
         <th colspan="2">
+          <h2 id="section-downloading-datasets" class="hasAnchor"><a href="#section-downloading-datasets" class="anchor"></a>Downloading Datasets</h2>
+          <p class="section-desc"><p>Functions to help download common datasets</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="alarm_states.html">alarm_states()</a></code> </p>
+        </td>
+        <td><p>List Available States from ALARM Data</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="clean_vest.html">clean_vest()</a></code> </p>
+        </td>
+        <td><p>Clean Vest Names</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_alarm.html">get_alarm()</a></code> </p>
+        </td>
+        <td><p>Get ALARM Dataset</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_vest.html">get_vest()</a></code> </p>
+        </td>
+        <td><p>Get VEST Dataset</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="vest_states.html">vest_states()</a></code> </p>
+        </td>
+        <td><p>List Available States from VEST Dataverse</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
           <h2 id="section-fixing-geographic-imperfections" class="hasAnchor"><a href="#section-fixing-geographic-imperfections" class="anchor"></a>Fixing Geographic Imperfections</h2>
           <p class="section-desc"><p>Functions to help pretend that the geographies were properly connected</p></p>
         </th>
@@ -285,6 +328,12 @@
       </tr><tr>
         
         <td>
+          <p><code><a href="subtract_edge.html">subtract_edge()</a></code> </p>
+        </td>
+        <td><p>Subtract Edges from an Adjacency List</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="suggest_component_connection.html">suggest_component_connection()</a></code> </p>
         </td>
         <td><p>Suggest Connections for Disconnected Groups</p></td>
@@ -319,6 +368,68 @@
           <p><code><a href="r2dra.html">r2dra()</a></code> </p>
         </td>
         <td><p>R to DRA</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-center-of-shape" class="hasAnchor"><a href="#section-center-of-shape" class="anchor"></a>Center of Shape</h2>
+          <p class="section-desc"><p>Adjusted centroids to ensure that the point is in the shape</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="geos_centerish.html">geos_centerish()</a></code> </p>
+        </td>
+        <td><p>Get the kind of center of each shape</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="st_centerish.html">st_centerish()</a></code> </p>
+        </td>
+        <td><p>Get the kind of center of each shape</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-tools-for-working-with-borders" class="hasAnchor"><a href="#section-tools-for-working-with-borders" class="anchor"></a>Tools for working with borders</h2>
+          <p class="section-desc"><p>Functions that deal with two sides of a seam between two administrative units</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="seam_adj.html">seam_adj()</a></code> </p>
+        </td>
+        <td><p>Filter Adjacency to Edges Along Border</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="seam_geom.html">seam_geom()</a></code> </p>
+        </td>
+        <td><p>Filter Shape to Geographies Along Border</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="seam_rip.html">seam_rip()</a></code> </p>
+        </td>
+        <td><p>Remove Edges along a Boundary</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="seam_sew.html">seam_sew()</a></code> </p>
+        </td>
+        <td><p>Suggest Edges to Connect Two Sides of a Border</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -500,6 +611,12 @@
       </tr><tr>
         
         <td>
+          <p><code><a href="geos_centerish.html">geos_centerish()</a></code> </p>
+        </td>
+        <td><p>Get the kind of center of each shape</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="get_alarm.html">get_alarm()</a></code> </p>
         </td>
         <td><p>Get ALARM Dataset</p></td>
@@ -512,15 +629,33 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="st_centerish.html">st_centerish()</a></code> </p>
+          <p><code><a href="seam_adj.html">seam_adj()</a></code> </p>
         </td>
-        <td><p>Get the kind of center of each shape</p></td>
+        <td><p>Filter Adjacency to Edges Along Border</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="subtract_edge.html">subtract_edge()</a></code> </p>
+          <p><code><a href="seam_geom.html">seam_geom()</a></code> </p>
         </td>
-        <td><p>Subtract Edges from an Adjacency List</p></td>
+        <td><p>Filter Shape to Geographies Along Border</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="seam_rip.html">seam_rip()</a></code> </p>
+        </td>
+        <td><p>Remove Edges along a Boundary</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="seam_sew.html">seam_sew()</a></code> </p>
+        </td>
+        <td><p>Suggest Edges to Connect Two Sides of a Border</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="st_centerish.html">st_centerish()</a></code> </p>
+        </td>
+        <td><p>Get the kind of center of each shape</p></td>
       </tr><tr>
         
         <td>

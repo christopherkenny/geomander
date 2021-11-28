@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -141,6 +141,7 @@
   geometry <span class='op'>=</span> <span class='cn'>TRUE</span>,
   year <span class='op'>=</span> <span class='fl'>2019</span>,
   mem <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  epsg <span class='op'>=</span> <span class='fl'>3857</span>,
   <span class='va'>geography</span>
 <span class='op'>)</span></pre>
 
@@ -166,6 +167,10 @@
     <tr>
       <th>mem</th>
       <td><p>Default is FALSE. Set TRUE to use memoized backend.</p></td>
+    </tr>
+    <tr>
+      <th>epsg</th>
+      <td><p>numeric EPSG code to planarize to. Default is 3857.</p></td>
     </tr>
     <tr>
       <th>geography</th>

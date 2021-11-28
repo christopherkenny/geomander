@@ -4,12 +4,12 @@
 \alias{geo_plot_group}
 \title{Create Plots of Shapes by Group with Connected Components Colored}
 \usage{
-geo_plot_group(shp, adjacency, group, save = F, path = "")
+geo_plot_group(shp, adj, group, save = FALSE, path = "")
 }
 \arguments{
 \item{shp}{An sf shapefile}
 
-\item{adjacency}{adjacency list}
+\item{adj}{adjacency list}
 
 \item{group}{array of group identifiers. Typically district numbers or county names.}
 
@@ -25,15 +25,14 @@ Create Plots of Shapes by Group with Connected Components Colored
 }
 \examples{
 library(dplyr)
-data("checkerboard")
-data("checkerboard_adj")
+data('checkerboard')
+data('checkerboard_adj')
 
-checkerboard <- checkerboard \%>\% mutate(discont = as.integer(j == 5| j == 6))
+checkerboard <- checkerboard \%>\% mutate(discont = as.integer(j == 5 | j == 6))
 
 p <- geo_plot_group(checkerboard, checkerboard_adj, checkerboard$discont)
 
 p[[1]]
 p[[2]]
-
 }
 \concept{plot}

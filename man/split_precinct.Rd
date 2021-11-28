@@ -4,40 +4,45 @@
 \alias{split_precinct}
 \title{Split a Precinct}
 \usage{
-split_precinct(lower, precinct, split_by, lower_wt, split_by_id)
+split_precinct(lower, precinct, split_by, lower_wt, split_by_id, epsg = 3857)
 }
 \arguments{
-\item{lower}{The lower geography that makes up the precinct, this is often a 
+\item{lower}{The lower geography that makes up the precinct, this is often a
 block level geography.}
 
 \item{precinct}{The single precinct that you would like to split.}
 
 \item{split_by}{The upper geography that you want to split precinct by}
 
-\item{lower_wt}{Optional. Numeric weights to give to each precinct, typically 
+\item{lower_wt}{Optional. Numeric weights to give to each precinct, typically
 VAP or population.}
 
-\item{split_by_id}{Optional. A string that names a column in split_by that 
+\item{split_by_id}{Optional. A string that names a column in split_by that
 identifies each observation in split_by}
+
+\item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
 sf data frame with precinct split
 }
 \description{
-States often split a precinct when they create districts but rarely provide the 
+States often split a precinct when they create districts but rarely provide the
 geography for the split precinct. This allows you to split a precinct using a
 lower geography, typically blocks.
 }
 \examples{
-library(dplyr)
 library(sf)
 data(checkerboard)
-low <- checkerboard \%>\% slice(1:3, 9:11)
-prec <- checkerboard \%>\% slice(1:3) \%>\% summarize(geometry = st_union(geometry)) 
-dists <-  checkerboard \%>\% slice(1:3, 9:11) \%>\% mutate(dist = c(1,2,2,1,3,3)) \%>\% 
-group_by(dist) \%>\% summarize(geometry = st_union(geometry))
+low <- checkerboard \%>\% dplyr::slice(1:3, 9:11)
+prec <- checkerboard \%>\%
+  dplyr::slice(1:3) \%>\%
+  dplyr::summarize(geometry = sf::st_union(geometry))
+dists <- checkerboard \%>\%
+  dplyr::slice(1:3, 9:11) \%>\%
+  dplyr::mutate(dist = c(1, 2, 2, 1, 3, 3)) \%>\%
+  dplyr::group_by(dist) \%>\%
+  dplyr::summarize(geometry = sf::st_union(geometry))
 
 split_precinct(low, prec, dists, split_by_id = 'dist')
-
 }
 \concept{fix}

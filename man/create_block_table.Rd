@@ -10,6 +10,7 @@ create_block_table(
   geometry = TRUE,
   year = 2020,
   mem = FALSE,
+  epsg = 3857,
   geography
 )
 }
@@ -23,6 +24,8 @@ create_block_table(
 \item{year}{year, must be 2000, 2010, or 2020}
 
 \item{mem}{Default is FALSE. Set TRUE to use memoized backend.}
+
+\item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 
 \item{geography}{Deprecated. Use geometry.}
 }

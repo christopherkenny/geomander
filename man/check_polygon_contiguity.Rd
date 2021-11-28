@@ -4,17 +4,19 @@
 \alias{check_polygon_contiguity}
 \title{Check Polygon Contiguity}
 \usage{
-check_polygon_contiguity(shp, group)
+check_polygon_contiguity(shp, group, epsg = 3857)
 }
 \arguments{
 \item{shp}{An sf data frame}
 
-\item{group}{unquoted name of group identifier in shp. 
+\item{group}{unquoted name of group identifier in shp.
 Typically, this is district assignment. If you're looking for dis-contiguous precincts,
 this should be a row number.}
+
+\item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-tibble with a column for each of inputted group, created group number, and the 
+tibble with a column for each of inputted group, created group number, and the
 identified connected component number
 }
 \description{
@@ -24,6 +26,5 @@ Avoids issues where a precinct is actually a multipolygon
 \examples{
 data(checkerboard)
 check_polygon_contiguity(checkerboard, i)
-
 }
 \concept{fix}

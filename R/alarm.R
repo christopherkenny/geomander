@@ -1,49 +1,58 @@
 #' Get ALARM Dataset
 #'
 #' Get's a dataset from the Algorithm-Assisted Redistricting Methodology Project.
-#' The current supported data is the 2020 retabulations of the VEST data, which 
+#' The current supported data is the 2020 retabulations of the VEST data, which
 #' can be downloaded with `get_vest`.
 #'
 #' @param state two letter state abbreviation
 #' @param geometry Default is TRUE. Add geomeetry to the data?
 #' @param file file path to save ALARM csv
+#' @templateVar epsg TRUE
+#' @template template
 #'
 #' @return tibble with election data and optional geometry
 #' @export
 #'
+#' @concept datasets
 #' @examples
 #' \donttest{
-#' # Takes a few seconds t
+#' # Takes a few seconds to run
 #' ak <- get_alarm('AK')
 #' }
-get_alarm <- function(state, geometry = TRUE, file = tempfile(fileext = '.csv')) {
+get_alarm <- function(state, geometry = TRUE, file = tempfile(fileext = '.csv'), epsg = 3857) {
   base_path <- 'https://raw.githubusercontent.com/christopherkenny/census-2020/elections/census-vest-2020/'
   state <- tolower(censable::match_abb(state))
   end_path <- paste0(state, '_2020_vtd.csv')
   out <- NULL
-  try({out <- utils::download.file(url = paste0(base_path, end_path), file)})
-  
+  try({
+    out <- utils::download.file(url = paste0(base_path, end_path), file)
+  })
+
   if (is.null(out)) {
     end_path <- paste0(state, '_2020_block.csv')
-    try({out <- utils::download.file(url = paste0(base_path, end_path), file)})
+    try({
+      out <- utils::download.file(url = paste0(base_path, end_path), file)
+    })
     if (is.null(out)) {
-      stop(stringr::str_glue('State {state} not found in ALARM Data.'))
+      cli::cli_abort('State {state} not found in ALARM Data.')
     }
   }
-  
+
   tb <- readr::read_csv(file = file, lazy = FALSE)
- 
+
   if (geometry) {
-    geo <- tigris::voting_districts(state = state) %>% 
-      dplyr::select(.data$GEOID20, .data$geometry) %>% 
+    geo <- tigris::voting_districts(state = state) %>%
+      dplyr::select(.data$GEOID20, .data$geometry) %>%
       dplyr::mutate(GEOID20 = as.character(.data$GEOID20))
-    tb <- tb %>% 
-      dplyr::mutate(GEOID20 = as.character(.data$GEOID20)) %>% 
-      dplyr::left_join(geo, by = 'GEOID20') %>% 
+    tb <- tb %>%
+      dplyr::mutate(GEOID20 = as.character(.data$GEOID20)) %>%
+      dplyr::left_join(geo, by = 'GEOID20') %>%
       sf::st_as_sf()
+    
+    tb <- make_planar_pair(tb, epsg = epsg)$x
   }
-  
-  tb 
+
+  tb
 }
 
 
@@ -52,6 +61,7 @@ get_alarm <- function(state, geometry = TRUE, file = tempfile(fileext = '.csv'))
 #' @return character abbreviations for states
 #' @export
 #'
+#' @concept datasets
 #' @examples
 #' \dontrun{
 #' # relies on internet availability and interactivity on some systems

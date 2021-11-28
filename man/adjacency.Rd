@@ -4,7 +4,7 @@
 \alias{adjacency}
 \title{Build Adjacency List}
 \usage{
-adjacency(shp, zero = TRUE, rook = TRUE)
+adjacency(shp, zero = TRUE, rook = TRUE, epsg = 3857)
 }
 \arguments{
 \item{shp}{sf dataframe}
@@ -12,6 +12,8 @@ adjacency(shp, zero = TRUE, rook = TRUE)
 \item{zero}{Default is TRUE for zero indexed. FALSE gives a one indexed adjacency list.}
 
 \item{rook}{Default is TRUE for rook adjacency. FALSE gives queen adjacency}
+
+\item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
 list with nrow(shp) entries
@@ -24,5 +26,6 @@ and replaces the indicator for no adjacent precincts with a integer(0)
 \examples{
 data(precincts)
 adj <- adjacency(precincts)
+
 }
 \concept{fix}

@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -135,7 +135,7 @@
     <p>Reorders precincts by distance from the NW corner of the bounding box.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>geo_sort</span><span class='op'>(</span><span class='va'>shp</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>geo_sort</span><span class='op'>(</span><span class='va'>shp</span>, epsg <span class='op'>=</span> <span class='fl'>3857</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -143,6 +143,10 @@
     <tr>
       <th>shp</th>
       <td><p>sf dataframe, required.</p></td>
+    </tr>
+    <tr>
+      <th>epsg</th>
+      <td><p>numeric EPSG code to planarize to. Default is 3857.</p></td>
     </tr>
     </table>
 
@@ -153,24 +157,23 @@
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>checkerboard</span><span class='op'>)</span>
 <span class='fu'>geo_sort</span><span class='op'>(</span><span class='va'>checkerboard</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; Simple feature collection with 64 features and 3 fields
+</div><div class='output co'>#&gt; <span class='warning'>Warning: Planarizing skipped. <span style='color: #262626; background-color: #DADADA;'>`x`</span> missing CRS.</span></div><div class='output co'>#&gt; Simple feature collection with 64 features and 3 fields
 #&gt; Geometry type: POLYGON
 #&gt; Dimension:     XY
 #&gt; Bounding box:  xmin: 0 ymin: 0 xmax: 8 ymax: 8
 #&gt; CRS:           NA
 #&gt; First 10 features:
 #&gt;    i j id                       geometry
-#&gt; 1  0 0  1 POLYGON ((0 0, 1 0, 1 1, 0 ...
-#&gt; 2  0 1  2 POLYGON ((0 1, 1 1, 1 2, 0 ...
-#&gt; 3  0 2  3 POLYGON ((0 2, 1 2, 1 3, 0 ...
-#&gt; 4  1 0  9 POLYGON ((1 0, 2 0, 2 1, 1 ...
-#&gt; 5  1 1 10 POLYGON ((1 1, 2 1, 2 2, 1 ...
-#&gt; 6  1 2 11 POLYGON ((1 2, 2 2, 2 3, 1 ...
-#&gt; 7  0 3  4 POLYGON ((0 3, 1 3, 1 4, 0 ...
-#&gt; 8  2 0 17 POLYGON ((2 0, 3 0, 3 1, 2 ...
-#&gt; 9  2 1 18 POLYGON ((2 1, 3 1, 3 2, 2 ...
-#&gt; 10 1 3 12 POLYGON ((1 3, 2 3, 2 4, 1 ...</div><div class='input'>
-</div></pre>
+#&gt; 1  0 7  8 POLYGON ((0 7, 1 7, 1 8, 0 ...
+#&gt; 2  0 6  7 POLYGON ((0 6, 1 6, 1 7, 0 ...
+#&gt; 3  1 7 16 POLYGON ((1 7, 2 7, 2 8, 1 ...
+#&gt; 4  1 6 15 POLYGON ((1 6, 2 6, 2 7, 1 ...
+#&gt; 5  0 5  6 POLYGON ((0 5, 1 5, 1 6, 0 ...
+#&gt; 6  2 7 24 POLYGON ((2 7, 3 7, 3 8, 2 ...
+#&gt; 7  1 5 14 POLYGON ((1 5, 2 5, 2 6, 1 ...
+#&gt; 8  2 6 23 POLYGON ((2 6, 3 6, 3 7, 2 ...
+#&gt; 9  0 4  5 POLYGON ((0 4, 1 4, 1 5, 0 ...
+#&gt; 10 2 5 22 POLYGON ((2 5, 3 5, 3 6, 2 ...</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

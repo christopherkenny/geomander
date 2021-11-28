@@ -4,12 +4,12 @@
 \alias{suggest_neighbors}
 \title{Suggest Neighbors for Lonely Precincts}
 \usage{
-suggest_neighbors(shp, adjacency, idx, neighbors = 1)
+suggest_neighbors(shp, adj, idx, neighbors = 1)
 }
 \arguments{
 \item{shp}{an sf shapefile}
 
-\item{adjacency}{an adjacency list}
+\item{adj}{an adjacency list}
 
 \item{idx}{Optional. Which indices to suggest neighbors for. If blank, suggests for those
 with no neighbors.}

@@ -1,27 +1,31 @@
 #' Sort Precincts
-#' 
+#'
 #' Reorders precincts by distance from the NW corner of the bounding box.
 #'
 #' @param shp sf dataframe, required.
+#' @templateVar epsg TRUE
+#' @template template
 #'
 #' @return sf dataframe
 #' @export
-#' 
+#'
 #' @concept fix
-#' 
-#' @examples 
+#'
+#' @examples
 #' data(checkerboard)
 #' geo_sort(checkerboard)
-#' 
-geo_sort <- function(shp){
-  if(missing(shp)){
-    stop('shp is required.')
+geo_sort <- function(shp, epsg = 3857) {
+  
+  if (missing(shp)) {
+    cli::cli_abort('{.arg shp} is required.')
   }
   
-  bbox <- sf::st_bbox(shp)
-  pt <- sf::st_point(x = c(bbox$xmin, bbox$ymax))
-  suppressWarnings(cent <- sf::st_centroid(shp))
-  dists <- sf::st_distance(pt, cent)
+  shp <- make_planar_pair(shp, epsg = epsg)$x
+
+  bbox <- bbox_geos(shp)
+  pt <- geos::geos_make_point(x = geos::geos_xmin(bbox), y = geos::geos_ymax(bbox))
+  cent <- geos::geos_centroid(shp)
+  dists <- geos::geos_distance(pt, cent)
   idx <- sort(dists, index.return = TRUE)
-  return(shp %>% dplyr::slice(idx$ix))
+  shp %>% dplyr::slice(idx$ix)
 }

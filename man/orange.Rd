@@ -19,6 +19,6 @@ orange <- create_block_table('NY', 'Orange')
 orange <- rmapshaper::ms_simplify(orange, keep_shapes = TRUE)
 }
 \examples{
-data("orange")
+data('orange')
 }
 \concept{data}

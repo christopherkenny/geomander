@@ -4,17 +4,19 @@
 \alias{r2dra}
 \title{R to DRA}
 \usage{
-r2dra(precincts, plan, state, path)
+r2dra(precincts, plan, state, path, epsg = 3857)
 }
 \arguments{
 \item{precincts}{Required. an sf dataframe of precinct shapes}
 
-\item{plan}{Required. Either a vector of district assignments 
+\item{plan}{Required. Either a vector of district assignments
 or the name of a column in precincts with district assignments.}
 
 \item{state}{Required. the state postal code of the state}
 
 \item{path}{Optional. A path to try to save to. Warns if saving failed.}
+
+\item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
 tibble with columns Id, as used by DRA, identical to GEOID in census terms and District.

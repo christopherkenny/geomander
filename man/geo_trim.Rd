@@ -4,7 +4,7 @@
 \alias{geo_trim}
 \title{Trim Away Small Pieces}
 \usage{
-geo_trim(from, to, thresh = 0.01, bool = FALSE)
+geo_trim(from, to, thresh = 0.01, bool = FALSE, epsg = 3857)
 }
 \arguments{
 \item{from}{Required. sf dataframe. the geography to subset}
@@ -14,6 +14,8 @@ geo_trim(from, to, thresh = 0.01, bool = FALSE)
 \item{thresh}{Percent as decimal of an area to trim away. Default is .01, which is 1\%.}
 
 \item{bool}{Optional, defaults to FALSE. Should this just return a logical vector?}
+
+\item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
 sf data frame or logical vector if bool=TRUE
@@ -29,11 +31,10 @@ block <- create_block_table('NY', 'Rockland')
 geo_trim(block, towns, thresh = 0.05)
 }
 
-\donttest{
 data(towns)
 data(rockland)
 sub <- geo_filter(rockland, towns)
 rem <- geo_trim(sub, towns, thresh = 0.05)
-}
+
 }
 \concept{datatable}

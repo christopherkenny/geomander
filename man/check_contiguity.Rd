@@ -4,15 +4,15 @@
 \alias{check_contiguity}
 \title{Check Contiguity by Group}
 \usage{
-check_contiguity(adjacency, group)
+check_contiguity(adj, group)
 }
 \arguments{
-\item{adjacency}{adjacency list}
+\item{adj}{adjacency list}
 
 \item{group}{array of group identifiers. Typically district numbers or county names.}
 }
 \value{
-tibble with a column for each of inputted group, created group number, and the 
+tibble with a column for each of inputted group, created group number, and the
 identified connected component number
 }
 \description{

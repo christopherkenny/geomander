@@ -73,7 +73,7 @@ Uses the centroid if that's in the shape, or point on surface if not." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -137,7 +137,7 @@ Uses the centroid if that's in the shape, or point on surface if not." />
 Uses the centroid if that's in the shape, or point on surface if not.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>st_centerish</span><span class='op'>(</span><span class='va'>shp</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>st_centerish</span><span class='op'>(</span><span class='va'>shp</span>, epsg <span class='op'>=</span> <span class='fl'>3857</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -145,6 +145,10 @@ Uses the centroid if that's in the shape, or point on surface if not.</p>
     <tr>
       <th>shp</th>
       <td><p>An sf dataframe</p></td>
+    </tr>
+    <tr>
+      <th>epsg</th>
+      <td><p>numeric EPSG code to planarize to. Default is 3857.</p></td>
     </tr>
     </table>
 
@@ -158,8 +162,8 @@ Uses the centroid if that's in the shape, or point on surface if not.</p>
 </div><div class='output co'>#&gt; Simple feature collection with 7 features and 5 fields
 #&gt; Geometry type: POINT
 #&gt; Dimension:     XY
-#&gt; Bounding box:  xmin: -74.07531 ymin: 41.19223 xmax: -73.96066 ymax: 41.25858
-#&gt; Geodetic CRS:  NAD83
+#&gt; Bounding box:  xmin: -8246026 ymin: 5040737 xmax: -8234039 ymax: 5050560
+#&gt; Projected CRS: WGS 84 / Pseudo-Mercator
 #&gt;          NAME         VILLAGE        TOWN               MUNI ID
 #&gt; 1  Haverstraw      Haverstraw  Haverstraw Haverstraw Village  1
 #&gt; 2  Haverstraw          Pomona  Haverstraw Pomona, Haverstraw  2
@@ -168,14 +172,14 @@ Uses the centroid if that's in the shape, or point on surface if not.</p>
 #&gt; 5  Haverstraw            &lt;NA&gt;  Haverstraw         Haverstraw  5
 #&gt; 6 Stony Point            &lt;NA&gt; Stony Point        Stony Point  6
 #&gt; 7  Haverstraw            &lt;NA&gt;  Haverstraw         Haverstraw  7
-#&gt;                     geometry
-#&gt; 1  POINT (-73.9676 41.18994)
-#&gt; 2  POINT (-74.04715 41.2003)
-#&gt; 3  POINT (-73.98367 41.2145)
-#&gt; 4 POINT (-73.98615 41.20533)
-#&gt; 5 POINT (-74.09508 41.21297)
-#&gt; 6 POINT (-74.01912 41.26741)
-#&gt; 7 POINT (-73.96066 41.23608)</div><div class='input'>
+#&gt;                   geometry
+#&gt; 1 POINT (-8234039 5040737)
+#&gt; 2 POINT (-8243081 5041725)
+#&gt; 3 POINT (-8235791 5044025)
+#&gt; 4 POINT (-8236354 5042820)
+#&gt; 5 POINT (-8246026 5043154)
+#&gt; 6 POINT (-8239547 5050560)
+#&gt; 7 POINT (-8234888 5049279)</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

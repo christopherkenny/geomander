@@ -4,40 +4,68 @@
 #' Uses the centroid if that's in the shape, or point on surface if not.
 #'
 #' @param shp An sf dataframe
+#' @templateVar epsg TRUE
+#' @template template
 #'
 #' @return An sf dataframe where geometry is the center(ish) of each shape in shp
 #' @export
-#' 
-#' @concept leftover
-#' 
-#' @importFrom sf st_geometry st_geometry<- st_within st_centroid st_point_on_surface
+#'
+#' @concept center
+#'
 #' @examples
 #' data(towns)
 #' st_centerish(towns)
 #' 
-st_centerish <- function(shp){
+st_centerish <- function(shp, epsg = 3857) {
   
-  suppressWarnings( cent <- st_centroid(shp) )
-  
-  if(nrow(shp) > 1){
+  cent <- geos_centerish(shp, epsg = epsg)
 
-    outside <- sapply(1:nrow(shp), 
-                      function(x){suppressMessages(st_within(x = cent[x,], y = shp[x,], sparse = FALSE))})
-    suppressWarnings( pts <- st_point_on_surface(shp[outside, ]) )
-    suppressWarnings( st_geometry(cent[outside,]) <- st_geometry(pts) )
+  sf::st_geometry(shp) <- sf::st_as_sfc(cent)
+  shp
+}
+
+#' Get the kind of center of each shape
+#'
+#' Returns points within the shape, near the center.
+#' Uses the centroid if that's in the shape, or point on surface if not.
+#'
+#' @param shp An sf dataframe
+#' @templateVar epsg TRUE
+#' @template template
+#'
+#' @return A geos geometry list
+#' @export
+#'
+#' @concept center
+#'
+#' @examples
+#' data(towns)
+#' geos_centerish(towns)
+#' 
+geos_centerish <- function(shp, epsg = 3857) {
+  
+  shp <- make_planar_pair(x = shp, epsg = epsg)$x
+  
+  cent <- geos::geos_centroid(shp)
+  
+  if (nrow(shp) > 1) {
+    outside <- !geos::geos_within(cent, shp)
     
+    if (any(outside)) {
+      cent[outside] <- geos::geos_point_on_surface(shp[outside, ])
+    }
   } else {
+    outside <- !geos::geos_within(geom1 = cent, geom2 = shp)
     
-    
-    outside <- as.logical(st_within(x = cent, y = shp, sparse = FALSE))
-    if(is.na(outside)){
+    if (is.na(outside)) {
       outside <- TRUE
     }
     
-    suppressWarnings( st_geometry(cent[outside]) <- st_geometry(st_point_on_surface(shp[outside])) )
-    
-    
+    if (outside) {
+      cent <- geos::geos_point_on_surface(shp)
+    }
   }
-
-  return(cent)
+  
+  cent
 }
+

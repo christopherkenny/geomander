@@ -4,7 +4,12 @@
 \alias{get_alarm}
 \title{Get ALARM Dataset}
 \usage{
-get_alarm(state, geometry = TRUE, file = tempfile(fileext = ".csv"))
+get_alarm(
+  state,
+  geometry = TRUE,
+  file = tempfile(fileext = ".csv"),
+  epsg = 3857
+)
 }
 \arguments{
 \item{state}{two letter state abbreviation}
@@ -12,18 +17,21 @@ get_alarm(state, geometry = TRUE, file = tempfile(fileext = ".csv"))
 \item{geometry}{Default is TRUE. Add geomeetry to the data?}
 
 \item{file}{file path to save ALARM csv}
+
+\item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
 tibble with election data and optional geometry
 }
 \description{
 Get's a dataset from the Algorithm-Assisted Redistricting Methodology Project.
-The current supported data is the 2020 retabulations of the VEST data, which 
+The current supported data is the 2020 retabulations of the VEST data, which
 can be downloaded with `get_vest`.
 }
 \examples{
 \donttest{
-# Takes a few seconds t
+# Takes a few seconds to run
 ak <- get_alarm('AK')
 }
 }
+\concept{datasets}

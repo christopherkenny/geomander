@@ -4,7 +4,7 @@
 \alias{geo_match}
 \title{Match Across Geographic Layers}
 \usage{
-geo_match(from, to, method = "center", tiebreaker = TRUE)
+geo_match(from, to, method = "center", tiebreaker = TRUE, epsg = 3857)
 }
 \arguments{
 \item{from}{smaller geographic level to match up from}
@@ -13,8 +13,10 @@ geo_match(from, to, method = "center", tiebreaker = TRUE)
 
 \item{method}{string from center, centroid, point, or area for matching method}
 
-\item{tiebreaker}{Should ties be broken? boolean. If FALSE, precincts with no 
+\item{tiebreaker}{Should ties be broken? boolean. If FALSE, precincts with no
 matches get value -1 and precincts with multiple matches get value -2.}
+
+\item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
 Integer Vector of matches length(to) with values in 1:nrow(from)
@@ -25,11 +27,12 @@ Match Across Geographic Layers
 \examples{
 library(dplyr)
 data(checkerboard)
-counties <- sf::st_as_sf(as.data.frame(rbind(sf::st_union(checkerboard \%>\% filter(i < 4)), 
-sf::st_union(checkerboard \%>\% filter(i >= 4)) )))
+counties <- sf::st_as_sf(as.data.frame(rbind(
+  sf::st_union(checkerboard \%>\% filter(i < 4)),
+  sf::st_union(checkerboard \%>\% filter(i >= 4))
+)))
 
 geo_match(from = checkerboard, to = counties)
 geo_match(from = checkerboard, to = counties, method = 'area')
-
 }
 \concept{estimate}

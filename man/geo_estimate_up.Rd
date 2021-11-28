@@ -4,7 +4,7 @@
 \alias{geo_estimate_up}
 \title{Estimate Up Geography Levels}
 \usage{
-geo_estimate_up(from, to, value, method = "center")
+geo_estimate_up(from, to, value, method = "center", epsg = 3857)
 }
 \arguments{
 \item{from}{smaller geography level}
@@ -14,6 +14,8 @@ geo_estimate_up(from, to, value, method = "center")
 \item{value}{numeric vector of length nrow(from). Defaults to 1.}
 
 \item{method}{string from center, centroid, point, or area for matching levels}
+
+\item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
 numeric vector with each value aggregated by group
@@ -25,11 +27,12 @@ Geographic partner to estimate_up.
 }
 \examples{
 library(dplyr)
- set.seed(1)
+set.seed(1)
 data(checkerboard)
-counties <- checkerboard \%>\% group_by(id <= 32) \%>\% 
-summarize(geometry = sf::st_union(geometry)) \%>\% mutate(pop = c(100,200))
+counties <- checkerboard \%>\%
+  group_by(id <= 32) \%>\%
+  summarize(geometry = sf::st_union(geometry)) \%>\%
+  mutate(pop = c(100, 200))
 geo_estimate_up(from = checkerboard, to = counties, value = checkerboard$i)
-
 }
 \concept{estimate}
