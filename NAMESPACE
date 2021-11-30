@@ -3,6 +3,7 @@
 export("%>%")
 export(add_edge)
 export(adjacency)
+export(adjacency_geos)
 export(alarm_states)
 export(block2prec)
 export(block2prec_by_county)
