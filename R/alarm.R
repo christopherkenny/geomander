@@ -20,7 +20,7 @@
 #' ak <- get_alarm('AK')
 #' }
 get_alarm <- function(state, geometry = TRUE, file = tempfile(fileext = '.csv'), epsg = 3857) {
-  base_path <- 'https://raw.githubusercontent.com/christopherkenny/census-2020/elections/census-vest-2020/'
+  base_path <- 'https://raw.githubusercontent.com/alarm-redist/census-2020/elections/census-vest-2020/'
   state <- tolower(censable::match_abb(state))
   end_path <- paste0(state, '_2020_vtd.csv')
   out <- NULL
