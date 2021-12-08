@@ -1,7 +1,7 @@
 test_that('adjacency works', {
   actual <- adjacency(checkerboard, epsg = FALSE)
 
-  expect_equal(actual, checkerboard_adj)
+  expect_equal(lapply(actual, sort),  lapply(checkerboard_adj, sort))
 })
 
 test_that('check_contiguity works', {
