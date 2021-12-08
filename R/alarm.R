@@ -3,6 +3,11 @@
 #' Get's a dataset from the Algorithm-Assisted Redistricting Methodology Project.
 #' The current supported data is the 2020 retabulations of the VEST data, which
 #' can be downloaded with `get_vest`.
+#' 
+#' See the full available data at <https://github.com/alarm-redist/census-2020>.
+#' 
+#' @md
+#' 
 #'
 #' @param state two letter state abbreviation
 #' @param geometry Default is TRUE. Add geomeetry to the data?
