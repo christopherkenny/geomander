@@ -25,7 +25,7 @@ Subtract Edges from an Adjacency List
 }
 \examples{
 data(towns)
-adj <- adjacency(towns)
+adj <- adjacency_geos(towns)
 subtract_edge(adj, 2, 3)
 
 }

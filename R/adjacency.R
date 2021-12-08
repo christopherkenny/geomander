@@ -14,7 +14,7 @@
 #'
 #' @examples
 #' data(towns)
-#' adj <- adjacency(towns)
+#' adj <- adjacency_geos(towns)
 #' add_edge(adj, 2, 3)
 #' 
 add_edge <- function(adj, v1, v2, zero = TRUE) {
@@ -49,7 +49,7 @@ add_edge <- function(adj, v1, v2, zero = TRUE) {
 #' @concept fix
 #' @examples
 #' data(towns)
-#' adj <- adjacency(towns)
+#' adj <- adjacency_geos(towns)
 #' subtract_edge(adj, 2, 3)
 #' 
 subtract_edge <- function(adj, v1, v2, zero = TRUE) {
