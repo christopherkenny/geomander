@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.2</span>
       </span>
     </div>
 
@@ -98,10 +98,10 @@
 <span class="r-in"><span class="va">adj</span> <span class="op">&lt;-</span> <span class="fu"><a href="adjacency.html">adjacency</a></span><span class="op">(</span><span class="va">o_and_r</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu">seam_geom</span><span class="op">(</span><span class="va">adj</span>, shp <span class="op">=</span> <span class="va">o_and_r</span>, admin <span class="op">=</span> <span class="st">'county'</span>, seam <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'071'</span>, <span class="st">'087'</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 18 features and 25 fields</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 24 features and 25 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: GEOMETRY</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: -8247177 ymin: 5049523 xmax: -8236118 ymax: 5060129</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: -8247177 ymin: 5049265 xmax: -8235418 ymax: 5060742</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Projected CRS: WGS 84 / Pseudo-Mercator</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> First 10 features:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      state county  tract block           GEOID waterpct pop pop_white pop_black</span>
@@ -110,44 +110,44 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 668     36    071 013800  3045 360710138003045        0   0         0         0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 937     36    071 013900  3113 360710139003113        0   0         0         0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2478    36    071 013800  3032 360710138003032        0   0         0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4278    36    071 013900  3108 360710139003108        0   0         0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4448    36    071 014900  1091 360710149001091        0   0         0         0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5332    36    071 013800  3036 360710138003036        1   0         0         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6531    36    071 013800  3039 360710138003039        0  10         7         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7316    36    071 013800  3049 360710138003049        0   0         0         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8534    36    071 014900  1102 360710149001102        0   0         0         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31      36    087 010101  4020 360870101014020        0   0         0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5334    36    071 013800  3044 360710138003044        1   0         0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5533    36    071 013800  3043 360710138003043        1   0         0         0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      pop_hisp pop_aian pop_asian pop_nhpi pop_other pop_two vap vap_white</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 486         0        0         0        0         0       0   0         0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 660         0        0         0        0         0       0   0         0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 668         0        0         0        0         0       0   0         0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 937         0        0         0        0         0       0   0         0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2478        0        0         0        0         0       0   0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4278        0        0         0        0         0       0   0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4448        0        0         0        0         0       0   0         0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5332        0        0         0        0         0       0   0         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6531        3        0         0        0         0       0   9         7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7316        0        0         0        0         0       0   0         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8534        0        0         0        0         0       0   0         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31          0        0         0        0         0       0   0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5334        0        0         0        0         0       0   0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5533        0        0         0        0         0       0   0         0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      vap_black vap_hisp vap_aian vap_asian vap_nhpi vap_other vap_two place</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 486          0        0        0         0        0         0       0 99999</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 660          0        0        0         0        0         0       0 99999</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 668          0        0        0         0        0         0       0 99999</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 937          0        0        0         0        0         0       0 82750</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2478         0        0        0         0        0         0       0 99999</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4278         0        0        0         0        0         0       0 82750</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4448         0        0        0         0        0         0       0 99999</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5332         0        0        0         0        0         0       0 99999</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6531         0        2        0         0        0         0       0 99999</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7316         0        0        0         0        0         0       0 99999</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8534         0        0        0         0        0         0       0 99999</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31           0        0        0         0        0         0       0 99999</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5334         0        0        0         0        0         0       0 99999</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5533         0        0        0         0        0         0       0 99999</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                            geometry</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 486  MULTIPOLYGON (((-8237395 50...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 660  MULTIPOLYGON (((-8238303 50...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 668  MULTIPOLYGON (((-8238234 50...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 937  MULTIPOLYGON (((-8241105 50...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2478 MULTIPOLYGON (((-8237787 50...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4278 MULTIPOLYGON (((-8241634 50...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4448 MULTIPOLYGON (((-8247157 50...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5332 MULTIPOLYGON (((-8236666 50...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6531 MULTIPOLYGON (((-8236340 50...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7316 MULTIPOLYGON (((-8239374 50...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8534 MULTIPOLYGON (((-8245979 50...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31   POLYGON ((-8238354 5057160,...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5334 MULTIPOLYGON (((-8236121 50...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5533 MULTIPOLYGON (((-8236047 50...</span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>
