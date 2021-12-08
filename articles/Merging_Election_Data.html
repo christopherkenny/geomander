@@ -26,6 +26,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -38,18 +40,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
@@ -74,7 +70,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/christopherkenny/geomander/">
+  <a href="https://github.com/christopherkenny/geomander/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -93,10 +89,10 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Merging Election Data</h1>
-                        <h4 class="author">Christopher T. Kenny</h4>
+                        <h4 data-toc-skip class="author">Christopher T. Kenny</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/christopherkenny/geomander/blob/master/vignettes/Merging_Election_Data.Rmd"><code>vignettes/Merging_Election_Data.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/christopherkenny/geomander/blob/HEAD/vignettes/Merging_Election_Data.Rmd" class="external-link"><code>vignettes/Merging_Election_Data.Rmd</code></a></small>
       <div class="hidden name"><code>Merging_Election_Data.Rmd</code></div>
 
     </div>
@@ -106,27 +102,27 @@
 <p>A common issue in electoral geography is that data needs to be tied to a spatial component, but the pieces required for an analysis are not available at the desired levels of geography. This vignette walks through two common tasks. The first is collecting population data for precinct-level data, assuming that all (or nearly all) blocks can be matched to exactly one precinct. The second example is taking precinct-level data, estimating it down to a block level, and then aggregating up to voting districts. The second example is useful when state precincts do not match census voting districts or for when voting districts or precincts have changed over time.</p>
 <p>For most analyses, we want some combination of the below packages.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.christophertkenny.com/geomander/">geomander</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/walkerke/tigris">tigris</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span></code></pre></div>
-<div id="aggregating-population-data-to-precincts" class="section level1">
-<h1 class="hasAnchor">
-<a href="#aggregating-population-data-to-precincts" class="anchor"></a>Aggregating Population Data to Precincts</h1>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.christophertkenny.com/geomander/">geomander</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/walkerke/tigris" class="external-link">tigris</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></code></pre></div>
+<div class="section level1">
+<h1 id="aggregating-population-data-to-precincts">Aggregating Population Data to Precincts<a class="anchor" aria-label="anchor" href="#aggregating-population-data-to-precincts"></a>
+</h1>
 <p>Many sources of electoral data are focused, as expected, on elections. As such, many lack the population data that can be necessary to place racial, turnout, and other population patterns in context.</p>
-<p>One of the best sources of electoral data is the <a href="https://dataverse.harvard.edu/dataverse/electionscience">Voting and Election Science Team</a> for spatial analysis. Using one county from the Virginia senate election in 2018, this example walks through an easy way to add population data to this by matching based on the geographies.</p>
+<p>One of the best sources of electoral data is the <a href="https://dataverse.harvard.edu/dataverse/electionscience" class="external-link">Voting and Election Science Team</a> for spatial analysis. Using one county from the Virginia senate election in 2018, this example walks through an easy way to add population data to this by matching based on the geographies.</p>
 <p>First, we load in the VA county subset included in the package.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">va18sub</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">va18sub</span><span class="op">$</span><span class="va">COUNTYFP</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] "087"</code></pre>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">va18sub</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">va18sub</span><span class="op">$</span><span class="va">COUNTYFP</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## [1] "087"</span></code></pre>
 <p>After noting the countiy included, we can use create_block_table to collect the key population boxes needed for most redistricting analysis.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">block</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_block_table.html">create_block_table</a></span><span class="op">(</span>state <span class="op">=</span> <span class="st">'VA'</span>, county <span class="op">=</span> <span class="st">'087'</span>, year <span class="op">=</span> <span class="fl">2010</span><span class="op">)</span>  </code></pre></div>
 <p>To avoid needing API access, we can use saved data. These polygons are simplified using <code>rmapshaper</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"va_blocks"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"va_blocks"</span><span class="op">)</span>
 <span class="va">block</span> <span class="op">&lt;-</span> <span class="va">va_blocks</span></code></pre></div>
 <p>A typical approach from here is to match the geography from the blocks to the precincts. In this case, the geographies of the blocks are expected to match up well with only one precinct match for each block. This is not necessarily the case for all states or data sources, so blindly matching can be dangerous. Below, I use the default matching, which is by st_centerish, which is the centroid of the shape if it is within the shape or a point on its surface otherwise. There are three other options that could have been used: - centroid: the center of mass of the shape - point: a point on the surface of the shape - area: the intersection that has the largest area (this is most useful when you expect that boundaries don’t line up well)</p>
 <p>Using centroid matching:</p>
@@ -141,30 +137,30 @@
 <p>In this case, it makes no difference, as the va18sub shapes line up very well with the block lines.</p>
 <p>In either case, the data is arranged by the order of the second argument (to/precinct), so we can column bind them to have a full dataset for analysis purposes.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fulldata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_cols</a></span><span class="op">(</span><span class="va">va18sub</span>, <span class="va">prec</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">fulldata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_cols</a></span><span class="op">(</span><span class="va">va18sub</span>, <span class="va">prec</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="disaggregating-and-reaggregating" class="section level1">
-<h1 class="hasAnchor">
-<a href="#disaggregating-and-reaggregating" class="anchor"></a>Disaggregating and Reaggregating</h1>
+<div class="section level1">
+<h1 id="disaggregating-and-reaggregating">Disaggregating and Reaggregating<a class="anchor" aria-label="anchor" href="#disaggregating-and-reaggregating"></a>
+</h1>
 <p>A second common task is transferring information from one level of geography to another. In this case, I use the same Virginia county subset and blocks, but the end goal is to estimate electoral data in voting districts from known data in precincts.</p>
 <p>The first dataset is the Virginia subset as above:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">va18sub</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">va18sub</span><span class="op">)</span></code></pre></div>
 <p>The second is the block dataset for County 087 (Henrico County).</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">block</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_block_table.html">create_block_table</a></span><span class="op">(</span>state <span class="op">=</span> <span class="st">'VA'</span>, county <span class="op">=</span> <span class="st">'087'</span><span class="op">)</span>  </code></pre></div>
 <p>Third, we can use <code>tigris</code> to get voting districts for the relevant Virginia county.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">vtd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tigris/man/voting_districts.html">voting_districts</a></span><span class="op">(</span>state <span class="op">=</span> <span class="st">'VA'</span><span class="op">)</span> <span class="op"><a href="../reference/%&gt;%.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">COUNTYFP10</span> <span class="op">==</span> <span class="st">'087'</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">vtd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tigris/man/voting_districts.html" class="external-link">voting_districts</a></span><span class="op">(</span>state <span class="op">=</span> <span class="st">'VA'</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">COUNTYFP10</span> <span class="op">==</span> <span class="st">'087'</span><span class="op">)</span></code></pre></div>
 <p>As with other potential calls to the API, this data is also simplified and included.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"va_vtd"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"va_vtd"</span><span class="op">)</span>
 <span class="va">vtd</span> <span class="op">&lt;-</span> <span class="va">va_vtd</span></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">vtd</span> <span class="op"><a href="../reference/%&gt;%.html">%&gt;%</a></span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">va18sub</span>, color <span class="op">=</span> <span class="st">'red'</span>, fill <span class="op">=</span> <span class="st">'NA'</span> <span class="op">)</span><span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">vtd</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">va18sub</span>, color <span class="op">=</span> <span class="st">'red'</span>, fill <span class="op">=</span> <span class="st">'NA'</span> <span class="op">)</span><span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_void</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="Merging_Election_Data_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
 <p>Now, an always hopeful bit is that the lines are generally close to each other, so the final quality of the estimate should be fairly good.</p>
 <p>Next, we need a vector of matches to precinct data (va18sub) from blocks.</p>
@@ -190,8 +186,8 @@
                                    <span class="st">'centroid'</span><span class="op">)</span></code></pre></div>
 <p>Again, these two methods give the same answers, but the first approach would allow you to apply the same logic to many variables.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/all.html">all</a></span><span class="op">(</span><span class="va">disagg_kaine</span> <span class="op">==</span> <span class="va">disagg_kaine_geo</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/all.html">all</a></span><span class="op">(</span><span class="va">vtd_kaine</span> <span class="op">==</span> <span class="va">vtd_kaine_geo</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] TRUE</code></pre>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">disagg_kaine</span> <span class="op">==</span> <span class="va">disagg_kaine_geo</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">vtd_kaine</span> <span class="op">==</span> <span class="va">vtd_kaine_geo</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## [1] TRUE</span></code></pre>
 </div>
   </div>
 
@@ -206,11 +202,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Christopher T. Kenny.</p>
+  <p></p>
+<p>Developed by Christopher T. Kenny.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -218,6 +216,8 @@
 
   
 
+
+  
 
   </body>
 </html>
