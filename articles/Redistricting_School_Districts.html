@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.1</span>
       </span>
     </div>
 
@@ -219,23 +219,25 @@
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>district <span class="op">=</span> <span class="va">plans</span><span class="op">[</span>,<span class="va">pick</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">district</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">across</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">'vap'</span><span class="op">)</span>, <span class="va">sum</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## Simple feature collection with 7 features and 10 fields</span>
-<span class="co">## Geometry type: POLYGON</span>
+<pre><code><span class="co">## Simple feature collection with 9 features and 10 fields</span>
+<span class="co">## Geometry type: GEOMETRY</span>
 <span class="co">## Dimension:     XY</span>
 <span class="co">## Bounding box:  xmin: -8250400 ymin: 5038222 xmax: -8228926 ymax: 5061114</span>
 <span class="co">## Projected CRS: WGS 84 / Pseudo-Mercator</span>
-<span class="co">## <span style="color: #949494;"># A tibble: 7 × 11</span></span>
-<span class="co">##   district   vap vap_white vap_black vap_hisp vap_aian vap_asian vap_nhpi</span>
-<span class="co">##      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">## <span style="color: #BCBCBC;">1</span>        1  <span style="text-decoration: underline;">5</span>411      <span style="text-decoration: underline;">4</span>396       155      676        5       118        2</span>
-<span class="co">## <span style="color: #BCBCBC;">2</span>        2  <span style="text-decoration: underline;">4</span>918       791       378     <span style="text-decoration: underline;">3</span>599       11        89        0</span>
-<span class="co">## <span style="color: #BCBCBC;">3</span>        3  <span style="text-decoration: underline;">5</span>299      <span style="text-decoration: underline;">4</span>485       139      508        5       124        0</span>
-<span class="co">## <span style="color: #BCBCBC;">4</span>        4  <span style="text-decoration: underline;">5</span>326      <span style="text-decoration: underline;">3</span>376       692      872        3       307        0</span>
-<span class="co">## <span style="color: #BCBCBC;">5</span>        5  <span style="text-decoration: underline;">5</span>206      <span style="text-decoration: underline;">3</span>529       396     <span style="text-decoration: underline;">1</span>029        9       196        0</span>
-<span class="co">## <span style="color: #BCBCBC;">6</span>        6  <span style="text-decoration: underline;">5</span>199      <span style="text-decoration: underline;">1</span>822       586     <span style="text-decoration: underline;">2</span>587        7       134        1</span>
-<span class="co">## <span style="color: #BCBCBC;">7</span>        7  <span style="text-decoration: underline;">5</span>101      <span style="text-decoration: underline;">2</span>031       920     <span style="text-decoration: underline;">1</span>761        6       302        2</span>
-<span class="co">## <span style="color: #949494;"># … with 3 more variables: vap_other &lt;dbl&gt;, vap_two &lt;dbl&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   geometry &lt;POLYGON [m]&gt;</span></span></code></pre>
+<span class="co">## <span style="color: #949494;"># A tibble: 9 × 11</span></span>
+<span class="co">##   district[,1]  [,2]   vap vap_white vap_black vap_hisp vap_aian vap_asian</span>
+<span class="co">##          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="co">## <span style="color: #BCBCBC;">1</span>            1     1  <span style="text-decoration: underline;">5</span>143      <span style="text-decoration: underline;">2</span>098       869     <span style="text-decoration: underline;">1</span>844        5       249</span>
+<span class="co">## <span style="color: #BCBCBC;">2</span>            2     2  <span style="text-decoration: underline;">5</span>153      <span style="text-decoration: underline;">1</span>349       547     <span style="text-decoration: underline;">3</span>053        8       146</span>
+<span class="co">## <span style="color: #BCBCBC;">3</span>            3     3  <span style="text-decoration: underline;">5</span>380      <span style="text-decoration: underline;">3</span>632       569      882        6       243</span>
+<span class="co">## <span style="color: #BCBCBC;">4</span>            4     4  <span style="text-decoration: underline;">4</span>992      <span style="text-decoration: underline;">1</span>756       326     <span style="text-decoration: underline;">2</span>757       12        82</span>
+<span class="co">## <span style="color: #BCBCBC;">5</span>            5     5  <span style="text-decoration: underline;">5</span>306      <span style="text-decoration: underline;">3</span>376       362     <span style="text-decoration: underline;">1</span>335        3       163</span>
+<span class="co">## <span style="color: #BCBCBC;">6</span>            6     6  <span style="text-decoration: underline;">5</span>179      <span style="text-decoration: underline;">3</span>710       433      665        9       295</span>
+<span class="co">## <span style="color: #BCBCBC;">7</span>            6     7   121       100        14        5        0         1</span>
+<span class="co">## <span style="color: #BCBCBC;">8</span>            7     6   127       117         0       10        0         0</span>
+<span class="co">## <span style="color: #BCBCBC;">9</span>            7     7  <span style="text-decoration: underline;">5</span>059      <span style="text-decoration: underline;">4</span>292       146      481        3        91</span>
+<span class="co">## <span style="color: #949494;"># … with 4 more variables: vap_nhpi &lt;dbl&gt;, vap_other &lt;dbl&gt;, vap_two &lt;dbl&gt;,</span></span>
+<span class="co">## <span style="color: #949494;">#   geometry &lt;GEOMETRY [m]&gt;</span></span></code></pre>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
