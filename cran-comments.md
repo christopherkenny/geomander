@@ -8,7 +8,3 @@
 ## R CMD check results
 
 0 errors | 0 warnings | 0 notes
-
-## Additional Notes
-* Fixes the website redirects.
-* Adds a donttest around a download taking > 5 seconds.
