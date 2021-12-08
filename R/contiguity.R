@@ -91,7 +91,7 @@ check_polygon_contiguity <- function(shp, group, epsg = 3857) {
     sf::st_as_sf() %>%
     suppressWarnings()
 
-  adj <- adjacency(shp)
+  adj <- adj_geos(shp)
 
   check_contiguity(adj = adj, group = shp %>%
     sf::st_drop_geometry() %>%

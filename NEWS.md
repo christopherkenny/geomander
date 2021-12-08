@@ -1,3 +1,6 @@
+# geomander 2.0.2
+* Drop `spdep` dependency to avoid timeouts on checking examples.
+
 # geomander 2.0.0
 * `check_contiguity()` orders by most frequent component, so less common components have higher numbers.
 * Uses `geos` for geographic computations over `sf` to avoid `s2` where possible and introduce speed improvements.

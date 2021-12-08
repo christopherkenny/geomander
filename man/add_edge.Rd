@@ -25,7 +25,7 @@ Add Edges to an Adjacency List
 }
 \examples{
 data(towns)
-adj <- adjacency_geos(towns)
+adj <- adjacency(towns)
 add_edge(adj, 2, 3)
 
 }

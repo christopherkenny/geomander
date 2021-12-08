@@ -13,7 +13,6 @@
 #' @concept seam
 #' 
 #' @examples
-#' \donttest{
 #' data("rockland")
 #' data("orange")
 #' data("nrcsd")
@@ -23,7 +22,7 @@
 #' adj <- adjacency(o_and_r)
 #' 
 #' seam_rip(adj, o_and_r, 'county', c('071', '087'))
-#' }
+#' 
 seam_rip <- function(adj, shp, admin, seam, epsg = 3857) {
   
   shp <- make_planar_pair(shp, epsg = epsg)$x

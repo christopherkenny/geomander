@@ -14,7 +14,7 @@
 #'
 #' @examples
 #' data(towns)
-#' adj <- adjacency_geos(towns)
+#' adj <- adjacency(towns)
 #' add_edge(adj, 2, 3)
 #' 
 add_edge <- function(adj, v1, v2, zero = TRUE) {
@@ -49,7 +49,7 @@ add_edge <- function(adj, v1, v2, zero = TRUE) {
 #' @concept fix
 #' @examples
 #' data(towns)
-#' adj <- adjacency_geos(towns)
+#' adj <- adjacency(towns)
 #' subtract_edge(adj, 2, 3)
 #' 
 subtract_edge <- function(adj, v1, v2, zero = TRUE) {
@@ -187,13 +187,10 @@ compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE) {
 
 #' Build Adjacency List
 #'
-#' This is similar to the old version of redist's adjacency function which has been
-#' replaced by sf internals. This is faster but less reliable. This wraps spdep::poly2nb()
-#' and replaces the indicator for no adjacent precincts with a integer(0)
+#' This mimics redist's redist.adjacency using GEOS to create the patterns, rather than sf.
+#' This is faster than that version, but forces projections.
 #'
 #' @param shp sf dataframe
-#' @param zero Default is TRUE for zero indexed. FALSE gives a one indexed adjacency list.
-#' @param rook Default is TRUE for rook adjacency. FALSE gives queen adjacency
 #' @templateVar epsg TRUE
 #' @template template
 #' 
@@ -204,63 +201,9 @@ compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE) {
 #'
 #' @examples
 #' data(precincts)
-#' adj <- adjacency(precincts, epsg = FALSE)
+#' adj <- adjacency(precincts)
 #' 
-adjacency <- function(shp, zero = TRUE, rook = TRUE, epsg = 3857) {
-  if (!inherits(shp, 'sf')) {
-    cli::cli_abort('Input to {.arg shp} must be an sf dataframe.')
-  }
-  
-  shp <- make_planar_pair(shp, epsg = epsg)$x
-
-  adj <- spdep::poly2nb(shp, queen = !rook)
-
-  if (zero) {
-    adj <- lapply(adj, function(x) {
-      x - 1L
-    })
-    adj <- lapply(adj, function(x) {
-      if (all(x == -1L)) {
-        integer(0)
-      } else {
-        x
-      }
-    })
-  } else {
-    adj <- lapply(adj, function(x) {
-      x - 0L
-    })
-    adj <- lapply(adj, function(x) {
-      if (all(x == -1L)) {
-        integer(0)
-      } else {
-        x
-      }
-    })
-  }
-
-  adj
-}
-
-#' Build Adjacency List using Geos
-#'
-#' This mimics redist's redist.adjacency using GEOS to create the patterns, rather than sf.
-#' This is faster than that version, but forces projections.
-#' 
-#' @param shp sf dataframe
-#' @templateVar epsg TRUE
-#' @template template
-#' 
-#' @return zero-indexed adjacency list with nrow(shp) entries
-#' @export
-#'
-#' @concept fix
-#'
-#' @examples
-#' data(precincts)
-#' adj <- adjacency_geos(precincts)
-#' 
-adjacency_geos <- function(shp, epsg = 3857) {
+adjacency <- function(shp, epsg = 3857) {
   if (!inherits(shp, 'sf')) {
     cli::cli_abort('Input to {.arg shp} must be an sf dataframe.')
   }

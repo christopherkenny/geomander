@@ -4,10 +4,11 @@
 * ubuntu 20.04 (on GitHub Actions), (devel and release)
 * windows-latest (on GitHub Actions), (release)
 * macOS-latest (on GitHub Actions), (release)
+* Windows (on Winbuilder), (release)
 
 ## R CMD check results
 
 0 errors | 0 warnings | 0 notes
 
 ## Additional Notes
-* Tweaked `add_edge()` example to avoid running for too long. Full example should run in about .1 seconds.
+* Remove `spdep` dependency to avoid timeouts on examples. Verified on Winbuilder that there are no new notes based on this.
