@@ -204,7 +204,7 @@ compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE) {
 #'
 #' @examples
 #' data(precincts)
-#' adj <- adjacency(precincts)
+#' adj <- adjacency(precincts, epsg = FALSE)
 #' 
 adjacency <- function(shp, zero = TRUE, rook = TRUE, epsg = 3857) {
   if (!inherits(shp, 'sf')) {
@@ -246,7 +246,7 @@ adjacency <- function(shp, zero = TRUE, rook = TRUE, epsg = 3857) {
 #'
 #' This mimics redist's redist.adjacency using GEOS to create the patterns, rather than sf.
 #' This is faster than that version, but forces projections.
-#' ß
+#' 
 #' @param shp sf dataframe
 #' @templateVar epsg TRUE
 #' @template template

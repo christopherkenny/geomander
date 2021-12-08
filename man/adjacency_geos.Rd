@@ -17,7 +17,6 @@ zero-indexed adjacency list with nrow(shp) entries
 \description{
 This mimics redist's redist.adjacency using GEOS to create the patterns, rather than sf.
 This is faster than that version, but forces projections.
-ß
 }
 \examples{
 data(precincts)

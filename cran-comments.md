@@ -8,3 +8,6 @@
 ## R CMD check results
 
 0 errors | 0 warnings | 0 notes
+
+## Additional Notes
+* Tweaked `add_edge()` example to avoid running for too long. Full example should run in about .1 seconds.

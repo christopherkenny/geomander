@@ -25,7 +25,7 @@ and replaces the indicator for no adjacent precincts with a integer(0)
 }
 \examples{
 data(precincts)
-adj <- adjacency(precincts)
+adj <- adjacency(precincts, epsg = FALSE)
 
 }
 \concept{fix}
