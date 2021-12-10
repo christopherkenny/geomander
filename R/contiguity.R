@@ -1,10 +1,18 @@
 #' Check Contiguity by Group
 #'
-#' @param adj adjacency list
-#' @param group array of group identifiers. Typically district numbers or county names.
+#' Identify contiguous sets of units and numbers each set. Can be extended to repeat the procedure
+#'  within a subgeography.
 #'
-#' @return tibble with a column for each of inputted group, created group number, and the
-#' identified connected component number
+#' @param adj An adjacency list from `adjacency()`
+#' @param group To check contiguity within larger groups such as counties, specify the group identifiers. 
+#'   Typically input district numbers or county names.
+#'
+#' @return tibble with contiguity indicators. Each row is the units of `adj`. Columns include
+#'  - `group` Values of the inputted `group` argument. If `group` is not specified, then all values
+#'    will be 1. 
+#'  - `component` A number for each contiguous set of units within a `group`. If all units within a
+#'    `group` are contiguous, all values are 1. If there are two sets, each discontiguous with
+#'    the other, the larger one will be numbered 1 and the smaller one will be numbered as 2.
 #'
 #' @concept fix
 #'
@@ -12,8 +20,8 @@
 #' @examples
 #' data(checkerboard)
 #' adj <- adjacency(checkerboard)
-#' check_contiguity(adj)
-#' 
+#' check_contiguity(adj) # all contiguous
+#' # If there are two discontiguous groups, there will be 2 values of `component`
 check_contiguity <- function(adj, group) {
   if (missing(adj)) {
     cli::cli_abort('Please provide an argument to {.arg adj}.')
