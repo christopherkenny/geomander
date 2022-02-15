@@ -25,9 +25,9 @@ add_edge <- function(adj, v1, v2, zero = TRUE) {
 
   zero <- as.integer(zero) 
   
-  for (i in 1:length(v1)) {
-      adj[[v1[i]]] <- c(adj[[v1[i]]], v2[i] - 1)
-      adj[[v2[i]]] <- c(adj[[v2[i]]], v1[i] - 1)
+  for (i in seq_along(v1)) {
+      adj[[v1[i]]] <- c(adj[[v1[i]]], v2[i] - zero)
+      adj[[v2[i]]] <- c(adj[[v2[i]]], v1[i] - zero)
   }
 
   adj
@@ -103,7 +103,7 @@ suggest_neighbors <- function(shp, adj, idx, neighbors = 1) {
   out <- tibble()
   for (i in idx) {
     nn <- nn_geos(x = cents[i, ], y = cents[-i, ], k = neighbors)
-    for (j in 1:length(nn)) {
+    for (j in seq_along(nn)) {
       if (nn[j] >= i) {
         nn[j] <- nn[j] + 1
       }
@@ -144,7 +144,7 @@ compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE) {
   }
 
   ret <- tibble()
-  for (i in 1:length(adj1)) {
+  for (i in seq_along(adj1)) {
     temp1 <- tibble(
       x = i, y = adj1[[i]][which(!(adj1[[i]] %in% adj2[[i]]))],
       from = 1
