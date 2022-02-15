@@ -107,9 +107,9 @@
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/walkerke/tigris" class="external-link">tigris</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></code></pre></div>
-<div class="section level1">
-<h1 id="aggregating-population-data-to-precincts">Aggregating Population Data to Precincts<a class="anchor" aria-label="anchor" href="#aggregating-population-data-to-precincts"></a>
-</h1>
+<div class="section level2">
+<h2 id="aggregating-population-data-to-precincts">Aggregating Population Data to Precincts<a class="anchor" aria-label="anchor" href="#aggregating-population-data-to-precincts"></a>
+</h2>
 <p>Many sources of electoral data are focused, as expected, on elections. As such, many lack the population data that can be necessary to place racial, turnout, and other population patterns in context.</p>
 <p>One of the best sources of electoral data is the <a href="https://dataverse.harvard.edu/dataverse/electionscience" class="external-link">Voting and Election Science Team</a> for spatial analysis. Using one county from the Virginia senate election in 2018, this example walks through an easy way to add population data to this by matching based on the geographies.</p>
 <p>First, we load in the VA county subset included in the package.</p>
@@ -139,9 +139,9 @@
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fulldata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_cols</a></span><span class="op">(</span><span class="va">va18sub</span>, <span class="va">prec</span><span class="op">)</span></code></pre></div>
 </div>
-<div class="section level1">
-<h1 id="disaggregating-and-reaggregating">Disaggregating and Reaggregating<a class="anchor" aria-label="anchor" href="#disaggregating-and-reaggregating"></a>
-</h1>
+<div class="section level2">
+<h2 id="disaggregating-and-reaggregating">Disaggregating and Reaggregating<a class="anchor" aria-label="anchor" href="#disaggregating-and-reaggregating"></a>
+</h2>
 <p>A second common task is transferring information from one level of geography to another. In this case, I use the same Virginia county subset and blocks, but the end goal is to estimate electoral data in voting districts from known data in precincts.</p>
 <p>The first dataset is the Virginia subset as above:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -208,7 +208,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
