@@ -24,17 +24,19 @@
 #' ak <- get_alarm('AK')
 #' }
 get_alarm <- function(state, geometry = TRUE, epsg = 3857) {
-
   base_path <- 'https://raw.githubusercontent.com/alarm-redist/census-2020/main/census-vest-2020/'
   state <- tolower(censable::match_abb(state))
   block_states <- c('ca', 'hi', 'or')
+  spec <- readr::cols(GEOID20 = 'c', state = 'c', county = 'c', vtd = 'c', .default = 'd')
   if (state %in% block_states) {
     end_path <- paste0(state, '_2020_block.csv')
+    spec[[1]]$vtd <- NULL
   } else {
     end_path <- paste0(state, '_2020_vtd.csv')
   }
 
-  tb <- readr::read_csv(file = paste0(base_path, end_path))
+  tb <- readr::read_csv(file = paste0(base_path, end_path), col_types = spec, 
+                        show_col_types = FALSE)
 
   if (geometry) {
     if (state  %in% block_states) {
