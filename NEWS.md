@@ -1,3 +1,6 @@
+# geomander 2.1.0
+* Avoid indirect download for `get_alarm()`. Fixes bug where block level data resulted in mismatched geometry.
+
 # geomander 2.0.2
 * Drop `spdep` dependency to avoid timeouts on checking examples.
 

@@ -11,7 +11,6 @@
 #'
 #' @param state two letter state abbreviation
 #' @param geometry Default is TRUE. Add geomeetry to the data?
-#' @param file file path to save ALARM csv
 #' @templateVar epsg TRUE
 #' @template template
 #'
@@ -24,29 +23,27 @@
 #' # Takes a few seconds to run
 #' ak <- get_alarm('AK')
 #' }
-get_alarm <- function(state, geometry = TRUE, file = tempfile(fileext = '.csv'), epsg = 3857) {
+get_alarm <- function(state, geometry = TRUE, epsg = 3857) {
+
   base_path <- 'https://raw.githubusercontent.com/alarm-redist/census-2020/main/census-vest-2020/'
   state <- tolower(censable::match_abb(state))
-  end_path <- paste0(state, '_2020_vtd.csv')
-  out <- NULL
-  try({
-    out <- utils::download.file(url = paste0(base_path, end_path), file)
-  })
-
-  if (is.null(out)) {
+  block_states <- c('ca', 'hi', 'or')
+  if (state %in% block_states) {
     end_path <- paste0(state, '_2020_block.csv')
-    try({
-      out <- utils::download.file(url = paste0(base_path, end_path), file)
-    })
-    if (is.null(out)) {
-      cli::cli_abort('State {state} not found in ALARM Data.')
-    }
+  } else {
+    end_path <- paste0(state, '_2020_vtd.csv')
   }
 
-  tb <- readr::read_csv(file = file, lazy = FALSE)
+  tb <- readr::read_csv(file = paste0(base_path, end_path))
 
   if (geometry) {
-    geo <- tigris::voting_districts(state = state) %>%
+    if (state  %in% block_states) {
+      geo <- tigris::blocks(state = state, year = 2020)
+    } else {
+      geo <- tigris::voting_districts(state = state)
+    }  
+    
+    geo <- geo %>%
       dplyr::select(.data$GEOID20, .data$geometry) %>%
       dplyr::mutate(GEOID20 = as.character(.data$GEOID20))
     tb <- tb %>%

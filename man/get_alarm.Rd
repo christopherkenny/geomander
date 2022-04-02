@@ -4,19 +4,12 @@
 \alias{get_alarm}
 \title{Get ALARM Dataset}
 \usage{
-get_alarm(
-  state,
-  geometry = TRUE,
-  file = tempfile(fileext = ".csv"),
-  epsg = 3857
-)
+get_alarm(state, geometry = TRUE, epsg = 3857)
 }
 \arguments{
 \item{state}{two letter state abbreviation}
 
 \item{geometry}{Default is TRUE. Add geomeetry to the data?}
-
-\item{file}{file path to save ALARM csv}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
