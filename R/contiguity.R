@@ -1,10 +1,32 @@
 #' Check Contiguity by Group
 #'
+#' Given a zero-indexed adjacency list and an array of group identifiers, this 
+#' returns a tibble which identifies the connected components. The three columns
+#' are `group` for the inputted group, `group_number` which uniquely identifies each
+#' group as a positive integer, and `component` which identifies the connected 
+#' component number for each corresponding entry of adjacency and group. If everything
+#' is connected within the group, then each element of `component` will be `1`.
+#' Otherwise, the largest component is given the value `1`, the next largest `2`, 
+#' and so on.
+#' 
+#' If nothing is provided to group, it will default to a vector of ones, checking
+#' if the adjacency graph is connected.
+#' 
+#' `cct()` is shorthand for creating a table of the component values. If everything 
+#' is connected within each group, it returns a value of 1. In general, it returns 
+#' a frequency table of components.
+#' 
+#' `ccm()` is shorthand for getting the maximum component value. It returns the 
+#' maximum number of  components that a group is broken into.
+#' This returns 1 if each group is connected. #' 
+#'
 #' @param adj adjacency list
 #' @param group array of group identifiers. Typically district numbers or county names.
+#' Defaults to 1 if no input is provided, checking that the adjacency list itself is 
+#' one connected component.
 #'
-#' @return tibble with a column for each of inputted group, created group number, and the
-#' identified connected component number
+#' @return tibble with a column for each of inputted group, created group number, 
+#' and the identified connected component number
 #'
 #' @concept fix
 #'
@@ -12,7 +34,10 @@
 #' @examples
 #' data(checkerboard)
 #' adj <- adjacency(checkerboard)
+#' # These each indicate the graph is connected.
 #' check_contiguity(adj)
+#' cct(adj)
+#' ccm(adj)
 #' 
 check_contiguity <- function(adj, group) {
   if (missing(adj)) {
@@ -24,7 +49,7 @@ check_contiguity <- function(adj, group) {
     }
     groups <- rep(0, length(group))
     sorted <- sort(unique(group))
-    for (i in 1:length(group)) {
+    for (i in seq_along(group)) {
       groups[i] <- which(sorted == group[i])
     }
   } else {
@@ -50,6 +75,18 @@ check_contiguity <- function(adj, group) {
   }
   
   out
+}
+
+#' @rdname check_contiguity
+#' @export
+cct <- function(adj, group) {
+  table(check_contiguity(adj = adj, group = group)$component)
+}
+
+#' @rdname check_contiguity
+#' @export
+ccm <- function(adj, group) {
+  max(check_contiguity(adj = adj, group = group)$component)
 }
 
 
@@ -155,7 +192,7 @@ suggest_component_connection <- function(shp, adj, group, epsg = 3857) {
     }
   }
 
-  for (i in 1:nrow(out)) {
+  for (i in seq_len(nrow(out))) {
     if (out[i, 1] > out[i, 2]) {
       temp <- out[i, 1]
       out[i, 1] <- out[i, 2]

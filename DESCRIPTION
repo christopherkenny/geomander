@@ -2,15 +2,15 @@ Package: geomander
 Type: Package
 Title: Geographic Tools for Studying Gerrymandering
 Version: 2.1.0
-Date: 2022-04-01
+Date: 2022-06-21
 Authors@R: person("Christopher T.", "Kenny", email = "christopherkenny@fas.harvard.edu",
                   role = c("aut", "cre"), comment = c(ORCID = "0000-0002-9386-6860"))
 Description: A compilation of tools to complete common tasks for studying gerrymandering. This focuses on the geographic tool side of common problems, such as linking different levels of spatial units or estimating how to break up units. Functions exist for creating redistricting-focused data for the US.
 License: MIT + file LICENCE
 URL: https://www.christophertkenny.com/geomander/, https://github.com/christopherkenny/geomander
 BugReports: https://github.com/christopherkenny/geomander/issues
-RoxygenNote: 7.1.2
-LinkingTo: Rcpp
+RoxygenNote: 7.2.0
+LinkingTo: Rcpp (>= 1.0.7)
 Imports:
     dplyr,
     magrittr,
@@ -23,11 +23,10 @@ Imports:
     readr,
     dataverse,
     censable,
-    Rcpp (>= 1.0.7),
     geos,
     cli
 Depends: 
-    R (>= 2.10)
+    R (>= 3.0.2)
 Suggests:
     redist,
     knitr,

@@ -2,26 +2,56 @@
 % Please edit documentation in R/contiguity.R
 \name{check_contiguity}
 \alias{check_contiguity}
+\alias{cct}
+\alias{ccm}
 \title{Check Contiguity by Group}
 \usage{
 check_contiguity(adj, group)
+
+cct(adj, group)
+
+ccm(adj, group)
 }
 \arguments{
 \item{adj}{adjacency list}
 
-\item{group}{array of group identifiers. Typically district numbers or county names.}
+\item{group}{array of group identifiers. Typically district numbers or county names.
+Defaults to 1 if no input is provided, checking that the adjacency list itself is 
+one connected component.}
 }
 \value{
-tibble with a column for each of inputted group, created group number, and the
-identified connected component number
+tibble with a column for each of inputted group, created group number, 
+and the identified connected component number
 }
 \description{
-Check Contiguity by Group
+Given a zero-indexed adjacency list and an array of group identifiers, this 
+returns a tibble which identifies the connected components. The three columns
+are `group` for the inputted group, `group_number` which uniquely identifies each
+group as a positive integer, and `component` which identifies the connected 
+component number for each corresponding entry of adjacency and group. If everything
+is connected within the group, then each element of `component` will be `1`.
+Otherwise, the largest component is given the value `1`, the next largest `2`, 
+and so on.
+}
+\details{
+If nothing is provided to group, it will default to a vector of ones, checking
+if the adjacency graph is connected.
+
+`cct()` is shorthand for creating a table of the component values. If everything 
+is connected within each group, it returns a value of 1. In general, it returns 
+a frequency table of components.
+
+`ccm()` is shorthand for getting the maximum component value. It returns the 
+maximum number of  components that a group is broken into.
+This returns 1 if each group is connected. #'
 }
 \examples{
 data(checkerboard)
 adj <- adjacency(checkerboard)
+# These each indicate the graph is connected.
 check_contiguity(adj)
+cct(adj)
+ccm(adj)
 
 }
 \concept{fix}
