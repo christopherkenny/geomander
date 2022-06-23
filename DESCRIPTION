@@ -25,7 +25,8 @@ Imports:
     censable,
     geos,
     cli,
-    rlang
+    rlang,
+    Rcpp
 Depends: 
     R (>= 3.0.2)
 Suggests:
