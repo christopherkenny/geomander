@@ -1,6 +1,7 @@
 # geomander 2.1.0
 * Avoid indirect download for `get_alarm()`. Fixes bug where block level data resulted in mismatched geometry.
 * Add `st_circle_center()` and `geos_circle_center()` for centroid of the maximum inscribed circle.
+* Add `baf_to_vtd()` function to approximate BAFs at the VTD level.
 
 # geomander 2.0.2
 * Drop `spdep` dependency to avoid timeouts on checking examples.
