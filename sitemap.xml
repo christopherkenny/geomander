@@ -34,6 +34,9 @@
     <loc>https://www.christophertkenny.com/geomander/reference/alarm_states.html</loc>
   </url>
   <url>
+    <loc>https://www.christophertkenny.com/geomander/reference/baf_to_vtd.html</loc>
+  </url>
+  <url>
     <loc>https://www.christophertkenny.com/geomander/reference/block2prec.html</loc>
   </url>
   <url>
@@ -106,6 +109,9 @@
     <loc>https://www.christophertkenny.com/geomander/reference/geos_centerish.html</loc>
   </url>
   <url>
+    <loc>https://www.christophertkenny.com/geomander/reference/geos_circle_center.html</loc>
+  </url>
+  <url>
     <loc>https://www.christophertkenny.com/geomander/reference/get_alarm.html</loc>
   </url>
   <url>
@@ -164,6 +170,9 @@
   </url>
   <url>
     <loc>https://www.christophertkenny.com/geomander/reference/st_centerish.html</loc>
+  </url>
+  <url>
+    <loc>https://www.christophertkenny.com/geomander/reference/st_circle_center.html</loc>
   </url>
   <url>
     <loc>https://www.christophertkenny.com/geomander/reference/subtract_edge.html</loc>

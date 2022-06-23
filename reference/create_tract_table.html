@@ -81,22 +81,37 @@
     <h2>Arguments</h2>
     <dl><dt>state</dt>
 <dd><p>Required. Two letter state postal code.</p></dd>
+
+
 <dt>county</dt>
 <dd><p>Optional. Name of county.  If not provided, returns tracts for the entire state.</p></dd>
+
+
 <dt>geometry</dt>
 <dd><p>Defaults to TRUE. Whether to return the geography or not.</p></dd>
+
+
 <dt>year</dt>
 <dd><p>year, must be &gt;= 2009 and &lt;= 2019.</p></dd>
+
+
 <dt>mem</dt>
 <dd><p>Default is FALSE. Set TRUE to use memoized backend.</p></dd>
+
+
 <dt>epsg</dt>
 <dd><p>numeric EPSG code to planarize to. Default is 3857.</p></dd>
+
+
 <dt>geography</dt>
 <dd><p>Deprecated. Use geometry.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>dataframe with data for each tract in the selected region. Data includes
+    
+
+<p>dataframe with data for each tract in the selected region. Data includes
 3 sets of columns for each race or ethnicity category: population (pop), voting age
 population (vap), and citizen voting age population (cvap)</p>
     </div>
@@ -121,7 +136,7 @@ population (vap), and citizen voting age population (cvap)</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>
