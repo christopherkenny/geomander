@@ -94,7 +94,7 @@ download_2020_vtd_baf <- function(state) {
     col_types = readr::cols(.default = 'c'),
     progress = interactive() 
   ) %>%
-    dplyr::rename(GEOID = BLOCKID, county = COUNTYFP, vtd = DISTRICT)
+    dplyr::rename(GEOID = .data$BLOCKID, county = .data$COUNTYFP, vtd = .data$DISTRICT)
 }
 
 Mode <- function(v) {

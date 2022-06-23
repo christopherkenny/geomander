@@ -11,4 +11,4 @@
 0 errors | 0 warnings | 0 notes
 
 ## Additional Notes
-* Patch to allow `sf` to update without error.
+* Fixes the un-used import of Rcpp.
