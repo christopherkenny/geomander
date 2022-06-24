@@ -85,7 +85,7 @@ geos_centerish <- function(shp, epsg = 3857) {
 #'
 #' @examples
 #' data(towns)
-#' st_centerish(towns)
+#' st_circle_center(towns)
 #' 
 st_circle_center <- function(shp, tolerance = 0.01, epsg = 3857) {
   
@@ -111,12 +111,12 @@ st_circle_center <- function(shp, tolerance = 0.01, epsg = 3857) {
 #'
 #' @examples
 #' data(towns)
-#' geos_centerish(towns)
+#' geos_circle_center(towns)
 #' 
 geos_circle_center <- function(shp, tolerance = 0.01, epsg = 3857) {
   
   shp <- make_planar_pair(x = shp, epsg = epsg)$x
   
-  geos::geos_centroid(geos::geos_maximum_inscribed_crc(shp))
+  geos::geos_centroid(geos::geos_maximum_inscribed_crc(shp, tolerance = tolerance))
 }
 

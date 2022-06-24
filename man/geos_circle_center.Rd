@@ -21,7 +21,7 @@ Returns the centroid of the largest inscribed circle for each shape
 }
 \examples{
 data(towns)
-geos_centerish(towns)
+geos_circle_center(towns)
 
 }
 \concept{center}
