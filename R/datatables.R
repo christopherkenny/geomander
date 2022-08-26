@@ -9,7 +9,6 @@
 #' @param year year, must be 2000, 2010, or 2020
 #' @param mem Default is FALSE. Set TRUE to use memoized backend.
 #' @templateVar epsg TRUE
-#' @param geography Deprecated. Use geometry.
 #' @template template
 #'
 #' @return dataframe with data for each block in the selected region. Data includes
@@ -24,12 +23,7 @@
 #' create_block_table(state = 'NY', county = 'Rockland', geometry = FALSE)
 #' }
 create_block_table <- function(state, county = NULL, geometry = TRUE, year = 2020, 
-                               mem = FALSE, epsg = 3857, geography) {
-  if (!missing(geography)) {
-    .Deprecated('geometry', msg = 'Use `geometry` rather than `geography`.')
-    geometry <- geography
-  }
-
+                               mem = FALSE, epsg = 3857) {
   statepo <- censable::match_abb(state)
 
   if (length(statepo) == 0) {
@@ -68,7 +62,6 @@ create_block_table <- function(state, county = NULL, geometry = TRUE, year = 202
 #' @param year year, must be >= 2009 and <= 2019.
 #' @param mem Default is FALSE. Set TRUE to use memoized backend.
 #' @templateVar epsg TRUE
-#' @param geography Deprecated. Use geometry.
 #' @template template
 #'
 #' @return dataframe with data for each tract in the selected region. Data includes
@@ -82,11 +75,7 @@ create_block_table <- function(state, county = NULL, geometry = TRUE, year = 202
 #' tract <- create_tract_table('NY', 'Rockland', year = 2018)
 #' }
 create_tract_table <- function(state, county, geometry = TRUE, year = 2019,
-                               mem = FALSE, epsg = 3857, geography) {
-  if (!missing(geography)) {
-    .Deprecated('geometry', msg = 'Use `geometry` rather than `geography`.')
-    geometry <- geography
-  }
+                               mem = FALSE, epsg = 3857) {
 
   statepo <- censable::match_abb(state)
 

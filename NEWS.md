@@ -1,6 +1,7 @@
 # geomander 2.1.1
 * Fixes missing tolerance bug in `geos_circle_center()`.
 * Adds experimental regionalizion approach, `regionalize()`.
+* Updates dependencies for easier installation.
 
 # geomander 2.1.0
 * Avoid indirect download for `get_alarm()`. Fixes bug where block level data resulted in mismatched geometry.

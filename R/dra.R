@@ -59,7 +59,7 @@ dra2r <- function(dra, state, precincts, epsg = 3857) {
   dra <- dra %>% dplyr::rename(District_DRA = District)
 
   # get the block file to match it to
-  shp <- tigris::blocks(state, year = 2020)
+  shp <- tinytiger::tt_blocks(state, year = 2020)
 
   # join them together
   shp <- shp %>% dplyr::left_join(dra, by = 'GEOID20')
@@ -117,8 +117,8 @@ dra2r <- function(dra, state, precincts, epsg = 3857) {
 #' @concept dra
 #' @examples \dontrun{
 #' # Needs Census Bureau API
-#' cd <- tigris::congressional_districts() %>% filter(STATEFP == '49')
-#' cnty <- tigris::counties(state = 49)
+#' cd <- tinytiger::tt_congressional_districts() %>% filter(STATEFP == '49')
+#' cnty <- tinytiger::tt_counties(state = 49)
 #' matchedcty <- geo_match(from = cnty, to = cd)
 #' # use counties as precincts and let the plan be their center match:
 #' r2dra(cnty, matchedcty, 'UT', 'r2dra_ex.csv')
@@ -143,7 +143,7 @@ r2dra <- function(precincts, plan, state, path, epsg = 3857) {
     cli::cli_abort('{.arg state} is a required input.')
   }
   
-  shp <- tigris::blocks(state, year = 2020)
+  shp <- tinytiger::tt_blocks(state, year = 2020)
   
   pairs <- make_planar_pair(precincts, shp)
   precincts <- pairs$x

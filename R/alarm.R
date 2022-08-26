@@ -40,9 +40,9 @@ get_alarm <- function(state, geometry = TRUE, epsg = 3857) {
 
   if (geometry) {
     if (state  %in% block_states) {
-      geo <- tigris::blocks(state = state, year = 2020)
+      geo <- tinytiger::tt_blocks(state = state, year = 2020)
     } else {
-      geo <- tigris::voting_districts(state = state)
+      geo <- tinytiger::tt_voting_districts(state = state)
     }  
     
     geo <- geo %>%

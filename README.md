@@ -42,28 +42,20 @@ A very common task is aggregating block data to precincts.
 ``` r
 library(geomander)
 library(tidyverse)
-#> -- Attaching packages --------------------------------------- tidyverse 1.3.1 --
-#> v ggplot2 3.3.5     v purrr   0.3.4
-#> v tibble  3.1.6     v dplyr   1.0.7
-#> v tidyr   1.1.4     v stringr 1.4.0
-#> v readr   2.1.0     v forcats 0.5.1
-#> -- Conflicts ------------------------------------------ tidyverse_conflicts() --
-#> x dplyr::filter() masks stats::filter()
-#> x dplyr::lag()    masks stats::lag()
+#> ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
+#> ✔ ggplot2 3.3.6     ✔ purrr   0.3.4
+#> ✔ tibble  3.1.8     ✔ dplyr   1.0.9
+#> ✔ tidyr   1.2.0     ✔ stringr 1.4.1
+#> ✔ readr   2.1.2     ✔ forcats 0.5.1
+#> ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+#> ✖ dplyr::filter() masks stats::filter()
+#> ✖ dplyr::lag()    masks stats::lag()
  
 # load precincts
 data('va18sub')
 
 # create block data
 block <- create_block_table(state = 'VA', county = '087')  
-#> Getting data from the 2020 decennial Census
-#> Downloading feature geometry from the Census website.  To cache shapefiles for use in future sessions, set `options(tigris_use_cache = TRUE)`.
-#> Using the PL 94-171 Redistricting Data summary file
-#> Note: 2020 decennial Census data use differential privacy, a technique that
-#> introduces errors into data to preserve respondent confidentiality.
-#> i Small counts should be interpreted with caution.
-#> i See https://www.census.gov/library/fact-sheets/2021/protecting-the-confidentiality-of-the-2020-census-redistricting-data.html for additional guidance.
-#> This message is displayed once per session.
 
 # match the geographies
 matches <- geo_match(from = block, to = va18sub)
