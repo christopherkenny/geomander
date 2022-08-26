@@ -24,7 +24,7 @@ library(stringr)
 
 library(redist)
 library(sf)
-library(tigris)
+library(tinytiger)
 ```
 
 
@@ -44,9 +44,9 @@ block <- bind_rows(rockland, orange)
 ```
 
 
-Next, we need the shape for North Rockland, which can be obtained from the R package tigris as below. The same idea holds for having target areas, such as counties or legislative districts, though they are less likely to directly use the block level data.
+Next, we need the shape for North Rockland, which can be obtained from the R package `tinytiger` as below. The same idea holds for having target areas, such as counties or legislative districts, though they are less likely to directly use the block level data.
 ```{r, results = 'hide', eval = FALSE, message = FALSE}
-school <- school_districts(state = 'NY') %>% filter(str_detect(NAME, 'North Rockland'))
+school <- tt_unified_school_districts(state = 'NY') %>% filter(str_detect(NAME, 'North Rockland'))
 ```
 As above, we use a saved version that doesn't need API access to download.
 ```{r}

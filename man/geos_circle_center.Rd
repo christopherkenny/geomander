@@ -9,7 +9,7 @@ geos_circle_center(shp, tolerance = 0.01, epsg = 3857)
 \arguments{
 \item{shp}{An sf dataframe}
 
-\item{tolerance}{postive numeric tolerance to simplify by. Default is 0.01.}
+\item{tolerance}{positive numeric tolerance to simplify by. Default is 0.01.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
