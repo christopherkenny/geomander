@@ -24,7 +24,7 @@ and so on."><meta property="og:image" content="https://www.christophertkenny.com
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0</span>
       </span>
     </div>
 
@@ -80,11 +80,11 @@ and so on.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">check_contiguity</span><span class="op">(</span><span class="va">adj</span>, <span class="va">group</span><span class="op">)</span>
-
-<span class="fu">cct</span><span class="op">(</span><span class="va">adj</span>, <span class="va">group</span><span class="op">)</span>
-
-<span class="fu">ccm</span><span class="op">(</span><span class="va">adj</span>, <span class="va">group</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">check_contiguity</span><span class="op">(</span><span class="va">adj</span>, <span class="va">group</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">cct</span><span class="op">(</span><span class="va">adj</span>, <span class="va">group</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">ccm</span><span class="op">(</span><span class="va">adj</span>, <span class="va">group</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -120,11 +120,11 @@ This returns 1 if each group is connected. #'</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">checkerboard</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">adj</span> <span class="op">&lt;-</span> <span class="fu"><a href="adjacency.html">adjacency</a></span><span class="op">(</span><span class="va">checkerboard</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">checkerboard</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">adj</span> <span class="op">&lt;-</span> <span class="fu"><a href="adjacency.html">adjacency</a></span><span class="op">(</span><span class="va">checkerboard</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Planarizing skipped. `x` missing CRS.</span>
-<span class="r-in"><span class="co"># These each indicate the graph is connected.</span></span>
-<span class="r-in"><span class="fu">check_contiguity</span><span class="op">(</span><span class="va">adj</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co"># These each indicate the graph is connected.</span></span></span>
+<span class="r-in"><span><span class="fu">check_contiguity</span><span class="op">(</span><span class="va">adj</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 64 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    group group_number component</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
@@ -139,13 +139,13 @@ This returns 1 if each group is connected. #'</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     1            1         1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     1            1         1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 54 more rows</span></span>
-<span class="r-in"><span class="fu">cct</span><span class="op">(</span><span class="va">adj</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">cct</span><span class="op">(</span><span class="va">adj</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 64 </span>
-<span class="r-in"><span class="fu">ccm</span><span class="op">(</span><span class="va">adj</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">ccm</span><span class="op">(</span><span class="va">adj</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -160,7 +160,7 @@ This returns 1 if each group is connected. #'</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0</span>
       </span>
     </div>
 
@@ -66,15 +66,14 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">create_tract_table</span><span class="op">(</span>
-  <span class="va">state</span>,
-  <span class="va">county</span>,
-  geometry <span class="op">=</span> <span class="cn">TRUE</span>,
-  year <span class="op">=</span> <span class="fl">2019</span>,
-  mem <span class="op">=</span> <span class="cn">FALSE</span>,
-  epsg <span class="op">=</span> <span class="fl">3857</span>,
-  <span class="va">geography</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">create_tract_table</span><span class="op">(</span></span>
+<span>  <span class="va">state</span>,</span>
+<span>  <span class="va">county</span>,</span>
+<span>  geometry <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  year <span class="op">=</span> <span class="fl">2019</span>,</span>
+<span>  mem <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  epsg <span class="op">=</span> <span class="fl">3857</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -102,10 +101,6 @@
 <dt>epsg</dt>
 <dd><p>numeric EPSG code to planarize to. Default is 3857.</p></dd>
 
-
-<dt>geography</dt>
-<dd><p>Deprecated. Use geometry.</p></dd>
-
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -118,10 +113,10 @@ population (vap), and citizen voting age population (cvap)</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="co"># Relies on Census Bureau API</span></span>
-<span class="r-in"><span class="va">tract</span> <span class="op">&lt;-</span> <span class="fu">create_tract_table</span><span class="op">(</span><span class="st">'NY'</span>, <span class="st">'Rockland'</span>, year <span class="op">=</span> <span class="fl">2018</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># Relies on Census Bureau API</span></span></span>
+<span class="r-in"><span><span class="va">tract</span> <span class="op">&lt;-</span> <span class="fu">create_tract_table</span><span class="op">(</span><span class="st">'NY'</span>, <span class="st">'Rockland'</span>, year <span class="op">=</span> <span class="fl">2018</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -136,7 +131,7 @@ population (vap), and citizen voting age population (cvap)</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

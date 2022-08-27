@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0</span>
       </span>
     </div>
 
@@ -66,7 +66,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">st_circle_center</span><span class="op">(</span><span class="va">shp</span>, tolerance <span class="op">=</span> <span class="fl">0.01</span>, epsg <span class="op">=</span> <span class="fl">3857</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">st_circle_center</span><span class="op">(</span><span class="va">shp</span>, tolerance <span class="op">=</span> <span class="fl">0.01</span>, epsg <span class="op">=</span> <span class="fl">3857</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -76,7 +76,7 @@
 
 
 <dt>tolerance</dt>
-<dd><p>postive numeric tolerance to simplify by. Default is 0.01.</p></dd>
+<dd><p>positive numeric tolerance to simplify by. Default is 0.01.</p></dd>
 
 
 <dt>epsg</dt>
@@ -92,12 +92,12 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">towns</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="st_centerish.html">st_centerish</a></span><span class="op">(</span><span class="va">towns</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">towns</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">st_circle_center</span><span class="op">(</span><span class="va">towns</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 7 features and 5 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POINT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: -8246026 ymin: 5040737 xmax: -8234039 ymax: 5050560</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: -8248447 ymin: 5041227 xmax: -8233259 ymax: 5049609</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Projected CRS: WGS 84 / Pseudo-Mercator</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          NAME         VILLAGE        TOWN               MUNI ID</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1  Haverstraw      Haverstraw  Haverstraw Haverstraw Village  1</span>
@@ -108,14 +108,14 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 Stony Point            &lt;NA&gt; Stony Point        Stony Point  6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7  Haverstraw            &lt;NA&gt;  Haverstraw         Haverstraw  7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                   geometry</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 POINT (-8234039 5040737)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 POINT (-8243081 5041725)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 POINT (-8235791 5044025)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 POINT (-8236354 5042820)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 POINT (-8246026 5043154)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 POINT (-8239547 5050560)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7 POINT (-8234888 5049279)</span>
-<span class="r-in"></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 POINT (-8234582 5041227)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 POINT (-8242964 5041868)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 POINT (-8235722 5044015)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 POINT (-8236606 5043118)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 POINT (-8248447 5043738)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 POINT (-8240068 5049609)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 POINT (-8233259 5043748)</span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -130,7 +130,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

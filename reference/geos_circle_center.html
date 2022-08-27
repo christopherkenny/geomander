@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0</span>
       </span>
     </div>
 
@@ -66,7 +66,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">geos_circle_center</span><span class="op">(</span><span class="va">shp</span>, tolerance <span class="op">=</span> <span class="fl">0.01</span>, epsg <span class="op">=</span> <span class="fl">3857</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">geos_circle_center</span><span class="op">(</span><span class="va">shp</span>, tolerance <span class="op">=</span> <span class="fl">0.01</span>, epsg <span class="op">=</span> <span class="fl">3857</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -76,7 +76,7 @@
 
 
 <dt>tolerance</dt>
-<dd><p>postive numeric tolerance to simplify by. Default is 0.01.</p></dd>
+<dd><p>positive numeric tolerance to simplify by. Default is 0.01.</p></dd>
 
 
 <dt>epsg</dt>
@@ -92,17 +92,17 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">towns</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="geos_centerish.html">geos_centerish</a></span><span class="op">(</span><span class="va">towns</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">towns</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">geos_circle_center</span><span class="op">(</span><span class="va">towns</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;geos_geometry[7] with CRS=WGS 84 / Pseudo-Mercator&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] &lt;POINT (-8234038.72204 5040736.91813)&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2] &lt;POINT (-8243080.69709 5041725.31103)&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] &lt;POINT (-8235790.95729 5044025.01539)&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4] &lt;POINT (-8236353.90968 5042820.13014)&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5] &lt;POINT (-8246025.59424 5043154.17798)&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [6] &lt;POINT (-8239546.93907 5050559.6919)&gt; </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [7] &lt;POINT (-8234888.29266 5049278.86145)&gt;</span>
-<span class="r-in"></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] &lt;POINT (-8234581.81061 5041227.20796)&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] &lt;POINT (-8242964.41612 5041867.6098)&gt; </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] &lt;POINT (-8235721.66668 5044014.65337)&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] &lt;POINT (-8236606.26276 5043118.13727)&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5] &lt;POINT (-8248446.64048 5043738.24472)&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6] &lt;POINT (-8240067.5504 5049608.51069)&gt; </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [7] &lt;POINT (-8233258.86813 5043748.1357)&gt; </span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -117,7 +117,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>
