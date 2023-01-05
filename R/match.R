@@ -2,7 +2,7 @@
 #'
 #' @param from smaller geographic level to match up from
 #' @param to larger geographic level to be matched to
-#' @param method string from center, centroid, point, or area for matching method
+#' @param method string from 'center', 'centroid', 'point', , 'circle', or 'area' for matching method
 #' @param tiebreaker Should ties be broken? boolean. If FALSE, precincts with no
 #' matches get value -1 and precincts with multiple matches get value -2.
 #' @templateVar epsg TRUE
@@ -24,7 +24,7 @@
 #' geo_match(from = checkerboard, to = counties)
 #' geo_match(from = checkerboard, to = counties, method = 'area')
 geo_match <- function(from, to, method = 'center', tiebreaker = TRUE, epsg = 3857) {
-  match.arg(arg = method, choices = c('center', 'centroid', 'point', 'area'))
+  match.arg(arg = method, choices = c('center', 'centroid', 'point', 'circle', 'area'))
 
   if (missing(from)) {
     cli::cli_abort('Please provide an argument to {.arg from}.')
@@ -37,9 +37,11 @@ geo_match <- function(from, to, method = 'center', tiebreaker = TRUE, epsg = 385
   from <- pairs$x
   to <- pairs$y
 
-  if (method %in% c('center', 'centroid', 'point')) {
+  if (method %in% c('center', 'centroid', 'point', 'circle')) {
     if (method == 'center') {
       op <- function(x) st_centerish(x, epsg = epsg)
+    } else if (method == 'circle') {
+      op <- st_circle_center
     } else if (method == 'centroid') {
       op <- geos::geos_centroid
     } else {
@@ -69,8 +71,8 @@ geo_match <- function(from, to, method = 'center', tiebreaker = TRUE, epsg = 385
       }
     }
   } else {
-    to <- to %>% mutate(toid = row_number())
-    from <- from %>% mutate(fromid = row_number())
+    to <- to %>% dplyr::mutate(toid = row_number())
+    from <- from %>% dplyr::mutate(fromid = row_number())
     ints <- largest_intersection_geos(x = geos::geos_make_valid(from), 
                                       y = geos::geos_make_valid(to))
 

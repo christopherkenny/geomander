@@ -11,7 +11,7 @@ geo_match(from, to, method = "center", tiebreaker = TRUE, epsg = 3857)
 
 \item{to}{larger geographic level to be matched to}
 
-\item{method}{string from center, centroid, point, or area for matching method}
+\item{method}{string from 'center', 'centroid', 'point', , 'circle', or 'area' for matching method}
 
 \item{tiebreaker}{Should ties be broken? boolean. If FALSE, precincts with no
 matches get value -1 and precincts with multiple matches get value -2.}

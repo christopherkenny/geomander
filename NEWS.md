@@ -1,5 +1,6 @@
 # geomander 2.2.0
 * Updates dependencies for easier installation.
+* Allows for use of `center` as a method in `geo_match()`.
 
 # geomander 2.1.1
 * Fixes missing tolerance bug in `geos_circle_center()`.
