@@ -4,7 +4,14 @@
 \alias{geo_match}
 \title{Match Across Geographic Layers}
 \usage{
-geo_match(from, to, method = "center", tiebreaker = TRUE, epsg = 3857)
+geo_match(
+  from,
+  to,
+  method = "center",
+  by = NULL,
+  tiebreaker = TRUE,
+  epsg = 3857
+)
 }
 \arguments{
 \item{from}{smaller geographic level to match up from}
@@ -12,6 +19,9 @@ geo_match(from, to, method = "center", tiebreaker = TRUE, epsg = 3857)
 \item{to}{larger geographic level to be matched to}
 
 \item{method}{string from 'center', 'centroid', 'point', , 'circle', or 'area' for matching method}
+
+\item{by}{A character vector to match by. One element if both `from` and `to` share the subsetting column name. 
+One element with a name (for `from`) and one element (for `to`).}
 
 \item{tiebreaker}{Should ties be broken? boolean. If FALSE, precincts with no
 matches get value -1 and precincts with multiple matches get value -2.}
