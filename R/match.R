@@ -63,7 +63,7 @@ geo_match <- function(from, to, method = 'center', by = NULL, tiebreaker = TRUE,
             ints[[idx[i]]] <- nnb
           }
         } else {
-          for (i in 1:length(ints)) {
+          for (i in seq_along(ints)) {
             if (length(ints[[i]]) == 0) {
               ints[[i]] <- -1L
             }
@@ -74,8 +74,8 @@ geo_match <- function(from, to, method = 'center', by = NULL, tiebreaker = TRUE,
         }
       }
     } else {
-      to <- to %>% dplyr::mutate(toid = row_number())
-      from <- from %>% dplyr::mutate(fromid = row_number())
+      to <- to %>% dplyr::mutate(toid = dplyr::row_number())
+      from <- from %>% dplyr::mutate(fromid = dplyr::row_number())
       ints <- largest_intersection_geos(x = geos::geos_make_valid(from), 
                                         y = geos::geos_make_valid(to))
       
@@ -83,7 +83,7 @@ geo_match <- function(from, to, method = 'center', by = NULL, tiebreaker = TRUE,
         idx <- which(is.na(ints))
         
         if (tiebreaker) {
-          for (i in 1:length(idx)) {
+          for (i in seq_along(idx)) {
             nnb <- nn_geos(x = from[idx[i], ], y = to)
             ints[idx[i]] <- nnb
           }
