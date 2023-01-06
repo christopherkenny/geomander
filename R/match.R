@@ -87,6 +87,10 @@ geo_match <- function(from, to, method = 'center', by = NULL, tiebreaker = TRUE,
             nnb <- nn_geos(x = from[idx[i], ], y = to)
             ints[idx[i]] <- nnb
           }
+        } else {
+          for (i in seq_along(idx)) {
+            ints[idx[i]] <- -1L
+          }
         }
       }
     }
