@@ -4,12 +4,14 @@
 \alias{get_alarm}
 \title{Get ALARM Dataset}
 \usage{
-get_alarm(state, geometry = TRUE, epsg = 3857)
+get_alarm(state, year = 2020, geometry = TRUE, epsg = 3857)
 }
 \arguments{
 \item{state}{two letter state abbreviation}
 
-\item{geometry}{Default is TRUE. Add geomeetry to the data?}
+\item{year}{year to get data for. Either \code{2020} or \code{2010}}
+
+\item{geometry}{Default is TRUE. Add geometry to the data?}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
