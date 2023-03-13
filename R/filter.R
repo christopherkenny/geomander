@@ -43,7 +43,7 @@ geo_filter <- function(from, to, bool = FALSE, epsg = 3857) {
 #'
 #' @param from Required. sf dataframe. the geography to subset
 #' @param to Required. sf dataframe. the geography that from must intersect
-#' @param thresh Percent as decimal of an area to trim away. Default is .01, which is 1\%.
+#' @param thresh Percent as decimal of an area to trim away. Default is .01, which is 1%.
 #' @param bool Optional, defaults to FALSE. Should this just return a logical vector?
 #' @templateVar epsg TRUE
 #' @template  template
