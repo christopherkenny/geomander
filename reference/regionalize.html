@@ -72,11 +72,11 @@
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>shp</dt>
-<dd><p>`sf` tibble to estimate regions for</p></dd>
+<dd><p><code>sf</code> tibble to estimate regions for</p></dd>
 
 
 <dt>lines</dt>
-<dd><p>`sf` tibble which divides `shp` into regions</p></dd>
+<dd><p><code>sf</code> tibble which divides <code>shp</code> into regions</p></dd>
 
 
 <dt>adj</dt>
@@ -91,7 +91,7 @@
     <h2>Value</h2>
     
 
-<p>integer vector of regions with `nrow(shp)` entries</p>
+<p>integer vector of regions with <code>nrow(shp)</code> entries</p>
     </div>
 
     <div id="ref-examples">
@@ -100,7 +100,7 @@
 <span class="r-in"><span><span class="co"># make some weird roadlike feature passing through the towns</span></span></span>
 <span class="r-in"><span><span class="va">lines</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/sfc.html" class="external-link">st_sfc</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st.html" class="external-link">st_linestring</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_coordinates.html" class="external-link">st_coordinates</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_unary.html" class="external-link">st_centroid</a></span><span class="op">(</span><span class="va">towns</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, </span></span>
 <span class="r-in"><span>                    crs <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html" class="external-link">st_crs</a></span><span class="op">(</span><span class="va">towns</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>st_centroid assumes attributes are constant over geometries of x</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>st_centroid assumes attributes are constant over geometries</span>
 <span class="r-in"><span><span class="fu">regionalize</span><span class="op">(</span><span class="va">towns</span>, <span class="va">lines</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 2 1 1 2 2 2</span>
 </code></pre></div>

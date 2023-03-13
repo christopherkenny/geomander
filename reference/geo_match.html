@@ -87,12 +87,12 @@
 
 
 <dt>method</dt>
-<dd><p>string from 'center', 'centroid', 'point', , 'circle', or 'area' for matching method</p></dd>
+<dd><p>string from 'center', 'centroid', 'point', 'circle', or 'area' for matching method</p></dd>
 
 
 <dt>by</dt>
-<dd><p>A character vector to match by. One element if both `from` and `to` share the subsetting column name. 
-One element with a name (for `from`) and one element (for `to`).</p></dd>
+<dd><p>A character vector to match by. One element if both <code>from</code> and <code>to</code> share the subsetting column name.
+One element with a name (for <code>from</code>) and one element (for <code>to</code>).</p></dd>
 
 
 <dt>tiebreaker</dt>
@@ -110,6 +110,16 @@ matches get value -1 and precincts with multiple matches get value -2.</p></dd>
 
 <p>Integer Vector of matches length(to) with values in 1:nrow(from)</p>
     </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>Methods are as follows:</p><ul><li><p>centroid: matches each element of <code>from</code> to the <code>to</code> entry that the geographic centroid intersects</p></li>
+<li><p>center: very similar to centroid, but it matches an arbitrary center point within <code>from</code>
+if the centroid of <code>from</code> is outside the bounds of from. (This happens for non-convex shapes only).</p></li>
+<li><p>point: matches each element of <code>from</code> to the <code>to</code> entry that the "point on surface" intersects.</p></li>
+<li><p>circle: matches each element of <code>from</code> to the <code>to</code> entry that the centroid
+of the maximum inscribed circle intersects</p></li>
+<li><p>area: matches each element of <code>from</code> to the <code>to</code> element which has the largest area overlap</p></li>
+</ul></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
