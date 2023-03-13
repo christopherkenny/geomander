@@ -9,16 +9,16 @@ baf_to_vtd(baf, plan_name, GEOID = "GEOID")
 \arguments{
 \item{baf}{a tibble representing a block assignment file.}
 
-\item{plan_name}{character. Name of column in `baf` which corresponds to the districts.}
+\item{plan_name}{character. Name of column in \code{baf} which corresponds to the districts.}
 
-\item{GEOID}{character. Name of column which corresponds to each block's GEOID, 
-sometimes called "BLOCKID". Default is `'GEOID'`.}
+\item{GEOID}{character. Name of column which corresponds to each block's GEOID,
+sometimes called "BLOCKID". Default is \code{'GEOID'}.}
 }
 \value{
 a tibble with a vtd-level assignment file
 }
 \description{
-District lines are often provided at the census block level, but analyses 
+District lines are often provided at the census block level, but analyses
 often occur at the voting district level. This provides a simple way to
 estimate the block level to the voting district level.
 }

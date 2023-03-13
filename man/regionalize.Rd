@@ -7,16 +7,16 @@
 regionalize(shp, lines, adj = adjacency(shp), epsg = 3857)
 }
 \arguments{
-\item{shp}{`sf` tibble to estimate regions for}
+\item{shp}{\code{sf} tibble to estimate regions for}
 
-\item{lines}{`sf` tibble which divides `shp` into regions}
+\item{lines}{\code{sf} tibble which divides \code{shp} into regions}
 
 \item{adj}{adjacency graph}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-integer vector of regions with `nrow(shp)` entries
+integer vector of regions with \code{nrow(shp)} entries
 }
 \description{
 This offers a basic method for dividing a shape into separate pieces

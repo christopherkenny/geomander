@@ -2,13 +2,24 @@
 #'
 #' @param from smaller geographic level to match up from
 #' @param to larger geographic level to be matched to
-#' @param method string from 'center', 'centroid', 'point', , 'circle', or 'area' for matching method
+#' @param method string from 'center', 'centroid', 'point', 'circle', or 'area' for matching method
 #' @param by A character vector to match by. One element if both `from` and `to` share the subsetting column name. 
 #' One element with a name (for `from`) and one element (for `to`).
 #' @param tiebreaker Should ties be broken? boolean. If FALSE, precincts with no
 #' matches get value -1 and precincts with multiple matches get value -2.
 #' @templateVar epsg TRUE
 #' @template template
+#' 
+#' @details 
+#' 
+#' Methods are as follows:
+#' - centroid: matches each element of `from` to the `to` entry that the geographic centroid intersects
+#' - center: very similar to centroid, but it matches an arbitrary center point within `from` 
+#'   if the centroid of `from` is outside the bounds of from. (This happens for non-convex shapes only).
+#' - point: matches each element of `from` to the `to` entry that the "point on surface" intersects.
+#' - circle: matches each element of `from` to the `to` entry that the centroid 
+#'   of the maximum inscribed circle intersects
+#' - area: matches each element of `from` to the `to` element which has the largest area overlap
 #'
 #' @return Integer Vector of matches length(to) with values in 1:nrow(from)
 #' @export

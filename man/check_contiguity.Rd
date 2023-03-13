@@ -16,32 +16,32 @@ ccm(adj, group)
 \item{adj}{adjacency list}
 
 \item{group}{array of group identifiers. Typically district numbers or county names.
-Defaults to 1 if no input is provided, checking that the adjacency list itself is 
+Defaults to 1 if no input is provided, checking that the adjacency list itself is
 one connected component.}
 }
 \value{
-tibble with a column for each of inputted group, created group number, 
+tibble with a column for each of inputted group, created group number,
 and the identified connected component number
 }
 \description{
-Given a zero-indexed adjacency list and an array of group identifiers, this 
+Given a zero-indexed adjacency list and an array of group identifiers, this
 returns a tibble which identifies the connected components. The three columns
-are `group` for the inputted group, `group_number` which uniquely identifies each
-group as a positive integer, and `component` which identifies the connected 
+are \code{group} for the inputted group, \code{group_number} which uniquely identifies each
+group as a positive integer, and \code{component} which identifies the connected
 component number for each corresponding entry of adjacency and group. If everything
-is connected within the group, then each element of `component` will be `1`.
-Otherwise, the largest component is given the value `1`, the next largest `2`, 
+is connected within the group, then each element of \code{component} will be \code{1}.
+Otherwise, the largest component is given the value \code{1}, the next largest \code{2},
 and so on.
 }
 \details{
 If nothing is provided to group, it will default to a vector of ones, checking
 if the adjacency graph is connected.
 
-`cct()` is shorthand for creating a table of the component values. If everything 
-is connected within each group, it returns a value of 1. In general, it returns 
+\code{cct()} is shorthand for creating a table of the component values. If everything
+is connected within each group, it returns a value of 1. In general, it returns
 a frequency table of components.
 
-`ccm()` is shorthand for getting the maximum component value. It returns the 
+\code{ccm()} is shorthand for getting the maximum component value. It returns the
 maximum number of  components that a group is broken into.
 This returns 1 if each group is connected. #'
 }

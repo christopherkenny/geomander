@@ -11,7 +11,7 @@ geo_trim(from, to, thresh = 0.01, bool = FALSE, epsg = 3857)
 
 \item{to}{Required. sf dataframe. the geography that from must intersect}
 
-\item{thresh}{Percent as decimal of an area to trim away. Default is .01, which is 1\%.}
+\item{thresh}{Percent as decimal of an area to trim away. Default is .01, which is 1\\%.}
 
 \item{bool}{Optional, defaults to FALSE. Should this just return a logical vector?}
 
