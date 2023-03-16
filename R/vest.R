@@ -1,10 +1,11 @@
 #' Get VEST Dataset
 #'
 #' @param state two letter state abbreviation
-#' @param year year in 2016, 2018, or 2020
+#' @param year year any in 2016-2021
 #' @param path folder to put shape in. Default is \code{tempdir()}
 #' @param clean_names Clean names. Default is \code{TRUE}. If \code{FALSE},
 #' returns default names.
+#' @param ... additional arguments passed to [sf::read_sf()]
 #' @templateVar epsg TRUE
 #' @template template
 #'
@@ -17,13 +18,18 @@
 #' # Requires Dataverse API
 #' shp <- get_vest('CO', 2020)
 #' }
-get_vest <- function(state, year, path = tempdir(), clean_names = TRUE, epsg = 3857) {
+get_vest <- function(state, year, path = tempdir(), clean_names = TRUE, epsg = 3857, ...) {
   abb <- tolower(censable::match_abb(state))
 
   file_name <- stringr::str_glue('{abb}_{year}.zip')
 
   doi <- vest_doi()[as.character(year)]
-
+  cite_url <- paste0('https://doi.org/', stringr::str_sub(doi, 5))
+  cli::cli_inform(
+    'Data sourced from the Voting and Election Science Team {.url {cite_url}}.',
+    .frequency = 'once',
+    .frequency_id = 'cite_vest'
+  )
 
   tf <- tempfile(fileext = '.zip')
   x <- dataverse::get_file_by_name(
@@ -36,7 +42,7 @@ get_vest <- function(state, year, path = tempdir(), clean_names = TRUE, epsg = 3
   poss <- sf::st_layers(dsn = path)[[1]]
   up_path <- poss[stringr::str_starts(string = poss, stringr::str_glue('{abb}_{year}'))]
 
-  out <- sf::st_read(dsn = paste0(path, '/', up_path, '.shp'))
+  out <- sf::read_sf(dsn = paste0(path, '/', up_path, '.shp'), ...)
 
   if (clean_names) {
     out <- out %>% clean_vest()
@@ -109,8 +115,11 @@ vest_states <- function(year) {
 #' @keywords internal
 vest_doi <- function() {
   c(
+    `2021` = 'doi:10.7910/DVN/FDMI5F',
     `2020` = 'doi:10.7910/DVN/K7760H',
+    `2019` = 'doi:10.7910/DVN/2AJUII',
     `2018` = 'doi:10.7910/DVN/UBKYRU',
+    `2017` = 'doi:10.7910/DVN/VNJAB1',
     `2016` = 'doi:10.7910/DVN/NH5S2I'
   )
 }
