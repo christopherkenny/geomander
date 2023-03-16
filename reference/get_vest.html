@@ -66,7 +66,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_vest</span><span class="op">(</span><span class="va">state</span>, <span class="va">year</span>, path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, clean_names <span class="op">=</span> <span class="cn">TRUE</span>, epsg <span class="op">=</span> <span class="fl">3857</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_vest</span><span class="op">(</span><span class="va">state</span>, <span class="va">year</span>, path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, clean_names <span class="op">=</span> <span class="cn">TRUE</span>, epsg <span class="op">=</span> <span class="fl">3857</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -76,7 +76,7 @@
 
 
 <dt>year</dt>
-<dd><p>year in 2016, 2018, or 2020</p></dd>
+<dd><p>year any in 2016-2021</p></dd>
 
 
 <dt>path</dt>
@@ -90,6 +90,10 @@ returns default names.</p></dd>
 
 <dt>epsg</dt>
 <dd><p>numeric EPSG code to planarize to. Default is 3857.</p></dd>
+
+
+<dt>...</dt>
+<dd><p>additional arguments passed to <code><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">sf::read_sf()</a></code></p></dd>
 
 </dl></div>
     <div id="value">
