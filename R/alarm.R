@@ -6,8 +6,6 @@
 #' 
 #' See the full available data at <https://github.com/alarm-redist/census-2020>.
 #' 
-#' @md
-#' 
 #'
 #' @param state two letter state abbreviation
 #' @param year year to get data for. Either `2020` or `2010`
@@ -25,6 +23,12 @@
 #' ak <- get_alarm('AK')
 #' }
 get_alarm <- function(state, year = 2020, geometry = TRUE, epsg = 3857) {
+  cli::cli_inform(
+    'Data sourced from the ALARM Project {.url https://github.com/alarm-redist/census-2020}.',
+    .frequency = 'once',
+    .frequency_id = 'cite_alarm'
+  )
+  
   base_path <- stringr::str_glue(
     'https://raw.githubusercontent.com/alarm-redist/census-2020/main/census-vest-{year}/'
   )
