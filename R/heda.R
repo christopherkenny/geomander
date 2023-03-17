@@ -2,8 +2,8 @@
 #'
 #' @param state two letter state abbreviation
 #' @param path folder to put shape in. Default is \code{tempdir()}
-#' @param clean_names Clean names. Default is \code{TRUE}. If \code{FALSE},
-#' returns default names.
+#' @param clean_names Clean names. Default is \code{FALSE}. If \code{TRUE},
+#' it tries to clean names, but no guarantees are made.
 #' @param epsg `r roxy_epsg()`
 #' @param ... additional arguments passed to [sf::read_sf()]
 #'
@@ -13,7 +13,7 @@
 #' @concept datasets
 #' @examplesIf Sys.getenv('DATAVERSE_KEY') != ''
 #' shp <- get_heda('ND')
-get_heda <- function(state, path = tempdir(), clean_names = TRUE, epsg = 3857, ...) {
+get_heda <- function(state, path = tempdir(), clean_names = FALSE, epsg = 3857, ...) {
   abb <- tolower(censable::match_abb(state))
   
   cli::cli_inform(
@@ -58,6 +58,13 @@ get_heda <- function(state, path = tempdir(), clean_names = TRUE, epsg = 3857, .
     
     out <- sf::read_sf(dsn = paste0(path, '/', up_path), ...)
   } else {
+    if (abb %in% c('ga', 'va')) {
+      restore_shx <- Sys.getenv('SHAPE_RESTORE_SHX')
+      Sys.setenv(SHAPE_RESTORE_SHX = 'YES')
+      on.exit({
+        Sys.setenv(SHAPE_RESTORE_SHX = restore_shx)
+      })
+    }
     file_name <- heda_files[heda_files$state == abb, ]$files[[1]]
     doi <- heda_doi()[abb]
     
@@ -72,6 +79,10 @@ get_heda <- function(state, path = tempdir(), clean_names = TRUE, epsg = 3857, .
                           stringr::str_detect(.data$Name, '.shp'))
     utils::unzip(tf, exdir = path)
     up_path <- poss$Name[1]
+    if (abb == 'va') {
+      file.rename(paste0(path, '/', up_path), to = paste0(path, '/', stringr::str_sub(up_path, end = -12)))
+      up_path <- stringr::str_sub(up_path, end = -12)
+    }
     
     out <- sf::read_sf(dsn = paste0(path, '/', up_path), ...)
   }
@@ -99,11 +110,6 @@ get_heda <- function(state, path = tempdir(), clean_names = TRUE, epsg = 3857, .
 #' @param data sf tibble from HEDA
 #'
 #' @return data with cleaned names
-#' @export
-#'
-#' @concept datasets
-#' @examples
-#' # TODO
 clean_heda <- function(data, state) {
   if (missing(state)) {
     # normal track
@@ -198,7 +204,7 @@ clean_heda <- function(data, state) {
 #' heda_states()
 heda_states <- function() {
   c(
-    'tx', 'ks', 'ct', 'ga', 'mn', 'md', 'wa', 'nd', 'co', 'va',
+    'tx', 'ks', 'ct', 'ga', 'mn', 'md', 'wa', 'nd', 'co',
     'wy', 'nv', 'nh', 'vt', 'nc', 'nm', 'ny', 'ak', 'oh', 'hi', 'ms',
     'de', 'id', 'wi', 'in', 'ne', 'fl', 'tn', 'ma', 'sc', 'mi', 'mo',
     'al', 'az', 'nj', 'ca', 'il', 'ia', 'pa', 'la', 'sd', 'ok'
@@ -217,7 +223,7 @@ heda_files <- structure(
       '10.7910/DVN/JL8VUJ', '10.7910/DVN/WJPX3W',
       '10.7910/DVN/9ZKAIT', '10.7910/DVN/VC5TPK', '10.7910/DVN/6J2SEI',
       '10.7910/DVN/FVOXGI', '10.7910/DVN/DHWJVE', '10.7910/DVN/IZC6MA',
-      '10.7910/DVN/I8KTCP', '10.7910/DVN/GAYAKU', '10.7910/DVN/C4HL1Y',
+      '10.7910/DVN/I8KTCP', '10.7910/DVN/C4HL1Y',
       '10.7910/DVN/BWHRVG', '10.7910/DVN/OKM0MP', '10.7910/DVN/L3QRSZ',
       '10.7910/DVN/VIAUUO', '10.7910/DVN/YF4DUC', '10.7910/DVN/AWE39N',
       '10.7910/DVN/NSAXEZ', '10.7910/DVN/G2DC8X', '10.7910/DVN/TLLQYY',
@@ -236,7 +242,7 @@ heda_files <- structure(
         'MN_final.dbf',
         'MN_final.sbn', 'MN_final.sbx', 'MN_final.shp', 'MN_final.shx'
       ), 'MD Data.zip', 'WA_Shapefile.zip', 'ND_Shapefile.zip',
-      'CO_Shapefile.zip', 'VA Data.zip', 'WY_Shapefile.zip', 'nv_shapefile.zip',
+      'CO_Shapefile.zip', 'WY_Shapefile.zip', 'nv_shapefile.zip',
       'NH_Shapefile.zip', 'vt_shapefile.zip', 'NC_Shapefiles.zip',
       'NM_Shapefile.zip', 'ny_shapefile.zip', 'AK_Shapefile.zip',
       c(
@@ -256,7 +262,7 @@ heda_files <- structure(
     ),
     state = c(
       'tx', 'ks', 'ct', 'ga', 'mn', 'md', 'wa', 'nd',
-      'co', 'va', 'wy', 'nv', 'nh', 'vt', 'nc', 'nm', 'ny', 'ak',
+      'co', 'wy', 'nv', 'nh', 'vt', 'nc', 'nm', 'ny', 'ak',
       'oh', 'hi', 'ms', 'de', 'id', 'wi', 'in', 'ne', 'fl', 'tn',
       'ma', 'sc', 'mi', 'mo', 'al', 'az', 'nj', 'ca', 'il', 'ia',
       'pa', 'la', 'sd', 'ok'
