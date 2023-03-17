@@ -110,6 +110,7 @@ get_heda <- function(state, path = tempdir(), clean_names = FALSE, epsg = 3857, 
 #' @param data sf tibble from HEDA
 #'
 #' @return data with cleaned names
+#' @noRd
 clean_heda <- function(data, state) {
   if (missing(state)) {
     # normal track
@@ -317,10 +318,10 @@ heda_abb <- structure(
       'Adjutant General(SC)', 'Agriculture Commissioner / Secretary',
       'Auditor', 'Comptroller / Controller', 'Insurance Commissioner',
       'Land Commissioner / Commissioner of Public Lands', 'Regent',
-      'Superintendent of Education', 'State Supreme Court, # is seat number, Ex ”SC1” (TX)',
+      'Superintendent of Education', 'State Supreme Court, # is seat number, Ex SC1 (TX)',
       'State Supreme Court Chief Justice (TX)', 'State Circuit Courts of Appeals (LA)',
-      'State Criminal Court of Appeals, # is seat number, “PJ” is “Presiding Judge”. Ex. “CCA1”; “CCAPJ” (TX)',
-      'State Railroad Commission, # is seat number, Ex. “RR1” (TX)',
+      'State Criminal Court of Appeals, # is seat number, PJ is Presiding Judge. Ex. CCA1; CCAPJ (TX)',
+      'State Railroad Commission, # is seat number, Ex. RR1 (TX)',
       'State Board of Education (TX)', 'Superintendent of Public Instruction',
       'Chief Financial Officer (FL)', 'Chairman of the Council (DC)',
       'Circuit Court Judge, # is seat number', 'Public Service Commission, # is seat number',

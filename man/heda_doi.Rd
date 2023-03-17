@@ -4,7 +4,7 @@
 \alias{heda_doi}
 \title{Vest DOIs}
 \usage{
-heda_doi(state)
+heda_doi()
 }
 \description{
 Vest DOIs
