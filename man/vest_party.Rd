@@ -2,11 +2,11 @@
 % Please edit documentation in R/vest.R
 \name{vest_party}
 \alias{vest_party}
-\title{Vest Parties}
+\title{VEST Parties}
 \usage{
 vest_party(str)
 }
 \description{
-Vest Parties
+VEST Parties
 }
 \keyword{internal}

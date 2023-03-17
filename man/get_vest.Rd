@@ -2,7 +2,7 @@
 % Please edit documentation in R/vest.R
 \name{get_vest}
 \alias{get_vest}
-\title{Get VEST Dataset}
+\title{Get Voting and Election Science Team ("VEST") Dataset}
 \usage{
 get_vest(state, year, path = tempdir(), clean_names = TRUE, epsg = 3857, ...)
 }
@@ -24,7 +24,7 @@ returns default names.}
 sf tibble
 }
 \description{
-Get VEST Dataset
+Get Voting and Election Science Team ("VEST") Dataset
 }
 \examples{
 \dontrun{

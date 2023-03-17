@@ -30,64 +30,29 @@ eda <- tibble::tibble(
       NA_character_
       )
   ) %>% 
-  unnest(state)
+  unnest(state) %>% 
+  mutate(state = tolower(state)) 
 
-eda_states <- function() {
-  c("tx", "ks", "ct", "ga", "mn", "md", "wa", "nd", "co", "va", 
-    "wy", "nv", "nh", "vt", "nc", "nm", "ny", "ak", "oh", "hi", "ms", 
-    "de", "id", "wi", "in", "ne", "fl", "tn", "ma", "sc", "mi", "mo", 
-    "al", "az", "nj", "ca", "il", "ia", "pa", "la", "sd", "ok")
-}
+eda_save <- eda %>% 
+  filter(!is.na(state)) %>% 
+  mutate(files = map(files, \(x) Filter(\(y) stringr::str_detect(y, '.zip'), x)))
 
-eda_abb <- function() {
-  tibble::tribble(
-    ~a, ~b,
-    'USP', 'U.S. President',
-    'USS', 'U.S. Senate',
-    'USH', 'U.S. House',
-    'GOV', 'Governor',
-    'LTG', 'Lieutenant Governor',
-    'ATG', 'Attorney General',
-    'SOS', 'Secretary of State',
-    'TRE', 'State Treasurer',
-    'STS', 'State Senate (upper house)',
-    'STH', 'State House / Assembly (lower house)',
-    'ADJ', 'Adjutant General(SC)',
-    'AGR', 'Agriculture Commissioner / Secretary',
-    'AUD', 'Auditor',
-    'COM', 'Comptroller / Controller',
-    'INS', 'Insurance Commissioner',
-    'LND', 'Land Commissioner / Commissioner of Public Lands',
-    'RGNT', 'Regent',
-    'SPI', 'Superintendent of Education',
-    'SC#', 'State Supreme Court, # is seat number, Ex ”SC1” (TX)',
-    'SCC',  'State Supreme Court Chief Justice (TX)',
-    'CCA', 'State Circuit Courts of Appeals (LA)',
-    'CCA#', 'State Criminal Court of Appeals, # is seat number, “PJ” is “Presiding Judge”. Ex. “CCA1”; “CCAPJ” (TX)',
-    'RR#', 'State Railroad Commission, # is seat number, Ex. “RR1” (TX)',
-    'SBOE', 'State Board of Education (TX)',
-    'SPI', 'Superintendent of Public Instruction',
-    'CFO', 'Chief Financial Officer (FL)',
-    'COC', 'Chairman of the Council (DC)',
-    'CCJ#', 'Circuit Court Judge, # is seat number',
-    'PSC#', 'Public Service Commission, # is seat number',
-    'CVA', 'Court of Civil Appeals(AL)',
-    'FRE#', 'County Freeholder (NJ), # is seat number',
-    'LBR', 'Labor Commissioner (OK)',
-    'MAY', 'Mayor (DC)',
-    'DEL', 'Delegate to USH (DC)',
-    'SHADS', 'Shadow Senator (DC)',
-    'SHADR', 'Shadow Representative (DC)',
-    'STH2', 'Second State House Contest (for NJ)',
-    'STHa', 'Average State House Results (for NJ)'
-  )
-}
+eda_aug <- tibble::tribble(
+  ~state, ~files,
+  'ca', 'CA_2008_2010.tab',
+  'mn', c('MN_final.dbf', 'MN_final.sbn', 'MN_final.sbx', 'MN_final.shp', 'MN_final.shx'),
+  'oh', c('OH_final.dbf', 'OH_final.sbn', 'OH_final.sbx', 'OH_final.shp', 'OH_final.shx'),
+  'il', c('IL_final.dbf', 'IL_final.sbn', 'IL_final.sbx', 'IL_final.shp', 'IL_final.shx')
+)
 
-AK_files <- eda %>% 
+eda_save <- rows_update(eda_save, eda_aug, by = 'state')
+# dput(eda_save)
+
+ND_files <- eda %>% 
   filter(id == '10.7910/DVN/YN4TLR') %>% 
   pull(files) %>% 
   .[[1]] %>% 
-  Filter(\(x) substr(x, 1, 2) == 'AK', .)
+  Filter(\(x) substr(x, 1, 2) == 'ND', .)
 
 #dataverse::dataset_files(ids[10])
 
@@ -96,4 +61,7 @@ x <- dataverse::get_file_by_name('ND_Shapefile.zip', ids[10]) %>%
   writeBin(con = tf)
 utils::unzip(tf, exdir = tempdir())
 shp <- sf::st_read(paste0(tempdir(), '/ND_final.shp'))
+
+tabs <- lapply(ND_files, 
+               function(f) dataverse::get_dataframe_by_name(f, '10.7910/DVN/YN4TLR'))
 

@@ -2,11 +2,11 @@
 % Please edit documentation in R/vest.R
 \name{vest_abb}
 \alias{vest_abb}
-\title{Vest Abbreviations}
+\title{VEST Abbreviations}
 \usage{
 vest_abb(x)
 }
 \description{
-Vest Abbreviations
+VEST Abbreviations
 }
 \keyword{internal}

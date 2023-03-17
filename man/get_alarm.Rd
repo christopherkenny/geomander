@@ -19,7 +19,7 @@ get_alarm(state, year = 2020, geometry = TRUE, epsg = 3857)
 tibble with election data and optional geometry
 }
 \description{
-Get's a dataset from the Algorithm-Assisted Redistricting Methodology Project.
+Gets a dataset from the Algorithm-Assisted Redistricting Methodology Project.
 The current supported data is the 2020 retabulations of the VEST data, which
 can be downloaded with \code{get_vest}.
 }

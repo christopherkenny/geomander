@@ -2,11 +2,11 @@
 % Please edit documentation in R/vest.R
 \name{vest_doi}
 \alias{vest_doi}
-\title{Vest DOIs}
+\title{VEST DOIs}
 \usage{
 vest_doi()
 }
 \description{
-Vest DOIs
+VEST DOIs
 }
 \keyword{internal}

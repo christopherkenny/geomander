@@ -1,13 +1,12 @@
-#' Get VEST Dataset
+#' Get Voting and Election Science Team ("VEST") Dataset
 #'
 #' @param state two letter state abbreviation
 #' @param year year any in 2016-2021
 #' @param path folder to put shape in. Default is \code{tempdir()}
 #' @param clean_names Clean names. Default is \code{TRUE}. If \code{FALSE},
 #' returns default names.
+#' @param epsg `r roxy_epsg()`
 #' @param ... additional arguments passed to [sf::read_sf()]
-#' @templateVar epsg TRUE
-#' @template template
 #'
 #' @return sf tibble
 #' @export
@@ -51,7 +50,7 @@ get_vest <- function(state, year, path = tempdir(), clean_names = TRUE, epsg = 3
   make_planar_pair(out, epsg = epsg)$x
 }
 
-#' Clean Vest Names
+#' Clean VEST Names
 #'
 #' @param data sf tibble from VEST
 #'
@@ -111,7 +110,7 @@ vest_states <- function(year) {
   base::setdiff(out, 'do')
 }
 
-#' Vest DOIs
+#' VEST DOIs
 #' @keywords internal
 vest_doi <- function() {
   c(
@@ -124,7 +123,7 @@ vest_doi <- function() {
   )
 }
 
-#' Vest Parties
+#' VEST Parties
 #' @keywords internal
 vest_party <- function(str) {
   p <- stringr::str_sub(str, 7, 7)
@@ -151,7 +150,7 @@ vest_party <- function(str) {
   p
 }
 
-#' Vest Abbreviations
+#' VEST Abbreviations
 #' @keywords internal
 vest_abb <- function(x) {
   structure(list(
