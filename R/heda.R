@@ -108,6 +108,7 @@ get_heda <- function(state, path = tempdir(), clean_names = FALSE, epsg = 3857, 
 #' Clean HEDA Names
 #'
 #' @param data sf tibble from HEDA
+#' @param state bypass regular path with state specific changes
 #'
 #' @return data with cleaned names
 #' @noRd
