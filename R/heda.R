@@ -121,17 +121,18 @@ clean_heda <- function(data, state) {
       dplyr::rename(
         dplyr::any_of(
           c(GEOID = 'GEOID10', state = 'STATEFP10', county = 'COUNTYFP10', 
-            tract = 'TRACTCE10', vtd = 'VTDST10', precinct = 'PRECINCT')
+            tract = 'TRACTCE10', vtd = 'VTDST10', precinct = 'PRECINCT',
+            county = 'CNTYKEY', vtd = 'VTDKEY')
         )
       ) %>% 
       dplyr::select(
         dplyr::any_of(c('GEOID', 'state', 'county', 'tract', 'vtd', 'precinct')),
         dplyr::ends_with(c("_00", "_01", "_02", "_03", "_04", "_05", "_06", "_07", "_08", 
                            "_09", "_10", "_11", "_12", "_13", "_14", '_votes')),
-        dplyr::any_of(c('NDV', 'NRV'))
+        dplyr::any_of(c('NDV', 'NRV', ndv = 'NV_D', nrv = 'NV_R'))
       ) %>% 
       dplyr::select(-dplyr::matches('[a-zA-Z]{3}_\\d{2}$')) %>% 
-      dplyr::rename_with(.fn = stringr::str_to_lower, .cols = -c('GEOID')) %>% 
+      dplyr::rename_with(.fn = stringr::str_to_lower, .cols = -dplyr::any_of('GEOID')) %>% 
       dplyr::rename_with(.fn = function(x) stringr::str_replace(string = x, pattern = '_tot_', '_')) %>% 
       dplyr::select(-dplyr::contains('_reg_'), -dplyr::ends_with('_pct')) %>% 
       dplyr::rename_with(.fn = \(x) stringr::str_remove(x, pattern = '_votes'), dplyr::ends_with('_votes')) %>% 
@@ -331,6 +332,8 @@ heda_abb_from_alarm <- tibble::tribble(
   ~heda, ~alarm,
   "USP", 'pre',
   'prs', 'pre',
+  'pre', 'pre',
+  'pres', 'pre',
   "USS", 'uss',
   "USH", 'ush',
   "GOV", 'gov',
