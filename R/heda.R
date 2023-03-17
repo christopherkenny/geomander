@@ -82,7 +82,12 @@ get_heda <- function(state, path = tempdir(), clean_names = TRUE, epsg = 3857, .
   }
   
   if (clean_names) {
-    out <- clean_heda(out)
+    if (state %in% c('ny')) {
+      out <- clean_heda(out, state)
+    } else {
+      out <- clean_heda(out) 
+    }
+
   }
   
   make_planar_pair(out, epsg = epsg)$x
@@ -99,68 +104,86 @@ get_heda <- function(state, path = tempdir(), clean_names = TRUE, epsg = 3857, .
 #' @concept datasets
 #' @examples
 #' # TODO
-clean_heda <- function(data) {
-  #TODO
-  data <- data %>% 
-    dplyr::select(
-      -dplyr::ends_with('_1'), 
-      -dplyr::any_of(c(
-        'VTDI10', 'NAME10', 'NAMELSAD10', 'LSAD10',
-        'MTFCC10', 'FUNCSTAT10', 'ALAND10',
-        'AWATER10', 'INTPTLAT10', 'INTPTLON10'
-      ))
-    )
-  
-  data <- data %>% 
-    dplyr::rename(
-      dplyr::any_of(
-        c(GEOID = 'GEOID10', state = 'STATEFP10', county = 'COUNTYFP10', 
-          tract = 'TRACTCE10', vtd = 'VTDST10', precinct = 'PRECINCT')
+clean_heda <- function(data, state) {
+  if (missing(state)) {
+    # normal track
+    data <- data %>% 
+      dplyr::select(
+        -dplyr::ends_with('_1'), 
+        -dplyr::any_of(c(
+          'VTDI10', 'NAME10', 'NAMELSAD10', 'LSAD10',
+          'MTFCC10', 'FUNCSTAT10', 'ALAND10',
+          'AWATER10', 'INTPTLAT10', 'INTPTLON10'
+        ))
       )
-    ) %>% 
-    dplyr::select(
-      dplyr::any_of(c('GEOID', 'state', 'county', 'tract', 'vtd', 'precinct')),
-      dplyr::ends_with(c("_00", "_01", "_02", "_03", "_04", "_05", "_06", "_07", "_08", 
-                         "_09", "_10", "_11", "_12", "_13", "_14", '_votes')),
-      dplyr::any_of(c('NDV', 'NRV'))
+    
+    data <- data %>% 
+      dplyr::rename(
+        dplyr::any_of(
+          c(GEOID = 'GEOID10', state = 'STATEFP10', county = 'COUNTYFP10', 
+            tract = 'TRACTCE10', vtd = 'VTDST10', precinct = 'PRECINCT')
+        )
       ) %>% 
-    dplyr::select(-dplyr::matches('[a-zA-Z]{3}_\\d{2}$')) %>% 
-    dplyr::rename_with(.fn = stringr::str_to_lower, .cols = -c('GEOID')) %>% 
-    dplyr::rename_with(.fn = function(x) stringr::str_replace(string = x, pattern = '_tot_', '_')) %>% 
-    dplyr::select(-dplyr::contains('_reg_'), -dplyr::ends_with('_pct')) %>% 
-    dplyr::rename_with(.fn = \(x) stringr::str_remove(x, pattern = '_votes'), dplyr::ends_with('_votes')) %>% 
-    dplyr::rename_with(.fn = \(x) stringr::str_replace(x, '_20', '_'), dplyr::matches('\\d{4}'))
-  
-  noms <- names(data)
-  elec <- which(stringr::str_count(string = noms, '_') == 2)
-  if (length(elec) > 0 && stringr::str_sub(noms[elec[1]], 1, 3) %in% c('dem', 'rep')) {
-    for (i in seq_along(elec)) {
-      party <- stringr::str_sub(noms[elec[i]], 1, 3)
-      yr <- stringr::str_extract(noms[elec[i]], '\\d+')
-      off <- stringr::str_sub(noms[elec[i]], 5, 7)
-      off <- ifelse(
-        is.na(heda_abb_from_alarm[off]),
-        off,
-        heda_abb_from_alarm[off]
-      )
-      noms[elec[i]] <- stringr::str_glue('{off}_{yr}_{party}')
+      dplyr::select(
+        dplyr::any_of(c('GEOID', 'state', 'county', 'tract', 'vtd', 'precinct')),
+        dplyr::ends_with(c("_00", "_01", "_02", "_03", "_04", "_05", "_06", "_07", "_08", 
+                           "_09", "_10", "_11", "_12", "_13", "_14", '_votes')),
+        dplyr::any_of(c('NDV', 'NRV'))
+      ) %>% 
+      dplyr::select(-dplyr::matches('[a-zA-Z]{3}_\\d{2}$')) %>% 
+      dplyr::rename_with(.fn = stringr::str_to_lower, .cols = -c('GEOID')) %>% 
+      dplyr::rename_with(.fn = function(x) stringr::str_replace(string = x, pattern = '_tot_', '_')) %>% 
+      dplyr::select(-dplyr::contains('_reg_'), -dplyr::ends_with('_pct')) %>% 
+      dplyr::rename_with(.fn = \(x) stringr::str_remove(x, pattern = '_votes'), dplyr::ends_with('_votes')) %>% 
+      dplyr::rename_with(.fn = \(x) stringr::str_replace(x, '_20', '_'), dplyr::matches('\\d{4}'))
+    
+    noms <- names(data)
+    elec <- which(stringr::str_count(string = noms, '_') == 2)
+    if (length(elec) > 0 && stringr::str_sub(noms[elec[1]], 1, 3) %in% c('dem', 'rep')) {
+      for (i in seq_along(elec)) {
+        party <- stringr::str_sub(noms[elec[i]], 1, 3)
+        yr <- stringr::str_extract(noms[elec[i]], '\\d+')
+        off <- stringr::str_sub(noms[elec[i]], 5, 7)
+        off <- ifelse(
+          is.na(heda_abb_from_alarm[off]),
+          off,
+          heda_abb_from_alarm[off]
+        )
+        noms[elec[i]] <- stringr::str_glue('{off}_{yr}_{party}')
+      }
+    } else {
+      for (i in seq_along(elec)) {
+        off <- stringr::str_sub(stringr::str_extract(noms[elec[i]], '^(.+?)_'), end = -2L)
+        off <- ifelse(
+          is.na(heda_abb_from_alarm[off]),
+          off,
+          heda_abb_from_alarm[off]
+        )
+        
+        yr <- stringr::str_extract(noms[elec[i]], '\\d+')
+        party <- heda_party(noms[elec[i]])
+        noms[elec[i]] <- stringr::str_glue('{off}_{yr}_{party}')
+      }
     }
+    
+    names(data) <- noms
+    
   } else {
-    for (i in seq_along(elec)) {
-      off <- stringr::str_sub(stringr::str_extract(noms[elec[i]], '^(.+?)_'), end = -2L)
-      off <- ifelse(
-        is.na(heda_abb_from_alarm[off]),
-        off,
-        heda_abb_from_alarm[off]
-      )
-      
-      yr <- stringr::str_extract(noms[elec[i]], '\\d+')
-      party <- heda_party(noms[elec[i]])
-      noms[elec[i]] <- stringr::str_glue('{off}_{yr}_{party}')
+    if (state == 'ny') {
+      data <- data %>%
+        dplyr::select(
+          c(
+            GEOID = 'GEOID10', state = 'STATEFP10', county = 'COUNTYFP10', vtd = 'VTDST10', 
+            elect_id = 'ELECT_ID', gov_10_dem = 'GOV_DVOTE_', gov_10_rep = 'GOV_RVOTE_', 
+            com_10_dem = 'COMP_DVOTE', com_10_rep = 'COMP_RVOTE', 
+            atg_10_dem = 'AG_DVOTE_1', atg_10_rep = 'AG_RVOTE_1', 
+            uss_10_dem_gil = 'USS_2_DVOT', uss_10_rep_dio = 'USS_2_RVOT',
+            uss_10_dem_sch = 'USS_6_DVOT', uss_10_rep_tow = 'USS_6_RVOT', 
+            ndv = 'NDV', nrv = 'NRV', 'geometry'
+          )
+        )
     }
   }
-
-  names(data) <- noms
   data
 }
 
