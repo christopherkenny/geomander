@@ -22,10 +22,10 @@ get_heda <- function(state, path = tempdir(), clean_names = TRUE, epsg = 3857, .
     .frequency_id = 'cite_heda'
   )
   
-  if (state == 'ca') {
+  if (abb == 'ca') {
     # CA = block level; return tract level
-    file_name <- heda_files[heda_files$state == state, ]$files[[1]]
-    doi <- heda_doi()[state]
+    file_name <- heda_files[heda_files$state == abb, ]$files[[1]]
+    doi <- heda_doi()[abb]
     x <- dataverse::get_dataframe_by_name(filename = file_name, dataset = doi)
     x <- x %>% 
       dplyr::mutate(GEOID = stringr::str_sub(.data$geoid10, 1, 11)) %>% 
@@ -37,15 +37,16 @@ get_heda <- function(state, path = tempdir(), clean_names = TRUE, epsg = 3857, .
         c(GEOID = 'GEOID10', state = 'STATEFP10', county = 'COUNTYFP10', tract = 'TRACTCE10'))
       )
     
-    out <- dplyr::left_join(x, tr, by = 'GEOID')
-  } else if (state %in% c('oh', 'mn', 'il')) {
+    out <- dplyr::left_join(x, tr, by = 'GEOID') %>% 
+      sf::st_as_sf()
+  } else if (abb %in% c('oh', 'mn', 'il')) {
     # mn, oh, il = no zip file
-    file_names <- heda_files[heda_files$state == state, ]$files[[1]] # multiple!
-    doi <- heda_doi()[state]
+    file_names <- heda_files[heda_files$state == abb, ]$files[[1]] # multiple!
+    doi <- heda_doi()[abb]
     up_path <- Filter(function(f) stringr::str_detect(f, 'shp'), file_names)[1]
     
     lapply(file_names, function(file_name) {
-      exten <- stringr::word(file_name, start = -1L, sep = fixed("."))
+      exten <- stringr::word(file_name, start = -1L, sep = stringr::fixed("."))
       tf <- tempfile(fileext = paste0('.', exten))
       dataverse::get_file_by_name(
         filename = file_name, dataset = doi,
@@ -56,10 +57,9 @@ get_heda <- function(state, path = tempdir(), clean_names = TRUE, epsg = 3857, .
     })
     
     out <- sf::read_sf(dsn = paste0(path, '/', up_path), ...)
-    
   } else {
-    file_name <- heda_files[heda_files$state == state, ]$files[[1]]
-    doi <- heda_doi()[state]
+    file_name <- heda_files[heda_files$state == abb, ]$files[[1]]
+    doi <- heda_doi()[abb]
     
     tf <- tempfile(fileext = '.zip')
     x <- dataverse::get_file_by_name(
@@ -74,6 +74,11 @@ get_heda <- function(state, path = tempdir(), clean_names = TRUE, epsg = 3857, .
     up_path <- poss$Name[1]
     
     out <- sf::read_sf(dsn = paste0(path, '/', up_path), ...)
+  }
+  
+  # unless stated, they seem to use 4140 
+  if (is.na(sf::st_crs(out))) {
+    sf::st_crs(out) <- 4140
   }
   
   if (clean_names) {
@@ -96,6 +101,66 @@ get_heda <- function(state, path = tempdir(), clean_names = TRUE, epsg = 3857, .
 #' # TODO
 clean_heda <- function(data) {
   #TODO
+  data <- data %>% 
+    dplyr::select(
+      -dplyr::ends_with('_1'), 
+      -dplyr::any_of(c(
+        'VTDI10', 'NAME10', 'NAMELSAD10', 'LSAD10',
+        'MTFCC10', 'FUNCSTAT10', 'ALAND10',
+        'AWATER10', 'INTPTLAT10', 'INTPTLON10'
+      ))
+    )
+  
+  data <- data %>% 
+    dplyr::rename(
+      dplyr::any_of(
+        c(GEOID = 'GEOID10', state = 'STATEFP10', county = 'COUNTYFP10', 
+          tract = 'TRACTCE10', vtd = 'VTDST10', precinct = 'PRECINCT')
+      )
+    ) %>% 
+    dplyr::select(
+      dplyr::any_of(c('GEOID', 'state', 'county', 'tract', 'vtd', 'precinct')),
+      dplyr::ends_with(c("_00", "_01", "_02", "_03", "_04", "_05", "_06", "_07", "_08", 
+                         "_09", "_10", "_11", "_12", "_13", "_14", '_votes')),
+      dplyr::any_of(c('NDV', 'NRV'))
+      ) %>% 
+    dplyr::select(-dplyr::matches('[a-zA-Z]{3}_\\d{2}$')) %>% 
+    dplyr::rename_with(.fn = stringr::str_to_lower, .cols = -c('GEOID')) %>% 
+    dplyr::rename_with(.fn = function(x) stringr::str_replace(string = x, pattern = '_tot_', '_')) %>% 
+    dplyr::select(-dplyr::contains('_reg_'), -dplyr::ends_with('_pct')) %>% 
+    dplyr::rename_with(.fn = \(x) stringr::str_remove(x, pattern = '_votes'), dplyr::ends_with('_votes')) %>% 
+    dplyr::rename_with(.fn = \(x) stringr::str_replace(x, '_20', '_'), dplyr::matches('\\d{4}'))
+  
+  noms <- names(data)
+  elec <- which(stringr::str_count(string = noms, '_') == 2)
+  if (length(elec) > 0 && stringr::str_sub(noms[elec[1]], 1, 3) %in% c('dem', 'rep')) {
+    for (i in seq_along(elec)) {
+      party <- stringr::str_sub(noms[elec[i]], 1, 3)
+      yr <- stringr::str_extract(noms[elec[i]], '\\d+')
+      off <- stringr::str_sub(noms[elec[i]], 5, 7)
+      off <- ifelse(
+        is.na(heda_abb_from_alarm[off]),
+        off,
+        heda_abb_from_alarm[off]
+      )
+      noms[elec[i]] <- stringr::str_glue('{off}_{yr}_{party}')
+    }
+  } else {
+    for (i in seq_along(elec)) {
+      off <- stringr::str_sub(stringr::str_extract(noms[elec[i]], '^(.+?)_'), end = -2L)
+      off <- ifelse(
+        is.na(heda_abb_from_alarm[off]),
+        off,
+        heda_abb_from_alarm[off]
+      )
+      
+      yr <- stringr::str_extract(noms[elec[i]], '\\d+')
+      party <- heda_party(noms[elec[i]])
+      noms[elec[i]] <- stringr::str_glue('{off}_{yr}_{party}')
+    }
+  }
+
+  names(data) <- noms
   data
 }
 
@@ -183,20 +248,22 @@ heda_files <- structure(
 #' HEDA Parties
 #' @keywords internal
 heda_party <- function(str) {
-  p <- stringr::str_sub(str, 7, 7)
-  if (p == 'r') {
+  p <- stringr::str_extract(str, '_._')
+  if (p == '_r_') {
     p <- 'rep'
-  } else if (p == 'd') {
+  } else if (p == '_d_') {
     p <- 'dem'
-  } else if (p == 'l') {
+  } else if (p == '_l_') {
     p <- 'lib'
-  } else if (p == 'i') {
+  } else if (p == '_i_') {
     p <- 'ind'
-  } else if (p == 'dr') {
-    p <- 'der'
-  } else if (p == 'p') {
-    p <- 'pro'
-  } else {
+  } else if (p == '_dr_') {
+    p <- 'dmr' # democratic republicans
+  } else if (p == '_p_') {
+    p <- 'pro' #progressives
+  } else if (p == '_tot_') {
+    p <- 'tot'
+  } else{
     p <- 'unk'
   }
 
@@ -236,3 +303,54 @@ heda_abb <- structure(
   class = c('tbl_df', 'tbl', 'data.frame'),
   row.names = c(NA, -38L)
 )
+
+heda_abb_from_alarm <- tibble::tribble(
+  ~heda, ~alarm,
+  "USP", 'pre',
+  'prs', 'pre',
+  "USS", 'uss',
+  "USH", 'ush',
+  "GOV", 'gov',
+  "LTG", 'ltg',
+  'lt', 'ltg',
+  "ATG", 'atg',
+  "SOS", 'sos',
+  "TRE", 'tre',
+  "STS", 'ssd',
+  "STH", 'shd',
+  "ADJ", 'adj',
+  "AGR", 'agc',
+  "AUD", 'aud',
+  "COM", 'com',
+  "INS", 'ins',
+  "LND", 'lnd',
+  "RGNT", 'rgn',
+  "SPI", 'soe',
+  "SC#", 'spc',
+  "SCC", 'spc',
+  "CCA", 'jud',
+  "CCA#", 'jud',
+  "RR#", 'rrd', #railroad
+  "SBOE", 'boe',
+  "SPI", 'spi',
+  "CFO", 'cfo',
+  "COC", 'coc',
+  "CCJ#", 'ccj',
+  "PSC#", 'psc',
+  "CVA", 'cva', 
+  "FRE#", 'fre',
+  "LBR", 'lbr',
+  "MAY", 'may',
+  "DEL", 'ush', # DC
+  "SHADS", 'ssd', # DC
+  "SHADR",'ush', # DC
+  "STH2", 'shd',
+  "STHa", 'shd',
+  'sen', 'ssd',
+  'cng', 'ush',
+  'trs', 'tre',
+  'con', 'con' # CA controller ...
+) %>% 
+  dplyr::mutate(heda = tolower(.data$heda)) %>% 
+  tibble::deframe()
+  
