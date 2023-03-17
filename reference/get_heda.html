@@ -66,7 +66,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_heda</span><span class="op">(</span><span class="va">state</span>, path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, clean_names <span class="op">=</span> <span class="cn">TRUE</span>, epsg <span class="op">=</span> <span class="fl">3857</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_heda</span><span class="op">(</span><span class="va">state</span>, path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, clean_names <span class="op">=</span> <span class="cn">FALSE</span>, epsg <span class="op">=</span> <span class="fl">3857</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -80,8 +80,8 @@
 
 
 <dt>clean_names</dt>
-<dd><p>Clean names. Default is <code>TRUE</code>. If <code>FALSE</code>,
-returns default names.</p></dd>
+<dd><p>Clean names. Default is <code>FALSE</code>. If <code>TRUE</code>,
+it tries to clean names, but no guarantees are made.</p></dd>
 
 
 <dt>epsg</dt>

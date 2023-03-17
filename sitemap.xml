@@ -55,9 +55,6 @@
     <loc>https://www.christophertkenny.com/geomander/reference/checkerboard_adj.html</loc>
   </url>
   <url>
-    <loc>https://www.christophertkenny.com/geomander/reference/clean_heda.html</loc>
-  </url>
-  <url>
     <loc>https://www.christophertkenny.com/geomander/reference/clean_vest.html</loc>
   </url>
   <url>
@@ -116,6 +113,9 @@
   </url>
   <url>
     <loc>https://www.christophertkenny.com/geomander/reference/get_alarm.html</loc>
+  </url>
+  <url>
+    <loc>https://www.christophertkenny.com/geomander/reference/get_dra.html</loc>
   </url>
   <url>
     <loc>https://www.christophertkenny.com/geomander/reference/get_heda.html</loc>
