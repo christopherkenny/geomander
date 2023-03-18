@@ -8,8 +8,9 @@
 #' @param state two letter state abbreviation
 #' @param year year to get data for. Either `2020` or `2010`
 #' @param geometry Default is TRUE. Add geometry to the data?
-#' @templateVar epsg TRUE
-#' @template template
+#' @param clean_names Clean names. Default is \code{TRUE}. If \code{FALSE},
+#' returns default names.
+#' @param epsg `r roxy_epsg()`
 #'
 #' @return tibble with election data and optional geometry
 #' @export
@@ -20,7 +21,7 @@
 #' # Takes a few seconds to run
 #' ak <- get_dra('AK')
 #' }
-get_dra <- function(state, year = 2020, geometry = TRUE, epsg = 3857) {
+get_dra <- function(state, year = 2020, geometry = TRUE, clean_names = TRUE, epsg = 3857) {
   cli::cli_inform(
     'Data sourced from Dave\'s Redistricting {.url https://github.com/dra2020/vtd_data}.',
     .frequency = 'once',
@@ -80,6 +81,86 @@ get_dra <- function(state, year = 2020, geometry = TRUE, epsg = 3857) {
     tb <- make_planar_pair(tb, epsg = epsg)$x
   }
   
+  if (clean_names) {
+    tb <- clean_dra(tb)
+  }
   
   tb
 }
+
+#' Clean DRA Names
+#'
+#' @param data sf tibble from DRA
+#'
+#' @return data with cleaned names
+#' @noRd
+clean_dra <- function(data) {
+  noms <- names(data)
+  
+  gen <- grep('[0-9]{4}', noms, value = FALSE) # General
+  run <- which(stringr::str_ends(string = noms, 'roff')) # Runoff; necessary for LA/GA/etc
+  spe <- which(stringr::str_ends(string = noms, 'spec')) # Special
+  #spr <- which(stringr::str_ends(string = noms, 'sproff'))
+  
+  
+  for (i in seq_along(gen)) {
+    off <- dra_office[tolower(stringr::word(noms[gen[i]], 3, sep = stringr::fixed('_')))]
+    yr <- stringr::str_sub(stringr::str_extract(noms[gen[i]], '\\d+'), start = -2L)
+    party <- dra_party(noms[gen[i]])
+    noms[gen[i]] <- stringr::str_glue('{off}_{yr}_{party}')
+  }
+  
+  for (i in seq_along(run)) {
+    off <- dra_office[tolower(stringr::word(noms[gen[i]], 3, sep = stringr::fixed('_')))]
+    yr <- paste0('r', stringr::str_sub(stringr::str_extract(noms[gen[i]], '\\d+'), start = -2L))
+    party <- dra_party(noms[gen[i]])
+    noms[run[i]] <- stringr::str_glue('{off}_{yr}_{party}')
+  }
+  
+  for (i in seq_along(spe)) {
+    off <- dra_office[tolower(stringr::word(noms[gen[i]], 3, sep = stringr::fixed('_')))]
+    yr <- paste0('s', stringr::str_sub(stringr::str_extract(noms[gen[i]], '\\d+'), start = -2L))
+    party <- dra_party(noms[gen[i]])
+    noms[run[i]] <- stringr::str_glue('{off}_{yr}_{party}')
+  }
+  
+  # for (i in seq_along(spr)) {
+  #   off <- dra_office[tolower(stringr::word(noms[gen[i]], 3, sep = stringr::fixed('_')))]
+  #   yr <- paste0('s', stringr::str_sub(stringr::str_extract(noms[gen[i]], '\\d+'), start = -2L))
+  #   party <- dra_party(noms[gen[i]])
+  #   noms[run[i]] <- stringr::str_glue('{off}_{yr}_{party}')
+  # }
+  
+  names(data) <- noms
+  
+  data
+}
+
+#' DRA Parties
+#' @keywords internal
+dra_party <- function(str) {
+  p <- stringr::word(str, sep = stringr::fixed('_'))
+  if (p %in% c('R', 'Rep')) {
+    p <- 'rep'
+  } else if (p %in% c('D', 'Dem')) {
+    p <- 'dem'
+  } else if (p == 'Tot') {
+    p <- 'tot'
+  } else {
+    p <- 'unk'
+  }
+  
+  p
+}
+
+#' DRA Offices 
+#' @keywords internal
+dra_office <- tibble::tribble(
+  ~dra, ~alarm,
+  'gov', 'gov',
+  'ag', 'atg',
+  'ltg', 'ltg',
+  'pres', 'pre',
+  'sen', 'uss'
+) %>% 
+  tibble::deframe()
