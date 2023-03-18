@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# geomander <a href='https://www.christophertkenny.com/geomander/'><img src='man/figures/logo.png' align="right" height="137" /></a>
+# geomander <a href='https://christophertkenny.com/geomander'><img src='man/figures/logo.png' align="right" height="137" /></a>
 
 <!-- badges: start -->
 
@@ -89,4 +89,4 @@ disagg <- geo_estimate_down(from = va18sub, to = block, wts = block$vap, value =
 ```
 
 For more information, see the documentation and vignettes, available at
-<https://www.christophertkenny.com/geomander/>
+<https://christophertkenny.com/geomander>
