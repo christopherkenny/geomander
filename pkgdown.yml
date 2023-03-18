@@ -4,8 +4,8 @@ pkgdown_sha: ~
 articles:
   Merging_Election_Data: Merging_Election_Data.html
   Redistricting_School_Districts: Redistricting_School_Districts.html
-last_built: 2023-03-18T00:41Z
+last_built: 2023-03-18T00:53Z
 urls:
-  reference: https://www.christophertkenny.com/geomander/reference
-  article: https://www.christophertkenny.com/geomander/articles
+  reference: https://christophertkenny.com/geomander/reference
+  article: https://christophertkenny.com/geomander/articles
 
