@@ -66,7 +66,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_dra</span><span class="op">(</span><span class="va">state</span>, year <span class="op">=</span> <span class="fl">2020</span>, geometry <span class="op">=</span> <span class="cn">TRUE</span>, epsg <span class="op">=</span> <span class="fl">3857</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_dra</span><span class="op">(</span><span class="va">state</span>, year <span class="op">=</span> <span class="fl">2020</span>, geometry <span class="op">=</span> <span class="cn">TRUE</span>, clean_names <span class="op">=</span> <span class="cn">TRUE</span>, epsg <span class="op">=</span> <span class="fl">3857</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -81,6 +81,11 @@
 
 <dt>geometry</dt>
 <dd><p>Default is TRUE. Add geometry to the data?</p></dd>
+
+
+<dt>clean_names</dt>
+<dd><p>Clean names. Default is <code>TRUE</code>. If <code>FALSE</code>,
+returns default names.</p></dd>
 
 
 <dt>epsg</dt>
