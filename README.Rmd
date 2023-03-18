@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# geomander <a href='https://christophertkenny.com/geomander'><img src='man/figures/logo.png' align="right" height="137" /></a>
+# geomander <a href='https://christophertkenny.com/geomander/'><img src='man/figures/logo.png' align="right" height="137" /></a>
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/christopherkenny/geomander/workflows/R-CMD-check/badge.svg)](https://github.com/christopherkenny/geomander/actions)
@@ -83,4 +83,4 @@ And estimate down to blocks
 disagg <- geo_estimate_down(from = va18sub, to = block, wts = block$vap, value = va18sub$G18USSRSTE)
 ```
 
-For more information, see the documentation and vignettes, available at [https://christophertkenny.com/geomander](https://christophertkenny.com/geomander)
+For more information, see the documentation and vignettes, available at [https://christophertkenny.com/geomander/](https://christophertkenny.com/geomander/)
