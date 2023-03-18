@@ -138,6 +138,7 @@ clean_dra <- function(data) {
 
 #' DRA Parties
 #' @keywords internal
+#' @noRd
 dra_party <- function(str) {
   p <- stringr::word(str, sep = stringr::fixed('_'))
   if (p %in% c('R', 'Rep')) {
@@ -155,6 +156,7 @@ dra_party <- function(str) {
 
 #' DRA Offices 
 #' @keywords internal
+#' @noRd
 dra_office <- tibble::tribble(
   ~dra, ~alarm,
   'gov', 'gov',

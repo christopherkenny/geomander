@@ -4,7 +4,7 @@
 \alias{get_dra}
 \title{Get Dave's Redistricting App Dataset}
 \usage{
-get_dra(state, year = 2020, geometry = TRUE, epsg = 3857)
+get_dra(state, year = 2020, geometry = TRUE, clean_names = TRUE, epsg = 3857)
 }
 \arguments{
 \item{state}{two letter state abbreviation}
@@ -12,6 +12,9 @@ get_dra(state, year = 2020, geometry = TRUE, epsg = 3857)
 \item{year}{year to get data for. Either \code{2020} or \code{2010}}
 
 \item{geometry}{Default is TRUE. Add geometry to the data?}
+
+\item{clean_names}{Clean names. Default is \code{TRUE}. If \code{FALSE},
+returns default names.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
