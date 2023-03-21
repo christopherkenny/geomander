@@ -1,3 +1,9 @@
+# Notes on HEDA files
+# 
+#
+# - CT: Registration counts for Connecticut, as of 2008
+
+
 #' Get Harvard Election Data Archive ("HEDA") Dataset
 #'
 #' @param state two letter state abbreviation
@@ -113,6 +119,8 @@ get_heda <- function(state, path = tempdir(), clean_names = FALSE, epsg = 3857, 
 #' @return data with cleaned names
 #' @noRd
 clean_heda <- function(data, state) {
+  # Supports: ak al ca ct ny
+  # todo: az co de fl ga hi ia id il in ks la ma md mi mn mo ms nc nd ne nh nj nm nv oh ok pa sc sd tn tx vt wa wi wy
   if (missing(state)) {
     # normal track
     data <- data %>% 
@@ -139,7 +147,8 @@ clean_heda <- function(data, state) {
                            "_09", "_10", "_11", "_12", "_13", "_14", '_votes')),
         dplyr::any_of(c('NDV', 'NRV', ndv = 'NV_D', nrv = 'NV_R'))
       ) %>% 
-      dplyr::select(-dplyr::matches('[a-zA-Z]{3}_\\d{2}$')) %>% 
+      dplyr::select(-dplyr::matches('^[a-zA-Z]{3}_\\d{2}$')) %>% 
+      dplyr::select(-dplyr::matches('^[a-zA-Z]{1}_\\d{2}$')) %>% 
       dplyr::rename_with(.fn = stringr::str_to_lower, .cols = -dplyr::any_of('GEOID')) %>% 
       dplyr::rename_with(.fn = function(x) stringr::str_replace(string = x, pattern = '_tot_', '_')) %>% 
       dplyr::select(-dplyr::contains('_reg_'), -dplyr::ends_with('_pct')) %>% 
@@ -191,6 +200,8 @@ clean_heda <- function(data, state) {
             ndv = 'NDV', nrv = 'NRV', 'geometry'
           )
         )
+    } else if (state == 'ct') {
+      
     }
   }
   data
@@ -270,7 +281,7 @@ heda_files <- structure(
       'pa', 'la', 'sd', 'ok'
     )
   ),
-  row.names = c(NA, -42L),
+  row.names = c(NA, -41L),
   class = c(
     'tbl_df',
     'tbl', 'data.frame'
@@ -347,7 +358,9 @@ heda_abb_from_alarm <- tibble::tribble(
   "GOV", 'gov',
   "LTG", 'ltg',
   'lt', 'ltg',
+  'ltgov', 'ltg',
   "ATG", 'atg',
+  'ag', 'atg',
   "SOS", 'sos',
   "TRE", 'tre',
   "STS", 'ssd',
@@ -355,6 +368,7 @@ heda_abb_from_alarm <- tibble::tribble(
   "ADJ", 'adj',
   "AGR", 'agc',
   "AUD", 'aud',
+  'audit', 'aud',
   "COM", 'com',
   "INS", 'ins',
   "LND", 'lnd',
@@ -383,6 +397,7 @@ heda_abb_from_alarm <- tibble::tribble(
   'sen', 'ssd',
   'cng', 'ush',
   'trs', 'tre',
+  'treas', 'tre',
   'con', 'con' # CA controller ...
 ) %>% 
   dplyr::mutate(heda = tolower(.data$heda)) %>% 
