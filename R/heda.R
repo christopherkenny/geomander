@@ -200,8 +200,20 @@ clean_heda <- function(data, state) {
             ndv = 'NDV', nrv = 'NRV', 'geometry'
           )
         )
-    } else if (state == 'ct') {
-      
+    } else if (state == 'az') {
+      data <- data %>% 
+        dplyr::select(
+          c(
+            GEOID = 'GEOID10', state = 'STATEFP10', county = 'COUNTYFP10', vtd = 'VTDST10', 
+            pre_08_rep = "PRS08_REP",  pre_08_dem = "PRS08_DEM",  pre_08_oth = "PRS08_OTH", 
+            gov_10_dem = "GOV10_DEM",  gov_10_rep = "GOV10_REP",  gov_10_oth = "GOV10_OTH", 
+            sos_10_dem = "SOS_10DEM",  sos_10_rep = "SOS_10REP",  sos_10_oth = "SOS_10OTH", 
+            atg_10_dem = "AG10_DEM",   atg_10_rep = "AG10_REP",   atg_10_oth = "AG1_0OTH", 
+            tre_10_dem = "ST10_DEM",   tre_10_rep = "ST10_REP",   tre_10_oth = "ST10_OTH", 
+            spi_10_dem = "SPI10_DEM",  spi_10_rep = "SPI10_REP",  spi_10_oth = "SPI10_OTH", 
+            uss_10_dem = "USSEN10_DE", uss_10_rep = "USSEN10_RE", uss_10_oth = "USSEN10_OT", 
+            ndv = "NDV", nrv = "NRV", "geometry")
+        )
     }
   }
   data
