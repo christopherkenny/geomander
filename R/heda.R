@@ -214,6 +214,36 @@ clean_heda <- function(data, state) {
             uss_10_dem = "USSEN10_DE", uss_10_rep = "USSEN10_RE", uss_10_oth = "USSEN10_OT", 
             ndv = "NDV", nrv = "NRV", "geometry")
         )
+    } else if (state == 'co') {
+      data <- data %>% 
+        dplyr::select(
+          c(
+            c(GEOID = 'GEOID10', state = 'STATEFP10', county = 'COUNTYFP10', vtd = 'VTDST10',
+              "PRES08__D", "PRES08__R", "PRES08_MP", 
+              "USSEN08_D", "USSEN08_R", "USSEN08_MP", 
+              "USHSE08_R", 
+              "RGNT08_D", "RGNT08_R", 
+              "SBE08_D", "SBE08_R", 
+              "SD08_R", 
+              "HD08_D", "HD08_R", 
+              "REGVTR08_D", "REGVTR08_R", "REGVTR08_U", "REGVTR08_M", 
+              "USHSE08_D", "SD08_D", 
+              "VTD", 
+              "USSEN10R", "USSEN10D", "USSEN10MP", 
+              "GOV10R", "GOV10D", "GOVMP", 
+              "SOS10R", "SOS10D", "SOS10MP", 
+              "AG10R", "AG10D", 
+              "TRE10R", "TRE10D", 
+              "RGNT10LRGR", 
+              "RGNT10LRGD", "RGNT10LRGM", 
+              "USHSE10R", "USHSE10D", "USHSE10MP", 
+              "RGNT10R", "RGNT10_D", 
+              "SBE10R", "SBE10D", 
+              "SD10_R", "SD10_D", 
+              "HD10_D", "HD10_R", 
+              ndv = "NDV", nrv = "NRV", "geometry")
+          )
+        )
     }
   }
   data
