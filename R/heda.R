@@ -219,7 +219,7 @@ clean_heda <- function(data, state) {
         dplyr::select(
           c(
             c(GEOID = 'GEOID10', state = 'STATEFP10', county = 'COUNTYFP10', vtd = 'VTDST10',
-              "PRES08__D", "PRES08__R", "PRES08_MP", 
+              pre_08_dem = "PRES08__D", pre_08_rep = "PRES08__R", pre_08_oth = "PRES08_MP", 
               "USSEN08_D", "USSEN08_R", "USSEN08_MP", 
               "USHSE08_R", 
               "RGNT08_D", "RGNT08_R", 
