@@ -121,9 +121,9 @@ get_heda <- function(state, path = tempdir(), clean_names = FALSE, epsg = 3857, 
 #' @return data with cleaned names
 #' @noRd
 clean_heda <- function(data, state) {
-  # custom: az ny co 
+  # custom: az ny co fl
   # auto: ak al ca de ct
-  # todo:  fl ga hi ia id il in ks la ma md mi mn mo ms nc nd ne nh nj nm nv oh ok pa sc sd tn tx vt wa wi wy
+  # todo:   ga hi ia id il in ks la ma md mi mn mo ms nc nd ne nh nj nm nv oh ok pa sc sd tn tx vt wa wi wy
   if (missing(state)) {
     # normal track
     data <- data %>% 
