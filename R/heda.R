@@ -22,6 +22,8 @@
 get_heda <- function(state, path = tempdir(), clean_names = FALSE, epsg = 3857, ...) {
   abb <- tolower(censable::match_abb(state))
   
+  match.arg(abb, choices = heda_states())
+  
   cli::cli_inform(
     'Data sourced from the Harvard Election Data Archive {.url https://projects.iq.harvard.edu/eda/home}.',
     .frequency = 'once',
@@ -119,8 +121,9 @@ get_heda <- function(state, path = tempdir(), clean_names = FALSE, epsg = 3857, 
 #' @return data with cleaned names
 #' @noRd
 clean_heda <- function(data, state) {
-  # Supports: ak al az ca ct ny
-  # todo:  co de fl ga hi ia id il in ks la ma md mi mn mo ms nc nd ne nh nj nm nv oh ok pa sc sd tn tx vt wa wi wy
+  # custom: az ny co 
+  # auto: ak al ca de ct
+  # todo:  fl ga hi ia id il in ks la ma md mi mn mo ms nc nd ne nh nj nm nv oh ok pa sc sd tn tx vt wa wi wy
   if (missing(state)) {
     # normal track
     data <- data %>% 
@@ -237,6 +240,26 @@ clean_heda <- function(data, state) {
               boe_10_rep = "SBE10R", boe_10_dem = "SBE10D", 
               ssd_10_rep = "SD10_R", ssd_10_dem = "SD10_D", 
               shd_10_dem = "HD10_D", shd_10_rep = "HD10_R", 
+              ndv = "NDV", nrv = "NRV", "geometry")
+          )
+        )
+    } else if (state == 'fl') {
+      data <- data %>% 
+        dplyr::select(
+          c(
+            c(county = "COUNTY", vtd = "precinct",
+              gov_10_dem_sin = "GOV_D_SINK", gov_10_rep_sco = "GOV_R_SCOT", gov_10_oth_all = "GOV_NPA_AL", 
+              gov_10_oth_art = "GOV_NPA_AR", gov_10_oth_imp = "GOV_NPA_IM", gov_10_oth_kha = "GOV_NPA_KH", 
+              gov_10_oth_ree = "GOV_NPA_RE", 
+              cfo_10_dem_aus = "CFO_D_AUSL", cfo_10_rep_atw = "CFO_R_ATWA", cfo_10_oth_maz = "CFO_NPA_MA", 
+              cfo_10_oth_ste = "CFO_NPA_ST", 
+              atg_10_dem_gel = "AG_D_GELBE", atg_10_rep_bon = "AG_R_BONDI", 
+              atg_10_oth_lew = "AG_NPA_LEW", 
+              agc_10_dem_mad = "AGC_D_MADD", agc_10_rep_put = "AGC_R_PUTN", 
+              agc_10_tea_che = "AGC_TEA_CH", agc_10_oth_ham = "AGC_NPA_HA", 
+              uss_10_dem_mee = "SEN_D_MEEK", uss_10_rep_rub =  "SEN_R_RUBI", uss_10_oth_arm = "SEN_NPA_AR", 
+              uss_10_oth_ask = "SEN_NPA_AS", uss_10_oth_dec = "SEN_NPA_DE", uss_10_oth_cri = "SEN_NPA_CR", 
+              uss_10_oth_rig = "SEN_NPA_RI", uss_10_lib_sni = "SEN_LBT_SN", 
               ndv = "NDV", nrv = "NRV", "geometry")
           )
         )
