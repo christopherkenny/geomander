@@ -266,22 +266,24 @@ clean_heda <- function(data, state) {
     } else if (state == 'ga') {
       data <- data %>% 
         dplyr::select(
-          c(
-            c(county = "COUNTY", vtd = "precinct",
-              gov_10_dem_sin = "GOV_D_SINK", gov_10_rep_sco = "GOV_R_SCOT", gov_10_oth_all = "GOV_NPA_AL", 
-              gov_10_oth_art = "GOV_NPA_AR", gov_10_oth_imp = "GOV_NPA_IM", gov_10_oth_kha = "GOV_NPA_KH", 
-              gov_10_oth_ree = "GOV_NPA_RE", 
-              cfo_10_dem_aus = "CFO_D_AUSL", cfo_10_rep_atw = "CFO_R_ATWA", cfo_10_oth_maz = "CFO_NPA_MA", 
-              cfo_10_oth_ste = "CFO_NPA_ST", 
-              atg_10_dem_gel = "AG_D_GELBE", atg_10_rep_bon = "AG_R_BONDI", 
-              atg_10_oth_lew = "AG_NPA_LEW", 
-              agc_10_dem_mad = "AGC_D_MADD", agc_10_rep_put = "AGC_R_PUTN", 
-              agc_10_tea_che = "AGC_TEA_CH", agc_10_oth_ham = "AGC_NPA_HA", 
-              uss_10_dem_mee = "SEN_D_MEEK", uss_10_rep_rub =  "SEN_R_RUBI", uss_10_oth_arm = "SEN_NPA_AR", 
-              uss_10_oth_ask = "SEN_NPA_AS", uss_10_oth_dec = "SEN_NPA_DE", uss_10_oth_cri = "SEN_NPA_CR", 
-              uss_10_oth_rig = "SEN_NPA_RI", uss_10_lib_sni = "SEN_LBT_SN", 
-              ndv = "NDV", nrv = "NRV", "geometry")
-          )
+          c("ID", "AREA", "DATA", "CTYSOSID", "PRECINCT_C", "PRECINCT_N", 
+            "COUNTY_NAM", "FIPS", "FIPS2", "COUNTY_NUM", 
+            "MCCAIN08", "OBAMA08", "BARR08", 
+            "CHAMBLISS0", "MARTIN08", "BUCKLEY08", "MCDONALD08", "POWELL08", 
+            "GIVENS08", "EVERETT08", "MONDS08", "CREP08", "CDEM08", "STSREP08", 
+            "STSDEM08", "STHREP08", "STHDEM08",
+            "GOV_RVOTE_", "GOV_DVOTE_", "GOV_LIBVOT", 
+            "LTG_RVOTE_", "LTG_DVOTE_", "BUCKLEY06", "SOS_RVOTE_", "SOS_DVOTE_", 
+            "SOS_LIBVOT", "AG_RVOTE_0", "AG_DVOTE_0", "BLACK06", "IRVIN06", 
+            "CASHIN06", "OXENDINE06", "DREXINGER0", "SUPT_RVOTE", "SUPT_DVOTE", 
+            "SUPT_LIBVO", "AGR_RVOTE_", "AGR_DVOTE_", "PSC3_DVOTE", "PSC3_RVOTE", 
+            "PSC3_LIBVO", "PSC5_RVOTE", "PSC5_DVOTE", "PSC5_LIBVO", "USH_RVOTE_", 
+            "USH_DVOTE_", "STS_RVOTE_", "STS_DVOTE_", "STH_RVOTE_", "STH_DVOTE_", 
+            "CNTYSOSID_", "PRECINCT_0", 
+            "PRES_RVOTE", "PRES_DVOTE", "USS_RVOTE_", "USS_DVOTE_", "USS_LIBVOT", 
+            "PSC4_RVOTE", "PSC4_DVOTE", "PSC4_LIBVO", "PSC1_RVOTE", "PSC1_LIBVO", 
+            "USH_RVOTE0", "USH_DVOTE0", "STH_RVOTE0", "STH_DVOTE0",  
+            "geometry")
         )
     }
   }
