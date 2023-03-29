@@ -17,10 +17,7 @@
 #'
 #' @concept datasets
 #' @examples
-#' \donttest{
-#' # Takes a few seconds to run
-#' ak <- get_dra('AK')
-#' }
+#' ak <- get_dra('AK', geometry = FALSE)
 get_dra <- function(state, year = 2020, geometry = TRUE, clean_names = TRUE, epsg = 3857) {
   cli::cli_inform(
     'Data sourced from Dave\'s Redistricting {.url https://github.com/dra2020/vtd_data}.',
