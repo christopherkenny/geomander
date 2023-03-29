@@ -27,9 +27,6 @@ can be downloaded with \code{get_vest}.
 See the full available data at \url{https://github.com/alarm-redist/census-2020}.
 }
 \examples{
-\donttest{
-# Takes a few seconds to run
 ak <- get_alarm('AK')
-}
 }
 \concept{datasets}
