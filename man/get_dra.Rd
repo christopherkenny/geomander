@@ -28,9 +28,6 @@ Gets a dataset from Dave's Redistricting App.
 See the full available data at \url{https://github.com/dra2020/vtd_data}.
 }
 \examples{
-\donttest{
-# Takes a few seconds to run
-ak <- get_dra('AK')
-}
+ak <- get_dra('AK', geometry = FALSE)
 }
 \concept{datasets}
