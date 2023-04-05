@@ -22,7 +22,6 @@ library(ggplot2)
 library(dplyr)
 library(stringr)
 
-library(redist)
 library(sf)
 library(tinytiger)
 ```
@@ -121,7 +120,7 @@ Second, we can see that one block in 7 was matched to 1 because it didn't proper
 Now, to figure out what's going on and try to clean it up, we can build an adjacency graph for each block by town and see which pieces are discontinuous.
 
 ```{r, message = FALSE}
-adj <- redist.adjacency(shp = block)
+adj <- adjacency(shp = block)
 
 comp <- check_contiguity(adj = adj, group = block$TownID)
 
@@ -144,7 +143,8 @@ which(comp$component > 1)
 ```
 
 Finally, we have the data in a simulation-ready state! We can now use the adjacency list created above with redist.adjacency to run a simulation using redist.smc. See [the redist package](https://alarm-redist.github.io/) for more information about what's going on here.
-```{r}
+```{r, eval = 'redist' %in% installed.packages()}
+library(redist)
 map <- redist_map(block, pop_tol = 0.02, ndists = 7, adj = adj)
 
 sims005 <- redist_smc(map, nsims = 50, counties = TownID, silent = TRUE)
@@ -163,7 +163,8 @@ pick <- tibble(parity = par) %>% bind_cols(comp_m) %>% slice_max(order_by = mean
 In short, the above uses a Sequential Monte Carlo algorithm to draw 50 compact districts that try to preserve towns. From those, I pick a map that is on average, pretty compact. You would typically aim for about 100 times this number of simulations to start. This is shortened for vignette compilation time.
 
 Then we have the basic information we want and we can look at the VAP data to see that we have one majority minority Hispanic ward and one potential coalition ward.
-```{r}
+
+```{r,  eval = 'redist' %in% installed.packages()}
 block %>% 
   mutate(district = plans[,pick]) %>% 
   group_by(district) %>% 
