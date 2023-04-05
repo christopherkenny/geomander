@@ -114,7 +114,6 @@ level.</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://alarm-redist.org/redist/" class="external-link">redist</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/alarm-redist/tinytiger" class="external-link">tinytiger</a></span><span class="op">)</span></span></code></pre></div>
 <p>First, we want to build a block level dataset. The school district
@@ -225,7 +224,7 @@ other blocks.</p>
 build an adjacency graph for each block by town and see which pieces are
 discontinuous.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">adj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://alarm-redist.org/redist/reference/redist.adjacency.html" class="external-link">redist.adjacency</a></span><span class="op">(</span>shp <span class="op">=</span> <span class="va">block</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">adj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/adjacency.html">adjacency</a></span><span class="op">(</span>shp <span class="op">=</span> <span class="va">block</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">comp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/check_contiguity.html">check_contiguity</a></span><span class="op">(</span>adj <span class="op">=</span> <span class="va">adj</span>, group <span class="op">=</span> <span class="va">block</span><span class="op">$</span><span class="va">TownID</span><span class="op">)</span></span>
 <span></span>
@@ -248,11 +247,19 @@ the adjacency list created above with redist.adjacency to run a
 simulation using redist.smc. See <a href="https://alarm-redist.github.io/" class="external-link">the redist package</a> for more
 information about what’s going on here.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://alarm-redist.org/redist/" class="external-link">redist</a></span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Loading required package: redistmetrics</span></span></code></pre>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## Attaching package: 'redist'</span></span></code></pre>
+<pre><code><span><span class="co">## The following object is masked from 'package:stats':</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##     filter</span></span></code></pre>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">map</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://alarm-redist.org/redist/reference/redist_map.html" class="external-link">redist_map</a></span><span class="op">(</span><span class="va">block</span>, pop_tol <span class="op">=</span> <span class="fl">0.02</span>, ndists <span class="op">=</span> <span class="fl">7</span>, adj <span class="op">=</span> <span class="va">adj</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">sims005</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://alarm-redist.org/redist/reference/redist_smc.html" class="external-link">redist_smc</a></span><span class="op">(</span><span class="va">map</span>, nsims <span class="op">=</span> <span class="fl">50</span>, counties <span class="op">=</span> <span class="va">TownID</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Warning: Counties were not contiguous; expect additional splits.</span></span></code></pre>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">plans</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://alarm-redist.org/redist/reference/get_plans_matrix.html" class="external-link">get_plans_matrix</a></span><span class="op">(</span><span class="va">sims005</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span>MARGIN  <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">par</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://alarm-redist.org/redist/reference/redist.parity.html" class="external-link">redist.parity</a></span><span class="op">(</span>plans <span class="op">=</span> <span class="va">plans</span>, total_pop <span class="op">=</span> <span class="va">block</span><span class="op">$</span><span class="va">pop</span><span class="op">)</span></span>
@@ -270,7 +277,7 @@ for vignette compilation time.</p>
 <p>Then we have the basic information we want and we can look at the VAP
 data to see that we have one majority minority Hispanic ward and one
 potential coalition ward.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">block</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>district <span class="op">=</span> <span class="va">plans</span><span class="op">[</span>,<span class="va">pick</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">district</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
@@ -283,13 +290,13 @@ potential coalition ward.</p>
 <span><span class="co">## <span style="color: #949494;"># A tibble: 7 × 11</span></span></span>
 <span><span class="co">##   district   vap vap_white vap_black vap_hisp vap_aian vap_asian vap_nhpi</span></span>
 <span><span class="co">##      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span>        1  <span style="text-decoration: underline;">5</span>264      <span style="text-decoration: underline;">3</span>697       474      778        8       264        0</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span>        2  <span style="text-decoration: underline;">5</span>408      <span style="text-decoration: underline;">3</span>225       644     <span style="text-decoration: underline;">1</span>204        2       246        2</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span>        3  <span style="text-decoration: underline;">5</span>125      <span style="text-decoration: underline;">4</span>119       193      575        3       188        0</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">4</span>        4  <span style="text-decoration: underline;">5</span>029      <span style="text-decoration: underline;">1</span>710       916     <span style="text-decoration: underline;">2</span>084        7       237        0</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">5</span>        5  <span style="text-decoration: underline;">5</span>045      <span style="text-decoration: underline;">1</span>083       495     <span style="text-decoration: underline;">3</span>277        5       132        0</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">6</span>        6  <span style="text-decoration: underline;">5</span>206      <span style="text-decoration: underline;">2</span>010       410     <span style="text-decoration: underline;">2</span>593       12       117        2</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">7</span>        7  <span style="text-decoration: underline;">5</span>383      <span style="text-decoration: underline;">4</span>586       134      521        9        86        1</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span>        1  <span style="text-decoration: underline;">5</span>172      <span style="text-decoration: underline;">1</span>384       523     <span style="text-decoration: underline;">3</span>058       12       145        1</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span>        2  <span style="text-decoration: underline;">5</span>086      <span style="text-decoration: underline;">1</span>817       935     <span style="text-decoration: underline;">1</span>995        8       249        0</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span>        3  <span style="text-decoration: underline;">5</span>082      <span style="text-decoration: underline;">1</span>815       358     <span style="text-decoration: underline;">2</span>745        6        96        1</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span>        4  <span style="text-decoration: underline;">5</span>370      <span style="text-decoration: underline;">3</span>438       662      880        8       315        0</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span>        5  <span style="text-decoration: underline;">5</span>272      <span style="text-decoration: underline;">3</span>600       294     <span style="text-decoration: underline;">1</span>138        0       178        2</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span>        6  <span style="text-decoration: underline;">5</span>122      <span style="text-decoration: underline;">3</span>875       345      658        9       190        1</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">7</span>        7  <span style="text-decoration: underline;">5</span>356      <span style="text-decoration: underline;">4</span>501       149      558        3        97        0</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 3 more variables: vap_other &lt;dbl&gt;, vap_two &lt;dbl&gt;, geometry &lt;POLYGON [m]&gt;</span></span></span></code></pre>
   </div>
 
