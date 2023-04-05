@@ -2,6 +2,7 @@
 * Updates dependencies for easier installation.
 * Allows for use of `circle` as a method in `geo_match()`.
 * Adds a `by` argument to `geo_match()` for subsetting to known matching regions.
+* Uses `redist` in vignettes only conditionally.
 
 # geomander 2.1.1
 * Fixes missing tolerance bug in `geos_circle_center()`.
