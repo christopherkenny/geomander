@@ -47,11 +47,8 @@ check_contiguity <- function(adj, group) {
     if (length(adj) != length(group)) {
       cli::cli_abort('{.arg adj} and {.arg group} are different lengths.')
     }
-    groups <- rep(0, length(group))
     sorted <- sort(unique(group))
-    for (i in seq_along(group)) {
-      groups[i] <- which(sorted == group[i])
-    }
+    groups <- match(group, sorted)
   } else {
     group <- 1L
     groups <- rep(1L, length(adj))

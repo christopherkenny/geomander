@@ -91,4 +91,6 @@ test_that('check_contiguity with groups works', {
     class = c('tbl_df', 'tbl', 'data.frame'),
     row.names = c(NA, -55L)
   )
+  
+  expect_equal(actual, expected)
 })
