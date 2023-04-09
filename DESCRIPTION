@@ -16,21 +16,21 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 LinkingTo: Rcpp (>= 1.0.7)
 Imports:
+    censable,
+    cli,
+    dataverse,
     dplyr,
+    geos,
+    ggplot2,
     magrittr,
+    readr,
+    rlang,
+    Rcpp,
     sf,
     stringr,
     tibble,
     tidyr,
-    tinytiger,
-    ggplot2,
-    readr,
-    dataverse,
-    censable,
-    geos,
-    cli,
-    rlang,
-    Rcpp
+    tinytiger
 Depends: 
     R (>= 3.0.2)
 Suggests:
