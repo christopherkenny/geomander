@@ -57,7 +57,7 @@ check_contiguity <- function(adj, group) {
   out <- tibble(
     group = group,
     group_number = groups,
-    component = contiguity(adj, groups)
+    component = contiguity(adj, groups - 1L)
   )
 
   if (max(out$component) == 1) {
@@ -65,13 +65,13 @@ check_contiguity <- function(adj, group) {
   } else {
     out <- out %>%
       dplyr::group_by(.data$group_number) %>%
-      dplyr::mutate(ranks = list(as.numeric(names(sort(table(component),
-        decreasing = TRUE
-      ))))) %>%
-      dplyr::rowwise() %>%
-      dplyr::mutate(component = which(component == .data$ranks)) %>%
-      dplyr::ungroup() %>%
-      dplyr::select(-.data$ranks)
+      dplyr::mutate(
+        component = match(component, as.numeric(names(sort(table(component), decreasing = TRUE))))
+    ) #%>%
+      # dplyr::rowwise() %>%
+      # dplyr::mutate(component = which(component == .data$ranks)) %>%
+      # dplyr::ungroup() %>%
+      # dplyr::select(-.data$ranks)
   }
 
   out

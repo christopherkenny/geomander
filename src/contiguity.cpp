@@ -8,14 +8,12 @@ IntegerVector contiguity(List adj, IntegerVector group) {
   IntegerVector group_cc(choices.size());
   IntegerVector currgroup(1);
   IntegerVector temp;
-  int cc, s, r, idx;
+  int cc, s, r;
 
   for(int i = 0; i < group.size(); i++){
     if(conncomp(i) == 0){
-      currgroup = group(i);
-      idx = match(currgroup, choices)(0) - 1;
-      group_cc(idx) ++;  
-      cc = group_cc(idx);
+      group_cc(group(i)) ++;  
+      cc = group_cc(group(i));
       conncomp(i) = cc;
       
       temp = adj(i);
