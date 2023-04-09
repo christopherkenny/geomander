@@ -46,7 +46,7 @@ get_vest <- function(state, year, path = tempdir(), clean_names = TRUE, epsg = 3
   if (clean_names) {
     out <- out %>% clean_vest()
   }
-  
+
   make_planar_pair(out, epsg = epsg)$x
 }
 
@@ -94,7 +94,7 @@ clean_vest <- function(data) {
 #'
 #' @return character abbreviations for states
 #' @export
-#' 
+#'
 #' @concept datasets
 #' @examples
 #' \dontrun{
@@ -153,37 +153,38 @@ vest_party <- function(str) {
 #' VEST Abbreviations
 #' @keywords internal
 vest_abb <- function(x) {
-  structure(list(
-    a = c(
-      'A##', 'AGR', 'ATG', 'AUD', 'CFO',
-      'CHA', 'COC', 'COM', 'CON', 'COU', 'CSC', 'DEL', 'GOV',
-      'H##', 'HOD', 'HOR', 'INS', 'LAB', 'LND', 'LTG', 'MAY',
-      'MNI', 'PSC', 'PUC', 'RGT', 'SAC', 'SBE', 'SCC', 'SOC',
-      'SOS', 'SPI', 'SPL', 'SSC', 'TAX', 'TRE', 'UBR', 'USS'
+  structure(
+    list(
+      a = c(
+        'A##', 'AGR', 'ATG', 'AUD', 'CFO',
+        'CHA', 'COC', 'COM', 'CON', 'COU', 'CSC', 'DEL', 'GOV',
+        'H##', 'HOD', 'HOR', 'INS', 'LAB', 'LND', 'LTG', 'MAY',
+        'MNI', 'PSC', 'PUC', 'RGT', 'SAC', 'SBE', 'SCC', 'SOC',
+        'SOS', 'SPI', 'SPL', 'SSC', 'TAX', 'TRE', 'UBR', 'USS'
+      ),
+      b = c(
+        'Ballot amendment, where ## is an identifier', 'Commissioner of Agriculture',
+        'Attorney General', 'Auditor', 'Chief Financial Officer',
+        'Council Chairman', 'Corporation Commissioner', 'Comptroller',
+        'State Controller', 'City Council Member', 'Clerk of the Supreme Court',
+        'Delegate to the U.S. House', 'Governor', 'U.S. House, where ## is the district number. AL: at large.',
+        'House of Delegates, accompanied by a HOD_DIST column indicating district number',
+        'U.S. House, accompanied by a HOR_DIST column indicating district number',
+        'Insurance Commissioner', 'Labor Commissioner', 'Commissioner of Public/State Lands',
+        'Lieutenant Governor', 'Mayor', 'State Mine Inspector', 'Public Service Commissioner',
+        'Public Utilities Commissioner', 'State University Regent',
+        'State Appeals Court (in AL: Civil Appeals)', 'State Board of Education',
+        'State Court of Criminal Appeals', 'Secretary of Commonwealth',
+        'Secretary of State', 'Superintendent of Public Instruction',
+        'Commissioner of School and Public Lands', 'State Supreme Court',
+        'Tax Commissioner', 'Treasurer', 'University Board of Regents/Trustees/Governors',
+        'U.S. Senate'
+      )
     ),
-    b = c(
-      'Ballot amendment, where ## is an identifier', 'Commissioner of Agriculture',
-      'Attorney General', 'Auditor', 'Chief Financial Officer',
-      'Council Chairman', 'Corporation Commissioner', 'Comptroller',
-      'State Controller', 'City Council Member', 'Clerk of the Supreme Court',
-      'Delegate to the U.S. House', 'Governor', 'U.S. House, where ## is the district number. AL: at large.',
-      'House of Delegates, accompanied by a HOD_DIST column indicating district number',
-      'U.S. House, accompanied by a HOR_DIST column indicating district number',
-      'Insurance Commissioner', 'Labor Commissioner', 'Commissioner of Public/State Lands',
-      'Lieutenant Governor', 'Mayor', 'State Mine Inspector', 'Public Service Commissioner',
-      'Public Utilities Commissioner', 'State University Regent',
-      'State Appeals Court (in AL: Civil Appeals)', 'State Board of Education',
-      'State Court of Criminal Appeals', 'Secretary of Commonwealth',
-      'Secretary of State', 'Superintendent of Public Instruction',
-      'Commissioner of School and Public Lands', 'State Supreme Court',
-      'Tax Commissioner', 'Treasurer', 'University Board of Regents/Trustees/Governors',
-      'U.S. Senate'
+    row.names = c(NA, -37L),
+    class = c(
+      'tbl_df',
+      'tbl', 'data.frame'
     )
-  ),
-  row.names = c(NA, -37L),
-  class = c(
-    'tbl_df',
-    'tbl', 'data.frame'
-  )
   )
 }

@@ -1,15 +1,14 @@
 make_planar_pair <- function(x, y = NULL, epsg = 3857) {
-  
   if (is.null(epsg) || isFALSE(epsg)) {
     return(list(x = x, y = y))
   }
 
   x_is_ll <- isTRUE(sf::st_is_longlat(x))
   y_is_ll <- isTRUE(sf::st_is_longlat(y))
-  
+
   x_crs <- sf::st_crs(x)
   y_crs <- sf::st_crs(y)
-  
+
   if (is.null(x_crs) || is.na(x_crs)) {
     cli::cli_warn('Planarizing skipped. {.arg x} missing CRS.')
     return(list(x = x, y = y))
@@ -18,7 +17,7 @@ make_planar_pair <- function(x, y = NULL, epsg = 3857) {
     cli::cli_warn('Planarizing skipped. {.arg y} missing CRS.')
     return(list(x = x, y = y))
   }
-  
+
   if (!is.null(y)) {
     if (!x_is_ll && !y_is_ll) { # both not-ll
       if (x_crs != y_crs) { # diff crs -> use x crs

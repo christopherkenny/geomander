@@ -18,7 +18,6 @@
 #' blocklevel <- dra2r('dra_utah_test.csv', state = 'UT')
 #' }
 dra2r <- function(dra, state, precincts, epsg = 3857) {
-
   # check inputs
   if (missing(dra)) {
     cli::cli_abort('Please provide an argument to {.arg dra}.')
@@ -29,7 +28,6 @@ dra2r <- function(dra, state, precincts, epsg = 3857) {
 
   # make dra into a dataframe
   if ('character' %in% class(dra)) {
-
     # check that it's pointing to a good thing:
     if (!file.exists(dra)) {
       cli::cli_abort('{.arg dra} supplied as character, but does not point to a valid file.')
@@ -124,27 +122,26 @@ dra2r <- function(dra, state, precincts, epsg = 3857) {
 #' r2dra(cnty, matchedcty, 'UT', 'r2dra_ex.csv')
 #' }
 r2dra <- function(precincts, plan, state, path, epsg = 3857) {
-  
   if (missing(precincts)) {
     cli::cli_abort('{.arg precincts} is a required input.')
   }
   if (!'sf' %in% class(precincts)) {
     cli::cli_abort('{.arg precincts} must be an sf dataframe')
   }
-  
+
   if (missing(plan)) {
     cli::cli_abort('{.arg plan} is a required input.')
   }
   if ('character' %in% class(plan)) {
     plan <- precincts[[plan]]
   }
-  
+
   if (missing(state)) {
     cli::cli_abort('{.arg state} is a required input.')
   }
-  
+
   shp <- tinytiger::tt_blocks(state, year = 2020)
-  
+
   pairs <- make_planar_pair(precincts, shp)
   precincts <- pairs$x
   shp <- pairs$y

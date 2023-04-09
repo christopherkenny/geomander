@@ -4,7 +4,7 @@
 ## usethis namespace: end
 NULL
 
-#' @importFrom sf st_geometry<- 
+#' @importFrom sf st_geometry<-
 #' @importFrom dplyr bind_rows row_number distinct filter mutate summarize arrange
 #' @importFrom dplyr select all_of any_of left_join .data
 #' @importFrom dplyr rename starts_with n desc bind_cols

@@ -24,7 +24,8 @@ This offers a basic method for dividing a shape into separate pieces
 \examples{
 data(towns)
 # make some weird roadlike feature passing through the towns
-lines <- sf::st_sfc(sf::st_linestring(sf::st_coordinates(sf::st_centroid(towns))), 
-                    crs = sf::st_crs(towns))
+lines <- sf::st_sfc(sf::st_linestring(sf::st_coordinates(sf::st_centroid(towns))),
+  crs = sf::st_crs(towns)
+)
 regionalize(towns, lines)
 }

@@ -1,9 +1,9 @@
 #' Get Dave's Redistricting App Dataset
 #'
 #' Gets a dataset from Dave's Redistricting App.
-#' 
+#'
 #' See the full available data at <https://github.com/dra2020/vtd_data>.
-#' 
+#'
 #'
 #' @param state two letter state abbreviation
 #' @param year year to get data for. Either `2020` or `2010`
@@ -24,7 +24,7 @@ get_dra <- function(state, year = 2020, geometry = TRUE, clean_names = TRUE, eps
     .frequency = 'once',
     .frequency_id = 'cite_dra'
   )
-  
+
   base_path <- stringr::str_glue(
     'https://raw.githubusercontent.com/dra2020/vtd_data/master/{year}_VTD/'
   )
@@ -37,19 +37,21 @@ get_dra <- function(state, year = 2020, geometry = TRUE, clean_names = TRUE, eps
   } else {
     spec <- readr::cols(GEOID10 = 'c', .default = 'd')
   }
-  end_path <-stringr::str_glue('{state}/{year}_election_{state}.csv')
-  
-  tb <- readr::read_csv(file = paste0(base_path, end_path), col_types = spec, 
-                        show_col_types = FALSE) %>% 
+  end_path <- stringr::str_glue('{state}/{year}_election_{state}.csv')
+
+  tb <- readr::read_csv(
+    file = paste0(base_path, end_path), col_types = spec,
+    show_col_types = FALSE
+  ) %>%
     dplyr::rename_with(.fn = \(x) stringr::str_remove_all(x, pattern = '\\d+'), .cols = dplyr::starts_with('GEOID'))
-  
+
   if (geometry) {
-    if ((year == 2020 && !state %in% block_group_states_2020 && state != 'ME') || 
-        (year == 2010 && !state %in% block_group_states_2010) ) {
+    if ((year == 2020 && !state %in% block_group_states_2020 && state != 'ME') ||
+      (year == 2010 && !state %in% block_group_states_2010)) {
       # regular vtds
       geo <- tinytiger::tt_voting_districts(state = state, year = year) %>%
         dplyr::select(dplyr::any_of(c(GEOID = 'GEOID10', GEOID = 'GEOID20')), 'geometry') %>%
-        dplyr::mutate(dplyr::across('GEOID', as.character)) 
+        dplyr::mutate(dplyr::across('GEOID', as.character))
     } else {
       if (year == 2020 && state == 'ME') {
         # frankenstein's vtds
@@ -66,22 +68,21 @@ get_dra <- function(state, year = 2020, geometry = TRUE, clean_names = TRUE, eps
         # block groups
         geo <- tinytiger::tt_block_groups(state = state, year = year) %>%
           dplyr::select(dplyr::any_of(c(GEOID = 'GEOID10', GEOID = 'GEOID20')), 'geometry') %>%
-          dplyr::mutate(dplyr::across('GEOID', as.character)) 
+          dplyr::mutate(dplyr::across('GEOID', as.character))
       }
-      
-    } 
+    }
     tb <- tb %>%
-      dplyr::left_join(geo, by = 'GEOID') %>% 
+      dplyr::left_join(geo, by = 'GEOID') %>%
       dplyr::relocate('GEOID', .before = dplyr::everything()) %>%
       sf::st_as_sf()
 
     tb <- make_planar_pair(tb, epsg = epsg)$x
   }
-  
+
   if (clean_names) {
     tb <- clean_dra(tb)
   }
-  
+
   tb
 }
 
@@ -93,43 +94,43 @@ get_dra <- function(state, year = 2020, geometry = TRUE, clean_names = TRUE, eps
 #' @noRd
 clean_dra <- function(data) {
   noms <- names(data)
-  
+
   gen <- grep('[0-9]{4}', noms, value = FALSE) # General
   run <- which(stringr::str_ends(string = noms, 'roff')) # Runoff; necessary for LA/GA/etc
   spe <- which(stringr::str_ends(string = noms, 'spec')) # Special
-  #spr <- which(stringr::str_ends(string = noms, 'sproff'))
-  
-  
+  # spr <- which(stringr::str_ends(string = noms, 'sproff'))
+
+
   for (i in seq_along(gen)) {
     off <- dra_office[tolower(stringr::word(noms[gen[i]], 3, sep = stringr::fixed('_')))]
     yr <- stringr::str_sub(stringr::str_extract(noms[gen[i]], '\\d+'), start = -2L)
     party <- dra_party(noms[gen[i]])
     noms[gen[i]] <- stringr::str_glue('{off}_{yr}_{party}')
   }
-  
+
   for (i in seq_along(run)) {
     off <- dra_office[tolower(stringr::word(noms[gen[i]], 3, sep = stringr::fixed('_')))]
     yr <- paste0('r', stringr::str_sub(stringr::str_extract(noms[gen[i]], '\\d+'), start = -2L))
     party <- dra_party(noms[gen[i]])
     noms[run[i]] <- stringr::str_glue('{off}_{yr}_{party}')
   }
-  
+
   for (i in seq_along(spe)) {
     off <- dra_office[tolower(stringr::word(noms[gen[i]], 3, sep = stringr::fixed('_')))]
     yr <- paste0('s', stringr::str_sub(stringr::str_extract(noms[gen[i]], '\\d+'), start = -2L))
     party <- dra_party(noms[gen[i]])
     noms[run[i]] <- stringr::str_glue('{off}_{yr}_{party}')
   }
-  
+
   # for (i in seq_along(spr)) {
   #   off <- dra_office[tolower(stringr::word(noms[gen[i]], 3, sep = stringr::fixed('_')))]
   #   yr <- paste0('s', stringr::str_sub(stringr::str_extract(noms[gen[i]], '\\d+'), start = -2L))
   #   party <- dra_party(noms[gen[i]])
   #   noms[run[i]] <- stringr::str_glue('{off}_{yr}_{party}')
   # }
-  
+
   names(data) <- noms
-  
+
   data
 }
 
@@ -147,11 +148,11 @@ dra_party <- function(str) {
   } else {
     p <- 'unk'
   }
-  
+
   p
 }
 
-#' DRA Offices 
+#' DRA Offices
 #' @keywords internal
 #' @noRd
 dra_office <- tibble::tribble(
@@ -161,5 +162,5 @@ dra_office <- tibble::tribble(
   'ltg', 'ltg',
   'pres', 'pre',
   'sen', 'uss'
-) %>% 
+) %>%
   tibble::deframe()

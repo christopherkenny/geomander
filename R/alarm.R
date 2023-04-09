@@ -3,9 +3,9 @@
 #' Gets a dataset from the Algorithm-Assisted Redistricting Methodology Project.
 #' The current supported data is the 2020 retabulations of the VEST data, which
 #' can be downloaded with `get_vest`.
-#' 
+#'
 #' See the full available data at <https://github.com/alarm-redist/census-2020>.
-#' 
+#'
 #'
 #' @param state two letter state abbreviation
 #' @param year year to get data for. Either `2020` or `2010`
@@ -25,7 +25,7 @@ get_alarm <- function(state, year = 2020, geometry = TRUE, epsg = 3857) {
     .frequency = 'once',
     .frequency_id = 'cite_alarm'
   )
-  
+
   base_path <- stringr::str_glue(
     'https://raw.githubusercontent.com/alarm-redist/census-2020/main/census-vest-{year}/'
   )
@@ -54,41 +54,53 @@ get_alarm <- function(state, year = 2020, geometry = TRUE, epsg = 3857) {
   }
 
 
-  tb <- readr::read_csv(file = paste0(base_path, end_path), col_types = spec, 
-                        show_col_types = FALSE)
+  tb <- readr::read_csv(
+    file = paste0(base_path, end_path), col_types = spec,
+    show_col_types = FALSE
+  )
 
   if (geometry) {
     if ((state %in% block_states_2020 && year == 2020) || (state %in% block_states_2010 && year == 2010)) {
       geo <- tinytiger::tt_blocks(state = state, year = year)
     } else {
       geo <- tinytiger::tt_voting_districts(state = state, year = year)
-    }  
-    
+    }
+
     if (year == 2020) {
       geo <- geo %>%
         dplyr::select(.data$GEOID20, .data$geometry) %>%
-        dplyr::mutate(GEOID20 = as.character(.data$GEOID20),
-                      .before = dplyr::everything())
+        dplyr::mutate(
+          GEOID20 = as.character(.data$GEOID20),
+          .before = dplyr::everything()
+        )
       tb <- tb %>%
-        dplyr::mutate(GEOID20 = as.character(.data$GEOID20),
-                      .before = dplyr::everything()) %>%
+        dplyr::mutate(
+          GEOID20 = as.character(.data$GEOID20),
+          .before = dplyr::everything()
+        ) %>%
         dplyr::left_join(geo, by = 'GEOID20') %>%
         sf::st_as_sf()
     } else if (year == 2010) {
       geo <- geo %>%
         dplyr::select(.data$GEOID10, .data$geometry) %>%
-        dplyr::mutate(GEOID10 = as.character(.data$GEOID10),
-                      .before = dplyr::everything())
+        dplyr::mutate(
+          GEOID10 = as.character(.data$GEOID10),
+          .before = dplyr::everything()
+        )
       if (is_block) {
         tb <- tb %>%
-          dplyr::mutate(GEOID10 = paste0(.data$state, .data$county, .data$tract, .data$block),
-                        .before = dplyr::everything()) %>%
+          dplyr::mutate(
+            GEOID10 = paste0(.data$state, .data$county, .data$tract, .data$block),
+            .before = dplyr::everything()
+          ) %>%
           dplyr::left_join(geo, by = 'GEOID10') %>%
           sf::st_as_sf()
       } else {
         tb <- tb %>%
-          dplyr::mutate(GEOID10 = paste0(.data$state, .data$county, .data$vtd), 
-                        .before = dplyr::everything()) %>%
+          dplyr::mutate(
+            GEOID10 = paste0(.data$state, .data$county, .data$vtd),
+            .before = dplyr::everything()
+          ) %>%
           dplyr::left_join(geo, by = 'GEOID10') %>%
           sf::st_as_sf()
       }

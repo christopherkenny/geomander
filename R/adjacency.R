@@ -16,18 +16,17 @@
 #' data(towns)
 #' adj <- adjacency(towns)
 #' add_edge(adj, 2, 3)
-#' 
+#'
 add_edge <- function(adj, v1, v2, zero = TRUE) {
-  
   if (length(v1) != length(v2)) {
     cli::cli_abort('{.arg v1} and {.arg v2} lengths are different.')
   }
 
-  zero <- as.integer(zero) 
-  
+  zero <- as.integer(zero)
+
   for (i in seq_along(v1)) {
-      adj[[v1[i]]] <- c(adj[[v1[i]]], v2[i] - zero)
-      adj[[v2[i]]] <- c(adj[[v2[i]]], v1[i] - zero)
+    adj[[v1[i]]] <- c(adj[[v1[i]]], v2[i] - zero)
+    adj[[v2[i]]] <- c(adj[[v2[i]]], v1[i] - zero)
   }
 
   adj
@@ -45,24 +44,23 @@ add_edge <- function(adj, v1, v2, zero = TRUE) {
 #' @export
 #' @md
 #' @return adjacency list.
-#' 
+#'
 #' @concept fix
 #' @examples
 #' data(towns)
 #' adj <- adjacency(towns)
 #' subtract_edge(adj, 2, 3)
-#' 
+#'
 subtract_edge <- function(adj, v1, v2, zero = TRUE) {
-  
   if (length(v1) != length(v2)) {
     cli::cli_abort('{.arg v1} and {.arg v2} lengths are different.')
   }
-  
+
   zero <- as.integer(zero)
 
   for (i in seq_along(v1)) {
-      adj[[v1[i]]] <- setdiff(adj[[v1[i]]], v2[i] - zero)
-      adj[[v2[i]]] <- setdiff(adj[[v2[i]]], v1[i] - zero)
+    adj[[v1[i]]] <- setdiff(adj[[v1[i]]], v2[i] - zero)
+    adj[[v2[i]]] <- setdiff(adj[[v2[i]]], v1[i] - zero)
   }
 
   adj
@@ -92,7 +90,7 @@ subtract_edge <- function(adj, v1, v2, zero = TRUE) {
 #' adj <- adjacency(va18sub)
 #' suggests <- suggest_neighbors(va18sub, adj)
 #' adj <- adj %>% add_edge(v1 = suggests$x, v2 = suggests$y)
-#' 
+#'
 suggest_neighbors <- function(shp, adj, idx, neighbors = 1) {
   if (missing(idx)) {
     idx <- which(lengths(adj) == 0)
@@ -193,7 +191,7 @@ compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE) {
 #' @param shp sf dataframe
 #' @templateVar epsg TRUE
 #' @template template
-#' 
+#'
 #' @return list with nrow(shp) entries
 #' @export
 #'
@@ -202,13 +200,13 @@ compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE) {
 #' @examples
 #' data(precincts)
 #' adj <- adjacency(precincts)
-#' 
+#'
 adjacency <- function(shp, epsg = 3857) {
   if (!inherits(shp, 'sf')) {
     cli::cli_abort('Input to {.arg shp} must be an sf dataframe.')
   }
-  
+
   shp <- make_planar_pair(shp, epsg = epsg)$x
-  
+
   adj_geos(shp)
 }

@@ -1,5 +1,5 @@
 # Notes on HEDA files
-# 
+#
 #
 # - CT: Registration counts for Connecticut, as of 2008
 
@@ -21,40 +21,40 @@
 #' shp <- get_heda('ND')
 get_heda <- function(state, path = tempdir(), clean_names = FALSE, epsg = 3857, ...) {
   abb <- tolower(censable::match_abb(state))
-  
+
   match.arg(abb, choices = heda_states())
-  
+
   cli::cli_inform(
     'Data sourced from the Harvard Election Data Archive {.url https://projects.iq.harvard.edu/eda/home}.',
     .frequency = 'once',
     .frequency_id = 'cite_heda'
   )
-  
+
   if (abb == 'ca') {
     # CA = block level; return tract level
     file_name <- heda_files[heda_files$state == abb, ]$files[[1]]
     doi <- heda_doi()[abb]
     x <- dataverse::get_dataframe_by_name(filename = file_name, dataset = doi)
-    x <- x %>% 
-      dplyr::mutate(GEOID = stringr::str_sub(.data$geoid10, 1, 11)) %>% 
-      dplyr::group_by(.data$GEOID) %>% 
+    x <- x %>%
+      dplyr::mutate(GEOID = stringr::str_sub(.data$geoid10, 1, 11)) %>%
+      dplyr::group_by(.data$GEOID) %>%
       dplyr::summarise(dplyr::across(where(is.numeric), function(x) sum(x, na.rm = TRUE)))
-    
-    tr <- tinytiger::tt_tracts('CA', year = 2010) %>% 
+
+    tr <- tinytiger::tt_tracts('CA', year = 2010) %>%
       dplyr::select(dplyr::all_of(
-        c(GEOID = 'GEOID10', state = 'STATEFP10', county = 'COUNTYFP10', tract = 'TRACTCE10'))
-      )
-    
-    out <- dplyr::left_join(x, tr, by = 'GEOID') %>% 
+        c(GEOID = 'GEOID10', state = 'STATEFP10', county = 'COUNTYFP10', tract = 'TRACTCE10')
+      ))
+
+    out <- dplyr::left_join(x, tr, by = 'GEOID') %>%
       sf::st_as_sf()
   } else if (abb %in% c('oh', 'mn', 'il')) {
     # mn, oh, il = no zip file
     file_names <- heda_files[heda_files$state == abb, ]$files[[1]] # multiple!
     doi <- heda_doi()[abb]
     up_path <- Filter(function(f) stringr::str_detect(f, 'shp'), file_names)[1]
-    
+
     lapply(file_names, function(file_name) {
-      exten <- stringr::word(file_name, start = -1L, sep = stringr::fixed("."))
+      exten <- stringr::word(file_name, start = -1L, sep = stringr::fixed('.'))
       tf <- tempfile(fileext = paste0('.', exten))
       dataverse::get_file_by_name(
         filename = file_name, dataset = doi,
@@ -63,7 +63,7 @@ get_heda <- function(state, path = tempdir(), clean_names = FALSE, epsg = 3857, 
         writeBin(con = tf)
       file.rename(from = tf, to = paste0(tempdir(), '/', file_name))
     })
-    
+
     out <- sf::read_sf(dsn = paste0(path, '/', up_path), ...)
   } else {
     if (abb %in% c('ga', 'va')) {
@@ -75,7 +75,7 @@ get_heda <- function(state, path = tempdir(), clean_names = FALSE, epsg = 3857, 
     }
     file_name <- heda_files[heda_files$state == abb, ]$files[[1]]
     doi <- heda_doi()[abb]
-    
+
     tf <- tempfile(fileext = '.zip')
     x <- dataverse::get_file_by_name(
       filename = file_name, dataset = doi,
@@ -83,32 +83,33 @@ get_heda <- function(state, path = tempdir(), clean_names = FALSE, epsg = 3857, 
     ) %>%
       writeBin(con = tf)
     poss <- utils::unzip(tf, list = TRUE)
-    poss <- dplyr::filter(poss, !stringr::str_detect(.data$Name, 'MACOSX'),
-                          stringr::str_detect(.data$Name, '.shp'))
+    poss <- dplyr::filter(
+      poss, !stringr::str_detect(.data$Name, 'MACOSX'),
+      stringr::str_detect(.data$Name, '.shp')
+    )
     utils::unzip(tf, exdir = path)
     up_path <- poss$Name[1]
     if (abb == 'va') {
       file.rename(paste0(path, '/', up_path), to = paste0(path, '/', stringr::str_sub(up_path, end = -12)))
       up_path <- stringr::str_sub(up_path, end = -12)
     }
-    
+
     out <- sf::read_sf(dsn = paste0(path, '/', up_path), ...)
   }
-  
-  # unless stated, they seem to use 4140 
+
+  # unless stated, they seem to use 4140
   if (is.na(sf::st_crs(out))) {
     sf::st_crs(out) <- 4140
   }
-  
+
   if (clean_names) {
     if (state %in% c('ny')) {
       out <- clean_heda(out, state)
     } else {
-      out <- clean_heda(out) 
+      out <- clean_heda(out)
     }
-
   }
-  
+
   make_planar_pair(out, epsg = epsg)$x
 }
 
@@ -126,38 +127,42 @@ clean_heda <- function(data, state) {
   # todo:   ga hi ia id il in ks la ma md mi mn mo ms nc nd ne nh nj nm nv oh ok pa sc sd tn tx vt wa wi wy
   if (missing(state)) {
     # normal track
-    data <- data %>% 
+    data <- data %>%
       dplyr::select(
-        -dplyr::ends_with('_1'), 
+        -dplyr::ends_with('_1'),
         -dplyr::any_of(c(
           'VTDI10', 'NAME10', 'NAMELSAD10', 'LSAD10',
           'MTFCC10', 'FUNCSTAT10', 'ALAND10',
           'AWATER10', 'INTPTLAT10', 'INTPTLON10'
         ))
       )
-    
-    data <- data %>% 
+
+    data <- data %>%
       dplyr::rename(
         dplyr::any_of(
-          c(GEOID = 'GEOID10', state = 'STATEFP10', county = 'COUNTYFP10', 
+          c(
+            GEOID = 'GEOID10', state = 'STATEFP10', county = 'COUNTYFP10',
             tract = 'TRACTCE10', vtd = 'VTDST10', precinct = 'PRECINCT',
-            county = 'CNTYKEY', vtd = 'VTDKEY')
+            county = 'CNTYKEY', vtd = 'VTDKEY'
+          )
         )
-      ) %>% 
+      ) %>%
       dplyr::select(
         dplyr::any_of(c('GEOID', 'state', 'county', 'tract', 'vtd', 'precinct')),
-        dplyr::ends_with(c("_00", "_01", "_02", "_03", "_04", "_05", "_06", "_07", "_08", 
-                           "_09", "_10", "_11", "_12", "_13", "_14", '_votes')),
+        dplyr::ends_with(c(
+          '_00', '_01', '_02', '_03', '_04', '_05', '_06', '_07', '_08',
+          '_09', '_10', '_11', '_12', '_13', '_14', '_votes'
+        )),
         dplyr::any_of(c('NDV', 'NRV', ndv = 'NV_D', nrv = 'NV_R'))
-      ) %>% 
-      dplyr::select(-dplyr::matches('^[a-zA-Z]{3}_\\d{2}$')) %>% 
-      dplyr::select(-dplyr::matches('^[a-zA-Z]{1}_\\d{2}$')) %>% 
-      dplyr::rename_with(.fn = stringr::str_to_lower, .cols = -dplyr::any_of('GEOID')) %>% 
-      dplyr::rename_with(.fn = function(x) stringr::str_replace(string = x, pattern = '_tot_', '_')) %>% 
-      dplyr::select(-dplyr::contains('_reg_'), -dplyr::ends_with('_pct')) %>% 
-      dplyr::rename_with(.fn = \(x) stringr::str_remove(x, pattern = '_votes'), dplyr::ends_with('_votes')) %>% 
+      ) %>%
+      dplyr::select(-dplyr::matches('^[a-zA-Z]{3}_\\d{2}$')) %>%
+      dplyr::select(-dplyr::matches('^[a-zA-Z]{1}_\\d{2}$')) %>%
+      dplyr::rename_with(.fn = stringr::str_to_lower, .cols = -dplyr::any_of('GEOID')) %>%
+      dplyr::rename_with(.fn = function(x) stringr::str_replace(string = x, pattern = '_tot_', '_')) %>%
+      dplyr::select(-dplyr::contains('_reg_'), -dplyr::ends_with('_pct')) %>%
+      dplyr::rename_with(.fn = \(x) stringr::str_remove(x, pattern = '_votes'), dplyr::ends_with('_votes')) %>%
       dplyr::rename_with(.fn = \(x) stringr::str_replace(x, '_20', '_'), dplyr::matches('\\d{4}'))
-    
+
     noms <- names(data)
     elec <- which(stringr::str_count(string = noms, '_') == 2)
     if (length(elec) > 0 && stringr::str_sub(noms[elec[1]], 1, 3) %in% c('dem', 'rep')) {
@@ -180,110 +185,114 @@ clean_heda <- function(data, state) {
           off,
           heda_abb_from_alarm[off]
         )
-        
+
         yr <- stringr::str_extract(noms[elec[i]], '\\d+')
         party <- heda_party(noms[elec[i]])
         noms[elec[i]] <- stringr::str_glue('{off}_{yr}_{party}')
       }
     }
-    
+
     names(data) <- noms
-    
   } else {
     if (state == 'ny') {
       data <- data %>%
         dplyr::select(
           c(
-            GEOID = 'GEOID10', state = 'STATEFP10', county = 'COUNTYFP10', vtd = 'VTDST10', 
-            elect_id = 'ELECT_ID', gov_10_dem = 'GOV_DVOTE_', gov_10_rep = 'GOV_RVOTE_', 
-            com_10_dem = 'COMP_DVOTE', com_10_rep = 'COMP_RVOTE', 
-            atg_10_dem = 'AG_DVOTE_1', atg_10_rep = 'AG_RVOTE_1', 
+            GEOID = 'GEOID10', state = 'STATEFP10', county = 'COUNTYFP10', vtd = 'VTDST10',
+            elect_id = 'ELECT_ID', gov_10_dem = 'GOV_DVOTE_', gov_10_rep = 'GOV_RVOTE_',
+            com_10_dem = 'COMP_DVOTE', com_10_rep = 'COMP_RVOTE',
+            atg_10_dem = 'AG_DVOTE_1', atg_10_rep = 'AG_RVOTE_1',
             uss_10_dem_gil = 'USS_2_DVOT', uss_10_rep_dio = 'USS_2_RVOT',
-            uss_10_dem_sch = 'USS_6_DVOT', uss_10_rep_tow = 'USS_6_RVOT', 
+            uss_10_dem_sch = 'USS_6_DVOT', uss_10_rep_tow = 'USS_6_RVOT',
             ndv = 'NDV', nrv = 'NRV', 'geometry'
           )
         )
     } else if (state == 'az') {
-      data <- data %>% 
+      data <- data %>%
         dplyr::select(
           c(
-            GEOID = 'GEOID10', state = 'STATEFP10', county = 'COUNTYFP10', vtd = 'VTDST10', 
-            pre_08_rep = "PRS08_REP",  pre_08_dem = "PRS08_DEM",  pre_08_oth = "PRS08_OTH", 
-            gov_10_dem = "GOV10_DEM",  gov_10_rep = "GOV10_REP",  gov_10_oth = "GOV10_OTH", 
-            sos_10_dem = "SOS_10DEM",  sos_10_rep = "SOS_10REP",  sos_10_oth = "SOS_10OTH", 
-            atg_10_dem = "AG10_DEM",   atg_10_rep = "AG10_REP",   atg_10_oth = "AG1_0OTH", 
-            tre_10_dem = "ST10_DEM",   tre_10_rep = "ST10_REP",   tre_10_oth = "ST10_OTH", 
-            spi_10_dem = "SPI10_DEM",  spi_10_rep = "SPI10_REP",  spi_10_oth = "SPI10_OTH", 
-            uss_10_dem = "USSEN10_DE", uss_10_rep = "USSEN10_RE", uss_10_oth = "USSEN10_OT", 
-            ndv = "NDV", nrv = "NRV", "geometry")
+            GEOID = 'GEOID10', state = 'STATEFP10', county = 'COUNTYFP10', vtd = 'VTDST10',
+            pre_08_rep = 'PRS08_REP', pre_08_dem = 'PRS08_DEM', pre_08_oth = 'PRS08_OTH',
+            gov_10_dem = 'GOV10_DEM', gov_10_rep = 'GOV10_REP', gov_10_oth = 'GOV10_OTH',
+            sos_10_dem = 'SOS_10DEM', sos_10_rep = 'SOS_10REP', sos_10_oth = 'SOS_10OTH',
+            atg_10_dem = 'AG10_DEM', atg_10_rep = 'AG10_REP', atg_10_oth = 'AG1_0OTH',
+            tre_10_dem = 'ST10_DEM', tre_10_rep = 'ST10_REP', tre_10_oth = 'ST10_OTH',
+            spi_10_dem = 'SPI10_DEM', spi_10_rep = 'SPI10_REP', spi_10_oth = 'SPI10_OTH',
+            uss_10_dem = 'USSEN10_DE', uss_10_rep = 'USSEN10_RE', uss_10_oth = 'USSEN10_OT',
+            ndv = 'NDV', nrv = 'NRV', 'geometry'
+          )
         )
     } else if (state == 'co') {
-      data <- data %>% 
+      data <- data %>%
         dplyr::select(
           c(
-            c(GEOID = 'GEOID10', state = 'STATEFP10', county = 'COUNTYFP10', vtd = 'VTDST10',
-              pre_08_dem = "PRES08__D", pre_08_rep = "PRES08__R", pre_08_oth = "PRES08_MP", 
-              uss_08_dem = "USSEN08_D", uss_08_rep = "USSEN08_R", uss_08_oth = "USSEN08_MP", 
-              ush_08_rep = "USHSE08_R", ush_08_dem = "USHSE08_D",
-              rgn_08_dem = "RGNT08_D", rgn_08_rep = "RGNT08_R", 
-              sbe_08_dem = "SBE08_D", sbe_08_rep = "SBE08_R", 
-              ssd_08_rep = "SD08_R",  ssd_08_dem = "SD08_D", 
-              shd_08_dem = "HD08_D", shd_08_rep = "HD08_R", 
-              uss_10_rep = "USSEN10R", uss_10_dem = "USSEN10D", uss_10_oth = "USSEN10MP", 
-              gov_10_rep = "GOV10R", gov_10_dem = "GOV10D", gov_10_oth = "GOVMP", 
-              sos_10_rep = "SOS10R", sos_10_dem = "SOS10D", sos_10_oth = "SOS10MP", 
-              atg_10_rep = "AG10R", atg_10_dem = "AG10D", 
-              tre_10_rep = "TRE10R", tre_10_dem = "TRE10D", 
-              rgl_10_rep = "RGNT10LRGR", rgl_10_dem = "RGNT10LRGD", rgl_10_oth = "RGNT10LRGM", 
-              ush_10_rep = "USHSE10R", ush_10_dem = "USHSE10D", ush_10_oth = "USHSE10MP", 
-              rgn_10_rep = "RGNT10R", rgn_10_dem = "RGNT10_D", 
-              boe_10_rep = "SBE10R", boe_10_dem = "SBE10D", 
-              ssd_10_rep = "SD10_R", ssd_10_dem = "SD10_D", 
-              shd_10_dem = "HD10_D", shd_10_rep = "HD10_R", 
-              ndv = "NDV", nrv = "NRV", "geometry")
+            c(
+              GEOID = 'GEOID10', state = 'STATEFP10', county = 'COUNTYFP10', vtd = 'VTDST10',
+              pre_08_dem = 'PRES08__D', pre_08_rep = 'PRES08__R', pre_08_oth = 'PRES08_MP',
+              uss_08_dem = 'USSEN08_D', uss_08_rep = 'USSEN08_R', uss_08_oth = 'USSEN08_MP',
+              ush_08_rep = 'USHSE08_R', ush_08_dem = 'USHSE08_D',
+              rgn_08_dem = 'RGNT08_D', rgn_08_rep = 'RGNT08_R',
+              sbe_08_dem = 'SBE08_D', sbe_08_rep = 'SBE08_R',
+              ssd_08_rep = 'SD08_R', ssd_08_dem = 'SD08_D',
+              shd_08_dem = 'HD08_D', shd_08_rep = 'HD08_R',
+              uss_10_rep = 'USSEN10R', uss_10_dem = 'USSEN10D', uss_10_oth = 'USSEN10MP',
+              gov_10_rep = 'GOV10R', gov_10_dem = 'GOV10D', gov_10_oth = 'GOVMP',
+              sos_10_rep = 'SOS10R', sos_10_dem = 'SOS10D', sos_10_oth = 'SOS10MP',
+              atg_10_rep = 'AG10R', atg_10_dem = 'AG10D',
+              tre_10_rep = 'TRE10R', tre_10_dem = 'TRE10D',
+              rgl_10_rep = 'RGNT10LRGR', rgl_10_dem = 'RGNT10LRGD', rgl_10_oth = 'RGNT10LRGM',
+              ush_10_rep = 'USHSE10R', ush_10_dem = 'USHSE10D', ush_10_oth = 'USHSE10MP',
+              rgn_10_rep = 'RGNT10R', rgn_10_dem = 'RGNT10_D',
+              boe_10_rep = 'SBE10R', boe_10_dem = 'SBE10D',
+              ssd_10_rep = 'SD10_R', ssd_10_dem = 'SD10_D',
+              shd_10_dem = 'HD10_D', shd_10_rep = 'HD10_R',
+              ndv = 'NDV', nrv = 'NRV', 'geometry'
+            )
           )
         )
     } else if (state == 'fl') {
-      data <- data %>% 
+      data <- data %>%
         dplyr::select(
           c(
-            county = "COUNTY", vtd = "precinct",
-              gov_10_dem_sin = "GOV_D_SINK", gov_10_rep_sco = "GOV_R_SCOT", gov_10_oth_all = "GOV_NPA_AL", 
-              gov_10_oth_art = "GOV_NPA_AR", gov_10_oth_imp = "GOV_NPA_IM", gov_10_oth_kha = "GOV_NPA_KH", 
-              gov_10_oth_ree = "GOV_NPA_RE", 
-              cfo_10_dem_aus = "CFO_D_AUSL", cfo_10_rep_atw = "CFO_R_ATWA", cfo_10_oth_maz = "CFO_NPA_MA", 
-              cfo_10_oth_ste = "CFO_NPA_ST", 
-              atg_10_dem_gel = "AG_D_GELBE", atg_10_rep_bon = "AG_R_BONDI", 
-              atg_10_oth_lew = "AG_NPA_LEW", 
-              agc_10_dem_mad = "AGC_D_MADD", agc_10_rep_put = "AGC_R_PUTN", 
-              agc_10_tea_che = "AGC_TEA_CH", agc_10_oth_ham = "AGC_NPA_HA", 
-              uss_10_dem_mee = "SEN_D_MEEK", uss_10_rep_rub =  "SEN_R_RUBI", uss_10_oth_arm = "SEN_NPA_AR", 
-              uss_10_oth_ask = "SEN_NPA_AS", uss_10_oth_dec = "SEN_NPA_DE", uss_10_oth_cri = "SEN_NPA_CR", 
-              uss_10_oth_rig = "SEN_NPA_RI", uss_10_lib_sni = "SEN_LBT_SN", 
-              ndv = "NDV", nrv = "NRV", "geometry"
+            county = 'COUNTY', vtd = 'precinct',
+            gov_10_dem_sin = 'GOV_D_SINK', gov_10_rep_sco = 'GOV_R_SCOT', gov_10_oth_all = 'GOV_NPA_AL',
+            gov_10_oth_art = 'GOV_NPA_AR', gov_10_oth_imp = 'GOV_NPA_IM', gov_10_oth_kha = 'GOV_NPA_KH',
+            gov_10_oth_ree = 'GOV_NPA_RE',
+            cfo_10_dem_aus = 'CFO_D_AUSL', cfo_10_rep_atw = 'CFO_R_ATWA', cfo_10_oth_maz = 'CFO_NPA_MA',
+            cfo_10_oth_ste = 'CFO_NPA_ST',
+            atg_10_dem_gel = 'AG_D_GELBE', atg_10_rep_bon = 'AG_R_BONDI',
+            atg_10_oth_lew = 'AG_NPA_LEW',
+            agc_10_dem_mad = 'AGC_D_MADD', agc_10_rep_put = 'AGC_R_PUTN',
+            agc_10_tea_che = 'AGC_TEA_CH', agc_10_oth_ham = 'AGC_NPA_HA',
+            uss_10_dem_mee = 'SEN_D_MEEK', uss_10_rep_rub = 'SEN_R_RUBI', uss_10_oth_arm = 'SEN_NPA_AR',
+            uss_10_oth_ask = 'SEN_NPA_AS', uss_10_oth_dec = 'SEN_NPA_DE', uss_10_oth_cri = 'SEN_NPA_CR',
+            uss_10_oth_rig = 'SEN_NPA_RI', uss_10_lib_sni = 'SEN_LBT_SN',
+            ndv = 'NDV', nrv = 'NRV', 'geometry'
           )
         )
     } else if (state == 'ga') {
-      data <- data %>% 
+      data <- data %>%
         dplyr::select(
-          c("ID", "AREA", "DATA", "CTYSOSID", "PRECINCT_C", "PRECINCT_N", 
-            "COUNTY_NAM", "FIPS", "FIPS2", "COUNTY_NUM", 
-            "MCCAIN08", "OBAMA08", "BARR08", 
-            "CHAMBLISS0", "MARTIN08", "BUCKLEY08", "MCDONALD08", "POWELL08", 
-            "GIVENS08", "EVERETT08", "MONDS08", "CREP08", "CDEM08", "STSREP08", 
-            "STSDEM08", "STHREP08", "STHDEM08",
-            "GOV_RVOTE_", "GOV_DVOTE_", "GOV_LIBVOT", 
-            "LTG_RVOTE_", "LTG_DVOTE_", "BUCKLEY06", "SOS_RVOTE_", "SOS_DVOTE_", 
-            "SOS_LIBVOT", "AG_RVOTE_0", "AG_DVOTE_0", "BLACK06", "IRVIN06", 
-            "CASHIN06", "OXENDINE06", "DREXINGER0", "SUPT_RVOTE", "SUPT_DVOTE", 
-            "SUPT_LIBVO", "AGR_RVOTE_", "AGR_DVOTE_", "PSC3_DVOTE", "PSC3_RVOTE", 
-            "PSC3_LIBVO", "PSC5_RVOTE", "PSC5_DVOTE", "PSC5_LIBVO", "USH_RVOTE_", 
-            "USH_DVOTE_", "STS_RVOTE_", "STS_DVOTE_", "STH_RVOTE_", "STH_DVOTE_", 
-            "CNTYSOSID_", "PRECINCT_0", 
-            "PRES_RVOTE", "PRES_DVOTE", "USS_RVOTE_", "USS_DVOTE_", "USS_LIBVOT", 
-            "PSC4_RVOTE", "PSC4_DVOTE", "PSC4_LIBVO", "PSC1_RVOTE", "PSC1_LIBVO", 
-            "USH_RVOTE0", "USH_DVOTE0", "STH_RVOTE0", "STH_DVOTE0",  
-            "geometry")
+          c(
+            'ID', 'AREA', 'DATA', 'CTYSOSID', 'PRECINCT_C', 'PRECINCT_N',
+            'COUNTY_NAM', 'FIPS', 'FIPS2', 'COUNTY_NUM',
+            'MCCAIN08', 'OBAMA08', 'BARR08',
+            'CHAMBLISS0', 'MARTIN08', 'BUCKLEY08', 'MCDONALD08', 'POWELL08',
+            'GIVENS08', 'EVERETT08', 'MONDS08', 'CREP08', 'CDEM08', 'STSREP08',
+            'STSDEM08', 'STHREP08', 'STHDEM08',
+            'GOV_RVOTE_', 'GOV_DVOTE_', 'GOV_LIBVOT',
+            'LTG_RVOTE_', 'LTG_DVOTE_', 'BUCKLEY06', 'SOS_RVOTE_', 'SOS_DVOTE_',
+            'SOS_LIBVOT', 'AG_RVOTE_0', 'AG_DVOTE_0', 'BLACK06', 'IRVIN06',
+            'CASHIN06', 'OXENDINE06', 'DREXINGER0', 'SUPT_RVOTE', 'SUPT_DVOTE',
+            'SUPT_LIBVO', 'AGR_RVOTE_', 'AGR_DVOTE_', 'PSC3_DVOTE', 'PSC3_RVOTE',
+            'PSC3_LIBVO', 'PSC5_RVOTE', 'PSC5_DVOTE', 'PSC5_LIBVO', 'USH_RVOTE_',
+            'USH_DVOTE_', 'STS_RVOTE_', 'STS_DVOTE_', 'STH_RVOTE_', 'STH_DVOTE_',
+            'CNTYSOSID_', 'PRECINCT_0',
+            'PRES_RVOTE', 'PRES_DVOTE', 'USS_RVOTE_', 'USS_DVOTE_', 'USS_LIBVOT',
+            'PSC4_RVOTE', 'PSC4_DVOTE', 'PSC4_LIBVO', 'PSC1_RVOTE', 'PSC1_LIBVO',
+            'USH_RVOTE0', 'USH_DVOTE0', 'STH_RVOTE0', 'STH_DVOTE0',
+            'geometry'
+          )
         )
     }
   }
@@ -386,10 +395,10 @@ heda_party <- function(str) {
   } else if (p == '_dr_') {
     p <- 'dmr' # democratic republicans
   } else if (p == '_p_') {
-    p <- 'pro' #progressives
+    p <- 'pro' # progressives
   } else if (p == '_tot_') {
     p <- 'tot'
-  } else{
+  } else {
     p <- 'unk'
   }
 
@@ -432,57 +441,56 @@ heda_abb <- structure(
 
 heda_abb_from_alarm <- tibble::tribble(
   ~heda, ~alarm,
-  "USP", 'pre',
+  'USP', 'pre',
   'prs', 'pre',
   'pre', 'pre',
   'pres', 'pre',
-  "USS", 'uss',
-  "USH", 'ush',
-  "GOV", 'gov',
-  "LTG", 'ltg',
+  'USS', 'uss',
+  'USH', 'ush',
+  'GOV', 'gov',
+  'LTG', 'ltg',
   'lt', 'ltg',
   'ltgov', 'ltg',
-  "ATG", 'atg',
+  'ATG', 'atg',
   'ag', 'atg',
-  "SOS", 'sos',
-  "TRE", 'tre',
-  "STS", 'ssd',
-  "STH", 'shd',
-  "ADJ", 'adj',
-  "AGR", 'agc',
-  "AUD", 'aud',
+  'SOS', 'sos',
+  'TRE', 'tre',
+  'STS', 'ssd',
+  'STH', 'shd',
+  'ADJ', 'adj',
+  'AGR', 'agc',
+  'AUD', 'aud',
   'audit', 'aud',
-  "COM", 'com',
-  "INS", 'ins',
-  "LND", 'lnd',
-  "RGNT", 'rgn',
-  "SPI", 'soe',
-  "SC#", 'spc',
-  "SCC", 'spc',
-  "CCA", 'jud',
-  "CCA#", 'jud',
-  "RR#", 'rrd', #railroad
-  "SBOE", 'boe',
-  "SPI", 'spi',
-  "CFO", 'cfo',
-  "COC", 'coc',
-  "CCJ#", 'ccj',
-  "PSC#", 'psc',
-  "CVA", 'cva', 
-  "FRE#", 'fre',
-  "LBR", 'lbr',
-  "MAY", 'may',
-  "DEL", 'ush', # DC
-  "SHADS", 'ssd', # DC
-  "SHADR",'ush', # DC
-  "STH2", 'shd',
-  "STHa", 'shd',
+  'COM', 'com',
+  'INS', 'ins',
+  'LND', 'lnd',
+  'RGNT', 'rgn',
+  'SPI', 'soe',
+  'SC#', 'spc',
+  'SCC', 'spc',
+  'CCA', 'jud',
+  'CCA#', 'jud',
+  'RR#', 'rrd', # railroad
+  'SBOE', 'boe',
+  'SPI', 'spi',
+  'CFO', 'cfo',
+  'COC', 'coc',
+  'CCJ#', 'ccj',
+  'PSC#', 'psc',
+  'CVA', 'cva',
+  'FRE#', 'fre',
+  'LBR', 'lbr',
+  'MAY', 'may',
+  'DEL', 'ush', # DC
+  'SHADS', 'ssd', # DC
+  'SHADR', 'ush', # DC
+  'STH2', 'shd',
+  'STHa', 'shd',
   'sen', 'ssd',
   'cng', 'ush',
   'trs', 'tre',
   'treas', 'tre',
   'con', 'con' # CA controller ...
-) %>% 
-  dplyr::mutate(heda = tolower(.data$heda)) %>% 
+) %>%
+  dplyr::mutate(heda = tolower(.data$heda)) %>%
   tibble::deframe()
-  

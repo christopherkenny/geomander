@@ -29,13 +29,15 @@ common district.
 \examples{
 # Not guaranteed to reach download from redistrict2020.org
 \dontrun{
-# download and read baf ---- 
+# download and read baf ----
 url <- 'https://www.redistrict2020.org/files/DE-2021-01/DE_SLDU_bef.zip'
 tf <- tempfile('.zip')
 utils::download.file(url, tf)
 utils::unzip(tf, exdir = dirname(tf))
-baf <- readr::read_csv(file = paste0(dirname(tf), '/DE_SLDU_bef.csv'), 
-                       col_types = 'ci')
+baf <- readr::read_csv(
+  file = paste0(dirname(tf), '/DE_SLDU_bef.csv'),
+  col_types = 'ci'
+)
 names(baf) <- c('GEOID', 'ssd_20')
 
 # convert to vtd level ----

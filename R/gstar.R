@@ -39,6 +39,6 @@ gstar_i <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
       cli::cli_abort('wts and spatial_mat have different lengths.')
     }
   }
-  
+
   localgstar(wts, mat)
 }

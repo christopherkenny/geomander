@@ -5,36 +5,36 @@ contents <- dataverse::dataverse_contents('eda')
 ids <- sapply(contents, \(y) y$identifier)
 ids <- Filter(\(x) !x %in% c('DVN/EQCMZM', 'DVN/DDWGUI'), ids) # MN and UT are deacc.
 ids <- paste0('10.7910/', ids)
-#dataverse::dataset_metadata(paste0('10.7910/', ids[1]))
+# dataverse::dataset_metadata(paste0('10.7910/', ids[1]))
 
 out <- lapply(
-  ids, 
+  ids,
   \(id) dataverse::dataset_metadata(id)
 )
 
 ns <- sapply(out, \(x) x$fields$value[[1]])
 
 all_files <- lapply(ids, function(id) {
-                      id %>% 
-    dataverse::dataset_files() %>% 
+  id %>%
+    dataverse::dataset_files() %>%
     purrr::map_chr(\(z) z$label)
 })
 
 eda <- tibble::tibble(
   id = ids, name = ns, files = all_files
-) %>% 
+) %>%
   mutate(
     state = ifelse(
-      str_detect(name, ' Data Files'), 
-      sapply(name, \(n) censable::match_abb(str_remove(n, ' Data Files'))), 
+      str_detect(name, ' Data Files'),
+      sapply(name, \(n) censable::match_abb(str_remove(n, ' Data Files'))),
       NA_character_
-      )
-  ) %>% 
-  unnest(state) %>% 
-  mutate(state = tolower(state)) 
+    )
+  ) %>%
+  unnest(state) %>%
+  mutate(state = tolower(state))
 
-eda_save <- eda %>% 
-  filter(!is.na(state)) %>% 
+eda_save <- eda %>%
+  filter(!is.na(state)) %>%
   mutate(files = map(files, \(x) Filter(\(y) stringr::str_detect(y, '.zip'), x)))
 
 eda_aug <- tibble::tribble(
@@ -48,13 +48,13 @@ eda_aug <- tibble::tribble(
 eda_save <- rows_update(eda_save, eda_aug, by = 'state')
 # dput(eda_save)
 
-ND_files <- eda %>% 
-  filter(id == '10.7910/DVN/YN4TLR') %>% 
-  pull(files) %>% 
-  .[[1]] %>% 
+ND_files <- eda %>%
+  filter(id == '10.7910/DVN/YN4TLR') %>%
+  pull(files) %>%
+  .[[1]] %>%
   Filter(\(x) substr(x, 1, 2) == 'ND', .)
 
-#dataverse::dataset_files(ids[10])
+# dataverse::dataset_files(ids[10])
 
 tf <- tempfile(fileext = '.zip')
 x <- dataverse::get_file_by_name('ND_Shapefile.zip', ids[10]) %>%
@@ -62,6 +62,7 @@ x <- dataverse::get_file_by_name('ND_Shapefile.zip', ids[10]) %>%
 utils::unzip(tf, exdir = tempdir())
 shp <- sf::st_read(paste0(tempdir(), '/ND_final.shp'))
 
-tabs <- lapply(ND_files, 
-               function(f) dataverse::get_dataframe_by_name(f, '10.7910/DVN/YN4TLR'))
-
+tabs <- lapply(
+  ND_files,
+  function(f) dataverse::get_dataframe_by_name(f, '10.7910/DVN/YN4TLR')
+)
