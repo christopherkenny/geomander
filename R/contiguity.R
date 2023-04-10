@@ -67,13 +67,10 @@ check_contiguity <- function(adj, group) {
       dplyr::group_by(.data$group_number) %>%
       dplyr::mutate(
         component = match(component, as.numeric(names(sort(table(component), decreasing = TRUE))))
-    ) #%>%
-      # dplyr::rowwise() %>%
-      # dplyr::mutate(component = which(component == .data$ranks)) %>%
-      # dplyr::ungroup() %>%
-      # dplyr::select(-.data$ranks)
+    ) %>%
+      dplyr::ungroup()
   }
-
+  
   out
 }
 
