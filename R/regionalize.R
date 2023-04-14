@@ -31,7 +31,7 @@ regionalize <- function(shp, lines, adj = adjacency(shp), epsg = 3857) {
     adj <- subtract_edge(adj, ec_sub$i[i], ec_sub$j[i])
   }
 
-  contiguity(adj, rep(1, nrow(shp)))
+  contiguity(adj, rep(0, nrow(shp)))
 }
 
 
