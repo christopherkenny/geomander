@@ -4,15 +4,12 @@
 \alias{get_heda}
 \title{Get Harvard Election Data Archive ("HEDA") Dataset}
 \usage{
-get_heda(state, path = tempdir(), clean_names = FALSE, epsg = 3857, ...)
+get_heda(state, path = tempdir(), epsg = 3857, ...)
 }
 \arguments{
 \item{state}{two letter state abbreviation}
 
 \item{path}{folder to put shape in. Default is \code{tempdir()}}
-
-\item{clean_names}{Clean names. Default is \code{FALSE}. If \code{TRUE},
-it tries to clean names, but no guarantees are made.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 

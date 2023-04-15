@@ -8,8 +8,6 @@
 #'
 #' @param state two letter state abbreviation
 #' @param path folder to put shape in. Default is \code{tempdir()}
-#' @param clean_names Clean names. Default is \code{FALSE}. If \code{TRUE},
-#' it tries to clean names, but no guarantees are made.
 #' @param epsg `r roxy_epsg()`
 #' @param ... additional arguments passed to [sf::read_sf()]
 #'
@@ -19,7 +17,8 @@
 #' @concept datasets
 #' @examplesIf Sys.getenv('DATAVERSE_KEY') != ''
 #' shp <- get_heda('ND')
-get_heda <- function(state, path = tempdir(), clean_names = FALSE, epsg = 3857, ...) {
+get_heda <- function(state, path = tempdir(), epsg = 3857, ...) {
+  clean_names <- FALSE
   abb <- tolower(censable::match_abb(state))
 
   match.arg(abb, choices = heda_states())

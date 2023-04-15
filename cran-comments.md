@@ -4,7 +4,7 @@
 * ubuntu 20.04 (on GitHub Actions), (devel and release)
 * windows-latest (on GitHub Actions), (release)
 * macOS-latest (on GitHub Actions), (release)
-* Windows (on Winbuilder), (release)
+* Windows (on Winbuilder), (devel and release)
 
 ## R CMD check results
 
