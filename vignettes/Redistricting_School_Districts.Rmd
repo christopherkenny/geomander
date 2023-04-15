@@ -142,7 +142,7 @@ comp <- check_contiguity(adj = adj, group = block$TownID)
 which(comp$component > 1)
 ```
 
-Finally, we have the data in a simulation-ready state! We can now use the adjacency list created above with redist.adjacency to run a simulation using redist.smc. See [the redist package](https://alarm-redist.github.io/) for more information about what's going on here.
+Finally, we have the data in a simulation-ready state! We can now use the adjacency list created above with redist.adjacency to run a simulation using redist.smc. See [the redist package](https://alarm-redist.org/) for more information about what's going on here.
 ```{r, eval = 'redist' %in% installed.packages()}
 library(redist)
 map <- redist_map(block, pop_tol = 0.02, ndists = 7, adj = adj)
