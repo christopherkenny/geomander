@@ -8,6 +8,6 @@ bibentry(
         ),
     year = "2023",
     note = "R package",
-    key = "redist",
+    key = "geomander",
     url = "https://christophertkenny.com/geomander/"
 )
