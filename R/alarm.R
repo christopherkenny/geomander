@@ -18,7 +18,7 @@
 #'
 #' @concept datasets
 #' @examples
-#' ak <- get_alarm('AK')
+#' ak <- get_alarm('AK', geometry = FALSE)
 get_alarm <- function(state, year = 2020, geometry = TRUE, epsg = 3857) {
   cli::cli_inform(
     'Data sourced from the ALARM Project {.url https://github.com/alarm-redist/census-2020}.',
