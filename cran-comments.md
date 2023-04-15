@@ -1,6 +1,6 @@
 ## Test environments
-* local R installation (Windows 11), R 4.2.0
-* local R installation (macOS), R 4.1.2
+* local R installation (Windows 11), R 4.2.3
+* local R installation (macOS), R 4.2.3
 * ubuntu 20.04 (on GitHub Actions), (devel and release)
 * windows-latest (on GitHub Actions), (release)
 * macOS-latest (on GitHub Actions), (release)
@@ -12,3 +12,4 @@
 
 ## Additional Notes
 * Fixes the un-used import of Rcpp.
+* Makes use of `redist` in vignettes conditional.
