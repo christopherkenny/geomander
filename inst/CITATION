@@ -2,7 +2,7 @@ citHeader("To cite geomander in publications use:")
 
 citEntry(entry = "misc",
 	 title = "{geomander}: Geographic Tools for Studying Gerrymandering", 
-	 author = personList(as.person("Christopher T. Kenny")), 
+	 author = as.person("Christopher T. Kenny"), 
 	 howpublished = "Available at The Comprehensive R Archive Network (CRAN)", 
 	 year = "2021",
 	 url = "https://CRAN.R-project.org/package=geomander",
