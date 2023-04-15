@@ -13,3 +13,4 @@
 ## Additional Notes
 * Fixes the un-used import of Rcpp.
 * Makes use of `redist` in vignettes conditional.
+* Updates the CITATION file to use `bibentry()` and remove `personList()` call.
