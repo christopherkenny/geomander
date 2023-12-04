@@ -37,7 +37,8 @@ Suggests:
     redist,
     knitr,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    RcppSimdJson
 LazyData: true
 Encoding: UTF-8
 VignetteBuilder: knitr
