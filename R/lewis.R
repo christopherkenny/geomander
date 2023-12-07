@@ -13,7 +13,7 @@
 #' @references 
 #'  Jeffrey B. Lewis, Brandon DeVine, Lincoln Pitcher, and Kenneth C. Martis. (2013) 
 #'  Digital Boundary Definitions of United States Congressional Districts, 1789-2012. 
-#'  \[Data file and code book\]. Retrieved from https://cdmaps.polisci.ucla.edu on \[date of download\].
+#'  \[Data file and code book\]. Retrieved from <https://cdmaps.polisci.ucla.edu> on \[date of download\].
 #'
 #' @examples
 #' get_lewis(state = 'NM', congress = 111)
