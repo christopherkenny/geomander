@@ -75,7 +75,7 @@ List globalmoran(NumericVector x, NumericMatrix mat) {
     }
     Ii(i) = z(i)*temp/m2;
   }
-  double moran = sum(Ii);
+  double moran = sum(Ii)/normc;
   
   List ret;
   ret["moran"] = moran;
