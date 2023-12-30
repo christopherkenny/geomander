@@ -1,3 +1,9 @@
+# geomander 2.2.1
+
+* Adds support for downloading Jeffrey B. Lewis's historical congressional districts with `get_lewis()
+* Adds support for downloading RPV Near Me datasets with `get_rpvnearme()`
+* Corrects normalized global Moran's I calculation (#12), thanks @CoryMcCartan.
+
 # geomander 2.2.0
 * Updates dependencies for easier installation.
 * Allows for use of `circle` as a method in `geo_match()`.

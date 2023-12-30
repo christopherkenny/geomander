@@ -19,6 +19,7 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/christopherkenny/geomander/workflows/R-CMD-check/badge.svg)](https://github.com/christopherkenny/geomander/actions)
 [![CRAN status](https://www.r-pkg.org/badges/version/geomander)](https://CRAN.R-project.org/package=geomander)
 ![CRAN downloads](http://cranlogs.r-pkg.org/badges/grand-total/geomander)
+[![r-universe status badge](https://christopherkenny.r-universe.dev/badges/geomander)](https://christopherkenny.r-universe.dev/ui#package:geomander)
 <!-- badges: end -->
 
 Focuses on creating data sets and other tools that help make understanding gerrymandering faster and easier. Designed for easy preparation to run simulation analysis with the R package redist, but is aimed at the geographic aspects of redistricting, not partitioning methods. Most of these tools are gathered from seminar papers and do not correspond to a single publication.
@@ -37,8 +38,6 @@ And the development version from [GitHub](https://github.com/) with:
 # install.packages("devtools")
 devtools::install_github("christopherkenny/geomander")
 ```
-
-
 
 ## Examples
 
