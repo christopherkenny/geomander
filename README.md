@@ -6,8 +6,12 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/christopherkenny/geomander/workflows/R-CMD-check/badge.svg)](https://github.com/christopherkenny/geomander/actions)
-[![CRAN status](https://www.r-pkg.org/badges/version/geomander)](https://CRAN.R-project.org/package=geomander)
-![CRAN downloads](http://cranlogs.r-pkg.org/badges/grand-total/geomander)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/geomander)](https://CRAN.R-project.org/package=geomander)
+![CRAN
+downloads](http://cranlogs.r-pkg.org/badges/grand-total/geomander)
+[![geomander status
+badge](https://christopherkenny.r-universe.dev/badges/geomander)](https://christopherkenny.r-universe.dev/geomander)
 <!-- badges: end -->
 
 Focuses on creating data sets and other tools that help make
@@ -40,14 +44,16 @@ A very common task is aggregating block data to precincts.
 ``` r
 library(geomander)
 library(tidyverse)
-#> ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
-#> ✔ ggplot2 3.3.6     ✔ purrr   0.3.4
-#> ✔ tibble  3.1.8     ✔ dplyr   1.0.9
-#> ✔ tidyr   1.2.0     ✔ stringr 1.4.1
-#> ✔ readr   2.1.2     ✔ forcats 0.5.1
+#> ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+#> ✔ dplyr     1.1.4     ✔ readr     2.1.4
+#> ✔ forcats   1.0.0     ✔ stringr   1.5.1
+#> ✔ ggplot2   3.4.4     ✔ tibble    3.2.1
+#> ✔ lubridate 1.9.3     ✔ tidyr     1.3.0
+#> ✔ purrr     1.0.2     
 #> ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 #> ✖ dplyr::filter() masks stats::filter()
 #> ✖ dplyr::lag()    masks stats::lag()
+#> ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
  
 # load precincts
 data('va18sub')
