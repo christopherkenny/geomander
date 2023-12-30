@@ -29,5 +29,5 @@ get_rpvnearme <- function(state, version = c(1, 2)) {
     'https://raw.githubusercontent.com/electionlawclinic/rpvnearme/main/data/{state}_county_2020_precinct{vers}.csv'
   )
   
-  readr::read_csv(base_path)
+  readr::read_csv(base_path, show_col_types = FALSE)
 }
