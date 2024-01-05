@@ -40,26 +40,35 @@ edge_center <- function(shp, adj) {
   nb <- lapply(adj, function(x) {
     x + 1L
   })
-  edgedf <- tibble(
+  edgedf <- tibble::tibble(
     start = rep(seq_along(nb), lengths(nb)),
     finish = unlist(nb)
   )
-
-  edgedf <- edgedf %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(i = min(.data$start, .data$finish), j = max(.data$start, .data$finish)) %>%
-    dplyr::select(.data$i, .data$j)
+  
+  edgedf <- edgedf |>
+    dplyr::mutate(i = pmin(.data$start, .data$finish), j = pmax(.data$start, .data$finish)) |>
+    dplyr::select('i', 'j')
   edgedf <- edgedf[!duplicated(edgedf), ]
-
-
-  edgedf %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(geometry = geos::geos_make_linestring(
-      x = c(geos::geos_x(centers[[.data$i]]), geos::geos_x(centers[[.data$j]])),
-      y = c(geos::geos_y(centers[[.data$i]]), geos::geos_y(centers[[.data$j]])),
+  
+  is <- edgedf$i
+  js <- edgedf$j
+  
+  shps <- lapply(seq_along(is), function(x) {
+    geos::geos_make_linestring(
+      x = c(geos::geos_x(centers[[is[x]]]), geos::geos_x(centers[[js[x]]])),
+      y = c(geos::geos_y(centers[[is[x]]]), geos::geos_y(centers[[js[x]]])),
       crs = sf::st_crs(shp)
-    )) %>%
-    ungroup() %>%
+    ) |>
+      sf::st_as_sfc() |>
+      sf::st_geometrycollection()
+  }) |>
+    sf::st_sfc(crs = sf::st_crs(shp)) |>
+    sf::st_collection_extract('LINESTRING')
+  
+  edgedf |>
+    dplyr::mutate(
+      geometry = shps
+    ) |>
     sf::st_as_sf()
 }
 
