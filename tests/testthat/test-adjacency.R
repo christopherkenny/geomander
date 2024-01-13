@@ -4,6 +4,18 @@ test_that('adjacency works', {
   expect_equal(lapply(actual, sort), lapply(checkerboard_adj, sort))
 })
 
+test_that('adding edges works', {
+  data(towns)
+  adj <- adjacency(towns)
+  
+  expect_equal(
+    add_edge(adj, 4, 6),
+    add_edge(adj, "West Haverstraw", "Stony Point", towns$MUNI)
+  )
+  expect_error(add_edge(adj, "Haverstraw", "Stony Point", towns$MUNI), "[Dd]uplicate")
+  expect_error(add_edge(adj, "NOT A TOWN", "Stony Point", towns$MUNI), "[Mm]issing")
+})
+
 test_that('check_contiguity works', {
   expected <- structure(
     list(
