@@ -94,7 +94,8 @@ subtract_edge <- function(adj, v1, v2, ids = NULL, zero = TRUE) {
 match_vtxs <- function(adj, v1, v2, ids = NULL) {
   if (!is.null(ids)) {
     if (length(adj) != length(ids)) {
-      cli::cli_abort('{.arg ids} must be the same length as {.arg adj}.', parent.frame())
+      cli::cli_abort('{.arg ids} must be the same length as {.arg adj}.', 
+                     call=parent.frame())
     }
     
     lv1 <- lapply(v1, function(x) which(x == ids))
@@ -104,14 +105,14 @@ match_vtxs <- function(adj, v1, v2, ids = NULL) {
       cli::cli_abort(
         c('Provided {.arg ids} are not unique:',
           'i'='Duplicates: {c(v1[lengths(lv1) > 1], v2[lengths(lv2) > 1])}'),
-        parent.frame()
+        call=parent.frame()
       )
     }
     if (any(lengths(lv1) == 0) || any(lengths(lv2) == 0)) {
       cli::cli_abort(
         c('Some values in {.arg v1} and {.arg v2} are not in {.arg ids}:',
           'i'='Missing: {c(v1[lengths(lv1) == 0], v2[lengths(lv2) == 0])}'),
-        parent.frame()
+        call=parent.frame()
       )
     }
     
