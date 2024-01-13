@@ -32,7 +32,7 @@ add_edge <- function(adj, v1, v2, ids = NULL, zero = TRUE) {
 
   zero <- as.integer(zero)
   
-  matched = match_vtxs(v1, v2, ids)
+  matched = match_vtxs(adj, v1, v2, ids)
   v1 <- matched$v1
   v2 <- matched$v2
 
@@ -78,7 +78,7 @@ subtract_edge <- function(adj, v1, v2, ids = NULL, zero = TRUE) {
 
   zero <- as.integer(zero)
   
-  matched = match_vtxs(v1, v2, ids)
+  matched = match_vtxs(adj, v1, v2, ids)
   v1 <- matched$v1
   v2 <- matched$v2
 
@@ -91,7 +91,7 @@ subtract_edge <- function(adj, v1, v2, ids = NULL, zero = TRUE) {
 }
 
 # Helper to look up v1 and v2 in ids
-match_vtxs <- function(v1, v2, ids = NULL) {
+match_vtxs <- function(adj, v1, v2, ids = NULL) {
   if (!is.null(ids)) {
     if (length(adj) != length(ids)) {
       cli::cli_abort('{.arg ids} must be the same length as {.arg adj}.', parent.frame())
