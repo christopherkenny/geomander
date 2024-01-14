@@ -21,7 +21,7 @@ For most analyses, we want some combination of the below packages.
 library(geomander)
 library(dplyr)
 library(ggplot2)
-library(tigris)
+library(tinytiger)
 library(sf)
 ```
 
@@ -94,9 +94,9 @@ The second is the block dataset for County 087 (Henrico County).
 block <- create_block_table(state = 'VA', county = '087')  
 ```
 
-Third, we can use `tigris` to get voting districts for the relevant Virginia county.
+Third, we can use `tinytiger` to get voting districts for the relevant Virginia county.
 ```{r, results='hide', eval = FALSE, message = FALSE}
-vtd <- voting_districts(state = 'VA') %>% filter(COUNTYFP10 == '087')
+vtd <- tt_voting_districts(state = 'VA', county = '087', year = 2010)
 ```
 As with other potential calls to the API, this data is also simplified and included.
 

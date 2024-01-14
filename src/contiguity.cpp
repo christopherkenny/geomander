@@ -8,18 +8,16 @@ IntegerVector contiguity(List adj, IntegerVector group) {
   IntegerVector group_cc(choices.size());
   IntegerVector currgroup(1);
   IntegerVector temp;
-  int cc, s, r, idx;
-  IntegerVector reservoir;
+  int cc, s, r;
+
   for(int i = 0; i < group.size(); i++){
     if(conncomp(i) == 0){
-      currgroup = group(i);
-      idx = match(currgroup, choices)(0) - 1;
-      group_cc(idx) ++;  
-      cc = group_cc(idx);
+      group_cc(group(i)) ++;  
+      cc = group_cc(group(i));
       conncomp(i) = cc;
       
       temp = adj(i);
-      reservoir = IntegerVector(0);
+      std::vector<int> reservoir;
       s = 0;
       for(int j = 0; j < temp.size(); j++){
         if(group(temp(j)) == group(i) && conncomp(temp(j)) == 0){
@@ -32,7 +30,7 @@ IntegerVector contiguity(List adj, IntegerVector group) {
       if(s > 0){
         r = 0;
         while(r < s){
-          temp = adj(reservoir(r));
+          temp = adj(reservoir[r]);
           for(int j = 0; j < temp.size(); j++){
             if(group(temp(j)) == group(i) && conncomp(temp(j)) == 0){
               reservoir.push_back(temp(j));
@@ -48,4 +46,6 @@ IntegerVector contiguity(List adj, IntegerVector group) {
   
   return conncomp;
 }
+
+
 

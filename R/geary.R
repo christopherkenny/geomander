@@ -37,7 +37,7 @@ local_gearys <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
       cli::cli_abort('wts and spatial_mat have different lengths.')
     }
   }
-  
+
   tibble(geary = localgeary(wts, mat))
 }
 

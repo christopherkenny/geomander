@@ -22,12 +22,14 @@ tibble of edges connecting sides of a border
 Suggest Edges to Connect Two Sides of a Border
 }
 \examples{
-data("rockland")
-data("orange")
-data("nrcsd")
+data('rockland')
+data('orange')
+data('nrcsd')
 
 o_and_r <- rbind(orange, rockland)
-o_and_r <- o_and_r \%>\% geo_filter(nrcsd) \%>\% geo_trim(nrcsd)
+o_and_r <- o_and_r \%>\%
+  geo_filter(nrcsd) \%>\%
+  geo_trim(nrcsd)
 adj <- adjacency(o_and_r)
 
 adds <- seam_sew(o_and_r, 'county', c('071', '087'))

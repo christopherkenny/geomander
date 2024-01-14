@@ -1,6 +1,6 @@
-test_that("geo_filter works", {
+test_that('geo_filter works', {
   nr <- geo_filter(rockland, nrcsd)
-  
+
   expect_equal(nrow(nr), 722)
 })
 

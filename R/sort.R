@@ -15,11 +15,10 @@
 #' data(checkerboard)
 #' geo_sort(checkerboard)
 geo_sort <- function(shp, epsg = 3857) {
-  
   if (missing(shp)) {
     cli::cli_abort('{.arg shp} is required.')
   }
-  
+
   shp <- make_planar_pair(shp, epsg = epsg)$x
 
   bbox <- bbox_geos(shp)

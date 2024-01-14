@@ -2,14 +2,14 @@
 % Please edit documentation in R/vest.R
 \name{get_vest}
 \alias{get_vest}
-\title{Get VEST Dataset}
+\title{Get Voting and Election Science Team ("VEST") Dataset}
 \usage{
-get_vest(state, year, path = tempdir(), clean_names = TRUE, epsg = 3857)
+get_vest(state, year, path = tempdir(), clean_names = TRUE, epsg = 3857, ...)
 }
 \arguments{
 \item{state}{two letter state abbreviation}
 
-\item{year}{year in 2016, 2018, or 2020}
+\item{year}{year any in 2016-2021}
 
 \item{path}{folder to put shape in. Default is \code{tempdir()}}
 
@@ -17,12 +17,14 @@ get_vest(state, year, path = tempdir(), clean_names = TRUE, epsg = 3857)
 returns default names.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
+
+\item{...}{additional arguments passed to \code{\link[sf:st_read]{sf::read_sf()}}}
 }
 \value{
 sf tibble
 }
 \description{
-Get VEST Dataset
+Get Voting and Election Science Team ("VEST") Dataset
 }
 \examples{
 \dontrun{

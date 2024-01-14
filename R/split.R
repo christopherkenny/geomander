@@ -52,24 +52,24 @@ split_precinct <- function(lower, precinct, split_by, lower_wt, split_by_id, eps
   if (nrow(split_by) < 2) {
     cli::cli_abort('{.arg split_by} requires at least two geographies to consider.')
   }
-  
+
   pairs <- make_planar_pair(lower, precinct, epsg = epsg)
   lower <- pairs$x
   precinct <- pairs$y
   pairs <- make_planar_pair(lower, split_by, epsg = epsg)
   split_by <- pairs$y
-  
+
   lower <- lower %>%
     geo_filter(precinct, epsg = FALSE) %>%
     geo_trim(precinct, epsg = FALSE)
 
-  split_by <- split_by %>% 
+  split_by <- split_by %>%
     geo_filter(precinct, epsg = FALSE)
 
   matches <- geo_match(from = lower, to = split_by, epsg = FALSE)
 
   out_geo <- lower %>%
-    dplyr::select(.data$geometry) %>%
+    dplyr::select("geometry") %>%
     dplyr::mutate(new = matches) %>%
     dplyr::group_by(.data$new) %>%
     dplyr::summarize(geometry = sf::st_union(.data$geometry))

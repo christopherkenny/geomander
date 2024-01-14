@@ -9,7 +9,6 @@
 #' @param year year, must be 2000, 2010, or 2020
 #' @param mem Default is FALSE. Set TRUE to use memoized backend.
 #' @templateVar epsg TRUE
-#' @param geography Deprecated. Use geometry.
 #' @template template
 #'
 #' @return dataframe with data for each block in the selected region. Data includes
@@ -23,13 +22,8 @@
 #' # uses the Census API
 #' create_block_table(state = 'NY', county = 'Rockland', geometry = FALSE)
 #' }
-create_block_table <- function(state, county = NULL, geometry = TRUE, year = 2020, 
-                               mem = FALSE, epsg = 3857, geography) {
-  if (!missing(geography)) {
-    .Deprecated('geometry', msg = 'Use `geometry` rather than `geography`.')
-    geometry <- geography
-  }
-
+create_block_table <- function(state, county = NULL, geometry = TRUE, year = 2020,
+                               mem = FALSE, epsg = 3857) {
   statepo <- censable::match_abb(state)
 
   if (length(statepo) == 0) {
@@ -51,7 +45,7 @@ create_block_table <- function(state, county = NULL, geometry = TRUE, year = 202
       geometry = geometry, year = year, groups = 'all'
     )
   }
-  
+
   if (geometry) {
     out <- make_planar_pair(out, epsg = epsg)$x
   }
@@ -68,7 +62,6 @@ create_block_table <- function(state, county = NULL, geometry = TRUE, year = 202
 #' @param year year, must be >= 2009 and <= 2019.
 #' @param mem Default is FALSE. Set TRUE to use memoized backend.
 #' @templateVar epsg TRUE
-#' @param geography Deprecated. Use geometry.
 #' @template template
 #'
 #' @return dataframe with data for each tract in the selected region. Data includes
@@ -82,12 +75,7 @@ create_block_table <- function(state, county = NULL, geometry = TRUE, year = 202
 #' tract <- create_tract_table('NY', 'Rockland', year = 2018)
 #' }
 create_tract_table <- function(state, county, geometry = TRUE, year = 2019,
-                               mem = FALSE, epsg = 3857, geography) {
-  if (!missing(geography)) {
-    .Deprecated('geometry', msg = 'Use `geometry` rather than `geography`.')
-    geometry <- geography
-  }
-
+                               mem = FALSE, epsg = 3857) {
   statepo <- censable::match_abb(state)
 
   if (length(statepo) == 0) {
@@ -109,7 +97,7 @@ create_tract_table <- function(state, county, geometry = TRUE, year = 2019,
       geometry = geometry, year = year, groups = 'all'
     )
   }
-  
+
   if (geometry) {
     out <- make_planar_pair(out, epsg = epsg)$x
   }
@@ -125,7 +113,7 @@ create_tract_table <- function(state, county, geometry = TRUE, year = 2019,
 #' @param block_table Required. Block table output from create_block_table
 #' @param matches Required. Grouping variable to aggregate up by, typically made with geo_match
 #' @param geometry Boolean. Whether to keep geometry or not.
-#' 
+#'
 #' @return dataframe with length(unique(matches)) rows
 #' @export
 #' @concept datatable
@@ -134,7 +122,7 @@ create_tract_table <- function(state, county, geometry = TRUE, year = 2019,
 #' data(rockland)
 #' rockland$id <- sample(1:2, nrow(rockland), TRUE)
 #' block2prec(rockland, rockland$id)
-#' 
+#'
 block2prec <- function(block_table, matches, geometry = FALSE) {
   if (missing(block_table)) {
     cli::cli_abort('Please provide an argument to {.arg block_table}.')
@@ -142,7 +130,7 @@ block2prec <- function(block_table, matches, geometry = FALSE) {
   if (missing(matches)) {
     cli::cli_abort('Please provide an argument to {.arg matches}.')
   }
-  
+
   block_table <- block_table %>% mutate(matches_id = matches)
 
   if (!geometry) {
@@ -240,11 +228,11 @@ block2prec_by_county <- function(block_table, precinct, precinct_county_fips, ep
     matches <- geo_match(from = bsub, to = psub, epsg = FALSE)
     prectemp <- block2prec(bsub, matches = matches)
 
-    prectemp <- prectemp %>% 
-      dplyr::left_join(y = psub %>% sf::st_drop_geometry() %>% 
-                  dplyr::select(rowid, matches_id), by = 'matches_id')
+    prectemp <- prectemp %>%
+      dplyr::left_join(y = psub %>% sf::st_drop_geometry() %>%
+        dplyr::select(rowid, matches_id), by = 'matches_id')
 
-    prectb <- prectb %>% 
+    prectb <- prectb %>%
       dplyr::bind_rows(prectemp)
   }
 
@@ -286,7 +274,7 @@ update_tb <- function(ret, missed) {
   if (ncol(expected) == 0) {
     return(ret)
   }
-  
+
   dplyr::rows_patch(x = ret, y = expected, by = 'matches_id')
 }
 

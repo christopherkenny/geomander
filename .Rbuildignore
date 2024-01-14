@@ -12,3 +12,5 @@
 ^CRAN-RELEASE$
 ^cran-comments\.md$
 man-roxygen
+^CRAN-SUBMISSION$
+^data-raw$

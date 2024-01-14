@@ -4,19 +4,14 @@
 \alias{get_alarm}
 \title{Get ALARM Dataset}
 \usage{
-get_alarm(
-  state,
-  geometry = TRUE,
-  file = tempfile(fileext = ".csv"),
-  epsg = 3857
-)
+get_alarm(state, year = 2020, geometry = TRUE, epsg = 3857)
 }
 \arguments{
 \item{state}{two letter state abbreviation}
 
-\item{geometry}{Default is TRUE. Add geomeetry to the data?}
+\item{year}{year to get data for. Either \code{2020} or \code{2010}}
 
-\item{file}{file path to save ALARM csv}
+\item{geometry}{Default is TRUE. Add geometry to the data?}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
@@ -24,7 +19,7 @@ get_alarm(
 tibble with election data and optional geometry
 }
 \description{
-Get's a dataset from the Algorithm-Assisted Redistricting Methodology Project.
+Gets a dataset from the Algorithm-Assisted Redistricting Methodology Project.
 The current supported data is the 2020 retabulations of the VEST data, which
 can be downloaded with \code{get_vest}.
 }
@@ -32,9 +27,6 @@ can be downloaded with \code{get_vest}.
 See the full available data at \url{https://github.com/alarm-redist/census-2020}.
 }
 \examples{
-\donttest{
-# Takes a few seconds to run
-ak <- get_alarm('AK')
-}
+ak <- get_alarm('AK', geometry = FALSE)
 }
 \concept{datasets}

@@ -26,42 +26,42 @@ geo_plot_group <- function(shp, adj, group, save = FALSE, path = '') {
   if (missing(shp)) {
     cli::cli_abort('Please provide an argument to {.arg shp}.')
   }
-  
+
   if (missing(adj)) {
     cli::cli_abort('Please provide an argument to {.arg adj}.')
   }
-  
+
   if (missing(group)) {
     group <- rep(1L, nrow(shp))
   }
-  
+
   components <- check_contiguity(adj = adj, group = group)
-  
+
   shp <- shp %>%
     dplyr::bind_cols(components) %>%
     dplyr::mutate(rownum = row_number())
-  
-  
+
+
   out <- list()
   for (g in 1:length(unique(group))) {
     gc <- unique(group)[g]
-    
-    temp <- shp %>% 
+
+    temp <- shp %>%
       dplyr::filter(group == gc)
-    
-    p <- temp %>% 
+
+    p <- temp %>%
       ggplot2::ggplot(aes(fill = as.character(component))) +
       ggplot2::geom_sf() +
       ggplot2::labs(fill = 'Conn Comp', title = gc) +
       ggplot2::theme_void() +
       ggplot2::scale_fill_brewer(type = 'qual', palette = 'Dark2')
-    
+
     out[[g]] <- p
     if (save) {
       ggsave(filename = paste0(path, 'group_plot_', gc, '.png'), plot = p)
     }
   }
-  
+
   out
 }
 
@@ -79,7 +79,7 @@ geo_plot_group <- function(shp, adj, group, save = FALSE, path = '') {
 #' @examples
 #' data(checkerboard)
 #' geo_plot(checkerboard)
-#' 
+#'
 geo_plot <- function(shp) {
   shp %>%
     dplyr::mutate(rn = dplyr::row_number()) %>%

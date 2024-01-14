@@ -13,12 +13,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-# geomander <a href='https://www.christophertkenny.com/geomander/'><img src='man/figures/logo.png' align="right" height="137" /></a>
+# geomander <a href='https://christophertkenny.com/geomander/'><img src='man/figures/logo.png' align="right" height="137" /></a>
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/christopherkenny/geomander/workflows/R-CMD-check/badge.svg)](https://github.com/christopherkenny/geomander/actions)
 [![CRAN status](https://www.r-pkg.org/badges/version/geomander)](https://CRAN.R-project.org/package=geomander)
 ![CRAN downloads](http://cranlogs.r-pkg.org/badges/grand-total/geomander)
+[![geomander status badge](https://christopherkenny.r-universe.dev/badges/geomander)](https://christopherkenny.r-universe.dev/geomander)
 <!-- badges: end -->
 
 Focuses on creating data sets and other tools that help make understanding gerrymandering faster and easier. Designed for easy preparation to run simulation analysis with the R package redist, but is aimed at the geographic aspects of redistricting, not partitioning methods. Most of these tools are gathered from seminar papers and do not correspond to a single publication.
@@ -37,8 +38,6 @@ And the development version from [GitHub](https://github.com/) with:
 # install.packages("devtools")
 devtools::install_github("christopherkenny/geomander")
 ```
-
-
 
 ## Examples
 
@@ -83,4 +82,4 @@ And estimate down to blocks
 disagg <- geo_estimate_down(from = va18sub, to = block, wts = block$vap, value = va18sub$G18USSRSTE)
 ```
 
-For more information, see the documentation and vignettes, available at [https://www.christophertkenny.com/geomander/](https://www.christophertkenny.com/geomander/)
+For more information, see the documentation and vignettes, available at [https://christophertkenny.com/geomander/](https://christophertkenny.com/geomander/)

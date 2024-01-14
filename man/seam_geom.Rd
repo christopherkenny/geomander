@@ -24,12 +24,14 @@ subset of shp
 Filter Shape to Geographies Along Border
 }
 \examples{
-data("rockland")
-data("orange")
-data("nrcsd")
+data('rockland')
+data('orange')
+data('nrcsd')
 
 o_and_r <- rbind(orange, rockland)
-o_and_r <- o_and_r \%>\% geo_filter(nrcsd) \%>\% geo_trim(nrcsd)
+o_and_r <- o_and_r \%>\%
+  geo_filter(nrcsd) \%>\%
+  geo_trim(nrcsd)
 adj <- adjacency(o_and_r)
 
 seam_geom(adj, shp = o_and_r, admin = 'county', seam = c('071', '087'))

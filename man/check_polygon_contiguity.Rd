@@ -20,7 +20,7 @@ tibble with a column for each of inputted group, created group number, and the
 identified connected component number
 }
 \description{
-Cast `shp` to component polygons, build the adjacency, and check the contiguity.
+Cast \code{shp} to component polygons, build the adjacency, and check the contiguity.
 Avoids issues where a precinct is actually a multipolygon
 }
 \examples{

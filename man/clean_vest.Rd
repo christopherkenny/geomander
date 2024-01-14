@@ -2,7 +2,7 @@
 % Please edit documentation in R/vest.R
 \name{clean_vest}
 \alias{clean_vest}
-\title{Clean Vest Names}
+\title{Clean VEST Names}
 \usage{
 clean_vest(data)
 }
@@ -13,7 +13,7 @@ clean_vest(data)
 data with cleaned names
 }
 \description{
-Clean Vest Names
+Clean VEST Names
 }
 \examples{
 data(va18sub)

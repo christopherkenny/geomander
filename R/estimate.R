@@ -210,7 +210,7 @@ estimate_up <- function(value, group) {
   if (nrow(tb) < max(group)) {
     for (i in 1:max(group)) {
       if (tb$group[i] != i) {
-        tb <- tb %>% 
+        tb <- tb %>%
           dplyr::add_row(group = i, value = 0, .after = (i - 1))
       }
     }
