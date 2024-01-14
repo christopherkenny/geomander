@@ -4,16 +4,24 @@
 \alias{subtract_edge}
 \title{Subtract Edges from an Adjacency List}
 \usage{
-subtract_edge(adj, v1, v2, zero = TRUE)
+subtract_edge(adj, v1, v2, ids = NULL, zero = TRUE)
 }
 \arguments{
 \item{adj}{list of adjacent precincts}
 
-\item{v1}{integer or integer array for first vertex to connect.
-If array, connects each to corresponding entry in v2.}
+\item{v1}{vector of vertex identifiers for the first vertex. Can be an
+integer index or a value to look up in \code{ids}, if that argument is provided.
+If more than one identifier is present, disconnects each to corresponding
+entry in v2, if an edge exists.}
 
-\item{v2}{integer or integer array for second vertex to connect.
-If array, connects each to corresponding entry in v1.}
+\item{v2}{vector of vertex identifiers for the second vertex. Can be an
+integer index or a value to look up in \code{ids}, if that argument is provided.
+If more than one identifier is present, disconnects each to corresponding
+entry in v2, if an edge exists.}
+
+\item{ids}{A vector of identifiers which is used to look up the row indices
+for the vertices.  If provided, the entries in \code{v1} and \code{v2} must match
+exactly one entry in \code{ids}.}
 
 \item{zero}{boolean, TRUE if \code{adj} is zero indexed. False if one indexed.}
 }
@@ -26,7 +34,8 @@ Subtract Edges from an Adjacency List
 \examples{
 data(towns)
 adj <- adjacency(towns)
-subtract_edge(adj, 2, 3)
 
+subtract_edge(adj, 2, 3)
+subtract_edge(adj, "West Haverstraw", "Stony Point", towns$MUNI)
 }
 \concept{fix}

@@ -1,10 +1,17 @@
 #' Add Edges to an Adjacency List
 #'
 #' @param adj list of adjacent precincts
-#' @param v1 integer or integer array for first vertex to connect.
-#' If array, connects each to corresponding entry in v2.
-#' @param v2 integer or integer array for second vertex to connect.
-#' If array, connects each to corresponding entry in v1.
+#' @param v1 vector of vertex identifiers for the first vertex. Can be an
+#'   integer index or a value to look up in `ids`, if that argument is provided.
+#'   If more than one identifier is present, connects each to corresponding
+#'   entry in v2.
+#' @param v2 vector of vertex identifiers for the second vertex. Can be an
+#'   integer index or a value to look up in `ids`, if that argument is provided.
+#'   If more than one identifier is present, connects each to corresponding
+#'   entry in v2.
+#' @param ids A vector of identifiers which is used to look up the row indices
+#'   for the vertices.  If provided, the entries in `v1` and `v2` must match
+#'   exactly one entry in `ids`. 
 #' @param zero boolean, TRUE if the list is zero indexed. False if one indexed.
 #'
 #' @return adjacency list.
@@ -15,14 +22,19 @@
 #' @examples
 #' data(towns)
 #' adj <- adjacency(towns)
+#' 
 #' add_edge(adj, 2, 3)
-#'
-add_edge <- function(adj, v1, v2, zero = TRUE) {
+#' add_edge(adj, "West Haverstraw", "Stony Point", towns$MUNI)
+add_edge <- function(adj, v1, v2, ids = NULL, zero = TRUE) {
   if (length(v1) != length(v2)) {
     cli::cli_abort('{.arg v1} and {.arg v2} lengths are different.')
   }
 
   zero <- as.integer(zero)
+  
+  matched = match_vtxs(adj, v1, v2, ids)
+  v1 <- matched$v1
+  v2 <- matched$v2
 
   for (i in seq_along(v1)) {
     adj[[v1[i]]] <- c(adj[[v1[i]]], v2[i] - zero)
@@ -35,10 +47,17 @@ add_edge <- function(adj, v1, v2, zero = TRUE) {
 #' Subtract Edges from an Adjacency List
 #'
 #' @param adj list of adjacent precincts
-#' @param v1 integer or integer array for first vertex to connect.
-#' If array, connects each to corresponding entry in v2.
-#' @param v2 integer or integer array for second vertex to connect.
-#' If array, connects each to corresponding entry in v1.
+#' @param v1 vector of vertex identifiers for the first vertex. Can be an
+#'   integer index or a value to look up in `ids`, if that argument is provided.
+#'   If more than one identifier is present, disconnects each to corresponding
+#'   entry in v2, if an edge exists.
+#' @param v2 vector of vertex identifiers for the second vertex. Can be an
+#'   integer index or a value to look up in `ids`, if that argument is provided.
+#'   If more than one identifier is present, disconnects each to corresponding
+#'   entry in v2, if an edge exists.
+#' @param ids A vector of identifiers which is used to look up the row indices
+#'   for the vertices.  If provided, the entries in `v1` and `v2` must match
+#'   exactly one entry in `ids`. 
 #' @param zero boolean, TRUE if `adj` is zero indexed. False if one indexed.
 #'
 #' @export
@@ -49,14 +68,19 @@ add_edge <- function(adj, v1, v2, zero = TRUE) {
 #' @examples
 #' data(towns)
 #' adj <- adjacency(towns)
-#' subtract_edge(adj, 2, 3)
 #'
-subtract_edge <- function(adj, v1, v2, zero = TRUE) {
+#' subtract_edge(adj, 2, 3)
+#' subtract_edge(adj, "West Haverstraw", "Stony Point", towns$MUNI)
+subtract_edge <- function(adj, v1, v2, ids = NULL, zero = TRUE) {
   if (length(v1) != length(v2)) {
     cli::cli_abort('{.arg v1} and {.arg v2} lengths are different.')
   }
 
   zero <- as.integer(zero)
+  
+  matched = match_vtxs(adj, v1, v2, ids)
+  v1 <- matched$v1
+  v2 <- matched$v2
 
   for (i in seq_along(v1)) {
     adj[[v1[i]]] <- setdiff(adj[[v1[i]]], v2[i] - zero)
@@ -64,6 +88,39 @@ subtract_edge <- function(adj, v1, v2, zero = TRUE) {
   }
 
   adj
+}
+
+# Helper to look up v1 and v2 in ids
+match_vtxs <- function(adj, v1, v2, ids = NULL) {
+  if (!is.null(ids)) {
+    if (length(adj) != length(ids)) {
+      cli::cli_abort('{.arg ids} must be the same length as {.arg adj}.', 
+                     call=parent.frame())
+    }
+    
+    lv1 <- lapply(v1, function(x) which(x == ids))
+    lv2 <- lapply(v2, function(x) which(x == ids))
+    
+    if (any(lengths(lv1) > 1) || any(lengths(lv2) > 1)) {
+      cli::cli_abort(
+        c('Provided {.arg ids} are not unique:',
+          'i'='Duplicates: {c(v1[lengths(lv1) > 1], v2[lengths(lv2) > 1])}'),
+        call=parent.frame()
+      )
+    }
+    if (any(lengths(lv1) == 0) || any(lengths(lv2) == 0)) {
+      cli::cli_abort(
+        c('Some values in {.arg v1} and {.arg v2} are not in {.arg ids}:',
+          'i'='Missing: {c(v1[lengths(lv1) == 0], v2[lengths(lv2) == 0])}'),
+        call=parent.frame()
+      )
+    }
+    
+    v1 <- unlist(lv1)
+    v2 <- unlist(lv2)
+  }
+  
+  list(v1 = v1, v2 = v2)
 }
 
 #' Suggest Neighbors for Lonely Precincts
