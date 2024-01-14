@@ -1,5 +1,12 @@
 #' Check Contiguity by Group
 #'
+#' Identify contiguous sets of units and numbers each set. Can be extended to repeat the procedure
+#'  within a subgeography.
+#'
+#' @param adj An adjacency list from `adjacency()`
+#' @param group To check contiguity within larger groups such as counties, specify the group identifiers. 
+#'   Typically input district numbers or county names.
+#'
 #' Given a zero-indexed adjacency list and an array of group identifiers, this
 #' returns a tibble which identifies the connected components. The three columns
 #' are `group` for the inputted group, `group_number` which uniquely identifies each
@@ -25,8 +32,12 @@
 #' Defaults to 1 if no input is provided, checking that the adjacency list itself is
 #' one connected component.
 #'
-#' @return tibble with a column for each of inputted group, created group number,
-#' and the identified connected component number
+#' @return tibble with contiguity indicators. Each row is the units of `adj`. Columns include
+#'  - `group` Values of the inputted `group` argument. If `group` is not specified, then all values
+#'    will be 1. 
+#'  - `component` A number for each contiguous set of units within a `group`. If all units within a
+#'    `group` are contiguous, all values are 1. If there are two sets, each discontiguous with
+#'    the other, the larger one will be numbered 1 and the smaller one will be numbered as 2.
 #'
 #' @concept fix
 #'
@@ -35,7 +46,8 @@
 #' data(checkerboard)
 #' adj <- adjacency(checkerboard)
 #' # These each indicate the graph is connected.
-#' check_contiguity(adj)
+#' check_contiguity(adj) # all contiguous
+#' # If there are two discontiguous groups, there will be 2 values of `component`
 #' cct(adj)
 #' ccm(adj)
 #'
