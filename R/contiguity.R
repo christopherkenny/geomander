@@ -3,10 +3,6 @@
 #' Identify contiguous sets of units and numbers each set. Can be extended to repeat the procedure
 #'  within a subgeography.
 #'
-#' @param adj An adjacency list from `adjacency()`
-#' @param group To check contiguity within larger groups such as counties, specify the group identifiers. 
-#'   Typically input district numbers or county names.
-#'
 #' Given a zero-indexed adjacency list and an array of group identifiers, this
 #' returns a tibble which identifies the connected components. The three columns
 #' are `group` for the inputted group, `group_number` which uniquely identifies each

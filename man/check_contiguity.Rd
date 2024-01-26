@@ -20,10 +20,20 @@ Defaults to 1 if no input is provided, checking that the adjacency list itself i
 one connected component.}
 }
 \value{
-tibble with a column for each of inputted group, created group number,
-and the identified connected component number
+tibble with contiguity indicators. Each row is the units of \code{adj}. Columns include
+\itemize{
+\item \code{group} Values of the inputted \code{group} argument. If \code{group} is not specified, then all values
+will be 1.
+\item \code{component} A number for each contiguous set of units within a \code{group}. If all units within a
+\code{group} are contiguous, all values are 1. If there are two sets, each discontiguous with
+the other, the larger one will be numbered 1 and the smaller one will be numbered as 2.
+}
 }
 \description{
+Identify contiguous sets of units and numbers each set. Can be extended to repeat the procedure
+within a subgeography.
+}
+\details{
 Given a zero-indexed adjacency list and an array of group identifiers, this
 returns a tibble which identifies the connected components. The three columns
 are \code{group} for the inputted group, \code{group_number} which uniquely identifies each
@@ -32,8 +42,7 @@ component number for each corresponding entry of adjacency and group. If everyth
 is connected within the group, then each element of \code{component} will be \code{1}.
 Otherwise, the largest component is given the value \code{1}, the next largest \code{2},
 and so on.
-}
-\details{
+
 If nothing is provided to group, it will default to a vector of ones, checking
 if the adjacency graph is connected.
 
@@ -49,7 +58,8 @@ This returns 1 if each group is connected. #'
 data(checkerboard)
 adj <- adjacency(checkerboard)
 # These each indicate the graph is connected.
-check_contiguity(adj)
+check_contiguity(adj) # all contiguous
+# If there are two discontiguous groups, there will be 2 values of `component`
 cct(adj)
 ccm(adj)
 
