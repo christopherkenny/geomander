@@ -1,4 +1,4 @@
-# geomander 2.2.1
+# geomander 2.3.0
 
 * Adds support for downloading Jeffrey B. Lewis's historical congressional districts with `get_lewis()
 * Adds support for downloading RPV Near Me datasets with `get_rpvnearme()`
