@@ -13,6 +13,8 @@ baf_to_vtd(baf, plan_name, GEOID = "GEOID", year = 2020)
 
 \item{GEOID}{character. Name of column which corresponds to each block's GEOID,
 sometimes called "BLOCKID". Default is \code{'GEOID'}.}
+
+\item{year}{the decade to request, either \code{2010} or \code{2020}. Default is \code{2020}.}
 }
 \value{
 a tibble with a vtd-level assignment file

@@ -11,6 +11,7 @@
 #' @param plan_name character. Name of column in `baf` which corresponds to the districts.
 #' @param GEOID character. Name of column which corresponds to each block's GEOID,
 #' sometimes called "BLOCKID". Default is `'GEOID'`.
+#' @param year the decade to request, either `2010` or `2020`. Default is `2020`.
 #'
 #' @return a tibble with a vtd-level assignment file
 #' @export
