@@ -33,7 +33,7 @@
 #' baf_to_vtd(baf = baf, plan_name = 'ssd_20', 'GEOID')
 #' }
 #'
-baf_to_vtd <- function(baf, plan_name, GEOID = 'GEOID') {
+baf_to_vtd <- function(baf, plan_name, GEOID = 'GEOID', year = 2020) {
   if (missing(baf)) {
     cli::cli_abort('{.arg baf} missing, but required.')
   }
@@ -50,10 +50,18 @@ baf_to_vtd <- function(baf, plan_name, GEOID = 'GEOID') {
   if (!'character' %in% class(GEOID)) {
     cli::cli_abort('{.arg GEOID} must be a {.cls character}.')
   }
+  
+  if (!year %in% c(2010, 2020)) {
+    cli::cli_abort('{.arg year} must be either 2010 or 2020.')
+  }
 
   state_fips <- substr(baf[[GEOID]][1], 1, 2)
 
-  baf_vtd <- download_2020_vtd_baf(state = state_fips)
+  if (year == 2020) {
+    baf_vtd <- download_2020_vtd_baf(state = state_fips)
+  } else {
+    baf_vtd <- download_2010_vtd_baf(state = state_fips)
+  }
 
   baf <- baf %>%
     dplyr::rename(GEOID = .env$GEOID) %>%
