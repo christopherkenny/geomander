@@ -4,7 +4,7 @@
 \alias{baf_to_vtd}
 \title{Estimate Plans from a Block Assignment File to Voting Districts}
 \usage{
-baf_to_vtd(baf, plan_name, GEOID = "GEOID")
+baf_to_vtd(baf, plan_name, GEOID = "GEOID", year = 2020)
 }
 \arguments{
 \item{baf}{a tibble representing a block assignment file.}

@@ -20,36 +20,25 @@ Defaults to 1 if no input is provided, checking that the adjacency list itself i
 one connected component.}
 }
 \value{
-tibble with a column for each of inputted group, created group number,
-and the identified connected component number
+tibble with contiguity indicators. Each row is the units of \code{adj}. Columns include
+\itemize{
+\item \code{group} Values of the inputted \code{group} argument. If \code{group} is not specified, then all values
+will be 1.
+\item \code{component} A number for each contiguous set of units within a \code{group}. If all units within a
+\code{group} are contiguous, all values are 1. If there are two sets, each discontiguous with
+the other, the larger one will be numbered 1 and the smaller one will be numbered as 2.
+}
 }
 \description{
-Given a zero-indexed adjacency list and an array of group identifiers, this
-returns a tibble which identifies the connected components. The three columns
-are \code{group} for the inputted group, \code{group_number} which uniquely identifies each
-group as a positive integer, and \code{component} which identifies the connected
-component number for each corresponding entry of adjacency and group. If everything
-is connected within the group, then each element of \code{component} will be \code{1}.
-Otherwise, the largest component is given the value \code{1}, the next largest \code{2},
-and so on.
-}
-\details{
-If nothing is provided to group, it will default to a vector of ones, checking
-if the adjacency graph is connected.
-
-\code{cct()} is shorthand for creating a table of the component values. If everything
-is connected within each group, it returns a value of 1. In general, it returns
-a frequency table of components.
-
-\code{ccm()} is shorthand for getting the maximum component value. It returns the
-maximum number of  components that a group is broken into.
-This returns 1 if each group is connected. #'
+Identify contiguous sets of units and numbers each set. Can be extended to repeat the procedure
+within a subgeography.
 }
 \examples{
 data(checkerboard)
 adj <- adjacency(checkerboard)
 # These each indicate the graph is connected.
-check_contiguity(adj)
+check_contiguity(adj) # all contiguous
+# If there are two discontiguous groups, there will be 2 values of `component`
 cct(adj)
 ccm(adj)
 
