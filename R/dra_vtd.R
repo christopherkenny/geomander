@@ -26,7 +26,7 @@ get_dra <- function(state, year = 2020, geometry = TRUE, clean_names = TRUE, eps
   )
 
   base_path <- stringr::str_glue(
-    'https://raw.githubusercontent.com/dra2020/vtd_data/master/{year}_VTD/'
+    'https://raw.githubusercontent.com/dra2020/vtd_data/d8550e99c3ed5160d1851e21df321fd7be4dca70/{year}_VTD/'
   )
   state <- toupper(censable::match_abb(state))
   block_group_states_2020 <- c('CA', 'HI', 'OR', 'WV')
