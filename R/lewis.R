@@ -1,7 +1,7 @@
 #' Get historical United States Congressional District Shapefiles
 #' 
 #' Data sourced from the United States Congressional District Shapefiles, primarily
-#' hosted at <http://cdmaps.polisci.ucla.edu/>. Files are fetched through the GitHub 
+#' hosted at <https://cdmaps.polisci.ucla.edu/>. Files are fetched through the GitHub 
 #' repository at <https://github.com/JeffreyBLewis/congressional-district-boundaries>.
 #'
 #' @param state two letter state abbreviation

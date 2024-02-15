@@ -16,7 +16,7 @@ a sf tibble of the congressional district boundaries
 }
 \description{
 Data sourced from the United States Congressional District Shapefiles, primarily
-hosted at \url{http://cdmaps.polisci.ucla.edu/}. Files are fetched through the GitHub
+hosted at \url{https://cdmaps.polisci.ucla.edu/}. Files are fetched through the GitHub
 repository at \url{https://github.com/JeffreyBLewis/congressional-district-boundaries}.
 }
 \examples{
