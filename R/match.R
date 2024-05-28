@@ -30,8 +30,8 @@
 #' library(dplyr)
 #' data(checkerboard)
 #' counties <- sf::st_as_sf(as.data.frame(rbind(
-#'   sf::st_union(checkerboard %>% filter(i < 4)),
-#'   sf::st_union(checkerboard %>% filter(i >= 4))
+#'   sf::st_union(checkerboard |> filter(i < 4)),
+#'   sf::st_union(checkerboard |> filter(i >= 4))
 #' )))
 #'
 #' geo_match(from = checkerboard, to = counties)
@@ -85,8 +85,8 @@ geo_match <- function(from, to, method = 'center', by = NULL, tiebreaker = TRUE,
         }
       }
     } else {
-      to <- to %>% dplyr::mutate(toid = dplyr::row_number())
-      from <- from %>% dplyr::mutate(fromid = dplyr::row_number())
+      to <- to |> dplyr::mutate(toid = dplyr::row_number())
+      from <- from |> dplyr::mutate(fromid = dplyr::row_number())
       ints <- largest_intersection_geos(
         x = geos::geos_make_valid(from),
         y = geos::geos_make_valid(to)
@@ -134,11 +134,11 @@ geo_match <- function(from, to, method = 'center', by = NULL, tiebreaker = TRUE,
 
     # create corresponding subset lists
     from_l <- lapply(vals, function(v) {
-      from %>%
+      from |>
         dplyr::filter(.data[[col_from]] == v)
     })
     to_l <- lapply(vals, function(v) {
-      to %>%
+      to |>
         dplyr::filter(.data[[col_to]] == v)
     })
 

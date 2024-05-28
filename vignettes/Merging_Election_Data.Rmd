@@ -107,7 +107,7 @@ vtd <- va_vtd
 
 
 ```{r}
-vtd %>% ggplot() +
+vtd |> ggplot() +
   geom_sf() + 
   geom_sf(data = va18sub, color = 'red', fill = 'NA' )+
   theme_void()

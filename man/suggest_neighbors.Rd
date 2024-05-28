@@ -27,10 +27,10 @@ from the remainder of the geography, such as an island.
 \examples{
 library(dplyr)
 data(va18sub)
-va18sub <- va18sub \%>\% filter(!VTDST \%in\% c('000516', '000510', '000505', '000518'))
+va18sub <- va18sub |> filter(!VTDST \%in\% c('000516', '000510', '000505', '000518'))
 adj <- adjacency(va18sub)
 suggests <- suggest_neighbors(va18sub, adj)
-adj <- adj \%>\% add_edge(v1 = suggests$x, v2 = suggests$y)
+adj <- adj |> add_edge(v1 = suggests$x, v2 = suggests$y)
 
 }
 \concept{fix}

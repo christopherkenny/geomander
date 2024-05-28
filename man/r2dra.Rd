@@ -28,7 +28,7 @@ with DRA. Projecting down to blocks can take a lot of time for larger states.
 \examples{
 \dontrun{
 # Needs Census Bureau API
-cd <- tinytiger::tt_congressional_districts() \%>\% filter(STATEFP == '49')
+cd <- tinytiger::tt_congressional_districts() |> filter(STATEFP == '49')
 cnty <- tinytiger::tt_counties(state = 49)
 matchedcty <- geo_match(from = cnty, to = cd)
 # use counties as precincts and let the plan be their center match:

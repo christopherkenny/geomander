@@ -34,7 +34,7 @@ get_vest <- function(state, year, path = tempdir(), clean_names = TRUE, epsg = 3
   x <- dataverse::get_file_by_name(
     filename = file_name, dataset = doi,
     server = 'dataverse.harvard.edu'
-  ) %>%
+  ) |>
     writeBin(con = tf)
   utils::unzip(tf, exdir = path)
 
@@ -44,7 +44,7 @@ get_vest <- function(state, year, path = tempdir(), clean_names = TRUE, epsg = 3
   out <- sf::read_sf(dsn = paste0(path, '/', up_path, '.shp'), ...)
 
   if (clean_names) {
-    out <- out %>% clean_vest()
+    out <- out |> clean_vest()
   }
 
   make_planar_pair(out, epsg = epsg)$x

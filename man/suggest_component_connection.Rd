@@ -25,7 +25,7 @@ Suggests nearest neighbors for connecting a disconnected group.
 \examples{
 library(dplyr)
 data(checkerboard)
-checkerboard <- checkerboard \%>\% filter(i != 1, j != 1)
+checkerboard <- checkerboard |> filter(i != 1, j != 1)
 adj <- adjacency(checkerboard)
 suggest_component_connection(checkerboard, adj)
 

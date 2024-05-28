@@ -15,7 +15,7 @@
 #' @examples
 #' library(dplyr)
 #' data('checkerboard')
-#' checkerboard <- checkerboard %>% mutate(m = as.numeric((id + i) %% 2 == 0))
+#' checkerboard <- checkerboard |> mutate(m = as.numeric((id + i) %% 2 == 0))
 #' local_gearys(shp = checkerboard, wts = checkerboard$m)
 local_gearys <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
   if (missing(shp) & missing(adj) & missing(spatial_mat)) {
@@ -62,7 +62,7 @@ local_gearys <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
 #' @examples
 #' library(dplyr)
 #' data('checkerboard')
-#' checkerboard <- checkerboard %>% mutate(m = as.numeric((id + i) %% 2 == 0))
+#' checkerboard <- checkerboard |> mutate(m = as.numeric((id + i) %% 2 == 0))
 #' global_gearys(shp = checkerboard, wts = checkerboard$m)
 global_gearys <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
   if (missing(shp) & missing(adj) & missing(spatial_mat)) {

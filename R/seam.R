@@ -18,8 +18,8 @@
 #' data('nrcsd')
 #'
 #' o_and_r <- rbind(orange, rockland)
-#' o_and_r <- o_and_r %>%
-#'   geo_filter(nrcsd) %>%
+#' o_and_r <- o_and_r |>
+#'   geo_filter(nrcsd) |>
 #'   geo_trim(nrcsd)
 #' adj <- adjacency(o_and_r)
 #'
@@ -66,8 +66,8 @@ seam_rip <- function(adj, shp, admin, seam, epsg = 3857) {
 #' data('nrcsd')
 #'
 #' o_and_r <- rbind(orange, rockland)
-#' o_and_r <- o_and_r %>%
-#'   geo_filter(nrcsd) %>%
+#' o_and_r <- o_and_r |>
+#'   geo_filter(nrcsd) |>
 #'   geo_trim(nrcsd)
 #' adj <- adjacency(o_and_r)
 #'
@@ -112,8 +112,8 @@ seam_geom <- function(adj, shp, admin, seam, epsg = 3857) {
 #' data('nrcsd')
 #'
 #' o_and_r <- rbind(orange, rockland)
-#' o_and_r <- o_and_r %>%
-#'   geo_filter(nrcsd) %>%
+#' o_and_r <- o_and_r |>
+#'   geo_filter(nrcsd) |>
 #'   geo_trim(nrcsd)
 #' adj <- adjacency(o_and_r)
 #'
@@ -171,24 +171,25 @@ seam_adj <- function(adj, shp, admin, seam, epsg = 3857) {
 #' data('nrcsd')
 #'
 #' o_and_r <- rbind(orange, rockland)
-#' o_and_r <- o_and_r %>%
-#'   geo_filter(nrcsd) %>%
+#' o_and_r <- o_and_r |>
+#'   geo_filter(nrcsd) |>
 #'   geo_trim(nrcsd)
 #' adj <- adjacency(o_and_r)
 #'
 #' adds <- seam_sew(o_and_r, 'county', c('071', '087'))
-#' adj <- adj %>% add_edge(adds$v1, adds$v2)
+#' adj <- adj |> add_edge(adds$v1, adds$v2)
 #'
 seam_sew <- function(shp, admin, seam, epsg = 3857) {
   shp <- make_planar_pair(shp, epsg = epsg)$x
 
-  cents <- shp %>%
+  cents <- shp |>
     geos_centerish()
 
-  vr <- cents %>%
-    geos::geos_make_collection() %>%
-    geos::geos_voronoi_polygons() %>%
-    geos::geos_geometry_n(seq_len(geos::geos_num_geometries(.)))
+  vor <- cents |>
+    geos::geos_make_collection() |>
+    geos::geos_voronoi_polygons()
+  vr <- vor |>
+    geos::geos_geometry_n(seq_len(geos::geos_num_geometries(geom = vor)))
 
   vr <- vr[unlist(geos::geos_intersects_matrix(cents, vr))]
 
@@ -199,6 +200,6 @@ seam_sew <- function(shp, admin, seam, epsg = 3857) {
       rep(i, length(adj[[i]]))
     })),
     v2 = unlist(adj) + 1L
-  ) %>%
+  ) |>
     dplyr::filter(.data$v1 < .data$v2)
 }

@@ -64,15 +64,15 @@ baf_to_vtd <- function(baf, plan_name, GEOID = 'GEOID', year = 2020) {
     baf_vtd <- download_2010_vtd_baf(state = state_fips)
   }
 
-  baf <- baf %>%
-    dplyr::rename(GEOID = .env$GEOID) %>%
+  baf <- baf |>
+    dplyr::rename(GEOID = .env$GEOID) |>
     left_join(baf_vtd, by = 'GEOID')
 
-  baf %>%
-    dplyr::select(-.data$GEOID) %>%
-    dplyr::mutate(GEOID = paste0(state_fips, .data$county, .data$vtd)) %>%
-    dplyr::select(-.data$county, .data$vtd) %>%
-    dplyr::group_by(.data$GEOID) %>%
+  baf |>
+    dplyr::select(-.data$GEOID) |>
+    dplyr::mutate(GEOID = paste0(state_fips, .data$county, .data$vtd)) |>
+    dplyr::select(-.data$county, .data$vtd) |>
+    dplyr::group_by(.data$GEOID) |>
     dplyr::summarize({{ plan_name }} := as.integer(Mode(.data[[plan_name]])))
 }
 
@@ -91,7 +91,7 @@ download_2020_vtd_baf <- function(state) {
     zipfile = tf,
     files = paste0('BlockAssign_ST', fips, '_', abb, '_VTD.txt'),
     exdir = dirname(tf)
-  ) %>%
+  ) |>
     suppressWarnings()
 
   if (length(baf_vtd_path) == 0) {
@@ -105,7 +105,7 @@ download_2020_vtd_baf <- function(state) {
     delim = '|',
     col_types = readr::cols(.default = 'c'),
     progress = interactive()
-  ) %>%
+  ) |>
     dplyr::rename(GEOID = .data$BLOCKID, county = .data$COUNTYFP, vtd = .data$DISTRICT)
 }
 
@@ -124,7 +124,7 @@ download_2010_vtd_baf <- function(state) {
     zipfile = tf,
     files = paste0('BlockAssign_ST', fips, '_', abb, '_VTD.txt'),
     exdir = dirname(tf)
-  ) %>%
+  ) |>
     suppressWarnings()
 
   if (length(baf_vtd_path) == 0) {
@@ -138,7 +138,7 @@ download_2010_vtd_baf <- function(state) {
     delim = ',',
     col_types = readr::cols(.default = 'c'),
     progress = interactive()
-  ) %>%
+  ) |>
     dplyr::rename(GEOID = .data$BLOCKID, county = .data$COUNTYFP, vtd = .data$DISTRICT)
 }
 

@@ -17,7 +17,7 @@
 #' @examples
 #' library(dplyr)
 #' data('checkerboard')
-#' checkerboard <- checkerboard %>% mutate(m = as.numeric((id + i) %% 2 == 0))
+#' checkerboard <- checkerboard |> mutate(m = as.numeric((id + i) %% 2 == 0))
 #' gstar_i(shp = checkerboard, wts = checkerboard$m)
 gstar_i <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
   if (missing(shp) & missing(adj) & missing(spatial_mat)) {

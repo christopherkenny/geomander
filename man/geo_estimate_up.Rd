@@ -29,9 +29,9 @@ Geographic partner to estimate_up.
 library(dplyr)
 set.seed(1)
 data(checkerboard)
-counties <- checkerboard \%>\%
-  group_by(id <= 32) \%>\%
-  summarize(geometry = sf::st_union(geometry)) \%>\%
+counties <- checkerboard |>
+  group_by(id <= 32) |>
+  summarize(geometry = sf::st_union(geometry)) |>
   mutate(pop = c(100, 200))
 geo_estimate_up(from = checkerboard, to = counties, value = checkerboard$i)
 }

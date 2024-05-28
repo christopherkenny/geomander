@@ -67,41 +67,41 @@ get_alarm <- function(state, year = 2020, geometry = TRUE, epsg = 3857) {
     }
 
     if (year == 2020) {
-      geo <- geo %>%
-        dplyr::select(.data$GEOID20, .data$geometry) %>%
+      geo <- geo |>
+        dplyr::select(.data$GEOID20, .data$geometry) |>
         dplyr::mutate(
           GEOID20 = as.character(.data$GEOID20),
           .before = dplyr::everything()
         )
-      tb <- tb %>%
+      tb <- tb |>
         dplyr::mutate(
           GEOID20 = as.character(.data$GEOID20),
           .before = dplyr::everything()
-        ) %>%
-        dplyr::left_join(geo, by = 'GEOID20') %>%
+        ) |>
+        dplyr::left_join(geo, by = 'GEOID20') |>
         sf::st_as_sf()
     } else if (year == 2010) {
-      geo <- geo %>%
-        dplyr::select(.data$GEOID10, .data$geometry) %>%
+      geo <- geo |>
+        dplyr::select(.data$GEOID10, .data$geometry) |>
         dplyr::mutate(
           GEOID10 = as.character(.data$GEOID10),
           .before = dplyr::everything()
         )
       if (is_block) {
-        tb <- tb %>%
+        tb <- tb |>
           dplyr::mutate(
             GEOID10 = paste0(.data$state, .data$county, .data$tract, .data$block),
             .before = dplyr::everything()
-          ) %>%
-          dplyr::left_join(geo, by = 'GEOID10') %>%
+          ) |>
+          dplyr::left_join(geo, by = 'GEOID10') |>
           sf::st_as_sf()
       } else {
-        tb <- tb %>%
+        tb <- tb |>
           dplyr::mutate(
             GEOID10 = paste0(.data$state, .data$county, .data$vtd),
             .before = dplyr::everything()
-          ) %>%
-          dplyr::left_join(geo, by = 'GEOID10') %>%
+          ) |>
+          dplyr::left_join(geo, by = 'GEOID10') |>
           sf::st_as_sf()
       }
     }

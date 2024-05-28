@@ -71,11 +71,11 @@ check_contiguity <- function(adj, group) {
   if (max(out$component) == 1) {
     return(out)
   } else {
-    out <- out %>%
-      dplyr::group_by(.data$group_number) %>%
+    out <- out |>
+      dplyr::group_by(.data$group_number) |>
       dplyr::mutate(
         component = match(component, as.numeric(names(sort(table(component), decreasing = TRUE))))
-    ) %>%
+    ) |>
       dplyr::ungroup()
   }
   
@@ -127,16 +127,16 @@ check_polygon_contiguity <- function(shp, group, epsg = 3857) {
 
   shp <- make_planar_pair(x = shp, epsg = 3857)$x
 
-  shp <- shp %>%
-    dplyr::select({{ group }}) %>%
-    sf::st_cast('POLYGON') %>%
-    sf::st_as_sf() %>%
+  shp <- shp |>
+    dplyr::select({{ group }}) |>
+    sf::st_cast('POLYGON') |>
+    sf::st_as_sf() |>
     suppressWarnings()
 
   adj <- adj_geos(shp)
 
-  check_contiguity(adj = adj, group = shp %>%
-    sf::st_drop_geometry() %>%
+  check_contiguity(adj = adj, group = shp |>
+    sf::st_drop_geometry() |>
     dplyr::pull({{ group }}))
 }
 
@@ -159,7 +159,7 @@ check_polygon_contiguity <- function(shp, group, epsg = 3857) {
 #' @examples
 #' library(dplyr)
 #' data(checkerboard)
-#' checkerboard <- checkerboard %>% filter(i != 1, j != 1)
+#' checkerboard <- checkerboard |> filter(i != 1, j != 1)
 #' adj <- adjacency(checkerboard)
 #' suggest_component_connection(checkerboard, adj)
 #'
@@ -177,7 +177,7 @@ suggest_component_connection <- function(shp, adj, group, epsg = 3857) {
   components <- check_contiguity(adj = adj, group = group)
 
   shp <- make_planar_pair(x = shp, epsg = 3857)$x
-  shp <- shp %>% mutate(rownum = row_number())
+  shp <- shp |> mutate(rownum = row_number())
 
   out <- tibble()
   for (g in seq_len(length(unique(group)))) {
@@ -189,7 +189,7 @@ suggest_component_connection <- function(shp, adj, group, epsg = 3857) {
         tempy <- cents[group == g & components$component != c, ]
         dists <- dist_mat_geos(x = tempx, y = tempy)
         prop <- arrayInd(which.min(dists), dim(dists))
-        out <- out %>%
+        out <- out |>
           dplyr::bind_rows(tibble(
             x = tempx$rownum[prop[1, 1]],
             y = tempy$rownum[prop[1, 2]]

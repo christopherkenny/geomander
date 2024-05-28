@@ -27,13 +27,13 @@ data('orange')
 data('nrcsd')
 
 o_and_r <- rbind(orange, rockland)
-o_and_r <- o_and_r \%>\%
-  geo_filter(nrcsd) \%>\%
+o_and_r <- o_and_r |>
+  geo_filter(nrcsd) |>
   geo_trim(nrcsd)
 adj <- adjacency(o_and_r)
 
 adds <- seam_sew(o_and_r, 'county', c('071', '087'))
-adj <- adj \%>\% add_edge(adds$v1, adds$v2)
+adj <- adj |> add_edge(adds$v1, adds$v2)
 
 }
 \concept{seam}

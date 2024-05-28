@@ -143,10 +143,10 @@ match_vtxs <- function(adj, v1, v2, ids = NULL) {
 #' @examples
 #' library(dplyr)
 #' data(va18sub)
-#' va18sub <- va18sub %>% filter(!VTDST %in% c('000516', '000510', '000505', '000518'))
+#' va18sub <- va18sub |> filter(!VTDST %in% c('000516', '000510', '000505', '000518'))
 #' adj <- adjacency(va18sub)
 #' suggests <- suggest_neighbors(va18sub, adj)
-#' adj <- adj %>% add_edge(v1 = suggests$x, v2 = suggests$y)
+#' adj <- adj |> add_edge(v1 = suggests$x, v2 = suggests$y)
 #'
 suggest_neighbors <- function(shp, adj, idx, neighbors = 1) {
   if (missing(idx)) {
@@ -224,8 +224,8 @@ compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE) {
   if (!missing(shp)) {
     if (nrow(ret) > 1) {
       for (i in 1:nrow(ret)) {
-        temp1 <- shp %>% slice(ret$x[i])
-        temp2 <- shp %>% slice(ret$y[i])
+        temp1 <- shp |> slice(ret$x[i])
+        temp2 <- shp |> slice(ret$y[i])
 
         ret$relation[i] <- sf::st_relate(temp1, temp2)
         suppressWarnings(ret$class[i] <- class(sf::st_geometry(sf::st_intersection(

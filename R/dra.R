@@ -54,13 +54,13 @@ dra2r <- function(dra, state, precincts, epsg = 3857) {
   }
 
   # rename District column
-  dra <- dra %>% dplyr::rename(District_DRA = District)
+  dra <- dra |> dplyr::rename(District_DRA = District)
 
   # get the block file to match it to
   shp <- tinytiger::tt_blocks(state, year = 2020)
 
   # join them together
-  shp <- shp %>% dplyr::left_join(dra, by = 'GEOID20')
+  shp <- shp |> dplyr::left_join(dra, by = 'GEOID20')
 
   # match to precincts if provided
   if (!missing(precincts)) {
@@ -70,25 +70,25 @@ dra2r <- function(dra, state, precincts, epsg = 3857) {
 
     matches <- geo_match(from = shp, to = precincts, epsg = FALSE)
 
-    shp <- shp %>% dplyr::mutate(matches = matches)
+    shp <- shp |> dplyr::mutate(matches = matches)
 
-    shp <- shp %>%
-      sf::st_drop_geometry() %>%
+    shp <- shp |>
+      sf::st_drop_geometry() |>
       dplyr::select(matches, District_DRA)
 
     # get the most likely match
-    shp <- shp %>%
-      dplyr::group_by(matches, District_DRA) %>%
-      dplyr::mutate(n = n()) %>%
-      dplyr::ungroup() %>%
-      dplyr::group_by(matches) %>%
-      dplyr::arrange(desc(n)) %>%
-      dplyr::slice(1) %>%
-      dplyr::ungroup() %>%
+    shp <- shp |>
+      dplyr::group_by(matches, District_DRA) |>
+      dplyr::mutate(n = n()) |>
+      dplyr::ungroup() |>
+      dplyr::group_by(matches) |>
+      dplyr::arrange(desc(n)) |>
+      dplyr::slice(1) |>
+      dplyr::ungroup() |>
       dplyr::select(-n)
 
-    precincts <- precincts %>%
-      dplyr::left_join(shp, by = 'matches') %>%
+    precincts <- precincts |>
+      dplyr::left_join(shp, by = 'matches') |>
       dplyr::select(-matches)
 
     return(precincts)
@@ -115,7 +115,7 @@ dra2r <- function(dra, state, precincts, epsg = 3857) {
 #' @concept dra
 #' @examples \dontrun{
 #' # Needs Census Bureau API
-#' cd <- tinytiger::tt_congressional_districts() %>% filter(STATEFP == '49')
+#' cd <- tinytiger::tt_congressional_districts() |> filter(STATEFP == '49')
 #' cnty <- tinytiger::tt_counties(state = 49)
 #' matchedcty <- geo_match(from = cnty, to = cd)
 #' # use counties as precincts and let the plan be their center match:

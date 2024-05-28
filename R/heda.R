@@ -34,17 +34,17 @@ get_heda <- function(state, path = tempdir(), epsg = 3857, ...) {
     file_name <- heda_files[heda_files$state == abb, ]$files[[1]]
     doi <- heda_doi()[abb]
     x <- dataverse::get_dataframe_by_name(filename = file_name, dataset = doi)
-    x <- x %>%
-      dplyr::mutate(GEOID = stringr::str_sub(.data$geoid10, 1, 11)) %>%
-      dplyr::group_by(.data$GEOID) %>%
+    x <- x |>
+      dplyr::mutate(GEOID = stringr::str_sub(.data$geoid10, 1, 11)) |>
+      dplyr::group_by(.data$GEOID) |>
       dplyr::summarise(dplyr::across(where(is.numeric), function(x) sum(x, na.rm = TRUE)))
 
-    tr <- tinytiger::tt_tracts('CA', year = 2010) %>%
+    tr <- tinytiger::tt_tracts('CA', year = 2010) |>
       dplyr::select(dplyr::all_of(
         c(GEOID = 'GEOID10', state = 'STATEFP10', county = 'COUNTYFP10', tract = 'TRACTCE10')
       ))
 
-    out <- dplyr::left_join(x, tr, by = 'GEOID') %>%
+    out <- dplyr::left_join(x, tr, by = 'GEOID') |>
       sf::st_as_sf()
   } else if (abb %in% c('oh', 'mn', 'il')) {
     # mn, oh, il = no zip file
@@ -58,7 +58,7 @@ get_heda <- function(state, path = tempdir(), epsg = 3857, ...) {
       dataverse::get_file_by_name(
         filename = file_name, dataset = doi,
         server = 'dataverse.harvard.edu'
-      ) %>%
+      ) |>
         writeBin(con = tf)
       file.rename(from = tf, to = paste0(tempdir(), '/', file_name))
     })
@@ -79,7 +79,7 @@ get_heda <- function(state, path = tempdir(), epsg = 3857, ...) {
     x <- dataverse::get_file_by_name(
       filename = file_name, dataset = doi,
       server = 'dataverse.harvard.edu'
-    ) %>%
+    ) |>
       writeBin(con = tf)
     poss <- utils::unzip(tf, list = TRUE)
     poss <- dplyr::filter(
@@ -126,7 +126,7 @@ clean_heda <- function(data, state) {
   # todo:   ga hi ia id il in ks la ma md mi mn mo ms nc nd ne nh nj nm nv oh ok pa sc sd tn tx vt wa wi wy
   if (missing(state)) {
     # normal track
-    data <- data %>%
+    data <- data |>
       dplyr::select(
         -dplyr::ends_with('_1'),
         -dplyr::any_of(c(
@@ -136,7 +136,7 @@ clean_heda <- function(data, state) {
         ))
       )
 
-    data <- data %>%
+    data <- data |>
       dplyr::rename(
         dplyr::any_of(
           c(
@@ -145,7 +145,7 @@ clean_heda <- function(data, state) {
             county = 'CNTYKEY', vtd = 'VTDKEY'
           )
         )
-      ) %>%
+      ) |>
       dplyr::select(
         dplyr::any_of(c('GEOID', 'state', 'county', 'tract', 'vtd', 'precinct')),
         dplyr::ends_with(c(
@@ -153,13 +153,13 @@ clean_heda <- function(data, state) {
           '_09', '_10', '_11', '_12', '_13', '_14', '_votes'
         )),
         dplyr::any_of(c('NDV', 'NRV', ndv = 'NV_D', nrv = 'NV_R'))
-      ) %>%
-      dplyr::select(-dplyr::matches('^[a-zA-Z]{3}_\\d{2}$')) %>%
-      dplyr::select(-dplyr::matches('^[a-zA-Z]{1}_\\d{2}$')) %>%
-      dplyr::rename_with(.fn = stringr::str_to_lower, .cols = -dplyr::any_of('GEOID')) %>%
-      dplyr::rename_with(.fn = function(x) stringr::str_replace(string = x, pattern = '_tot_', '_')) %>%
-      dplyr::select(-dplyr::contains('_reg_'), -dplyr::ends_with('_pct')) %>%
-      dplyr::rename_with(.fn = \(x) stringr::str_remove(x, pattern = '_votes'), dplyr::ends_with('_votes')) %>%
+      ) |>
+      dplyr::select(-dplyr::matches('^[a-zA-Z]{3}_\\d{2}$')) |>
+      dplyr::select(-dplyr::matches('^[a-zA-Z]{1}_\\d{2}$')) |>
+      dplyr::rename_with(.fn = stringr::str_to_lower, .cols = -dplyr::any_of('GEOID')) |>
+      dplyr::rename_with(.fn = function(x) stringr::str_replace(string = x, pattern = '_tot_', '_')) |>
+      dplyr::select(-dplyr::contains('_reg_'), -dplyr::ends_with('_pct')) |>
+      dplyr::rename_with(.fn = \(x) stringr::str_remove(x, pattern = '_votes'), dplyr::ends_with('_votes')) |>
       dplyr::rename_with(.fn = \(x) stringr::str_replace(x, '_20', '_'), dplyr::matches('\\d{4}'))
 
     noms <- names(data)
@@ -194,7 +194,7 @@ clean_heda <- function(data, state) {
     names(data) <- noms
   } else {
     if (state == 'ny') {
-      data <- data %>%
+      data <- data |>
         dplyr::select(
           c(
             GEOID = 'GEOID10', state = 'STATEFP10', county = 'COUNTYFP10', vtd = 'VTDST10',
@@ -207,7 +207,7 @@ clean_heda <- function(data, state) {
           )
         )
     } else if (state == 'az') {
-      data <- data %>%
+      data <- data |>
         dplyr::select(
           c(
             GEOID = 'GEOID10', state = 'STATEFP10', county = 'COUNTYFP10', vtd = 'VTDST10',
@@ -222,7 +222,7 @@ clean_heda <- function(data, state) {
           )
         )
     } else if (state == 'co') {
-      data <- data %>%
+      data <- data |>
         dplyr::select(
           c(
             c(
@@ -250,7 +250,7 @@ clean_heda <- function(data, state) {
           )
         )
     } else if (state == 'fl') {
-      data <- data %>%
+      data <- data |>
         dplyr::select(
           c(
             county = 'COUNTY', vtd = 'precinct',
@@ -270,7 +270,7 @@ clean_heda <- function(data, state) {
           )
         )
     } else if (state == 'ga') {
-      data <- data %>%
+      data <- data |>
         dplyr::select(
           c(
             'ID', 'AREA', 'DATA', 'CTYSOSID', 'PRECINCT_C', 'PRECINCT_N',
@@ -490,6 +490,6 @@ heda_abb_from_alarm <- tibble::tribble(
   'trs', 'tre',
   'treas', 'tre',
   'con', 'con' # CA controller ...
-) %>%
-  dplyr::mutate(heda = tolower(.data$heda)) %>%
+) |>
+  dplyr::mutate(heda = tolower(.data$heda)) |>
   tibble::deframe()

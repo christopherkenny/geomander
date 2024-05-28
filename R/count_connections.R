@@ -19,6 +19,6 @@ count_connections <- function(dm, normalize = FALSE) {
     mat <- mat / ncol(dm)
   }
 
-  tidyr::expand_grid(x = 1:nrow(dm), y = 1:nrow(dm)) %>%
+  tidyr::expand_grid(x = 1:nrow(dm), y = 1:nrow(dm)) |>
     dplyr::mutate(fill = c(mat))
 }

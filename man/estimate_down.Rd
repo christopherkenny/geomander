@@ -24,9 +24,9 @@ down without the costly matching operation if they've already matched.
 library(dplyr)
 set.seed(1)
 data(checkerboard)
-counties <- checkerboard \%>\%
-  group_by(id <= 32) \%>\%
-  summarize(geometry = sf::st_union(geometry)) \%>\%
+counties <- checkerboard |>
+  group_by(id <= 32) |>
+  summarize(geometry = sf::st_union(geometry)) |>
   mutate(pop = c(100, 200))
 matches <- geo_match(checkerboard, counties)
 estimate_down(wts = rep(1, nrow(checkerboard)), value = counties$pop, group = matches)

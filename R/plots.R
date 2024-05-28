@@ -16,7 +16,7 @@
 #' data('checkerboard')
 #' data('checkerboard_adj')
 #'
-#' checkerboard <- checkerboard %>% mutate(discont = as.integer(j == 5 | j == 6))
+#' checkerboard <- checkerboard |> mutate(discont = as.integer(j == 5 | j == 6))
 #'
 #' p <- geo_plot_group(checkerboard, checkerboard_adj, checkerboard$discont)
 #'
@@ -37,8 +37,8 @@ geo_plot_group <- function(shp, adj, group, save = FALSE, path = '') {
 
   components <- check_contiguity(adj = adj, group = group)
 
-  shp <- shp %>%
-    dplyr::bind_cols(components) %>%
+  shp <- shp |>
+    dplyr::bind_cols(components) |>
     dplyr::mutate(rownum = row_number())
 
 
@@ -46,10 +46,10 @@ geo_plot_group <- function(shp, adj, group, save = FALSE, path = '') {
   for (g in 1:length(unique(group))) {
     gc <- unique(group)[g]
 
-    temp <- shp %>%
+    temp <- shp |>
       dplyr::filter(group == gc)
 
-    p <- temp %>%
+    p <- temp |>
       ggplot2::ggplot(aes(fill = as.character(component))) +
       ggplot2::geom_sf() +
       ggplot2::labs(fill = 'Conn Comp', title = gc) +
@@ -81,8 +81,8 @@ geo_plot_group <- function(shp, adj, group, save = FALSE, path = '') {
 #' geo_plot(checkerboard)
 #'
 geo_plot <- function(shp) {
-  shp %>%
-    dplyr::mutate(rn = dplyr::row_number()) %>%
+  shp |>
+    dplyr::mutate(rn = dplyr::row_number()) |>
     ggplot2::ggplot() +
     ggplot2::geom_sf() +
     ggplot2::geom_sf_text(aes(label = .data$rn)) +

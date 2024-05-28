@@ -15,7 +15,7 @@
 #' @examples
 #' library(dplyr)
 #' data('checkerboard')
-#' checkerboard <- checkerboard %>% mutate(m = as.numeric((id + i) %% 2 == 0))
+#' checkerboard <- checkerboard |> mutate(m = as.numeric((id + i) %% 2 == 0))
 #' local_morans(shp = checkerboard, wts = checkerboard$m)
 local_morans <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
   if (missing(shp) & missing(adj) & missing(spatial_mat)) {
@@ -64,7 +64,7 @@ local_morans <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
 #' @examples
 #' library(dplyr)
 #' data('checkerboard')
-#' checkerboard <- checkerboard %>% mutate(m = as.numeric((id + i) %% 2 == 0))
+#' checkerboard <- checkerboard |> mutate(m = as.numeric((id + i) %% 2 == 0))
 #' global_morans(shp = checkerboard, wts = checkerboard$m)
 global_morans <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
   if (missing(shp) & missing(adj) & missing(spatial_mat)) {

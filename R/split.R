@@ -23,14 +23,14 @@
 #' @examples
 #' library(sf)
 #' data(checkerboard)
-#' low <- checkerboard %>% dplyr::slice(1:3, 9:11)
-#' prec <- checkerboard %>%
-#'   dplyr::slice(1:3) %>%
+#' low <- checkerboard |> dplyr::slice(1:3, 9:11)
+#' prec <- checkerboard |>
+#'   dplyr::slice(1:3) |>
 #'   dplyr::summarize(geometry = sf::st_union(geometry))
-#' dists <- checkerboard %>%
-#'   dplyr::slice(1:3, 9:11) %>%
-#'   dplyr::mutate(dist = c(1, 2, 2, 1, 3, 3)) %>%
-#'   dplyr::group_by(dist) %>%
+#' dists <- checkerboard |>
+#'   dplyr::slice(1:3, 9:11) |>
+#'   dplyr::mutate(dist = c(1, 2, 2, 1, 3, 3)) |>
+#'   dplyr::group_by(dist) |>
 #'   dplyr::summarize(geometry = sf::st_union(geometry))
 #'
 #' split_precinct(low, prec, dists, split_by_id = 'dist')
@@ -59,25 +59,25 @@ split_precinct <- function(lower, precinct, split_by, lower_wt, split_by_id, eps
   pairs <- make_planar_pair(lower, split_by, epsg = epsg)
   split_by <- pairs$y
 
-  lower <- lower %>%
-    geo_filter(precinct, epsg = FALSE) %>%
+  lower <- lower |>
+    geo_filter(precinct, epsg = FALSE) |>
     geo_trim(precinct, epsg = FALSE)
 
-  split_by <- split_by %>%
+  split_by <- split_by |>
     geo_filter(precinct, epsg = FALSE)
 
   matches <- geo_match(from = lower, to = split_by, epsg = FALSE)
 
-  out_geo <- lower %>%
-    dplyr::select("geometry") %>%
-    dplyr::mutate(new = matches) %>%
-    dplyr::group_by(.data$new) %>%
+  out_geo <- lower |>
+    dplyr::select("geometry") |>
+    dplyr::mutate(new = matches) |>
+    dplyr::group_by(.data$new) |>
     dplyr::summarize(geometry = sf::st_union(.data$geometry))
 
 
   if (!missing(lower_wt)) {
-    out_wt <- tibble(new = matches, wt = lower_wt) %>%
-      dplyr::group_by(.data$new) %>%
+    out_wt <- tibble(new = matches, wt = lower_wt) |>
+      dplyr::group_by(.data$new) |>
       dplyr::summarize(wt = sum(.data$lower_wt, na.rm = TRUE), .groups = 'drop')
 
     out_geo <- dplyr::left_join(out_geo, out_wt, by = c('new'))

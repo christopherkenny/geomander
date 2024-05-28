@@ -32,9 +32,9 @@ partner to estimate_down.
 library(dplyr)
 set.seed(1)
 data(checkerboard)
-counties <- checkerboard \%>\%
-  group_by(id <= 32) \%>\%
-  summarize(geometry = sf::st_union(geometry)) \%>\%
+counties <- checkerboard |>
+  group_by(id <= 32) |>
+  summarize(geometry = sf::st_union(geometry)) |>
   mutate(pop = c(100, 200))
 geo_estimate_down(from = counties, to = checkerboard, value = counties$pop)
 }

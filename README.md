@@ -79,7 +79,7 @@ library(tidyverse)
 data("va18sub")
 
 # subset to target area
-va18sub <- va18sub %>% filter(COUNTYFP == '087')
+va18sub <- va18sub |> filter(COUNTYFP == '087')
 ```
 
 Then we can get common block data:

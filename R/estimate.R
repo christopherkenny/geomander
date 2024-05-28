@@ -22,9 +22,9 @@
 #' library(dplyr)
 #' set.seed(1)
 #' data(checkerboard)
-#' counties <- checkerboard %>%
-#'   group_by(id <= 32) %>%
-#'   summarize(geometry = sf::st_union(geometry)) %>%
+#' counties <- checkerboard |>
+#'   group_by(id <= 32) |>
+#'   summarize(geometry = sf::st_union(geometry)) |>
 #'   mutate(pop = c(100, 200))
 #' geo_estimate_down(from = counties, to = checkerboard, value = counties$pop)
 geo_estimate_down <- function(from, to, wts, value, method = 'center', epsg = 3857) {
@@ -37,23 +37,23 @@ geo_estimate_down <- function(from, to, wts, value, method = 'center', epsg = 38
     value <- rep(1, nrow(from))
   }
 
-  tb <- tibble(wts = wts, group = group) %>%
-    dplyr::group_by(group) %>%
-    dplyr::mutate(GTot = sum(wts)) %>%
-    dplyr::ungroup() %>%
-    dplyr::mutate(dplyr::if_else(GTot == 0, 1, wts)) %>%
-    dplyr::group_by(group) %>%
-    dplyr::mutate(GTot = sum(wts)) %>%
-    dplyr::ungroup() %>%
+  tb <- tibble(wts = wts, group = group) |>
+    dplyr::group_by(group) |>
+    dplyr::mutate(GTot = sum(wts)) |>
+    dplyr::ungroup() |>
+    dplyr::mutate(dplyr::if_else(GTot == 0, 1, wts)) |>
+    dplyr::group_by(group) |>
+    dplyr::mutate(GTot = sum(wts)) |>
+    dplyr::ungroup() |>
     dplyr::mutate(cont = wts / GTot)
 
   tb2 <- tibble(group = 1:length(value), value = value)
 
-  tb <- tb %>%
-    dplyr::left_join(tb2, by = 'group') %>%
+  tb <- tb |>
+    dplyr::left_join(tb2, by = 'group') |>
     dplyr::mutate(out = cont * value)
 
-  tb <- tb %>%
+  tb <- tb |>
     dplyr::mutate(out = ifelse(is.na(out), 0, out))
 
   tb$out
@@ -82,9 +82,9 @@ geo_estimate_down <- function(from, to, wts, value, method = 'center', epsg = 38
 #' library(dplyr)
 #' set.seed(1)
 #' data(checkerboard)
-#' counties <- checkerboard %>%
-#'   group_by(id <= 32) %>%
-#'   summarize(geometry = sf::st_union(geometry)) %>%
+#' counties <- checkerboard |>
+#'   group_by(id <= 32) |>
+#'   summarize(geometry = sf::st_union(geometry)) |>
 #'   mutate(pop = c(100, 200))
 #' matches <- geo_match(checkerboard, counties)
 #' estimate_down(wts = rep(1, nrow(checkerboard)), value = counties$pop, group = matches)
@@ -96,23 +96,23 @@ estimate_down <- function(wts, value, group) {
     value <- 1
   }
 
-  tb <- tibble(wts = wts, group = group) %>%
-    dplyr::group_by(group) %>%
-    dplyr::mutate(GTot = sum(wts)) %>%
-    dplyr::ungroup() %>%
-    dplyr::mutate(wts = dplyr::if_else(GTot == 0, 1, wts)) %>%
-    dplyr::group_by(group) %>%
-    dplyr::mutate(GTot = sum(wts)) %>%
-    dplyr::ungroup() %>%
+  tb <- tibble(wts = wts, group = group) |>
+    dplyr::group_by(group) |>
+    dplyr::mutate(GTot = sum(wts)) |>
+    dplyr::ungroup() |>
+    dplyr::mutate(wts = dplyr::if_else(GTot == 0, 1, wts)) |>
+    dplyr::group_by(group) |>
+    dplyr::mutate(GTot = sum(wts)) |>
+    dplyr::ungroup() |>
     dplyr::mutate(cont = wts / GTot)
 
   tb2 <- tibble(group = 1:length(value), value = value)
 
-  tb <- tb %>%
-    dplyr::left_join(tb2, by = 'group') %>%
+  tb <- tb |>
+    dplyr::left_join(tb2, by = 'group') |>
     dplyr::mutate(out = cont * value)
 
-  tb <- tb %>%
+  tb <- tb |>
     dplyr::mutate(out = ifelse(is.na(out), 0, out))
 
   tb$out
@@ -145,9 +145,9 @@ estimate_down <- function(wts, value, group) {
 #' library(dplyr)
 #' set.seed(1)
 #' data(checkerboard)
-#' counties <- checkerboard %>%
-#'   group_by(id <= 32) %>%
-#'   summarize(geometry = sf::st_union(geometry)) %>%
+#' counties <- checkerboard |>
+#'   group_by(id <= 32) |>
+#'   summarize(geometry = sf::st_union(geometry)) |>
 #'   mutate(pop = c(100, 200))
 #' geo_estimate_up(from = checkerboard, to = counties, value = checkerboard$i)
 geo_estimate_up <- function(from, to, value, method = 'center', epsg = 3857) {
@@ -156,15 +156,15 @@ geo_estimate_up <- function(from, to, value, method = 'center', epsg = 3857) {
   if (missing(value)) {
     value <- 1
   }
-  tb <- tibble(value = value, group = group) %>%
-    group_by(group) %>%
-    summarize(value = sum(value)) %>%
+  tb <- tibble(value = value, group = group) |>
+    group_by(group) |>
+    summarize(value = sum(value)) |>
     arrange(group)
 
   if (nrow(tb) < nrow(to)) {
     for (i in 1:nrow(to)) {
       if (tb$group[i] != i) {
-        tb <- tb %>% add_row(group = i, value = 0, .after = (i - 1))
+        tb <- tb |> add_row(group = i, value = 0, .after = (i - 1))
       }
     }
   }
@@ -191,9 +191,9 @@ geo_estimate_up <- function(from, to, value, method = 'center', epsg = 3857) {
 #' library(dplyr)
 #' set.seed(1)
 #' data(checkerboard)
-#' counties <- checkerboard %>%
-#'   group_by(id <= 32) %>%
-#'   summarize(geometry = sf::st_union(geometry)) %>%
+#' counties <- checkerboard |>
+#'   group_by(id <= 32) |>
+#'   summarize(geometry = sf::st_union(geometry)) |>
 #'   mutate(pop = c(100, 200))
 #' matches <- geo_match(checkerboard, counties)
 #' estimate_up(value = checkerboard$i, group = matches)
@@ -202,15 +202,15 @@ estimate_up <- function(value, group) {
     value <- 1
   }
 
-  tb <- tibble(value = value, group = group) %>%
-    dplyr::group_by(group) %>%
-    dplyr::summarize(value = sum(value)) %>%
+  tb <- tibble(value = value, group = group) |>
+    dplyr::group_by(group) |>
+    dplyr::summarize(value = sum(value)) |>
     dplyr::arrange(group)
 
   if (nrow(tb) < max(group)) {
     for (i in 1:max(group)) {
       if (tb$group[i] != i) {
-        tb <- tb %>%
+        tb <- tb |>
           dplyr::add_row(group = i, value = 0, .after = (i - 1))
       }
     }

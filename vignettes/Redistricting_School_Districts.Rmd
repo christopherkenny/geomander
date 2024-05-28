@@ -45,7 +45,7 @@ block <- bind_rows(rockland, orange)
 
 Next, we need the shape for North Rockland, which can be obtained from the R package `tinytiger` as below. The same idea holds for having target areas, such as counties or legislative districts, though they are less likely to directly use the block level data.
 ```{r, results = 'hide', eval = FALSE, message = FALSE}
-school <- tt_unified_school_districts(state = 'NY') %>% filter(str_detect(NAME, 'North Rockland'))
+school <- tt_unified_school_districts(state = 'NY') |> filter(str_detect(NAME, 'North Rockland'))
 ```
 As above, we use a saved version that doesn't need API access to download.
 ```{r}
@@ -55,34 +55,34 @@ school <- nrcsd
 
 The immediate and common difficulty here is that we have nearly 15,000 blocks, but the target region, in this case the school district outlined in red is significantly smaller than that.
 ```{r}
-block %>% ggplot() + 
+block |> ggplot() + 
   geom_sf() +
   geom_sf(data = school, fill = NA, color = 'red') +
   theme_void()
 ```
 As a first pass, we can use the geo_filter function, which wraps sf's st_intersects and filters only to those that intersect.
 ```{r}
-block <- block %>% geo_filter(to = school)
+block <- block |> geo_filter(to = school)
 ```
 
 This drops us down to 852 block and is a conservative filtering, as you only need to intersect at a single point.
 ```{r}
-block %>% mutate(id = row_number()) %>% 
+block |> mutate(id = row_number()) |> 
   ggplot() + geom_sf() +
   geom_sf(data = school, fill = NA, color = 'red') 
 ```
 Yet, we probably want to go further than that, getting rid of the various external pieces.
 We can use geo_trim to do just that. First, we want to check what would be thrown away at the default area threshold of 1%. Below, I've first checked what would be trimmed away, by setting bool = TRUE and plotting it.
 ```{r}
-block$trim <- block %>% geo_trim(to = school, bool = TRUE)
+block$trim <- block |> geo_trim(to = school, bool = TRUE)
 
-block %>% ggplot() + geom_sf(aes(fill = trim)) + 
+block |> ggplot() + geom_sf(aes(fill = trim)) + 
   geom_sf(data = school, fill = NA, lwd = 1.5)
 ```
 
 To me, it looks like we are subsetting correctly with this threshold, so we actually trim away this time.
 ```{r}
-block <- block %>% filter(trim)
+block <- block |> filter(trim)
 ```
 
 
@@ -90,7 +90,7 @@ Very often, at this step, we want to consider including information about other 
 ```{r data}
 data("towns")
 
-block %>% ggplot() +
+block |> ggplot() +
   geom_sf() +
   theme_void() +
   geom_sf(data = towns, aes(fill = as.character(ID)))
@@ -103,7 +103,7 @@ matched <- geo_match(from = block, to = towns, method = 'centroid')
 
 Now, I've used the default tiebreaker setting, which assigns all blocks to a town, even if they do not overlap.
 ```{r}
-block %>% 
+block |> 
   ggplot() +
   geom_sf(aes(fill = as.character(matched))) +
   theme_void() +
@@ -111,7 +111,7 @@ block %>%
 ```
 So, we want to make two particular edits to the outcome. First, we create a fake Orange County Town for the blocks that come from Orange County, though there are only a few dozen people who live in those blocks.
 ```{r}
-block <- block %>% mutate(TownID = matched) %>% 
+block <- block |> mutate(TownID = matched) |> 
   mutate(TownID = ifelse(county != '087', 8, TownID)) 
 ```
 
@@ -149,15 +149,15 @@ map <- redist_map(block, pop_tol = 0.02, ndists = 7, adj = adj)
 
 sims005 <- redist_smc(map, nsims = 50, counties = TownID, silent = TRUE)
 
-plans <- get_plans_matrix(sims005) %>% unique(MARGIN  = 2)
+plans <- get_plans_matrix(sims005) |> unique(MARGIN  = 2)
 
 par <- redist.parity(plans = plans, total_pop = block$pop)
 
 comp <- redist.compactness(shp = block, plans = plans, adj = adj, measure = 'EdgesRemoved')
 
-comp_m <- comp %>% group_by(draw) %>% summarize(mean = mean(EdgesRemoved))
+comp_m <- comp |> group_by(draw) |> summarize(mean = mean(EdgesRemoved))
 
-pick <- tibble(parity = par) %>% bind_cols(comp_m) %>% slice_max(order_by = mean, n = 1) %>% pull(draw)
+pick <- tibble(parity = par) |> bind_cols(comp_m) |> slice_max(order_by = mean, n = 1) |> pull(draw)
 ```
 
 In short, the above uses a Sequential Monte Carlo algorithm to draw 50 compact districts that try to preserve towns. From those, I pick a map that is on average, pretty compact. You would typically aim for about 100 times this number of simulations to start. This is shortened for vignette compilation time.
@@ -165,9 +165,9 @@ In short, the above uses a Sequential Monte Carlo algorithm to draw 50 compact d
 Then we have the basic information we want and we can look at the VAP data to see that we have one majority minority Hispanic ward and one potential coalition ward.
 
 ```{r,  eval = 'redist' %in% installed.packages()}
-block %>% 
-  mutate(district = plans[,pick]) %>% 
-  group_by(district) %>% 
+block |> 
+  mutate(district = plans[,pick]) |> 
+  group_by(district) |> 
   summarize(across(starts_with('vap'), sum))
 ```
 

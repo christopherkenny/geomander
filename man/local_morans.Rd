@@ -26,7 +26,7 @@ Compute Local Moran's I
 \examples{
 library(dplyr)
 data('checkerboard')
-checkerboard <- checkerboard \%>\% mutate(m = as.numeric((id + i) \%\% 2 == 0))
+checkerboard <- checkerboard |> mutate(m = as.numeric((id + i) \%\% 2 == 0))
 local_morans(shp = checkerboard, wts = checkerboard$m)
 }
 \concept{spatcorr}

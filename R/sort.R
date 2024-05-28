@@ -26,5 +26,5 @@ geo_sort <- function(shp, epsg = 3857) {
   cent <- geos::geos_centroid(shp)
   dists <- geos::geos_distance(pt, cent)
   idx <- sort(dists, index.return = TRUE)
-  shp %>% dplyr::slice(idx$ix)
+  shp |> dplyr::slice(idx$ix)
 }

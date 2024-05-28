@@ -28,7 +28,7 @@ library(dplyr)
 data('checkerboard')
 data('checkerboard_adj')
 
-checkerboard <- checkerboard \%>\% mutate(discont = as.integer(j == 5 | j == 6))
+checkerboard <- checkerboard |> mutate(discont = as.integer(j == 5 | j == 6))
 
 p <- geo_plot_group(checkerboard, checkerboard_adj, checkerboard$discont)
 
