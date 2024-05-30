@@ -1,3 +1,8 @@
+# geomander 2.4.0
+
+* Replaces magrittr pipe with the base R pipe internally and in examples.
+
+
 # geomander 2.3.0
 
 * Adds support for downloading Jeffrey B. Lewis's historical congressional districts with `get_lewis()
