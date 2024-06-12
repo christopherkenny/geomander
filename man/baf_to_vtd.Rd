@@ -32,7 +32,8 @@ common district.
 # Not guaranteed to reach download from redistrict2020.org
 \dontrun{
 # download and read baf ----
-url <- 'https://www.redistrict2020.org/files/DE-2021-01/DE_SLDU_bef.zip'
+url <- paste0('https://github.com/PlanScore/Redistrict2020/', 
+              'raw/main/files/DE-2021-01/DE_SLDU_bef.zip')
 tf <- tempfile('.zip')
 utils::download.file(url, tf)
 utils::unzip(tf, exdir = dirname(tf))

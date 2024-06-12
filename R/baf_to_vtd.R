@@ -20,7 +20,8 @@
 #' # Not guaranteed to reach download from redistrict2020.org
 #' \dontrun{
 #' # download and read baf ----
-#' url <- 'https://www.redistrict2020.org/files/DE-2021-01/DE_SLDU_bef.zip'
+#' url <- paste0('https://github.com/PlanScore/Redistrict2020/', 
+#'               'raw/main/files/DE-2021-01/DE_SLDU_bef.zip')
 #' tf <- tempfile('.zip')
 #' utils::download.file(url, tf)
 #' utils::unzip(tf, exdir = dirname(tf))
@@ -58,11 +59,12 @@ baf_to_vtd <- function(baf, plan_name, GEOID = 'GEOID', year = 2020) {
 
   state_fips <- substr(baf[[GEOID]][1], 1, 2)
 
-  if (year == 2020) {
-    baf_vtd <- download_2020_vtd_baf(state = state_fips)
-  } else {
-    baf_vtd <- download_2010_vtd_baf(state = state_fips)
+  baf_vtd <- baf::baf(state = state_fips, geographies = 'VTD')
+  if (length(baf_vtd) == 0) {
+    cli::cli_abort(c('VTD file not found for state {.val {state_fips}}.'))
   }
+  baf_vtd <- baf_vtd[[1]] |>
+    dplyr::rename(GEOID = .data$BLOCKID, county = .data$COUNTYFP, vtd = .data$DISTRICT)
 
   baf <- baf |>
     dplyr::rename(GEOID = .env$GEOID) |>
@@ -74,72 +76,6 @@ baf_to_vtd <- function(baf, plan_name, GEOID = 'GEOID', year = 2020) {
     dplyr::select(-.data$county, .data$vtd) |>
     dplyr::group_by(.data$GEOID) |>
     dplyr::summarize({{ plan_name }} := as.integer(Mode(.data[[plan_name]])))
-}
-
-# adapted & simplified from PL94171::pl_get_baf()
-download_2020_vtd_baf <- function(state) {
-  fips <- censable::match_fips(state)
-  abb <- censable::match_abb(state)
-
-  zip_url <- paste0(
-    'https://www2.census.gov/geo/docs/maps-data/data/baf2020/BlockAssign_ST',
-    fips, '_', abb, '.zip'
-  )
-  tf <- tempfile(fileext = '.zip')
-  utils::download.file(zip_url, tf)
-  baf_vtd_path <- utils::unzip(
-    zipfile = tf,
-    files = paste0('BlockAssign_ST', fips, '_', abb, '_VTD.txt'),
-    exdir = dirname(tf)
-  ) |>
-    suppressWarnings()
-
-  if (length(baf_vtd_path) == 0) {
-    cli::cli_abort(c('VTD file not found in zip file.',
-      'i' = paste0('Check downloaded files at ', tf, '.')
-    ))
-  }
-
-  readr::read_delim(
-    file = baf_vtd_path,
-    delim = '|',
-    col_types = readr::cols(.default = 'c'),
-    progress = interactive()
-  ) |>
-    dplyr::rename(GEOID = .data$BLOCKID, county = .data$COUNTYFP, vtd = .data$DISTRICT)
-}
-
-download_2010_vtd_baf <- function(state) {
-  fips <- censable::match_fips(state)
-  abb <- censable::match_abb(state)
-  
-  zip_path <- tempfile(fileext = '.zip')
-  zip_dir <- dirname(zip_path)
-  base_name <- stringr::str_glue('BlockAssign_ST{fips}_{abb}')
-  zip_url <- stringr::str_glue('https://www2.census.gov/geo/docs/maps-data/data/baf/{base_name}.zip')
-  
-  tf <- tempfile(fileext = '.zip')
-  utils::download.file(zip_url, tf)
-  baf_vtd_path <- utils::unzip(
-    zipfile = tf,
-    files = paste0('BlockAssign_ST', fips, '_', abb, '_VTD.txt'),
-    exdir = dirname(tf)
-  ) |>
-    suppressWarnings()
-
-  if (length(baf_vtd_path) == 0) {
-    cli::cli_abort(c('VTD file not found in zip file.',
-      'i' = paste0('Check downloaded files at ', tf, '.')
-    ))
-  }
-
-  readr::read_delim(
-    file = baf_vtd_path,
-    delim = ',',
-    col_types = readr::cols(.default = 'c'),
-    progress = interactive()
-  ) |>
-    dplyr::rename(GEOID = .data$BLOCKID, county = .data$COUNTYFP, vtd = .data$DISTRICT)
 }
 
 Mode <- function(v) {
