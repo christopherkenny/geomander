@@ -175,8 +175,8 @@ block2prec <- function(block_table, matches, geometry = FALSE) {
         NA
       }
     }) |> 
-      purrr::set_names(names(ret)) |>
-      purrr::discard(function(x) is.na(x))
+      stats::setNames(names(ret)) |>
+      Filter(function(x) !is.na(x))
       
     ret <- tidyr::complete(
       data = ret, matches_id = seq_len(nrow_to),

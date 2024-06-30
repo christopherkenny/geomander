@@ -33,8 +33,7 @@ Imports:
     stringr,
     tibble,
     tidyr,
-    tinytiger,
-    purrr
+    tinytiger
 Depends: 
     R (>= 4.0.0)
 Suggests:
