@@ -1,6 +1,8 @@
 # geomander 2.4.0
 
 * Replaces magrittr pipe with the base R pipe internally and in examples.
+* Improves handling of columns within `block2prec()`.
+* Adds an attribute to `geo_match()` when the last precinct in `to` is not matched. This can later be used when filling missing precincts (the implicit 0s).
 
 
 # geomander 2.3.0

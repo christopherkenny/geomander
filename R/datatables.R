@@ -130,8 +130,14 @@ block2prec <- function(block_table, matches, geometry = FALSE) {
   if (missing(matches)) {
     cli::cli_abort('Please provide an argument to {.arg matches}.')
   }
+  
+  nrow_to <- attr(matches, 'matching_max')
+  if (is.null(nrow_to)) {
+    nrow_to <- max(matches)
+  }
 
-  block_table <- block_table |> mutate(matches_id = matches)
+  block_table <- block_table |> 
+    dplyr::mutate(matches_id = matches)
 
   if (!geometry) {
     ret <- block_table |>
@@ -144,7 +150,8 @@ block2prec <- function(block_table, matches, geometry = FALSE) {
   } else {
     ret <- block_table |>
       dplyr::group_by(matches_id) |>
-      dplyr::summarize(dplyr::across(where(is.numeric), sum),
+      dplyr::summarize(
+        dplyr::across(where(is.numeric), sum),
         dplyr::across(where(function(x) length(unique(x)) == 1), unique),
         geometry = sf::st_union(geometry),
         .groups = 'drop'
@@ -152,21 +159,32 @@ block2prec <- function(block_table, matches, geometry = FALSE) {
       sf::st_as_sf()
   }
 
-  ret <- ret |> arrange(matches_id)
-  missed <- c()
-  if (nrow(ret) != max(matches)) {
-    for (i in 1:max(matches)) {
-      if (ret$matches_id[i] != i) {
-        ret <- ret |> add_row(
-          matches_id = i,
-          .after = (i - 1)
-        )
-        missed <- c(missed, i)
+  if (nrow(ret) != nrow_to) {
+    cols_to_fill <- lapply(ret, function(x) {
+      if (is.numeric(x)) {
+        if (all(x >= 0)) {
+          # assume counts
+          0L
+        } else {
+          # don't fill when there are negative values
+         NA_integer_ 
+        }
+      } else if (length(unique(x)) == 1) {
+        unique(x)
+      } else {
+        NA
       }
-    }
-    ret <- update_tb(ret, missed)
+    }) |> 
+      purrr::set_names(names(ret)) |>
+      purrr::discard(function(x) is.na(x))
+      
+    ret <- tidyr::complete(
+      data = ret, matches_id = seq_len(nrow_to),
+      fill = cols_to_fill,
+      explicit = FALSE
+    )
   }
-
+  
   ret
 }
 
@@ -219,7 +237,7 @@ block2prec_by_county <- function(block_table, precinct, precinct_county_fips, ep
   prectb <- tibble()
   countiesl <- unique(block_table$county)
 
-  for (cty in 1:length(countiesl)) {
+  for (cty in seq_along(countiesl)) {
     bsub <- block_table |> filter(.data$county == countiesl[cty])
     psub <- precinct |>
       filter(.data[[precinct_county_fips]] == countiesl[cty]) |>
@@ -242,41 +260,6 @@ block2prec_by_county <- function(block_table, precinct, precinct_county_fips, ep
     dplyr::select(-rowid)
 }
 
-
-update_tb <- function(ret, missed) {
-  expected <- tibble::tibble(
-    matches_id = missed,
-    state = ifelse(length(unique(ret$state, na.rm = TRUE)) == 1, unique(ret$state, na.rm = TRUE), NA),
-    county = ifelse(length(unique(ret$county, na.rm = TRUE)) == 1, unique(ret$county, na.rm = TRUE), NA),
-    pop = 0,
-    pop_white = 0,
-    pop_black = 0,
-    pop_hisp = 0,
-    pop_aian = 0,
-    pop_asian = 0,
-    pop_nhpi = 0,
-    pop_other = 0,
-    pop_two = 0,
-    vap = 0,
-    vap_hisp = 0,
-    vap_white = 0,
-    vap_black = 0,
-    vap_aian = 0,
-    vap_asian = 0,
-    vap_nhpi = 0,
-    vap_other = 0,
-    vap_two = 0
-  )
-
-  expected <- expected |>
-    dplyr::select(dplyr::any_of(base::intersect(names(expected), names(ret))))
-
-  if (ncol(expected) == 0) {
-    return(ret)
-  }
-
-  dplyr::rows_patch(x = ret, y = expected, by = 'matches_id')
-}
 
 globalVariables(c(
   'GEOID', 'variable', 'value', 'AWATER10', 'ALAND10', 'County',

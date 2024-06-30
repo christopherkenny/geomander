@@ -167,7 +167,11 @@ geo_match <- function(from, to, method = 'center', by = NULL, tiebreaker = TRUE,
     }
   }
 
-  as.integer(ints)
+  ints <- as.integer(ints)
+  if (max(ints) != nrow(to)) {
+    attr(ints, 'matching_max') <- nrow(to)
+  }
+  ints
 }
 
 globalVariables(c('fromid', 'toid', 'area'))
