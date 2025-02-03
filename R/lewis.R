@@ -39,7 +39,10 @@ get_lewis <- function(state, congress) {
   out <- sf::read_sf(file_name)
   
   if (requireNamespace('RcppSimdJson', quietly = TRUE)) {
-    out$member <- RcppSimdJson::fparse(out$member)
+    if (nrow(out) > 1)
+      out$member <- RcppSimdJson::fparse(out$member)
+    if (nrow(out) == 1)
+      out$member <- list(RcppSimdJson::fparse(out$member))
   }
   
   out
