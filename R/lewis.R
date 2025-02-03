@@ -22,7 +22,7 @@ get_lewis <- function(state, congress) {
   st <- tolower(censable::match_name(state))
   st <- stringr::str_replace_all(stringr::str_to_title(st), ' ', '_')
   
-  st_f <- lewis_urls[stringr::str_detect(lewis_urls, st)]
+  st_f <- lewis_urls[stringr::str_detect(lewis_urls, stringr::str_c("/", st))]
   
   f <- lapply(stringr::str_extract_all(st_f, '\\d+'), as.integer)
   f <- lapply(f, function(x) dplyr::between(congress, x[1], x[2])) |> 
