@@ -22,7 +22,7 @@ get_lewis <- function(state, congress) {
   st <- tolower(censable::match_name(state))
   st <- stringr::str_replace_all(stringr::str_to_title(st), ' ', '_')
   
-  st_f <- lewis_urls[stringr::str_detect(lewis_urls, st)]
+  st_f <- lewis_urls[stringr::str_detect(lewis_urls, stringr::str_c("/", st))]
   
   f <- lapply(stringr::str_extract_all(st_f, '\\d+'), as.integer)
   f <- lapply(f, function(x) dplyr::between(congress, x[1], x[2])) |> 
@@ -39,7 +39,10 @@ get_lewis <- function(state, congress) {
   out <- sf::read_sf(file_name)
   
   if (requireNamespace('RcppSimdJson', quietly = TRUE)) {
-    out$member <- RcppSimdJson::fparse(out$member)
+    if (nrow(out) > 1)
+      out$member <- RcppSimdJson::fparse(out$member)
+    if (nrow(out) == 1)
+      out$member <- list(RcppSimdJson::fparse(out$member))
   }
   
   out
