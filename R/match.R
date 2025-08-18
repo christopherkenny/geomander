@@ -88,7 +88,7 @@ geo_match <- function(from, to, method = 'center', by = NULL, tiebreaker = TRUE,
       if (method == 'center') {
         op <- function(x) geos_centerish(x, epsg = epsg)
       } else if (method == 'circle') {
-        op <- function(x) geo_circle_center(x, epsg = epsg)
+        op <- function(x) geos_circle_center(x, epsg = epsg)
       } else if (method == 'centroid') {
         op <- geos::geos_centroid
       } else {
@@ -115,10 +115,6 @@ geo_match <- function(from, to, method = 'center', by = NULL, tiebreaker = TRUE,
         }
       }
     } else {
-      # to <- to |> 
-      #   dplyr::mutate(toid = dplyr::row_number())
-      # from <- from |> 
-      #   dplyr::mutate(fromid = dplyr::row_number())
       ints <- largest_intersection_geos(
         x = geos::geos_make_valid(from),
         y = geos::geos_make_valid(to)
@@ -179,5 +175,3 @@ geo_match <- function(from, to, method = 'center', by = NULL, tiebreaker = TRUE,
   }
   ints
 }
-
-globalVariables(c('fromid', 'toid', 'area'))
