@@ -45,7 +45,39 @@ geo_match <- function(from, to, method = 'center', by = NULL, tiebreaker = TRUE,
   if (missing(to)) {
     cli::cli_abort('Please provide an argument to {.arg to}.')
   }
-
+  
+  # setup by ----
+  if (!is.null(by)) {
+    
+    if (length(by) != 1) {
+      cli::cli_abort('{.arg by} must be {.val NULL} or length 1.')
+    }
+    
+    if (length(names(by)) > 0) {
+      col_from <- names(by)
+      col_to <- unname(by)
+    } else {
+      col_to <- col_from <- by
+    }
+    
+    if (!col_from %in% names(from)) {
+      cli::cli_abort('{.arg by} entry for from {col_from} not found in {.arg from}.')
+    }
+    if (!col_to %in% names(to)) {
+      cli::cli_abort('{.arg to} entry for from {col_to} not found in {.arg to}.')
+    }
+    
+    vals <- unique(from[[col_from]])
+    
+    col_from_data <- from[[col_from]]
+    col_to_data <- to[[col_to]]
+    
+    from_idx <- lapply(vals, function(v) which(col_from_data == v))
+    to_idx <- lapply(vals, function(v) which(col_to_data == v))
+    
+  }
+  
+  # start from / to optimizing ----
   pairs <- make_planar_pair(sf::st_geometry(from), sf::st_geometry(to), epsg = epsg)
   from <- pairs$x
   to <- pairs$y
@@ -105,43 +137,19 @@ geo_match <- function(from, to, method = 'center', by = NULL, tiebreaker = TRUE,
 
     ints[geos::geos_is_empty(from)] <- NA_real_
   } else {
-    # check by ----
-    if (length(by) != 1) {
-      cli::cli_abort('{.arg by} must be {.val NULL} or length 1.')
-    }
-
-    if (length(names(by)) > 0) {
-      col_from <- names(by)
-      col_to <- unname(by)
-    } else {
-      col_to <- col_from <- by
-    }
-
-    if (!col_from %in% names(from)) {
-      cli::cli_abort('{.arg by} entry for from {col_from} not found in {.arg from}.')
-    }
-    if (!col_to %in% names(to)) {
-      cli::cli_abort('{.arg to} entry for from {col_to} not found in {.arg to}.')
-    }
-
-    vals <- unique(from[[col_from]]) # vals_from
-    # vals_to <- unique(to[col_to])
-
     # create corresponding subset lists
-    from_l <- lapply(vals, function(v) {
-      from |>
-        dplyr::filter(.data[[col_from]] == v)
+    from_l <- lapply(from_idx, function(v) {
+      from[v]
     })
-    to_l <- lapply(vals, function(v) {
-      to |>
-        dplyr::filter(.data[[col_to]] == v)
+    to_l <- lapply(to_idx, function(v) {
+      to[v]
     })
 
     # id entries
     int_l <- lapply(
       seq_along(vals),
       function(i) {
-        if (nrow(from_l[[i]]) == 0 || nrow(to_l[[i]]) == 0) {
+        if (length(from_l[[i]]) == 0 || length(to_l[[i]]) == 0) {
           return(integer(0)) # perhaps cli::cli_abort('something about values being in both')
         }
         geo_match(
@@ -156,13 +164,16 @@ geo_match <- function(from, to, method = 'center', by = NULL, tiebreaker = TRUE,
     ints <- rep.int(NA_integer_, times = length(from))
 
     for (i in seq_along(vals)) {
-      from_idx <- which(from[[col_from]] == vals[i])
-      to_idx <- which(to[[col_to]] == vals[i])
+      from_idx <- which(col_from_data == vals[i])
+      to_idx <- which(col_to_data == vals[i])
       ints[from_idx] <- to_idx[int_l[[i]]]
     }
   }
 
   ints <- as.integer(ints)
+  if (is.na(max(ints))) {
+    cat(ints)
+  }
   if (max(ints) != length(to)) {
     attr(ints, 'matching_max') <- length(to)
   }
