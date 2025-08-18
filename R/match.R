@@ -46,16 +46,17 @@ geo_match <- function(from, to, method = 'center', by = NULL, tiebreaker = TRUE,
     cli::cli_abort('Please provide an argument to {.arg to}.')
   }
 
-  pairs <- make_planar_pair(from, to, epsg = epsg)
+  pairs <- make_planar_pair(sf::st_geometry(from), sf::st_geometry(to), epsg = epsg)
   from <- pairs$x
   to <- pairs$y
+  to_tree <- geos::geos_strtree(to)
 
   if (is.null(by)) {
     if (method %in% c('center', 'centroid', 'point', 'circle')) {
       if (method == 'center') {
-        op <- function(x) st_centerish(x, epsg = epsg)
+        op <- function(x) geos_centerish(x, epsg = epsg)
       } else if (method == 'circle') {
-        op <- function(x) st_circle_center(x, epsg = epsg)
+        op <- function(x) geo_circle_center(x, epsg = epsg)
       } else if (method == 'centroid') {
         op <- geos::geos_centroid
       } else {
@@ -64,15 +65,12 @@ geo_match <- function(from, to, method = 'center', by = NULL, tiebreaker = TRUE,
 
       pts <- op(from)
 
-      ints <- geos::geos_intersects_matrix(pts, to)
+      ints <- geos::geos_intersects_matrix(pts, to_tree)
       if (any(lengths(ints) != 1)) {
         idx <- which(lengths(ints) != 1)
 
         if (tiebreaker) {
-          for (i in seq_along(idx)) {
-            nnb <- nn_geos(x = from[idx[i], ], y = to)
-            ints[[idx[i]]] <- nnb
-          }
+          ints[idx] <- geos::geos_nearest_indexed(geom = from[idx, ], tree = to_tree)
         } else {
           for (i in seq_along(ints)) {
             if (length(ints[[i]]) == 0) {
@@ -85,8 +83,10 @@ geo_match <- function(from, to, method = 'center', by = NULL, tiebreaker = TRUE,
         }
       }
     } else {
-      to <- to |> dplyr::mutate(toid = dplyr::row_number())
-      from <- from |> dplyr::mutate(fromid = dplyr::row_number())
+      # to <- to |> 
+      #   dplyr::mutate(toid = dplyr::row_number())
+      # from <- from |> 
+      #   dplyr::mutate(fromid = dplyr::row_number())
       ints <- largest_intersection_geos(
         x = geos::geos_make_valid(from),
         y = geos::geos_make_valid(to)
@@ -96,14 +96,9 @@ geo_match <- function(from, to, method = 'center', by = NULL, tiebreaker = TRUE,
         idx <- which(is.na(ints))
 
         if (tiebreaker) {
-          for (i in seq_along(idx)) {
-            nnb <- nn_geos(x = from[idx[i], ], y = to)
-            ints[idx[i]] <- nnb
-          }
+          ints[idx] <- geos::geos_nearest_indexed(geom = from[idx, ], tree = to_tree)
         } else {
-          for (i in seq_along(idx)) {
-            ints[idx[i]] <- -1L
-          }
+          ints[idx] <- -1L
         }
       }
     }
@@ -158,7 +153,7 @@ geo_match <- function(from, to, method = 'center', by = NULL, tiebreaker = TRUE,
     )
 
     # build index
-    ints <- rep.int(NA_integer_, times = nrow(from))
+    ints <- rep.int(NA_integer_, times = length(from))
 
     for (i in seq_along(vals)) {
       from_idx <- which(from[[col_from]] == vals[i])
@@ -168,8 +163,8 @@ geo_match <- function(from, to, method = 'center', by = NULL, tiebreaker = TRUE,
   }
 
   ints <- as.integer(ints)
-  if (max(ints) != nrow(to)) {
-    attr(ints, 'matching_max') <- nrow(to)
+  if (max(ints) != length(to)) {
+    attr(ints, 'matching_max') <- length(to)
   }
   ints
 }

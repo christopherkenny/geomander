@@ -40,7 +40,7 @@ test_that('match center works', {
     17L, 34L, 29L, 16L, 16L, 18L, 21L, 28L, 36L, 63L, 69L, 69L, 64L,
     65L, 70L, 38L, 52L, 70L, 62L, 72L, 81L, 81L, 81L, 85L, 81L, 76L,
     86L, 79L, 80L, 86L, 86L, 81L, 35L, 22L, 12L, 19L, 19L, 19L, 12L,
-    34L, 35L, 35L, 16L, 18L, 6L, 35L, 58L, 88L, 64L, 75L, 87L, 87L,
+    34L, 35L, 35L, 16L, 18L, 36L, 35L, 58L, 88L, 64L, 75L, 87L, 87L,
     87L, 76L, 74L, 90L, 77L, 76L, 81L, 81L, 77L, 84L, 86L, 90L, 16L,
     28L, 36L, 36L, 27L, 30L, 33L, 31L, 16L, 16L, 16L, 36L, 35L, 36L,
     34L, 19L, 62L, 62L, 68L, 71L, 61L, 61L, 61L, 61L, 60L, 59L, 65L,
@@ -1471,7 +1471,7 @@ test_that('match centroid works', {
   expect_equal(mtches_centroid, expected)
 })
 
-test_that('match centroid works', {
+test_that('match point works', {
   mtches_pt <- geo_match(va_blocks, va18sub, method = 'point')
 
   expected <- c(
@@ -1513,7 +1513,7 @@ test_that('match centroid works', {
     17L, 34L, 29L, 16L, 16L, 18L, 21L, 28L, 36L, 63L, 69L, 69L, 64L,
     65L, 70L, 38L, 52L, 63L, 62L, 72L, 81L, 81L, 81L, 85L, 81L, 76L,
     86L, 79L, 80L, 86L, 86L, 81L, 35L, 22L, 12L, 19L, 19L, 19L, 12L,
-    34L, 35L, 35L, 16L, 18L, 6L, 35L, 58L, 88L, 64L, 75L, 87L, 87L,
+    34L, 35L, 35L, 16L, 18L, 36L, 35L, 58L, 88L, 64L, 75L, 87L, 87L,
     87L, 76L, 74L, 90L, 77L, 76L, 81L, 81L, 77L, 84L, 86L, 90L, 16L,
     28L, 36L, 36L, 27L, 30L, 33L, 31L, 16L, 16L, 16L, 36L, 35L, 36L,
     34L, 19L, 62L, 62L, 68L, 71L, 61L, 61L, 61L, 61L, 60L, 59L, 65L,

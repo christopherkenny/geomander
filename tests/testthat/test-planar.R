@@ -15,23 +15,23 @@ test_that('make planar x == y, no planar works', {
 
 test_that('make planar x != y, one planar works', {
   data(towns)
-  towns2 <- sf::st_transform(towns, 2163)
+  towns2 <- sf::st_transform(towns, 9311)
   x <- make_planar_pair(towns, towns2)
 
-  expect_equal(sf::st_crs(x$x)[[1]], 'EPSG:2163')
-  expect_equal(sf::st_crs(x$y)[[1]], 'EPSG:2163')
+  expect_equal(sf::st_crs(x$x)[[1]], 'EPSG:9311')
+  expect_equal(sf::st_crs(x$y)[[1]], 'EPSG:9311')
 
 
   x <- make_planar_pair(towns2, towns)
 
-  expect_equal(sf::st_crs(x$x)[[1]], 'EPSG:2163')
-  expect_equal(sf::st_crs(x$y)[[1]], 'EPSG:2163')
+  expect_equal(sf::st_crs(x$x)[[1]], 'EPSG:9311')
+  expect_equal(sf::st_crs(x$y)[[1]], 'EPSG:9311')
 })
 
 test_that('make planar x != y, both planar works', {
   data(towns)
   towns <- sf::st_transform(towns, 3857)
-  towns2 <- sf::st_transform(towns, 2163)
+  towns2 <- sf::st_transform(towns, 9311)
   x <- make_planar_pair(towns, towns2)
 
   expect_equal(sf::st_crs(x$x)[[1]], 'EPSG:3857')

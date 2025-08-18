@@ -223,7 +223,7 @@ compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE) {
 
   if (!missing(shp)) {
     if (nrow(ret) > 1) {
-      for (i in 1:nrow(ret)) {
+      for (i in seq_len(nrow(ret))) {
         temp1 <- shp |> slice(ret$x[i])
         temp2 <- shp |> slice(ret$y[i])
 

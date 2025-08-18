@@ -1,17 +1,32 @@
 largest_intersection_geos <- function(x, y) {
-  l <- geos::geos_intersects_matrix(x, y)
 
-  a <- lapply(seq_along(l), function(i) {
-    geos::geos_area(geos::geos_intersection(x[[i]], y[[l[[i]]]]))
-  })
-
-  vapply(seq_along(l), function(i) {
-    o <- l[[i]][which.max(a[[i]])]
-    if (length(o) == 0) {
-      o <- NA_real_
+  n_x <- length(x)
+  result <- integer(n_x)
+  
+  intersect_matrix <- geos::geos_intersects_matrix(x, geos::geos_strtree(y))
+  
+  # Handle cases with no intersections
+  no_intersect <- lengths(intersect_matrix) == 0
+  result[no_intersect] <- NA_integer_
+  
+  # Handle cases with exactly one intersection (no area computation needed)
+  single_intersect <- lengths(intersect_matrix) == 1
+  result[single_intersect] <- vapply(intersect_matrix[single_intersect], function(v) v[[1L]], double(1))
+  
+  # Handle cases with multiple intersections
+  multi_intersect <- lengths(intersect_matrix) > 1
+  if (any(multi_intersect)) {
+    multi_indices <- which(multi_intersect)
+    
+    for (i in multi_indices) {
+      candidates <- intersect_matrix[[i]]
+      intersections <- geos::geos_intersection(x[[i]], y[candidates])
+      areas <- geos::geos_area(intersections)
+      result[i] <- candidates[which.max(areas)]
     }
-    o
-  }, 0)
+  }
+  
+  result
 }
 
 area_intersection_geos <- function(x, y) {

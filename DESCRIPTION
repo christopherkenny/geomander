@@ -35,7 +35,7 @@ Imports:
     tidyr,
     tinytiger
 Depends: 
-    R (>= 4.0.0)
+    R (>= 4.1.0)
 Suggests:
     redist,
     knitr,

@@ -42,25 +42,25 @@ st_centerish <- function(shp, epsg = 3857) {
 #' geos_centerish(towns)
 #'
 geos_centerish <- function(shp, epsg = 3857) {
-  shp <- make_planar_pair(x = shp, epsg = epsg)$x
+  geom <- make_planar_pair(x = sf::st_geometry(shp), epsg = epsg)$x
 
-  cent <- geos::geos_centroid(shp)
+  cent <- geos::geos_centroid(geom)
 
-  if (nrow(shp) > 1) {
-    outside <- !geos::geos_within(cent, shp)
+  if (length(geom) > 1) {
+    outside <- !geos::geos_within(cent, geom)
 
     if (any(outside)) {
-      cent[outside] <- geos::geos_point_on_surface(shp[outside, ])
+      cent[outside] <- geos::geos_point_on_surface(geom[outside, ])
     }
   } else {
-    outside <- !geos::geos_within(geom1 = cent, geom2 = shp)
+    outside <- !geos::geos_within(geom1 = cent, geom2 = geom)
 
     if (is.na(outside)) {
       outside <- TRUE
     }
 
     if (outside) {
-      cent <- geos::geos_point_on_surface(shp)
+      cent <- geos::geos_point_on_surface(geom)
     }
   }
 
@@ -86,7 +86,7 @@ geos_centerish <- function(shp, epsg = 3857) {
 #' st_circle_center(towns)
 #'
 st_circle_center <- function(shp, tolerance = 0.01, epsg = 3857) {
-  cent <- geos_circle_center(shp, tolerance = tolerance, epsg = epsg)
+  cent <- geos_circle_center(sf::st_geometry(shp), tolerance = tolerance, epsg = epsg)
 
   sf::st_geometry(shp) <- sf::st_as_sfc(cent)
   shp
@@ -111,7 +111,7 @@ st_circle_center <- function(shp, tolerance = 0.01, epsg = 3857) {
 #' geos_circle_center(towns)
 #'
 geos_circle_center <- function(shp, tolerance = 0.01, epsg = 3857) {
-  shp <- make_planar_pair(x = shp, epsg = epsg)$x
+  shp <- make_planar_pair(x = sf::st_geometry(shp), epsg = epsg)$x
 
   geos::geos_centroid(geos::geos_maximum_inscribed_crc(shp, tolerance = tolerance))
 }
