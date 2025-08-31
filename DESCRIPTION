@@ -1,11 +1,13 @@
 Package: geomander
 Type: Package
 Title: Geographic Tools for Studying Gerrymandering
-Version: 2.4.0
+Version: 2.5.0
 Authors@R: c(
-    person("Christopher T.", "Kenny", email = "christopherkenny@fas.harvard.edu",
-            role = c("aut", "cre"), comment = c(ORCID = "0000-0002-9386-6860")),
-    person("Cory", "McCartan", email = "corymccartan@nyu.edu",
+    person("Christopher T.", "Kenny", 
+            email = "ctkenny@proton.me",
+            role = c("aut", "cre"), 
+            comment = c(ORCID = "0000-0002-9386-6860")),
+    person("Cory", "McCartan", email = "mccartan@psu.edu",
             role = "ctb", comment = c(ORCID = "0000-0002-6251-669X"))
             )
 Description: A compilation of tools to complete common tasks for studying gerrymandering. 

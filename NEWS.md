@@ -1,3 +1,7 @@
+# geomander 2.5.0
+
+* Adds large speed improvements to `geo_match()`.
+
 # geomander 2.4.0
 
 * Replaces magrittr pipe with the base R pipe internally and in examples.
