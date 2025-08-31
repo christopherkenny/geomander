@@ -43,3 +43,6 @@ src-i386/
 /doc/
 /Meta/
 docs
+/revdep/library
+/revdep/checks
+revdep/data.sqlite
