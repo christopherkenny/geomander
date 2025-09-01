@@ -30,7 +30,7 @@ library(sf)
 
 Many sources of electoral data are focused, as expected, on elections. As such, many lack the population data that can be necessary to place racial, turnout, and other population patterns in context.
 
-One of the best sources of electoral data is the [Voting and Election Science Team](https://dataverse.harvard.edu/dataverse/electionscience) for spatial analysis. Using one county from the Virginia senate election in 2018, this example walks through an easy way to add population data to this by matching based on the geographies.
+One of the best sources of electoral data is the [Voting and Election Science Team](https://www.electproject.org/election-data/precinct-data) for spatial analysis. Using one county from the Virginia senate election in 2018, this example walks through an easy way to add population data to this by matching based on the geographies.
 
 First, we load in the VA county subset included in the package.
 ```{r}
