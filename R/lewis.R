@@ -623,7 +623,6 @@ lewis_urls <- c(
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/New_York_92_to_92.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/New_York_93_to_93.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/New_York_94_to_97.geojson',
-  'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/New_York_98_to_102.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/New_York_98_to_98.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/New_York_99_to_102.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/New_York_9_to_10.geojson',
