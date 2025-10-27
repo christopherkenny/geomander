@@ -30,7 +30,7 @@ get_alarm <- function(state, year = 2020, geometry = TRUE, epsg = 3857) {
     'https://raw.githubusercontent.com/alarm-redist/census-2020/main/census-vest-{year}/'
   )
   state <- tolower(censable::match_abb(state))
-  block_states_2020 <- c('ca', 'hi', 'or') # TODO: ME probably due to non-coverage?
+  block_states_2020 <- c('ca', 'hi', 'or', 'me')
   block_states_2010 <- c('ca', 'hi', 'ky', 'or', 'ri', 'wa')
   is_block <- FALSE
   if (year == 2020) {
