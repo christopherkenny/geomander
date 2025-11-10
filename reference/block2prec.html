@@ -18,7 +18,7 @@ the name block2prec."><meta property="og:image" content="https://christophertken
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.5.1</span>
       </span>
     </div>
 
@@ -96,17 +96,19 @@ the name block2prec.</p>
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">rockland</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">rockland</span><span class="op">$</span><span class="va">id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">rockland</span><span class="op">)</span>, <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rockland</span><span class="op">$</span><span class="va">id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">rockland</span><span class="op">)</span>, <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">block2prec</span><span class="op">(</span><span class="va">rockland</span>, <span class="va">rockland</span><span class="op">$</span><span class="va">id</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 24</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 24</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   matches_id waterpct    pop pop_white pop_black pop_hisp pop_aian pop_asian</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>          1     54.9 <span style="text-decoration: underline;">163</span>089    <span style="text-decoration: underline;">103</span>643     <span style="text-decoration: underline;">19</span>762    <span style="text-decoration: underline;">26</span>685      275     <span style="text-decoration: underline;">10</span>073</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>          2     71.2 <span style="text-decoration: underline;">148</span>598    <span style="text-decoration: underline;">100</span>027     <span style="text-decoration: underline;">14</span>861    <span style="text-decoration: underline;">22</span>098      212      <span style="text-decoration: underline;">9</span>026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>          1     40.1 <span style="text-decoration: underline;">108</span>145     <span style="text-decoration: underline;">71</span>422     <span style="text-decoration: underline;">12</span>109    <span style="text-decoration: underline;">16</span>272      170      <span style="text-decoration: underline;">6</span>486</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>          2     48.3 <span style="text-decoration: underline;">103</span>132     <span style="text-decoration: underline;">68</span>520     <span style="text-decoration: underline;">10</span>470    <span style="text-decoration: underline;">16</span>357      140      <span style="text-decoration: underline;">5</span>939</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>          3      0        0         0         0        0        0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>          4     37.7 <span style="text-decoration: underline;">100</span>410     <span style="text-decoration: underline;">63</span>728     <span style="text-decoration: underline;">12</span>044    <span style="text-decoration: underline;">16</span>154      177      <span style="text-decoration: underline;">6</span>674</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 16 more variables: pop_nhpi &lt;dbl&gt;, pop_other &lt;dbl&gt;, pop_two &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   vap &lt;dbl&gt;, vap_white &lt;dbl&gt;, vap_black &lt;dbl&gt;, vap_hisp &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   vap_aian &lt;dbl&gt;, vap_asian &lt;dbl&gt;, vap_nhpi &lt;dbl&gt;, vap_other &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   vap_two &lt;dbl&gt;, place &lt;dbl&gt;, id &lt;int&gt;, state &lt;chr&gt;, county &lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   vap_two &lt;dbl&gt;, place &lt;dbl&gt;, id &lt;dbl&gt;, state &lt;chr&gt;, county &lt;chr&gt;</span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -122,7 +124,7 @@ the name block2prec.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer></div>

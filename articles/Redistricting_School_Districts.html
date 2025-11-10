@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">geomander</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.5.1</span>
       </span>
     </div>
 
@@ -147,7 +147,7 @@ outlined in red is significantly smaller than that.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">school</span>, fill <span class="op">=</span> <span class="cn">NA</span>, color <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_void</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Redistricting_School_Districts_files/figure-html/unnamed-chunk-5-1.png" width="700">
+<p><img src="Redistricting_School_Districts_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" width="700">
 As a first pass, we can use the geo_filter function, which wraps sf’s
 st_intersects and filters only to those that intersect.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -158,7 +158,7 @@ you only need to intersect at a single point.</p>
 <code class="sourceCode R"><span><span class="va">block</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>id <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/row_number.html" class="external-link">row_number</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">school</span>, fill <span class="op">=</span> <span class="cn">NA</span>, color <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span> </span></code></pre></div>
-<p><img src="Redistricting_School_Districts_files/figure-html/unnamed-chunk-7-1.png" width="700">
+<p><img src="Redistricting_School_Districts_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" width="700">
 Yet, we probably want to go further than that, getting rid of the
 various external pieces. We can use geo_trim to do just that. First, we
 want to check what would be thrown away at the default area threshold of
@@ -169,7 +169,7 @@ bool = TRUE and plotting it.</p>
 <span></span>
 <span><span class="va">block</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">trim</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">school</span>, fill <span class="op">=</span> <span class="cn">NA</span>, lwd <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Redistricting_School_Districts_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
+<p><img src="Redistricting_School_Districts_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" width="700"></p>
 <p>To me, it looks like we are subsetting correctly with this threshold,
 so we actually trim away this time.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -186,7 +186,7 @@ County GIS Office</a>.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">towns</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">ID</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Redistricting_School_Districts_files/figure-html/data-1.png" width="700"></p>
+<p><img src="Redistricting_School_Districts_files/figure-html/data-1.png" class="r-plt" width="700"></p>
 <p>From this, we can then try to match our blocks to towns. I use the
 centroid option, which often works the most quickly. The default method,
 ‘center’ is slower, but more accurate.</p>
@@ -200,7 +200,7 @@ blocks to a town, even if they do not overlap.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">matched</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">'Match'</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Redistricting_School_Districts_files/figure-html/unnamed-chunk-11-1.png" width="700">
+<p><img src="Redistricting_School_Districts_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" width="700">
 So, we want to make two particular edits to the outcome. First, we
 create a fake Orange County Town for the blocks that come from Orange
 County, though there are only a few dozen people who live in those
@@ -314,7 +314,7 @@ potential coalition ward.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer>
