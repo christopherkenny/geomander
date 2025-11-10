@@ -120,7 +120,7 @@ create_tract_table <- function(state, county, geometry = TRUE, year = 2019,
 #' @examples
 #' set.seed(1)
 #' data(rockland)
-#' rockland$id <- sample(1:2, nrow(rockland), TRUE)
+#' rockland$id <- sample(c(1:2, 4), nrow(rockland), TRUE)
 #' block2prec(rockland, rockland$id)
 #'
 block2prec <- function(block_table, matches, geometry = FALSE) {
@@ -176,7 +176,7 @@ block2prec <- function(block_table, matches, geometry = FALSE) {
       }
     }) |> 
       stats::setNames(names(ret)) |>
-      Filter(function(x) !is.na(x))
+      Filter(f = function(x) !is.na(x))
       
     ret <- tidyr::complete(
       data = ret, matches_id = seq_len(nrow_to),

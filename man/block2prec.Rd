@@ -23,7 +23,7 @@ the name block2prec.
 \examples{
 set.seed(1)
 data(rockland)
-rockland$id <- sample(1:2, nrow(rockland), TRUE)
+rockland$id <- sample(c(1:2, 4), nrow(rockland), TRUE)
 block2prec(rockland, rockland$id)
 
 }

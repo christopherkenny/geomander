@@ -1,3 +1,8 @@
+# geomander 2.5.1
+
+* Updates Maine for `get_alarm()` to grab updated files that have full coverage for the state.
+* Fixes an issue where `block2prec()` would fail if there were units in `to` that had no matches in `from`.
+
 # geomander 2.5.0
 
 * Adds large speed improvements to `geo_match()`.

@@ -22,7 +22,7 @@ sf tibble
 Get Harvard Election Data Archive ("HEDA") Dataset
 }
 \examples{
-\dontshow{if (Sys.getenv('DATAVERSE_KEY') != '') (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (Sys.getenv('DATAVERSE_KEY') != '') withAutoprint(\{ # examplesIf}
 shp <- get_heda('ND')
 \dontshow{\}) # examplesIf}
 }
