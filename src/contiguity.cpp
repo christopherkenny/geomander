@@ -1,44 +1,43 @@
 #include <Rcpp.h>
+#include <vector>
+#include <queue>
 using namespace Rcpp;
 
 // [[Rcpp::export]]
 IntegerVector contiguity(List adj, IntegerVector group) {
-  IntegerVector choices = sort_unique(group);
-  IntegerVector conncomp(group.size());
-  IntegerVector group_cc(choices.size());
-  IntegerVector currgroup(1);
-  IntegerVector temp;
-  int cc, s, r;
-
-  for(int i = 0; i < group.size(); i++){
-    if(conncomp(i) == 0){
-      group_cc(group(i)) ++;  
-      cc = group_cc(group(i));
-      conncomp(i) = cc;
+  int n = group.size();
+  IntegerVector conncomp(n);
+  
+  // Convert group to 0-indexed for faster array access
+  int max_group = max(group);
+  std::vector<int> group_cc(max_group + 1, 0);
+  
+  // Pre-allocate queue for BFS
+  std::queue<int> q;
+  
+  for(int i = 0; i < n; i++){
+    if(conncomp[i] == 0){
+      int curr_group = group[i];
+      group_cc[curr_group]++;
+      int cc = group_cc[curr_group];
       
-      temp = adj(i);
-      std::vector<int> reservoir;
-      s = 0;
-      for(int j = 0; j < temp.size(); j++){
-        if(group(temp(j)) == group(i) && conncomp(temp(j)) == 0){
-          reservoir.push_back(temp(j));
-          conncomp(temp(j)) = cc;
-          s++;
-        } 
-      }
+      // BFS using queue
+      conncomp[i] = cc;
+      q.push(i);
       
-      if(s > 0){
-        r = 0;
-        while(r < s){
-          temp = adj(reservoir[r]);
-          for(int j = 0; j < temp.size(); j++){
-            if(group(temp(j)) == group(i) && conncomp(temp(j)) == 0){
-              reservoir.push_back(temp(j));
-              conncomp(temp(j)) = cc;
-              s++;
-            } 
+      while(!q.empty()){
+        int curr = q.front();
+        q.pop();
+        
+        IntegerVector neighbors = adj[curr];
+        int n_neighbors = neighbors.size();
+        
+        for(int j = 0; j < n_neighbors; j++){
+          int neighbor = neighbors[j];
+          if(group[neighbor] == curr_group && conncomp[neighbor] == 0){
+            conncomp[neighbor] = cc;
+            q.push(neighbor);
           }
-          r++;
         }
       }
     }
@@ -46,6 +45,3 @@ IntegerVector contiguity(List adj, IntegerVector group) {
   
   return conncomp;
 }
-
-
-
