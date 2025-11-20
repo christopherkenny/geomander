@@ -9,6 +9,18 @@ contiguity <- function(adj, group) {
     .Call(`_geomander_contiguity`, adj, group)
 }
 
+contiguity_matrix <- function(adj, group) {
+    .Call(`_geomander_contiguity_matrix`, adj, group)
+}
+
+is_contiguous <- function(adj, group) {
+    .Call(`_geomander_is_contiguous`, adj, group)
+}
+
+is_contiguous_mat <- function(adj, group) {
+    .Call(`_geomander_is_contiguous_mat`, adj, group)
+}
+
 countconnections <- function(dm) {
     .Call(`_geomander_countconnections`, dm)
 }

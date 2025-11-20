@@ -33,6 +33,42 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// contiguity_matrix
+IntegerMatrix contiguity_matrix(List adj, IntegerMatrix group);
+RcppExport SEXP _geomander_contiguity_matrix(SEXP adjSEXP, SEXP groupSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type adj(adjSEXP);
+    Rcpp::traits::input_parameter< IntegerMatrix >::type group(groupSEXP);
+    rcpp_result_gen = Rcpp::wrap(contiguity_matrix(adj, group));
+    return rcpp_result_gen;
+END_RCPP
+}
+// is_contiguous
+bool is_contiguous(List adj, IntegerVector group);
+RcppExport SEXP _geomander_is_contiguous(SEXP adjSEXP, SEXP groupSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type adj(adjSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type group(groupSEXP);
+    rcpp_result_gen = Rcpp::wrap(is_contiguous(adj, group));
+    return rcpp_result_gen;
+END_RCPP
+}
+// is_contiguous_mat
+LogicalVector is_contiguous_mat(List adj, IntegerMatrix group);
+RcppExport SEXP _geomander_is_contiguous_mat(SEXP adjSEXP, SEXP groupSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type adj(adjSEXP);
+    Rcpp::traits::input_parameter< IntegerMatrix >::type group(groupSEXP);
+    rcpp_result_gen = Rcpp::wrap(is_contiguous_mat(adj, group));
+    return rcpp_result_gen;
+END_RCPP
+}
 // countconnections
 IntegerMatrix countconnections(IntegerMatrix dm);
 RcppExport SEXP _geomander_countconnections(SEXP dmSEXP) {
@@ -108,6 +144,9 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_geomander_adjlist2matrix", (DL_FUNC) &_geomander_adjlist2matrix, 1},
     {"_geomander_contiguity", (DL_FUNC) &_geomander_contiguity, 2},
+    {"_geomander_contiguity_matrix", (DL_FUNC) &_geomander_contiguity_matrix, 2},
+    {"_geomander_is_contiguous", (DL_FUNC) &_geomander_is_contiguous, 2},
+    {"_geomander_is_contiguous_mat", (DL_FUNC) &_geomander_is_contiguous_mat, 2},
     {"_geomander_countconnections", (DL_FUNC) &_geomander_countconnections, 1},
     {"_geomander_localgeary", (DL_FUNC) &_geomander_localgeary, 2},
     {"_geomander_globalgeary", (DL_FUNC) &_geomander_globalgeary, 2},
