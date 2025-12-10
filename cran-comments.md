@@ -9,17 +9,11 @@
 
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note
-
-New maintainer:
-  Christopher T. Kenny <ctkenny@proton.me>
-Old maintainer(s):
-  Christopher T. Kenny <christopherkenny@fas.harvard.edu>
+0 errors | 0 warnings | 0 notes
 
 ## Additional notes
 
-* This includes updating the maintainer email to ctkenny@proton.me. Please see the email from christopherkenny@fas.harvard.edu on 2025-08-29 for confirmation.
-* This update fixes a note on CRAN about not specifying a sufficient R version and the package now requires R (>= 4.1.0).
+* This update fixes a download issue with an internet resource and now checks curl headers before attempting a download so that it will fail gracefully (if necessary).
 
 ## revdepcheck results
 

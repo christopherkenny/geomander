@@ -1,8 +1,6 @@
 BAFs
 BLOCKID
 CMD
-CRS
-DOIs
 DRA
 DVN
 Dataverse
@@ -26,10 +24,7 @@ Rockland
 UBKYRU
 VAP
 VTD
-bool
 centerish
-centroid
-centroids
 countiy
 csv
 cvap
@@ -47,6 +42,7 @@ ggplots
 https
 ish
 lewis
+magrittr
 memoized
 multipolygon
 nrcsd
