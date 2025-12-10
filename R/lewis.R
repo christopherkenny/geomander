@@ -6,6 +6,7 @@
 #'
 #' @param state two letter state abbreviation
 #' @param congress congress number, from 1 to 114.
+#' @param path_only logical. If TRUE, returns only the URL to the file.
 #'
 #' @return a sf tibble of the congressional district boundaries
 #' @export
@@ -16,8 +17,11 @@
 #'  \[Data file and code book\]. Retrieved from <https://cdmaps.polisci.ucla.edu> on \[date of download\].
 #'
 #' @examples
-#' get_lewis(state = 'NM', congress = 111)
-get_lewis <- function(state, congress) {
+#' path <- get_lewis(state = 'NM', congress = 111, path_only = TRUE)
+#' if (attr(curlGetHeaders(path), 'status') == 200) {
+#'   get_lewis(state = 'NM', congress = 111)
+#' }
+get_lewis <- function(state, congress, path_only = FALSE) {
   st <- tolower(censable::match_name(state))
   st <- stringr::str_replace_all(stringr::str_to_title(st), ' ', '%20')
 
@@ -35,6 +39,10 @@ get_lewis <- function(state, congress) {
     .frequency = 'once',
     .frequency_id = 'cite_lewis'
   )
+  
+  if (path_only) {
+    return(file_name)
+  }
 
   out <- sf::read_sf(file_name)
 

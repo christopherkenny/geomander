@@ -1,3 +1,7 @@
+# geomander 2.5.2
+
+* Fixes a CRAN download issue for invalid links for Lewis, DeVine, Pitcher, and Martis shapefiles.
+
 # geomander 2.5.1
 
 * Updates Maine for `get_alarm()` to grab updated files that have full coverage for the state.

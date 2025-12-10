@@ -4,12 +4,14 @@
 \alias{get_lewis}
 \title{Get historical United States Congressional District Shapefiles}
 \usage{
-get_lewis(state, congress)
+get_lewis(state, congress, path_only = FALSE)
 }
 \arguments{
 \item{state}{two letter state abbreviation}
 
 \item{congress}{congress number, from 1 to 114.}
+
+\item{path_only}{logical. If TRUE, returns only the URL to the file.}
 }
 \value{
 a sf tibble of the congressional district boundaries
@@ -20,7 +22,10 @@ hosted at \url{https://cdmaps.polisci.ucla.edu/}. Files are fetched through the 
 repository at \url{https://github.com/JeffreyBLewis/congressional-district-boundaries}.
 }
 \examples{
-get_lewis(state = 'NM', congress = 111)
+path <- get_lewis(state = 'NM', congress = 111, path_only = TRUE)
+if (attr(curlGetHeaders(path), 'status') == 200) {
+  get_lewis(state = 'NM', congress = 111)
+}
 }
 \references{
 Jeffrey B. Lewis, Brandon DeVine, Lincoln Pitcher, and Kenneth C. Martis. (2013)
