@@ -29,7 +29,13 @@ get_lewis <- function(state, congress, path_only = FALSE) {
 
   f <- lapply(stringr::str_extract_all(st_f, '\\d+'), as.integer)
   f <- lapply(f, function(x) setdiff(x, 20))
-  f <- lapply(f, function(x) dplyr::between(congress, x[1], x[2])) |>
+  f <- lapply(f, function(x) {
+    if (length(x) == 1) {
+      congress == x
+    } else {
+      dplyr::between(congress, x[1], x[2])
+    }
+  }) |>
     unlist()
 
   file_name <- st_f[f]

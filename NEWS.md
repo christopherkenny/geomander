@@ -1,3 +1,7 @@
+# geomander 2.5.3
+
+* Fixes an NA matching error within `get_lewis()` that would break downloads for certain congress-state pairs (#17).
+
 # geomander 2.5.2
 
 * Fixes a CRAN download issue for invalid links for Lewis, DeVine, Pitcher, and Martis shapefiles.
