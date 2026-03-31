@@ -7,13 +7,17 @@
 #' If a voting district is split between blocks, this currently uses the most
 #' common district.
 #'
-#' @param baf a tibble representing a block assignment file.
-#' @param plan_name character. Name of column in `baf` which corresponds to the districts.
-#' @param GEOID character. Name of column which corresponds to each block's GEOID,
-#' sometimes called "BLOCKID". Default is `'GEOID'`.
-#' @param year the decade to request, either `2010` or `2020`. Default is `2020`.
+#' @param baf dataframe representing a block assignment file.
+#' @param plan_name Name of the column in `baf` containing district assignments.
+#' @param GEOID Name of the column containing block GEOIDs, sometimes called
+#'   `"BLOCKID"`. Defaults to `"GEOID"`.
+#' @param year Decennial vintage for the crosswalk, either `2010` or `2020`.
 #'
-#' @return a tibble with a vtd-level assignment file
+#' @details
+#' When a voting district contains blocks assigned to more than one district, the
+#' output uses the modal district assignment.
+#'
+#' @return tibble with one row per voting district and the requested plan column
 #' @export
 #'
 #' @examples

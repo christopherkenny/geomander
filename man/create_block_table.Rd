@@ -2,7 +2,7 @@
 % Please edit documentation in R/datatables.R
 \name{create_block_table}
 \alias{create_block_table}
-\title{Create Block Level Data}
+\title{Create a Census Block-Level Table}
 \usage{
 create_block_table(
   state,
@@ -14,26 +14,27 @@ create_block_table(
 )
 }
 \arguments{
-\item{state}{Required. Two letter state postal code.}
+\item{state}{Two-letter state postal code.}
 
-\item{county}{Optional. Name of county.  If not provided, returns blocks for the entire state.}
+\item{county}{Optional county name or code. If omitted, returns blocks for the
+entire state.}
 
-\item{geometry}{Defaults to TRUE. Whether to return the geometry or not.}
+\item{geometry}{Logical. If \code{TRUE}, include geometry.}
 
-\item{year}{year, must be 2000, 2010, or 2020}
+\item{year}{Census year. Intended for decennial years, especially \code{2010} and
+\code{2020}.}
 
-\item{mem}{Default is FALSE. Set TRUE to use memoized backend.}
+\item{mem}{Logical. If \code{TRUE}, use the memoized \code{censable} backend.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-dataframe with data for each block in the selected region. Data includes
-2 sets of columns for each race or ethnicity category: population (pop) and
-voting age population (vap)
+dataframe or \code{sf} object with one row per block. Includes population
+and voting-age-population summaries by race and ethnicity.
 }
 \description{
-Creates a block level dataset, using the decennial census information, with the
-standard redistricting variables.
+Download block-level decennial census data with the standard redistricting
+variables used throughout the package.
 }
 \examples{
 \dontrun{

@@ -2,31 +2,38 @@
 % Please edit documentation in R/estimate.R
 \name{geo_estimate_down}
 \alias{geo_estimate_down}
-\title{Estimate Down Geography Levels}
+\title{Estimate Values Down to a Finer Geography}
 \usage{
 geo_estimate_down(from, to, wts, value, method = "center", epsg = 3857)
 }
 \arguments{
-\item{from}{Larger geography level}
+\item{from}{Larger geography level containing the observed values.}
 
-\item{to}{smaller geography level}
+\item{to}{Smaller geography level to estimate onto.}
 
-\item{wts}{numeric vector of length nrow(to). Defaults to 1. Typically population or VAP, as a weight to give each precinct.}
+\item{wts}{Numeric vector of length \code{nrow(to)}. Used to allocate each matched
+value across rows of \code{to}. Defaults to \code{1}, which splits evenly within each
+matched group.}
 
-\item{value}{numeric vector of length nrow(from). Defaults to 1. Typically electoral outcomes, as a value to estimate down into blocks.}
+\item{value}{Numeric vector of length \code{nrow(from)} containing the values to
+split downward. Defaults to \code{1}.}
 
-\item{method}{string from center, centroid, point, or area for matching levels}
+\item{method}{Matching method passed to \code{\link[=geo_match]{geo_match()}}.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-numeric vector with each value split by weight
+numeric vector of length \code{nrow(to)} with estimated values
 }
 \description{
-Simple method for estimating data down to a lower level. This is most often useful
-for getting election data down from a precinct level to a block level in the case
-that a state or other jurisdiction split precincts when creating districts. Geographic
-partner to estimate_down.
+Split values observed on a larger geography across a smaller geography after
+first matching each row of \code{to} to a row of \code{from}. This is commonly used to
+distribute precinct-level election totals to blocks.
+}
+\details{
+If all weights for a matched group are zero, the function falls back to equal
+allocation within that group. Rows in \code{to} that do not match any row of
+\code{from} receive \code{0}.
 }
 \examples{
 library(dplyr)

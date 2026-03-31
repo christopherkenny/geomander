@@ -2,7 +2,7 @@
 % Please edit documentation in R/datatables.R
 \name{create_tract_table}
 \alias{create_tract_table}
-\title{Create Tract Level Data}
+\title{Create an ACS Tract-Level Table}
 \usage{
 create_tract_table(
   state,
@@ -14,25 +14,27 @@ create_tract_table(
 )
 }
 \arguments{
-\item{state}{Required. Two letter state postal code.}
+\item{state}{Two-letter state postal code.}
 
-\item{county}{Optional. Name of county.  If not provided, returns tracts for the entire state.}
+\item{county}{Optional county name or code. If omitted, returns tracts for the
+entire state.}
 
-\item{geometry}{Defaults to TRUE. Whether to return the geography or not.}
+\item{geometry}{Logical. If \code{TRUE}, include geometry.}
 
-\item{year}{year, must be >= 2009 and <= 2019.}
+\item{year}{ACS year, currently intended for \code{2009} through \code{2019}.}
 
-\item{mem}{Default is FALSE. Set TRUE to use memoized backend.}
+\item{mem}{Logical. If \code{TRUE}, use the memoized \code{censable} backend.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-dataframe with data for each tract in the selected region. Data includes
-3 sets of columns for each race or ethnicity category: population (pop), voting age
-population (vap), and citizen voting age population (cvap)
+dataframe or \code{sf} object with one row per tract. Includes population,
+voting-age population, and citizen voting-age population summaries by race
+and ethnicity.
 }
 \description{
-Create Tract Level Data
+Download tract-level ACS data with the standard redistricting variables used
+throughout the package.
 }
 \examples{
 \dontrun{

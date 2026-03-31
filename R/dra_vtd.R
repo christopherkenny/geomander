@@ -1,18 +1,19 @@
-#' Get Dave's Redistricting App Dataset
+#' Get a Dave's Redistricting App Dataset
 #'
-#' Gets a dataset from Dave's Redistricting App.
+#' Download a state election dataset from the DRA public repository. Depending on
+#' state and year, the geometry may be joined at the VTD or block-group level.
 #'
 #' See the full available data at <https://github.com/dra2020/vtd_data>.
 #'
-#'
-#' @param state two letter state abbreviation
-#' @param year year to get data for. Either `2020` or `2010`
-#' @param geometry Default is TRUE. Add geometry to the data?
-#' @param clean_names Clean names. Default is \code{TRUE}. If \code{FALSE},
-#' returns default names.
+#' @param state Two-letter state abbreviation.
+#' @param year Year to retrieve, either `2020` or `2010`.
+#' @param geometry Logical. If `TRUE`, join the corresponding geometry.
+#' @param clean_names Logical. If `TRUE`, rename election columns into a more
+#'   consistent scheme.
 #' @param epsg `r roxy_epsg()`
 #'
-#' @return tibble with election data and optional geometry
+#' @return tibble or `sf` object with DRA election data and, optionally,
+#'   geometry.
 #' @export
 #'
 #' @concept datasets

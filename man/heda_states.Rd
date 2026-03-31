@@ -2,15 +2,16 @@
 % Please edit documentation in R/heda.R
 \name{heda_states}
 \alias{heda_states}
-\title{List Available States from HEDA Dataverse}
+\title{List Available HEDA States}
 \usage{
 heda_states()
 }
 \value{
-character abbreviations for states
+character vector of lowercase state abbreviations with packaged HEDA
+support.
 }
 \description{
-List Available States from HEDA Dataverse
+List Available HEDA States
 }
 \examples{
 heda_states()

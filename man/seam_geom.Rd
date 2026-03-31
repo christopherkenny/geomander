@@ -2,26 +2,27 @@
 % Please edit documentation in R/seam.R
 \name{seam_geom}
 \alias{seam_geom}
-\title{Filter Shape to Geographies Along Border}
+\title{Filter Shapes to Units Along a Seam}
 \usage{
 seam_geom(adj, shp, admin, seam, epsg = 3857)
 }
 \arguments{
-\item{adj}{zero indexed adjacency graph}
+\item{adj}{Zero-indexed adjacency graph.}
 
-\item{shp}{tibble to subset and where admin column is found}
+\item{shp}{\code{sf} object containing the administrative identifier.}
 
-\item{admin}{quoted name of administrative unit column}
+\item{admin}{Name of the administrative-unit column in \code{shp}.}
 
-\item{seam}{administrative units to filter by}
+\item{seam}{Length-2 vector of administrative-unit values defining the seam.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-subset of shp
+subset of \code{shp} containing only rows on the selected seam
 }
 \description{
-Filter Shape to Geographies Along Border
+Keep only rows in \code{shp} that lie on the border between two administrative
+units and have at least one adjacency connection across that border.
 }
 \examples{
 data('rockland')

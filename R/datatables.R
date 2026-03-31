@@ -1,19 +1,20 @@
-#' Create Block Level Data
+#' Create a Census Block-Level Table
 #'
-#' Creates a block level dataset, using the decennial census information, with the
-#' standard redistricting variables.
+#' Download block-level decennial census data with the standard redistricting
+#' variables used throughout the package.
 #'
-#' @param state Required. Two letter state postal code.
-#' @param county Optional. Name of county.  If not provided, returns blocks for the entire state.
-#' @param geometry Defaults to TRUE. Whether to return the geometry or not.
-#' @param year year, must be 2000, 2010, or 2020
-#' @param mem Default is FALSE. Set TRUE to use memoized backend.
+#' @param state Two-letter state postal code.
+#' @param county Optional county name or code. If omitted, returns blocks for the
+#'   entire state.
+#' @param geometry Logical. If `TRUE`, include geometry.
+#' @param year Census year. Intended for decennial years, especially `2010` and
+#'   `2020`.
+#' @param mem Logical. If `TRUE`, use the memoized `censable` backend.
 #' @templateVar epsg TRUE
 #' @template template
 #'
-#' @return dataframe with data for each block in the selected region. Data includes
-#' 2 sets of columns for each race or ethnicity category: population (pop) and
-#' voting age population (vap)
+#' @return dataframe or `sf` object with one row per block. Includes population
+#'   and voting-age-population summaries by race and ethnicity.
 #'
 #' @export
 #' @concept datatable
@@ -54,19 +55,23 @@ create_block_table <- function(state, county = NULL, geometry = TRUE, year = 202
 }
 
 
-#' Create Tract Level Data
+#' Create an ACS Tract-Level Table
 #'
-#' @param state Required. Two letter state postal code.
-#' @param county Optional. Name of county.  If not provided, returns tracts for the entire state.
-#' @param geometry Defaults to TRUE. Whether to return the geography or not.
-#' @param year year, must be >= 2009 and <= 2019.
-#' @param mem Default is FALSE. Set TRUE to use memoized backend.
+#' Download tract-level ACS data with the standard redistricting variables used
+#' throughout the package.
+#'
+#' @param state Two-letter state postal code.
+#' @param county Optional county name or code. If omitted, returns tracts for the
+#'   entire state.
+#' @param geometry Logical. If `TRUE`, include geometry.
+#' @param year ACS year, currently intended for `2009` through `2019`.
+#' @param mem Logical. If `TRUE`, use the memoized `censable` backend.
 #' @templateVar epsg TRUE
 #' @template template
 #'
-#' @return dataframe with data for each tract in the selected region. Data includes
-#' 3 sets of columns for each race or ethnicity category: population (pop), voting age
-#' population (vap), and citizen voting age population (cvap)
+#' @return dataframe or `sf` object with one row per tract. Includes population,
+#'   voting-age population, and citizen voting-age population summaries by race
+#'   and ethnicity.
 #' @export
 #'
 #' @concept datatable
@@ -105,16 +110,22 @@ create_tract_table <- function(state, county, geometry = TRUE, year = 2019,
   out
 }
 
-#'  Aggregate Block Table by Matches
+#' Aggregate a Block Table by Matches
 #'
-#' Aggregates block table values up to a higher level, normally precincts, hence
-#' the name block2prec.
+#' Aggregate block-level attributes up to a larger geography, usually precincts,
+#' using a vector of group assignments such as the output of [geo_match()].
 #'
-#' @param block_table Required. Block table output from create_block_table
-#' @param matches Required. Grouping variable to aggregate up by, typically made with geo_match
-#' @param geometry Boolean. Whether to keep geometry or not.
+#' @param block_table Block table, usually from [create_block_table()].
+#' @param matches Integer grouping variable, typically from [geo_match()].
+#' @param geometry Logical. If `TRUE`, union geometry within each matched group.
 #'
-#' @return dataframe with length(unique(matches)) rows
+#' @details
+#' If `matches` carries a `"matching_max"` attribute, the output preserves all
+#' target groups up to that size, even when some groups receive no matched rows.
+#' Missing nonnegative numeric summaries are filled with `0`.
+#'
+#' @return dataframe with one row per matched group. When empty target groups are
+#'   preserved, the number of rows may be larger than `length(unique(matches))`.
 #' @export
 #' @concept datatable
 #' @examples
@@ -189,20 +200,20 @@ block2prec <- function(block_table, matches, geometry = FALSE) {
 }
 
 
-#' Aggregate Block Table by Matches and County
+#' Aggregate a Block Table by Matches Within County
 #'
-#' Performs the same type of operation as block2prec, but subsets a precinct geometry
-#' based on a County fips column. This helps get around the problem that county geometries
-#' often have borders that follow rivers and lead to funny shaped blocks. This guarantees
-#' that every block is matched to a precinct which is in the same county.
+#' Variant of [block2prec()] that matches blocks to precincts separately within
+#' each county. This helps avoid cross-county mismatches when county boundaries
+#' and census blocks do not line up cleanly.
 #'
-#' @param block_table Required. Block table output from create_block_table
-#' @param precinct sf dataframe of shapefiles to match to.
-#' @param precinct_county_fips Column within precincts
+#' @param block_table Block table, usually from [create_block_table()].
+#' @param precinct `sf` object of target precinct shapes.
+#' @param precinct_county_fips Name of the county identifier column in `precinct`.
 #' @templateVar epsg TRUE
 #' @template template
 #'
-#' @return dataframe with nrow(precinct) rows
+#' @return dataframe with one row per row of `precinct`, ordered to align with
+#'   the input precinct object.
 #' @export
 #' @concept datatable
 #' @examples \dontrun{

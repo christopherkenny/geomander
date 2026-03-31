@@ -4,14 +4,27 @@
 # - CT: Registration counts for Connecticut, as of 2008
 
 
-#' Get Harvard Election Data Archive ("HEDA") Dataset
+#' Get a Harvard Election Data Archive ("HEDA") Dataset
 #'
-#' @param state two letter state abbreviation
-#' @param path folder to put shape in. Default is \code{tempdir()}
+#' Download a state file from the Harvard Election Data Archive and return it as
+#' an `sf` object. Some states require special handling because the source files
+#' differ in format or level of geography.
+#'
+#' @param state Two-letter state abbreviation.
+#' @param path Directory used for extracted files. Defaults to `tempdir()`.
 #' @param epsg `r roxy_epsg()`
-#' @param ... additional arguments passed to [sf::read_sf()]
+#' @param ... Additional arguments passed to [sf::read_sf()].
 #'
-#' @return sf tibble
+#' @details
+#' Most states are distributed as zipped shapefiles. California is stored
+#' differently and is aggregated here to 2010 tracts. Some states are shipped as
+#' loose shapefile components rather than zip archives. If the source file has no
+#' CRS metadata, the function assumes EPSG 4140 before optionally reprojecting.
+#'
+#' The function currently returns the raw source column names because internal
+#' name cleaning is disabled in the implementation.
+#'
+#' @return `sf` tibble containing the requested HEDA dataset
 #' @export
 #'
 #' @concept datasets
@@ -298,9 +311,10 @@ clean_heda <- function(data, state) {
   data
 }
 
-#' List Available States from HEDA Dataverse
+#' List Available HEDA States
 #'
-#' @return character abbreviations for states
+#' @return character vector of lowercase state abbreviations with packaged HEDA
+#'   support.
 #' @export
 #'
 #' @concept datasets

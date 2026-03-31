@@ -1,19 +1,26 @@
-#' Estimate Down Geography Levels
+#' Estimate Values Down to a Finer Geography
 #'
-#' Simple method for estimating data down to a lower level. This is most often useful
-#' for getting election data down from a precinct level to a block level in the case
-#' that a state or other jurisdiction split precincts when creating districts. Geographic
-#' partner to estimate_down.
+#' Split values observed on a larger geography across a smaller geography after
+#' first matching each row of `to` to a row of `from`. This is commonly used to
+#' distribute precinct-level election totals to blocks.
 #'
-#' @param from Larger geography level
-#' @param to smaller geography level
-#' @param wts numeric vector of length nrow(to). Defaults to 1. Typically population or VAP, as a weight to give each precinct.
-#' @param value numeric vector of length nrow(from). Defaults to 1. Typically electoral outcomes, as a value to estimate down into blocks.
-#' @param method string from center, centroid, point, or area for matching levels
+#' @param from Larger geography level containing the observed values.
+#' @param to Smaller geography level to estimate onto.
+#' @param wts Numeric vector of length `nrow(to)`. Used to allocate each matched
+#'   value across rows of `to`. Defaults to `1`, which splits evenly within each
+#'   matched group.
+#' @param value Numeric vector of length `nrow(from)` containing the values to
+#'   split downward. Defaults to `1`.
+#' @param method Matching method passed to [geo_match()].
 #' @templateVar epsg TRUE
 #' @template  template
 #'
-#' @return numeric vector with each value split by weight
+#' @details
+#' If all weights for a matched group are zero, the function falls back to equal
+#' allocation within that group. Rows in `to` that do not match any row of
+#' `from` receive `0`.
+#'
+#' @return numeric vector of length `nrow(to)` with estimated values
 #' @concept estimate
 #'
 #' @export
@@ -60,16 +67,18 @@ geo_estimate_down <- function(from, to, wts, value, method = 'center', epsg = 38
 }
 
 
-#' Estimate Down Levels
+#' Estimate Values Down Using Precomputed Matches
 #'
-#' Non-geographic partner function to geo_estimate_down. Allows users to estimate
-#' down without the costly matching operation if they've already matched.
+#' Non-geographic companion to [geo_estimate_down()]. Use this when you already
+#' have a vector of matches and want to avoid recomputing them.
 #'
-#' @param wts numeric vector. Defaults to 1. Typically population or VAP, as a weight to give each precinct.
-#' @param value numeric vector. Defaults to 1. Typically electoral outcomes, as a value to estimate down into blocks.
-#' @param group matches of length(wts) that correspond to row indices of value. Often, this input is the output of geo_match.
+#' @param wts Numeric vector of weights. Defaults to `1`.
+#' @param value Numeric vector of values on the larger geography. Defaults to `1`.
+#' @param group Integer vector of matches of length `length(wts)`. Each entry
+#'   should give the row of `value` that the corresponding lower-level unit maps
+#'   to, often from [geo_match()].
 #'
-#' @return numeric vector with each value split by weight
+#' @return numeric vector of length `length(group)` with values split by weight
 #'
 #' @importFrom tibble tibble
 #' @importFrom dplyr group_by ungroup slice pull left_join
@@ -119,20 +128,24 @@ estimate_down <- function(wts, value, group) {
 }
 
 
-#' Estimate Up Geography Levels
+#' Aggregate Values Up to a Larger Geography
 #'
-#' Simple method for aggregating data up to a higher level This is most often useful
-#' for getting population data from a block level up to a precinct level.
-#' Geographic partner to estimate_up.
+#' Aggregate values from a smaller geography to a larger geography after matching
+#' each row of `from` to a row of `to`. This is commonly used to roll block-level
+#' counts up to precincts or districts.
 #'
-#' @param from smaller geography level
-#' @param to larger geography level
-#' @param value numeric vector of length nrow(from). Defaults to 1.
-#' @param method string from center, centroid, point, or area for matching levels
+#' @param from Smaller geography level.
+#' @param to Larger geography level.
+#' @param value Numeric vector of length `nrow(from)` to aggregate. Defaults to
+#'   `1`.
+#' @param method Matching method passed to [geo_match()].
 #' @templateVar epsg TRUE
 #' @template  template
 #'
-#' @return numeric vector with each value aggregated by group
+#' @details
+#' Groups in `to` with no matched rows are included in the output and receive `0`.
+#'
+#' @return numeric vector of length `nrow(to)` with values aggregated by group
 #'
 #' @importFrom tibble tibble add_row
 #' @importFrom dplyr group_by ungroup slice pull left_join
@@ -172,16 +185,16 @@ geo_estimate_up <- function(from, to, value, method = 'center', epsg = 3857) {
   tb$value
 }
 
-#' Estimate Up Levels
+#' Aggregate Values Up Using Precomputed Matches
 #'
-#' Non-geographic partner function to geo_estimate_up. Allows users to aggregate
-#' up without the costly matching operation if they've already matched.
+#' Non-geographic companion to [geo_estimate_up()]. Use this when you already
+#' have a vector of group assignments.
 #'
-#' @param value numeric vector. Defaults to 1. Typically population values.
-#' @param group matches of length(value) that correspond to row indices of value.
-#' Often, this input is the output of geo_match.
+#' @param value Numeric vector to aggregate. Defaults to `1`.
+#' @param group Integer vector of length `length(value)` giving the destination
+#'   row for each value, often from [geo_match()].
 #'
-#' @return numeric vector with each value aggregated by group
+#' @return numeric vector of length `max(group)` with values aggregated by group
 #'
 #' @importFrom tibble tibble add_row
 #' @importFrom dplyr group_by ungroup slice pull left_join

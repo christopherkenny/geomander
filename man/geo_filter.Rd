@@ -7,19 +7,19 @@
 geo_filter(from, to, bool = FALSE, epsg = 3857)
 }
 \arguments{
-\item{from}{Required. sf dataframe. the geography to subset}
+\item{from}{\code{sf} object to subset.}
 
-\item{to}{Required. sf dataframe. the geography that from must intersect}
+\item{to}{\code{sf} object used as the target geography.}
 
-\item{bool}{Optional, defaults to FALSE. Should this just return a logical vector?}
+\item{bool}{Logical. If \code{TRUE}, return only the logical keep vector.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-sf data frame or logical vector if bool == TRUE
+subset of \code{from}, or a logical vector when \code{bool = TRUE}
 }
 \description{
-Filter to Intersecting Pieces
+Keep only the rows of \code{from} whose geometry intersects any geometry in \code{to}.
 }
 \examples{
 \dontrun{

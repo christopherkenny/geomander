@@ -13,20 +13,22 @@ cct(adj, group)
 ccm(adj, group)
 }
 \arguments{
-\item{adj}{adjacency list}
+\item{adj}{Zero-indexed adjacency list.}
 
-\item{group}{array of group identifiers. Typically district numbers or county names.
-Defaults to 1 if no input is provided, checking that the adjacency list itself is
-one connected component.}
+\item{group}{Optional vector of group identifiers, typically district numbers
+or county names. If omitted, all rows are treated as belonging to one group.}
 }
 \value{
-tibble with contiguity indicators. Each row is the units of \code{adj}. Columns include
+tibble with contiguity indicators. Each row is the units of \code{adj}.
+Columns include
 \itemize{
-\item \code{group} Values of the inputted \code{group} argument. If \code{group} is not specified, then all values
-will be 1.
-\item \code{component} A number for each contiguous set of units within a \code{group}. If all units within a
-\code{group} are contiguous, all values are 1. If there are two sets, each discontiguous with
-the other, the larger one will be numbered 1 and the smaller one will be numbered as 2.
+\item \code{group} Values of the inputted \code{group} argument. If \code{group} is not
+specified, then all values will be 1.
+\item \code{group_number} Integer encoding of \code{group}.
+\item \code{component} A number for each contiguous set of units within a \code{group}.
+If all units within a \code{group} are contiguous, all values are 1. If there
+are two sets, each discontiguous with the other, the larger one will be
+numbered 1 and the smaller one will be numbered 2.
 }
 }
 \description{

@@ -2,19 +2,21 @@
 % Please edit documentation in R/lewis.R
 \name{get_lewis}
 \alias{get_lewis}
-\title{Get historical United States Congressional District Shapefiles}
+\title{Get Historical United States Congressional District Shapefiles}
 \usage{
 get_lewis(state, congress, path_only = FALSE)
 }
 \arguments{
-\item{state}{two letter state abbreviation}
+\item{state}{State name, FIPS, or two-letter abbreviation understood by
+\code{censable}.}
 
-\item{congress}{congress number, from 1 to 114.}
+\item{congress}{Congress number to retrieve.}
 
-\item{path_only}{logical. If TRUE, returns only the URL to the file.}
+\item{path_only}{Logical. If \code{TRUE}, return only the selected download URL.}
 }
 \value{
-a sf tibble of the congressional district boundaries
+\code{sf} tibble of congressional district boundaries, or a character URL
+when \code{path_only = TRUE}.
 }
 \description{
 Data sourced from the United States Congressional District Shapefiles, primarily

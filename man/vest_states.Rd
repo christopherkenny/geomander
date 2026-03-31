@@ -2,18 +2,18 @@
 % Please edit documentation in R/vest.R
 \name{vest_states}
 \alias{vest_states}
-\title{List Available States from VEST Dataverse}
+\title{List Available VEST States}
 \usage{
 vest_states(year)
 }
 \arguments{
-\item{year}{year in 2016, 2018, or 2020}
+\item{year}{Year to inspect in the VEST Dataverse collection.}
 }
 \value{
-character abbreviations for states
+character vector of state abbreviations available for that year
 }
 \description{
-List Available States from VEST Dataverse
+List Available VEST States
 }
 \examples{
 \dontrun{

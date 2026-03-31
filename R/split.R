@@ -4,18 +4,21 @@
 #' geography for the split precinct. This allows you to split a precinct using a
 #' lower geography, typically blocks.
 #'
-#' @param lower The lower geography that makes up the precinct, this is often a
-#' block level geography.
-#' @param precinct The single precinct that you would like to split.
-#' @param split_by The upper geography that you want to split precinct by
-#' @param lower_wt Optional. Numeric weights to give to each precinct, typically
-#' VAP or population.
-#' @param split_by_id Optional. A string that names a column in split_by that
-#' identifies each observation in split_by
+#' @param lower Lower geography that makes up the precinct, often blocks.
+#' @param precinct Single-row `sf` object giving the precinct to split.
+#' @param split_by Geography that defines the pieces to split the precinct into.
+#' @param lower_wt Optional numeric vector of length `nrow(lower)` to aggregate
+#'   within the split pieces, such as population or VAP.
+#' @param split_by_id Optional column name in `split_by` to copy onto the output.
 #' @templateVar epsg TRUE
 #' @template template
 #'
-#' @return sf data frame with precinct split
+#' @details
+#' The function first filters `lower` and `split_by` to the selected precinct,
+#' matches lower-level units to `split_by`, and unions matched pieces. When
+#' `lower_wt` is supplied, a `wt` column is added with summed weights.
+#'
+#' @return `sf` dataframe with one row per observed split piece
 #' @export
 #'
 #' @concept fix

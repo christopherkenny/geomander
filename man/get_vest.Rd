@@ -2,29 +2,29 @@
 % Please edit documentation in R/vest.R
 \name{get_vest}
 \alias{get_vest}
-\title{Get Voting and Election Science Team ("VEST") Dataset}
+\title{Get a Voting and Election Science Team ("VEST") Dataset}
 \usage{
 get_vest(state, year, path = tempdir(), clean_names = TRUE, epsg = 3857, ...)
 }
 \arguments{
-\item{state}{two letter state abbreviation}
+\item{state}{Two-letter state abbreviation.}
 
-\item{year}{year any in 2016-2021}
+\item{year}{Election year, currently one of \code{2016} through \code{2021}.}
 
-\item{path}{folder to put shape in. Default is \code{tempdir()}}
+\item{path}{Directory used for extracted files. Defaults to \code{tempdir()}.}
 
-\item{clean_names}{Clean names. Default is \code{TRUE}. If \code{FALSE},
-returns default names.}
+\item{clean_names}{Logical. If \code{TRUE}, rename election columns into a more
+consistent scheme.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 
-\item{...}{additional arguments passed to \code{\link[sf:st_read]{sf::read_sf()}}}
+\item{...}{Additional arguments passed to \code{\link[sf:st_read]{sf::read_sf()}}.}
 }
 \value{
-sf tibble
+\code{sf} tibble containing the requested VEST dataset
 }
 \description{
-Get Voting and Election Science Team ("VEST") Dataset
+Download a state-year VEST precinct file from Harvard Dataverse.
 }
 \examples{
 \dontrun{

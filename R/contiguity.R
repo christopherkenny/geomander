@@ -23,17 +23,19 @@
 #' maximum number of  components that a group is broken into.
 #' This returns 1 if each group is connected. #'
 #'
-#' @param adj adjacency list
-#' @param group array of group identifiers. Typically district numbers or county names.
-#' Defaults to 1 if no input is provided, checking that the adjacency list itself is
-#' one connected component.
+#' @param adj Zero-indexed adjacency list.
+#' @param group Optional vector of group identifiers, typically district numbers
+#'   or county names. If omitted, all rows are treated as belonging to one group.
 #'
-#' @return tibble with contiguity indicators. Each row is the units of `adj`. Columns include
-#'  - `group` Values of the inputted `group` argument. If `group` is not specified, then all values
-#'    will be 1. 
-#'  - `component` A number for each contiguous set of units within a `group`. If all units within a
-#'    `group` are contiguous, all values are 1. If there are two sets, each discontiguous with
-#'    the other, the larger one will be numbered 1 and the smaller one will be numbered as 2.
+#' @return tibble with contiguity indicators. Each row is the units of `adj`.
+#' Columns include
+#'  - `group` Values of the inputted `group` argument. If `group` is not
+#'    specified, then all values will be 1.
+#'  - `group_number` Integer encoding of `group`.
+#'  - `component` A number for each contiguous set of units within a `group`.
+#'    If all units within a `group` are contiguous, all values are 1. If there
+#'    are two sets, each discontiguous with the other, the larger one will be
+#'    numbered 1 and the smaller one will be numbered 2.
 #'
 #' @concept fix
 #'
@@ -100,15 +102,13 @@ ccm <- function(adj, group) {
 #' Cast `shp` to component polygons, build the adjacency, and check the contiguity.
 #' Avoids issues where a precinct is actually a multipolygon
 #'
-#' @param shp An sf data frame
-#' @param group unquoted name of group identifier in shp.
-#' Typically, this is district assignment. If you're looking for dis-contiguous precincts,
-#' this should be a row number.
+#' @param shp An `sf` dataframe.
+#' @param group Unquoted column name in `shp` giving the grouping variable. Use a
+#'   row identifier when checking whether individual rows are multipart.
 #' @templateVar epsg TRUE
 #' @template template
 #'
-#' @return tibble with a column for each of inputted group, created group number, and the
-#' identified connected component number
+#' @return tibble in the same format as [check_contiguity()].
 #'
 #' @concept fix
 #'
@@ -142,16 +142,17 @@ check_polygon_contiguity <- function(shp, group, epsg = 3857) {
 
 #' Suggest Connections for Disconnected Groups
 #'
-#' Suggests nearest neighbors for connecting a disconnected group.
+#' Suggest nearest cross-component links that could reconnect disconnected groups.
 #'
-#' @param shp An sf data frame
-#' @param adj adjacency list
-#' @param group array of group identifiers. Typically district numbers or county names.
-#' Defaults to rep(1, length(adj)) if missing.
+#' @param shp An `sf` dataframe.
+#' @param adj Adjacency list.
+#' @param group Optional vector of group identifiers. If omitted, all rows are
+#'   treated as belonging to one group.
 #' @templateVar epsg TRUE
 #' @template template
 #'
-#' @return tibble with two columns of suggested rows of shp to connect in adj
+#' @return tibble with columns `x` and `y`, giving candidate row pairs to connect
+#'   with [add_edge()].
 #' @export
 #'
 #' @concept fix

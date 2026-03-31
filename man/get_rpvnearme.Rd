@@ -2,20 +2,22 @@
 % Please edit documentation in R/rpvnearme.R
 \name{get_rpvnearme}
 \alias{get_rpvnearme}
-\title{Get Racially Polarized Voting Dataset from RPV Near Me}
+\title{Get the RPV Near Me Dataset}
 \usage{
 get_rpvnearme(state, version = c(1, 2))
 }
 \arguments{
-\item{state}{the state postal code of the state}
+\item{state}{State postal code.}
 
-\item{version}{the version of the data to use. \code{1} for the original, \code{2} for the extended.}
+\item{version}{Dataset version. Use \code{1} for the original release or \code{2} for
+the extended release.}
 }
 \value{
-a tibble of precinct-level estimates of votes (party) by race
+tibble of precinct-level estimates of party vote by race
 }
 \description{
-Get Racially Polarized Voting Dataset from RPV Near Me
+Download precinct-level racially polarized voting estimates from the RPV Near
+Me repository.
 }
 \examples{
 get_rpvnearme('DE')

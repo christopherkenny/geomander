@@ -2,26 +2,26 @@
 % Please edit documentation in R/seam.R
 \name{seam_adj}
 \alias{seam_adj}
-\title{Filter Adjacency to Edges Along Border}
+\title{Filter Adjacency to the Edges Along a Seam}
 \usage{
 seam_adj(adj, shp, admin, seam, epsg = 3857)
 }
 \arguments{
-\item{adj}{zero indexed adjacency graph}
+\item{adj}{Zero-indexed adjacency graph.}
 
-\item{shp}{tibble to subset and where admin column is found}
+\item{shp}{\code{sf} object containing the administrative identifier.}
 
-\item{admin}{quoted name of administrative unit column}
+\item{admin}{Name of the administrative-unit column in \code{shp}.}
 
-\item{seam}{administrative units to filter by}
+\item{seam}{Length-2 vector of administrative-unit values defining the seam.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-subset of adj
+adjacency list containing only cross-seam edges
 }
 \description{
-Filter Adjacency to Edges Along Border
+Keep only the adjacency edges that connect the two sides of a selected seam.
 }
 \examples{
 data('rockland')

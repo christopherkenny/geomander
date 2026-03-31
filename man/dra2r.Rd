@@ -2,25 +2,29 @@
 % Please edit documentation in R/dra.R
 \name{dra2r}
 \alias{dra2r}
-\title{DRA to R}
+\title{Convert DRA Export Data to an R Spatial Object}
 \usage{
 dra2r(dra, state, precincts, epsg = 3857)
 }
 \arguments{
-\item{dra}{The path to an exported csv or
-a dataframe with columns GEOID20 and District, loaded from a DRA export.}
+\item{dra}{Path to a DRA CSV export, or a dataframe containing columns
+\code{GEOID20} and \code{District}.}
 
-\item{state}{the state postal code of the state}
+\item{state}{State postal abbreviation used to fetch 2020 blocks.}
 
-\item{precincts}{an sf dataframe of precinct shapes to link the output to}
+\item{precincts}{Optional \code{sf} object of precinct shapes. If supplied, the
+function assigns each precinct the most common block-level district among
+the blocks matched to it.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-sf dataframe either at the block level or precinct level
+\code{sf} object at the block level when \code{precincts} is omitted, or at the
+precinct level when \code{precincts} is supplied.
 }
 \description{
-Creates a block or precinct level dataset from DRA csv output.
+Read a DRA block assignment export and attach it to 2020 census blocks,
+optionally collapsing the assignments to a precinct layer.
 }
 \examples{
 \dontrun{

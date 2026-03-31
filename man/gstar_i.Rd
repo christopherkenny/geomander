@@ -2,26 +2,29 @@
 % Please edit documentation in R/gstar.R
 \name{gstar_i}
 \alias{gstar_i}
-\title{Compute Standardized Getis Ord G*i}
+\title{Compute Standardized Getis-Ord G*i}
 \usage{
 gstar_i(shp, adj, wts, spatial_mat, epsg = 3857)
 }
 \arguments{
-\item{shp}{sf data frame. Optional if adj or spatial_mat provided.}
+\item{shp}{\code{sf} dataframe. Optional if \code{adj} or \code{spatial_mat} is supplied.}
 
-\item{adj}{zero indexed adjacency list. Optional if shp or spatial_mat provided.}
+\item{adj}{Zero-indexed adjacency list. Optional if \code{shp} or \code{spatial_mat} is
+supplied.}
 
-\item{wts}{Required. Numeric vector with weights to use for Moran's I.}
+\item{wts}{Numeric vector of observed values.}
 
-\item{spatial_mat}{matrix of spatial weights. Optional if shp or adj provided.}
+\item{spatial_mat}{Square spatial weights matrix. Optional if \code{shp} or \code{adj}
+is supplied.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-vector of G*i scores
+numeric vector of standardized G*i scores, one per observation
 }
 \description{
-Returns the Getis Ord G*i in standardized form.
+Returns standardized local Getis-Ord G*i scores using either an \code{sf} object, a
+zero-indexed adjacency list, or a spatial weights matrix.
 }
 \examples{
 library(dplyr)

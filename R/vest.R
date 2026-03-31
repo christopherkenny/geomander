@@ -1,14 +1,16 @@
-#' Get Voting and Election Science Team ("VEST") Dataset
+#' Get a Voting and Election Science Team ("VEST") Dataset
 #'
-#' @param state two letter state abbreviation
-#' @param year year any in 2016-2021
-#' @param path folder to put shape in. Default is \code{tempdir()}
-#' @param clean_names Clean names. Default is \code{TRUE}. If \code{FALSE},
-#' returns default names.
+#' Download a state-year VEST precinct file from Harvard Dataverse.
+#'
+#' @param state Two-letter state abbreviation.
+#' @param year Election year, currently one of `2016` through `2021`.
+#' @param path Directory used for extracted files. Defaults to `tempdir()`.
+#' @param clean_names Logical. If `TRUE`, rename election columns into a more
+#'   consistent scheme.
 #' @param epsg `r roxy_epsg()`
-#' @param ... additional arguments passed to [sf::read_sf()]
+#' @param ... Additional arguments passed to [sf::read_sf()].
 #'
-#' @return sf tibble
+#' @return `sf` tibble containing the requested VEST dataset
 #' @export
 #'
 #' @concept datasets
@@ -50,11 +52,14 @@ get_vest <- function(state, year, path = tempdir(), clean_names = TRUE, epsg = 3
   make_planar_pair(out, epsg = epsg)$x
 }
 
-#' Clean VEST Names
+#' Clean VEST Column Names
 #'
-#' @param data sf tibble from VEST
+#' Rename VEST election-result columns into a more uniform
+#' `office_year_party_candidate` style.
 #'
-#' @return data with cleaned names
+#' @param data `sf` tibble from [get_vest()].
+#'
+#' @return input object with renamed columns
 #' @export
 #'
 #' @concept datasets
@@ -88,11 +93,11 @@ clean_vest <- function(data) {
   data
 }
 
-#' List Available States from VEST Dataverse
+#' List Available VEST States
 #'
-#' @param year year in 2016, 2018, or 2020
+#' @param year Year to inspect in the VEST Dataverse collection.
 #'
-#' @return character abbreviations for states
+#' @return character vector of state abbreviations available for that year
 #' @export
 #'
 #' @concept datasets

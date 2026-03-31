@@ -7,17 +7,15 @@
 check_polygon_contiguity(shp, group, epsg = 3857)
 }
 \arguments{
-\item{shp}{An sf data frame}
+\item{shp}{An \code{sf} dataframe.}
 
-\item{group}{unquoted name of group identifier in shp.
-Typically, this is district assignment. If you're looking for dis-contiguous precincts,
-this should be a row number.}
+\item{group}{Unquoted column name in \code{shp} giving the grouping variable. Use a
+row identifier when checking whether individual rows are multipart.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-tibble with a column for each of inputted group, created group number, and the
-identified connected component number
+tibble in the same format as \code{\link[=check_contiguity]{check_contiguity()}}.
 }
 \description{
 Cast \code{shp} to component polygons, build the adjacency, and check the contiguity.

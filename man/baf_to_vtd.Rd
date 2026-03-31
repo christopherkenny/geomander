@@ -7,17 +7,17 @@
 baf_to_vtd(baf, plan_name, GEOID = "GEOID", year = 2020)
 }
 \arguments{
-\item{baf}{a tibble representing a block assignment file.}
+\item{baf}{dataframe representing a block assignment file.}
 
-\item{plan_name}{character. Name of column in \code{baf} which corresponds to the districts.}
+\item{plan_name}{Name of the column in \code{baf} containing district assignments.}
 
-\item{GEOID}{character. Name of column which corresponds to each block's GEOID,
-sometimes called "BLOCKID". Default is \code{'GEOID'}.}
+\item{GEOID}{Name of the column containing block GEOIDs, sometimes called
+\code{"BLOCKID"}. Defaults to \code{"GEOID"}.}
 
-\item{year}{the decade to request, either \code{2010} or \code{2020}. Default is \code{2020}.}
+\item{year}{Decennial vintage for the crosswalk, either \code{2010} or \code{2020}.}
 }
 \value{
-a tibble with a vtd-level assignment file
+tibble with one row per voting district and the requested plan column
 }
 \description{
 District lines are often provided at the census block level, but analyses
@@ -27,6 +27,9 @@ estimate the block level to the voting district level.
 \details{
 If a voting district is split between blocks, this currently uses the most
 common district.
+
+When a voting district contains blocks assigned to more than one district, the
+output uses the modal district assignment.
 }
 \examples{
 # Not guaranteed to reach download from redistrict2020.org

@@ -2,27 +2,29 @@
 % Please edit documentation in R/dra_vtd.R
 \name{get_dra}
 \alias{get_dra}
-\title{Get Dave's Redistricting App Dataset}
+\title{Get a Dave's Redistricting App Dataset}
 \usage{
 get_dra(state, year = 2020, geometry = TRUE, clean_names = TRUE, epsg = 3857)
 }
 \arguments{
-\item{state}{two letter state abbreviation}
+\item{state}{Two-letter state abbreviation.}
 
-\item{year}{year to get data for. Either \code{2020} or \code{2010}}
+\item{year}{Year to retrieve, either \code{2020} or \code{2010}.}
 
-\item{geometry}{Default is TRUE. Add geometry to the data?}
+\item{geometry}{Logical. If \code{TRUE}, join the corresponding geometry.}
 
-\item{clean_names}{Clean names. Default is \code{TRUE}. If \code{FALSE},
-returns default names.}
+\item{clean_names}{Logical. If \code{TRUE}, rename election columns into a more
+consistent scheme.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-tibble with election data and optional geometry
+tibble or \code{sf} object with DRA election data and, optionally,
+geometry.
 }
 \description{
-Gets a dataset from Dave's Redistricting App.
+Download a state election dataset from the DRA public repository. Depending on
+state and year, the geometry may be joined at the VTD or block-group level.
 }
 \details{
 See the full available data at \url{https://github.com/dra2020/vtd_data}.

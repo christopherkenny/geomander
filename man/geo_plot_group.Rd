@@ -2,26 +2,27 @@
 % Please edit documentation in R/plots.R
 \name{geo_plot_group}
 \alias{geo_plot_group}
-\title{Create Plots of Shapes by Group with Connected Components Colored}
+\title{Plot Groups with Connected Components Colored}
 \usage{
 geo_plot_group(shp, adj, group, save = FALSE, path = "")
 }
 \arguments{
-\item{shp}{An sf shapefile}
+\item{shp}{An \code{sf} object.}
 
-\item{adj}{adjacency list}
+\item{adj}{Adjacency list.}
 
-\item{group}{array of group identifiers. Typically district numbers or county names.}
+\item{group}{Optional vector of group identifiers, typically district numbers
+or county names.}
 
-\item{save}{Boolean, whether to save or not.}
+\item{save}{Logical. If \code{TRUE}, save each plot to disk.}
 
-\item{path}{Path to save, only used if save is TRUE. Defaults to working directory.}
+\item{path}{Directory prefix used when \code{save = TRUE}.}
 }
 \value{
-list of ggplots
+list of \code{ggplot} objects, one per unique group
 }
 \description{
-Create Plots of Shapes by Group with Connected Components Colored
+Plot Groups with Connected Components Colored
 }
 \examples{
 library(dplyr)

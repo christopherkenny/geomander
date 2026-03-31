@@ -7,22 +7,24 @@
 global_gearys(shp, adj, wts, spatial_mat, epsg = 3857)
 }
 \arguments{
-\item{shp}{sf data frame. Optional if adj or spatial_mat provided.}
+\item{shp}{\code{sf} dataframe. Optional if \code{adj} or \code{spatial_mat} is supplied.}
 
-\item{adj}{zero indexed adjacency list. Optional if shp or spatial_mat provided.}
+\item{adj}{Zero-indexed adjacency list. Optional if \code{shp} or \code{spatial_mat} is
+supplied.}
 
-\item{wts}{Required. Numeric vector with weights to use for Moran's I.}
+\item{wts}{Numeric vector of observed values.}
 
-\item{spatial_mat}{matrix of spatial weights. Optional if shp or adj provided.}
+\item{spatial_mat}{Square spatial weights matrix. Optional if \code{shp} or \code{adj}
+is supplied.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-double
+numeric scalar containing the global Geary's C statistic
 }
 \description{
 Computes the Global Geary's Contiguity statistic. Can produce spatial weights
-from an adjacency or sf data frame, in which case the spatial_mat is a contiguity
+from an adjacency or sf dataframe, in which case the spatial_mat is a contiguity
 matrix. Users can also provide a spatial_mat argument directly.
 }
 \examples{

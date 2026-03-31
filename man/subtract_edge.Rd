@@ -2,12 +2,12 @@
 % Please edit documentation in R/adjacency.R
 \name{subtract_edge}
 \alias{subtract_edge}
-\title{Subtract Edges from an Adjacency List}
+\title{Remove Edges from an Adjacency List}
 \usage{
 subtract_edge(adj, v1, v2, ids = NULL, zero = TRUE)
 }
 \arguments{
-\item{adj}{list of adjacent precincts}
+\item{adj}{List of neighbors, one entry per vertex.}
 
 \item{v1}{vector of vertex identifiers for the first vertex. Can be an
 integer index or a value to look up in \code{ids}, if that argument is provided.
@@ -19,17 +19,18 @@ integer index or a value to look up in \code{ids}, if that argument is provided.
 If more than one identifier is present, disconnects each to corresponding
 entry in v2, if an edge exists.}
 
-\item{ids}{A vector of identifiers which is used to look up the row indices
-for the vertices.  If provided, the entries in \code{v1} and \code{v2} must match
-exactly one entry in \code{ids}.}
+\item{ids}{Optional identifier vector used to look up row indices. If
+provided, each entry in \code{v1} and \code{v2} must match exactly one entry.}
 
-\item{zero}{boolean, TRUE if \code{adj} is zero indexed. False if one indexed.}
+\item{zero}{Logical. \code{TRUE} when the adjacency list stores zero-based neighbor
+indices and \code{FALSE} when it stores one-based indices.}
 }
 \value{
-adjacency list.
+Adjacency list with the requested edges removed symmetrically.
 }
 \description{
-Subtract Edges from an Adjacency List
+Remove one or more undirected edges from an adjacency list and return the
+modified list.
 }
 \examples{
 data(towns)

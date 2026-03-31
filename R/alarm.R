@@ -1,19 +1,22 @@
-#' Get ALARM Dataset
+#' Get an ALARM Dataset
 #'
-#' Gets a dataset from the Algorithm-Assisted Redistricting Methodology Project.
-#' The current supported data is the 2020 retabulations of the VEST data, which
-#' can be downloaded with `get_vest`.
+#' Download a state dataset from the Algorithm-Assisted Redistricting Methodology
+#' Project. Depending on state and year, the data are returned at either the
+#' voting-district level or the census-block level.
+#' The current supported data is the 2020 and 2010 retabulations of the VEST
+#' data, which can be downloaded with [get_vest()].
 #'
 #' See the full available data at <https://github.com/alarm-redist/census-2020>.
 #'
 #'
-#' @param state two letter state abbreviation
-#' @param year year to get data for. Either `2020` or `2010`
-#' @param geometry Default is TRUE. Add geometry to the data?
+#' @param state Two-letter state abbreviation.
+#' @param year Year to retrieve, either `2020` or `2010`.
+#' @param geometry Logical. If `TRUE`, join the corresponding geometry.
 #' @templateVar epsg TRUE
 #' @template template
 #'
-#' @return tibble with election data and optional geometry
+#' @return tibble or `sf` object with ALARM election data and, optionally,
+#'   geometry.
 #' @export
 #'
 #' @concept datasets
@@ -34,7 +37,13 @@ get_alarm <- function(state, year = 2020, geometry = TRUE, epsg = 3857) {
   block_states_2010 <- c('ca', 'hi', 'ky', 'or', 'ri', 'wa')
   is_block <- FALSE
   if (year == 2020) {
-    spec <- readr::cols(GEOID20 = 'c', state = 'c', county = 'c', vtd = 'c', .default = 'd')
+    spec <- readr::cols(
+      GEOID20 = 'c',
+      state = 'c',
+      county = 'c',
+      vtd = 'c',
+      .default = 'd'
+    )
     if (state %in% block_states_2020) {
       end_path <- paste0(state, '_2020_block.csv')
       spec[[1]]$vtd <- NULL
@@ -53,14 +62,17 @@ get_alarm <- function(state, year = 2020, geometry = TRUE, epsg = 3857) {
     }
   }
 
-
   tb <- readr::read_csv(
-    file = paste0(base_path, end_path), col_types = spec,
+    file = paste0(base_path, end_path),
+    col_types = spec,
     show_col_types = FALSE
   )
 
   if (geometry) {
-    if ((state %in% block_states_2020 && year == 2020) || (state %in% block_states_2010 && year == 2010)) {
+    if (
+      (state %in% block_states_2020 && year == 2020) ||
+        (state %in% block_states_2010 && year == 2010)
+    ) {
       geo <- tinytiger::tt_blocks(state = state, year = year)
     } else {
       geo <- tinytiger::tt_voting_districts(state = state, year = year)
@@ -90,7 +102,12 @@ get_alarm <- function(state, year = 2020, geometry = TRUE, epsg = 3857) {
       if (is_block) {
         tb <- tb |>
           dplyr::mutate(
-            GEOID10 = paste0(.data$state, .data$county, .data$tract, .data$block),
+            GEOID10 = paste0(
+              .data$state,
+              .data$county,
+              .data$tract,
+              .data$block
+            ),
             .before = dplyr::everything()
           ) |>
           dplyr::left_join(geo, by = 'GEOID10') |>
@@ -115,7 +132,8 @@ get_alarm <- function(state, year = 2020, geometry = TRUE, epsg = 3857) {
 
 #' List Available States from ALARM Data
 #'
-#' @return character abbreviations for states
+#' @return character vector of state abbreviations inferred from the ALARM
+#'   repository contents.
 #' @export
 #'
 #' @concept datasets

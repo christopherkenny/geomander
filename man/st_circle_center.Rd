@@ -2,22 +2,23 @@
 % Please edit documentation in R/center.R
 \name{st_circle_center}
 \alias{st_circle_center}
-\title{Get the centroid of the maximum inscribed circle}
+\title{Get the Center of the Maximum Inscribed Circle}
 \usage{
 st_circle_center(shp, tolerance = 0.01, epsg = 3857)
 }
 \arguments{
-\item{shp}{An sf dataframe}
+\item{shp}{An \code{sf} dataframe.}
 
 \item{tolerance}{positive numeric tolerance to simplify by. Default is 0.01.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-An sf dataframe where geometry is the circle center of each shape in shp
+\code{sf} dataframe with the same rows and attributes as \code{shp}, but point
+geometries.
 }
 \description{
-Returns the centroid of the largest inscribed circle for each shape
+Compute the centroid of the largest inscribed circle for each feature.
 }
 \examples{
 data(towns)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/match.R
 \name{geo_match}
 \alias{geo_match}
-\title{Match Across Geographic Layers}
+\title{Match Features Across Geographic Layers}
 \usage{
 geo_match(
   from,
@@ -14,37 +14,48 @@ geo_match(
 )
 }
 \arguments{
-\item{from}{smaller geographic level to match up from}
+\item{from}{An \code{sf} object to match from, usually the smaller geography.}
 
-\item{to}{larger geographic level to be matched to}
+\item{to}{An \code{sf} object to match to, usually the larger geography.}
 
-\item{method}{string from 'center', 'centroid', 'point', 'circle', or 'area' for matching method}
+\item{method}{Matching method. One of \code{"center"}, \code{"centroid"}, \code{"point"},
+\code{"circle"}, or \code{"area"}.}
 
-\item{by}{A character vector to match by. One element if both \code{from} and \code{to} share the subsetting column name.
-One element with a name (for \code{from}) and one element (for \code{to}).}
+\item{by}{Optional character scalar restricting matching within shared groups.
+Use a single value when \code{from} and \code{to} use the same column name, or a named
+scalar such as \code{c(county_from = "county_to")} when the column names differ.}
 
-\item{tiebreaker}{Should ties be broken? boolean. If FALSE, precincts with no
-matches get value -1 and precincts with multiple matches get value -2.}
+\item{tiebreaker}{Logical. If \code{TRUE}, ambiguous or unmatched features are
+assigned to the nearest feature in \code{to}. If \code{FALSE}, unmatched rows receive
+\code{-1} and rows with multiple matches receive \code{-2}.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-Integer Vector of matches length(to) with values in 1:nrow(from)
+integer vector of length \code{nrow(from)}. Values are row indices in \code{to},
+or \code{-1} / \code{-2} when \code{tiebreaker = FALSE}. Empty geometries are returned as
+\code{NA}.
 }
 \description{
-Match Across Geographic Layers
+Match each row of \code{from} to one row of \code{to}, typically when \code{from} is a finer
+geography nested inside \code{to}. The result is an integer vector of row indices in
+\code{to} and can be reused by downstream helpers such as \code{\link[=estimate_up]{estimate_up()}},
+\code{\link[=estimate_down]{estimate_down()}}, and \code{\link[=block2prec]{block2prec()}}.
 }
 \details{
 Methods are as follows:
 \itemize{
-\item centroid: matches each element of \code{from} to the \code{to} entry that the geographic centroid intersects
-\item center: very similar to centroid, but it matches an arbitrary center point within \code{from}
-if the centroid of \code{from} is outside the bounds of from. (This happens for non-convex shapes only).
-\item point: matches each element of \code{from} to the \code{to} entry that the "point on surface" intersects.
-\item circle: matches each element of \code{from} to the \code{to} entry that the centroid
-of the maximum inscribed circle intersects
-\item area: matches each element of \code{from} to the \code{to} element which has the largest area overlap
+\item \code{"centroid"}: match using the geometric centroid of each row in \code{from}.
+\item \code{"center"}: use the centroid when it lies inside the polygon and otherwise
+fall back to a point-on-surface.
+\item \code{"point"}: use point on surface for each row in \code{from}.
+\item \code{"circle"}: use the centroid of the maximum inscribed circle.
+\item \code{"area"}: match to the row in \code{to} with the largest area overlap.
 }
+
+When the output does not reference every row of \code{to}, an attribute
+\code{"matching_max"} is attached and records \code{nrow(to)}. Functions such as
+\code{\link[=block2prec]{block2prec()}} use that attribute to preserve empty target groups.
 }
 \examples{
 library(dplyr)

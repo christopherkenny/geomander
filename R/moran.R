@@ -1,13 +1,18 @@
 #' Compute Local Moran's I
 #'
-#' @param shp sf data frame. Optional if adj or spatial_mat provided.
-#' @param adj zero indexed adjacency list. Optional if shp or spatial_mat provided.
-#' @param wts Required. Numeric vector with weights to use for Moran's I.
-#' @param spatial_mat matrix of spatial weights. Optional if shp or adj provided.
+#' Compute Local Moran's I for each observation using either an `sf` object, a
+#' zero-indexed adjacency list, or a spatial weights matrix.
+#'
+#' @param shp `sf` dataframe. Optional if `adj` or `spatial_mat` is supplied.
+#' @param adj Zero-indexed adjacency list. Optional if `shp` or `spatial_mat` is
+#'   supplied.
+#' @param wts Numeric vector of observed values.
+#' @param spatial_mat Square spatial weights matrix. Optional if `shp` or `adj`
+#'   is supplied.
 #' @templateVar epsg TRUE
 #' @template template
 #'
-#' @return tibble
+#' @return tibble with columns `moran`, `expectation`, and `variance`
 #' @export
 #'
 #' @concept spatcorr
@@ -46,17 +51,20 @@ local_morans <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
 #' Compute Global Moran's I
 #'
 #' Computes the Global Moran's I statistic and expectation. Can produce spatial weights
-#' from an adjacency or sf data frame, in which case the spatial_mat is a contiguity
+#' from an adjacency or sf dataframe, in which case the spatial_mat is a contiguity
 #' matrix. Users can also provide a spatial_mat argument directly.
 #'
-#' @param shp sf data frame. Optional if adj or spatial_mat provided.
-#' @param adj zero indexed adjacency list. Optional if shp or spatial_mat provided.
-#' @param wts Required. Numeric vector with weights to use for Moran's I.
-#' @param spatial_mat matrix of spatial weights. Optional if shp or adj provided.
+#' @param shp `sf` dataframe. Optional if `adj` or `spatial_mat` is supplied.
+#' @param adj Zero-indexed adjacency list. Optional if `shp` or `spatial_mat` is
+#'   supplied.
+#' @param wts Numeric vector of observed values.
+#' @param spatial_mat Square spatial weights matrix. Optional if `shp` or `adj`
+#'   is supplied.
 #' @templateVar epsg TRUE
 #' @template template
 #'
-#' @return list
+#' @return named list returned by the underlying C++ implementation, including the
+#'   global statistic and its moments.
 #' @export
 #'
 #' @concept spatcorr

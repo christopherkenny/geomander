@@ -7,17 +7,19 @@
 suggest_neighbors(shp, adj, idx, neighbors = 1)
 }
 \arguments{
-\item{shp}{an sf shapefile}
+\item{shp}{\code{sf} object used to compute representative points.}
 
-\item{adj}{an adjacency list}
+\item{adj}{Adjacency list.}
 
-\item{idx}{Optional. Which indices to suggest neighbors for. If blank, suggests for those
-with no neighbors.}
+\item{idx}{Optional integer vector of row indices to repair. If omitted, the
+function uses rows with no neighbors.}
 
-\item{neighbors}{number of neighbors to suggest}
+\item{neighbors}{Number of candidate neighbors to return for each row in
+\code{idx}.}
 }
 \value{
-tibble with two columns of suggested rows of shp to connect in adj
+tibble with columns \code{x} and \code{y}, giving pairs of row indices that
+could be connected with \code{\link[=add_edge]{add_edge()}}.
 }
 \description{
 For precincts which have no adjacent precincts, this suggests the nearest precinct

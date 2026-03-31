@@ -1,27 +1,40 @@
-#' Match Across Geographic Layers
+#' Match Features Across Geographic Layers
 #'
-#' @param from smaller geographic level to match up from
-#' @param to larger geographic level to be matched to
-#' @param method string from 'center', 'centroid', 'point', 'circle', or 'area' for matching method
-#' @param by A character vector to match by. One element if both `from` and `to` share the subsetting column name.
-#' One element with a name (for `from`) and one element (for `to`).
-#' @param tiebreaker Should ties be broken? boolean. If FALSE, precincts with no
-#' matches get value -1 and precincts with multiple matches get value -2.
+#' Match each row of `from` to one row of `to`, typically when `from` is a finer
+#' geography nested inside `to`. The result is an integer vector of row indices in
+#' `to` and can be reused by downstream helpers such as [estimate_up()],
+#' [estimate_down()], and [block2prec()].
+#'
+#' @param from An `sf` object to match from, usually the smaller geography.
+#' @param to An `sf` object to match to, usually the larger geography.
+#' @param method Matching method. One of `"center"`, `"centroid"`, `"point"`,
+#'   `"circle"`, or `"area"`.
+#' @param by Optional character scalar restricting matching within shared groups.
+#'   Use a single value when `from` and `to` use the same column name, or a named
+#'   scalar such as `c(county_from = "county_to")` when the column names differ.
+#' @param tiebreaker Logical. If `TRUE`, ambiguous or unmatched features are
+#'   assigned to the nearest feature in `to`. If `FALSE`, unmatched rows receive
+#'   `-1` and rows with multiple matches receive `-2`.
 #' @templateVar epsg TRUE
 #' @template template
 #'
 #' @details
 #'
 #' Methods are as follows:
-#' - centroid: matches each element of `from` to the `to` entry that the geographic centroid intersects
-#' - center: very similar to centroid, but it matches an arbitrary center point within `from`
-#'   if the centroid of `from` is outside the bounds of from. (This happens for non-convex shapes only).
-#' - point: matches each element of `from` to the `to` entry that the "point on surface" intersects.
-#' - circle: matches each element of `from` to the `to` entry that the centroid
-#'   of the maximum inscribed circle intersects
-#' - area: matches each element of `from` to the `to` element which has the largest area overlap
+#' - `"centroid"`: match using the geometric centroid of each row in `from`.
+#' - `"center"`: use the centroid when it lies inside the polygon and otherwise
+#'   fall back to a point-on-surface.
+#' - `"point"`: use point on surface for each row in `from`.
+#' - `"circle"`: use the centroid of the maximum inscribed circle.
+#' - `"area"`: match to the row in `to` with the largest area overlap.
 #'
-#' @return Integer Vector of matches length(to) with values in 1:nrow(from)
+#' When the output does not reference every row of `to`, an attribute
+#' `"matching_max"` is attached and records `nrow(to)`. Functions such as
+#' [block2prec()] use that attribute to preserve empty target groups.
+#'
+#' @return integer vector of length `nrow(from)`. Values are row indices in `to`,
+#'   or `-1` / `-2` when `tiebreaker = FALSE`. Empty geometries are returned as
+#'   `NA`.
 #' @export
 #'
 #' @concept estimate

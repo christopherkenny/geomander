@@ -2,23 +2,25 @@
 % Please edit documentation in R/estimate.R
 \name{estimate_down}
 \alias{estimate_down}
-\title{Estimate Down Levels}
+\title{Estimate Values Down Using Precomputed Matches}
 \usage{
 estimate_down(wts, value, group)
 }
 \arguments{
-\item{wts}{numeric vector. Defaults to 1. Typically population or VAP, as a weight to give each precinct.}
+\item{wts}{Numeric vector of weights. Defaults to \code{1}.}
 
-\item{value}{numeric vector. Defaults to 1. Typically electoral outcomes, as a value to estimate down into blocks.}
+\item{value}{Numeric vector of values on the larger geography. Defaults to \code{1}.}
 
-\item{group}{matches of length(wts) that correspond to row indices of value. Often, this input is the output of geo_match.}
+\item{group}{Integer vector of matches of length \code{length(wts)}. Each entry
+should give the row of \code{value} that the corresponding lower-level unit maps
+to, often from \code{\link[=geo_match]{geo_match()}}.}
 }
 \value{
-numeric vector with each value split by weight
+numeric vector of length \code{length(group)} with values split by weight
 }
 \description{
-Non-geographic partner function to geo_estimate_down. Allows users to estimate
-down without the costly matching operation if they've already matched.
+Non-geographic companion to \code{\link[=geo_estimate_down]{geo_estimate_down()}}. Use this when you already
+have a vector of matches and want to avoid recomputing them.
 }
 \examples{
 library(dplyr)

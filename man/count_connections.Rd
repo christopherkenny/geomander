@@ -2,20 +2,23 @@
 % Please edit documentation in R/count_connections.R
 \name{count_connections}
 \alias{count_connections}
-\title{Count Times Precincts are Connected}
+\title{Count How Often Pairs of Units Share a District}
 \usage{
 count_connections(dm, normalize = FALSE)
 }
 \arguments{
-\item{dm}{district membership matrix}
+\item{dm}{District membership matrix, typically with one row per unit and one
+column per plan or draw.}
 
-\item{normalize}{Whether to normalize all values by the number of columns.}
+\item{normalize}{Logical. If \code{TRUE}, divide counts by the number of columns in
+\code{dm}.}
 }
 \value{
-matrix with the number of connections between precincts
+tibble in long form with columns \code{x}, \code{y}, and \code{fill}, where \code{fill}
+stores the count or proportion of shared assignments.
 }
 \description{
-Count Times Precincts are Connected
+Summarize a district-membership matrix into pairwise co-assignment counts.
 }
 \examples{
 set.seed(1)

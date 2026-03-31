@@ -1,12 +1,13 @@
-#' Sort Precincts
+#' Sort Features by Northwest-to-Southeast Order
 #'
-#' Reorders precincts by distance from the NW corner of the bounding box.
+#' Reorder rows by the centroid distance from the northwest corner of the overall
+#' bounding box.
 #'
-#' @param shp sf dataframe, required.
+#' @param shp `sf` dataframe.
 #' @templateVar epsg TRUE
 #' @template template
 #'
-#' @return sf dataframe
+#' @return reordered `sf` dataframe
 #' @export
 #'
 #' @concept fix

@@ -1,9 +1,14 @@
-#' Count Times Precincts are Connected
+#' Count How Often Pairs of Units Share a District
 #'
-#' @param dm district membership matrix
-#' @param normalize Whether to normalize all values by the number of columns.
+#' Summarize a district-membership matrix into pairwise co-assignment counts.
 #'
-#' @return matrix with the number of connections between precincts
+#' @param dm District membership matrix, typically with one row per unit and one
+#'   column per plan or draw.
+#' @param normalize Logical. If `TRUE`, divide counts by the number of columns in
+#'   `dm`.
+#'
+#' @return tibble in long form with columns `x`, `y`, and `fill`, where `fill`
+#'   stores the count or proportion of shared assignments.
 #' @export
 #' @concept leftover
 #' @examples

@@ -2,22 +2,22 @@
 % Please edit documentation in R/estimate.R
 \name{estimate_up}
 \alias{estimate_up}
-\title{Estimate Up Levels}
+\title{Aggregate Values Up Using Precomputed Matches}
 \usage{
 estimate_up(value, group)
 }
 \arguments{
-\item{value}{numeric vector. Defaults to 1. Typically population values.}
+\item{value}{Numeric vector to aggregate. Defaults to \code{1}.}
 
-\item{group}{matches of length(value) that correspond to row indices of value.
-Often, this input is the output of geo_match.}
+\item{group}{Integer vector of length \code{length(value)} giving the destination
+row for each value, often from \code{\link[=geo_match]{geo_match()}}.}
 }
 \value{
-numeric vector with each value aggregated by group
+numeric vector of length \code{max(group)} with values aggregated by group
 }
 \description{
-Non-geographic partner function to geo_estimate_up. Allows users to aggregate
-up without the costly matching operation if they've already matched.
+Non-geographic companion to \code{\link[=geo_estimate_up]{geo_estimate_up()}}. Use this when you already
+have a vector of group assignments.
 }
 \examples{
 library(dplyr)

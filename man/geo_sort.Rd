@@ -2,20 +2,21 @@
 % Please edit documentation in R/sort.R
 \name{geo_sort}
 \alias{geo_sort}
-\title{Sort Precincts}
+\title{Sort Features by Northwest-to-Southeast Order}
 \usage{
 geo_sort(shp, epsg = 3857)
 }
 \arguments{
-\item{shp}{sf dataframe, required.}
+\item{shp}{\code{sf} dataframe.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-sf dataframe
+reordered \code{sf} dataframe
 }
 \description{
-Reorders precincts by distance from the NW corner of the bounding box.
+Reorder rows by the centroid distance from the northwest corner of the overall
+bounding box.
 }
 \examples{
 data(checkerboard)

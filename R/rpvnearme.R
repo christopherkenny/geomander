@@ -1,9 +1,13 @@
-#' Get Racially Polarized Voting Dataset from RPV Near Me
+#' Get the RPV Near Me Dataset
 #'
-#' @param state the state postal code of the state
-#' @param version the version of the data to use. `1` for the original, `2` for the extended.
+#' Download precinct-level racially polarized voting estimates from the RPV Near
+#' Me repository.
 #'
-#' @return a tibble of precinct-level estimates of votes (party) by race
+#' @param state State postal code.
+#' @param version Dataset version. Use `1` for the original release or `2` for
+#'   the extended release.
+#'
+#' @return tibble of precinct-level estimates of party vote by race
 #' @export
 #'
 #' @examples

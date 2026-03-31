@@ -2,24 +2,35 @@
 % Please edit documentation in R/heda.R
 \name{get_heda}
 \alias{get_heda}
-\title{Get Harvard Election Data Archive ("HEDA") Dataset}
+\title{Get a Harvard Election Data Archive ("HEDA") Dataset}
 \usage{
 get_heda(state, path = tempdir(), epsg = 3857, ...)
 }
 \arguments{
-\item{state}{two letter state abbreviation}
+\item{state}{Two-letter state abbreviation.}
 
-\item{path}{folder to put shape in. Default is \code{tempdir()}}
+\item{path}{Directory used for extracted files. Defaults to \code{tempdir()}.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 
-\item{...}{additional arguments passed to \code{\link[sf:st_read]{sf::read_sf()}}}
+\item{...}{Additional arguments passed to \code{\link[sf:st_read]{sf::read_sf()}}.}
 }
 \value{
-sf tibble
+\code{sf} tibble containing the requested HEDA dataset
 }
 \description{
-Get Harvard Election Data Archive ("HEDA") Dataset
+Download a state file from the Harvard Election Data Archive and return it as
+an \code{sf} object. Some states require special handling because the source files
+differ in format or level of geography.
+}
+\details{
+Most states are distributed as zipped shapefiles. California is stored
+differently and is aggregated here to 2010 tracts. Some states are shipped as
+loose shapefile components rather than zip archives. If the source file has no
+CRS metadata, the function assumes EPSG 4140 before optionally reprojecting.
+
+The function currently returns the raw source column names because internal
+name cleaning is disabled in the implementation.
 }
 \examples{
 \dontshow{if (Sys.getenv('DATAVERSE_KEY') != '') withAutoprint(\{ # examplesIf}

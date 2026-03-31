@@ -7,7 +7,8 @@
 alarm_states()
 }
 \value{
-character abbreviations for states
+character vector of state abbreviations inferred from the ALARM
+repository contents.
 }
 \description{
 List Available States from ALARM Data

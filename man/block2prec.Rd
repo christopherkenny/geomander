@@ -2,23 +2,29 @@
 % Please edit documentation in R/datatables.R
 \name{block2prec}
 \alias{block2prec}
-\title{Aggregate Block Table by Matches}
+\title{Aggregate a Block Table by Matches}
 \usage{
 block2prec(block_table, matches, geometry = FALSE)
 }
 \arguments{
-\item{block_table}{Required. Block table output from create_block_table}
+\item{block_table}{Block table, usually from \code{\link[=create_block_table]{create_block_table()}}.}
 
-\item{matches}{Required. Grouping variable to aggregate up by, typically made with geo_match}
+\item{matches}{Integer grouping variable, typically from \code{\link[=geo_match]{geo_match()}}.}
 
-\item{geometry}{Boolean. Whether to keep geometry or not.}
+\item{geometry}{Logical. If \code{TRUE}, union geometry within each matched group.}
 }
 \value{
-dataframe with length(unique(matches)) rows
+dataframe with one row per matched group. When empty target groups are
+preserved, the number of rows may be larger than \code{length(unique(matches))}.
 }
 \description{
-Aggregates block table values up to a higher level, normally precincts, hence
-the name block2prec.
+Aggregate block-level attributes up to a larger geography, usually precincts,
+using a vector of group assignments such as the output of \code{\link[=geo_match]{geo_match()}}.
+}
+\details{
+If \code{matches} carries a \code{"matching_max"} attribute, the output preserves all
+target groups up to that size, even when some groups receive no matched rows.
+Missing nonnegative numeric summaries are filled with \code{0}.
 }
 \examples{
 set.seed(1)

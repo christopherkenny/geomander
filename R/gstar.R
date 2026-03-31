@@ -1,18 +1,20 @@
-#' Compute Standardized Getis Ord G*i
+#' Compute Standardized Getis-Ord G*i
 #'
-#' Returns the Getis Ord G*i in standardized form.
+#' Returns standardized local Getis-Ord G*i scores using either an `sf` object, a
+#' zero-indexed adjacency list, or a spatial weights matrix.
 #'
-#'
-#' @param shp sf data frame. Optional if adj or spatial_mat provided.
-#' @param adj zero indexed adjacency list. Optional if shp or spatial_mat provided.
-#' @param wts Required. Numeric vector with weights to use for Moran's I.
-#' @param spatial_mat matrix of spatial weights. Optional if shp or adj provided.
+#' @param shp `sf` dataframe. Optional if `adj` or `spatial_mat` is supplied.
+#' @param adj Zero-indexed adjacency list. Optional if `shp` or `spatial_mat` is
+#'   supplied.
+#' @param wts Numeric vector of observed values.
+#' @param spatial_mat Square spatial weights matrix. Optional if `shp` or `adj`
+#'   is supplied.
 #' @templateVar epsg TRUE
 #' @template template
 #'
 #' @concept spatcorr
 #'
-#' @return vector of G*i scores
+#' @return numeric vector of standardized G*i scores, one per observation
 #' @export
 #' @examples
 #' library(dplyr)

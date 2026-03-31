@@ -2,27 +2,27 @@
 % Please edit documentation in R/datatables.R
 \name{block2prec_by_county}
 \alias{block2prec_by_county}
-\title{Aggregate Block Table by Matches and County}
+\title{Aggregate a Block Table by Matches Within County}
 \usage{
 block2prec_by_county(block_table, precinct, precinct_county_fips, epsg = 3857)
 }
 \arguments{
-\item{block_table}{Required. Block table output from create_block_table}
+\item{block_table}{Block table, usually from \code{\link[=create_block_table]{create_block_table()}}.}
 
-\item{precinct}{sf dataframe of shapefiles to match to.}
+\item{precinct}{\code{sf} object of target precinct shapes.}
 
-\item{precinct_county_fips}{Column within precincts}
+\item{precinct_county_fips}{Name of the county identifier column in \code{precinct}.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-dataframe with nrow(precinct) rows
+dataframe with one row per row of \code{precinct}, ordered to align with
+the input precinct object.
 }
 \description{
-Performs the same type of operation as block2prec, but subsets a precinct geometry
-based on a County fips column. This helps get around the problem that county geometries
-often have borders that follow rivers and lead to funny shaped blocks. This guarantees
-that every block is matched to a precinct which is in the same county.
+Variant of \code{\link[=block2prec]{block2prec()}} that matches blocks to precincts separately within
+each county. This helps avoid cross-county mismatches when county boundaries
+and census blocks do not line up cleanly.
 }
 \examples{
 \dontrun{

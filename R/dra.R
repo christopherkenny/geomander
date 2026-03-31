@@ -1,15 +1,19 @@
-#' DRA to R
+#' Convert DRA Export Data to an R Spatial Object
 #'
-#' Creates a block or precinct level dataset from DRA csv output.
+#' Read a DRA block assignment export and attach it to 2020 census blocks,
+#' optionally collapsing the assignments to a precinct layer.
 #'
-#' @param dra The path to an exported csv or
-#' a dataframe with columns GEOID20 and District, loaded from a DRA export.
-#' @param state the state postal code of the state
-#' @param precincts an sf dataframe of precinct shapes to link the output to
+#' @param dra Path to a DRA CSV export, or a dataframe containing columns
+#'   `GEOID20` and `District`.
+#' @param state State postal abbreviation used to fetch 2020 blocks.
+#' @param precincts Optional `sf` object of precinct shapes. If supplied, the
+#'   function assigns each precinct the most common block-level district among
+#'   the blocks matched to it.
 #' @templateVar epsg TRUE
 #' @template template
 #'
-#' @return sf dataframe either at the block level or precinct level
+#' @return `sf` object at the block level when `precincts` is omitted, or at the
+#'   precinct level when `precincts` is supplied.
 #' @export
 #' @concept dra
 #' @examples\dontrun{
@@ -97,20 +101,22 @@ dra2r <- function(dra, state, precincts, epsg = 3857) {
   make_planar_pair(shp, epsg = epsg)$x
 }
 
-#' R to DRA
+#' Convert an R Plan to DRA Block Assignment Format
 #'
-#' Project a plan at the precinct level down to blocks into a format that can be used
-#' with DRA. Projecting down to blocks can take a lot of time for larger states.
+#' Project a plan defined on precincts down to 2020 census blocks and return the
+#' two-column format expected by DRA exports.
 #'
-#' @param precincts Required. an sf dataframe of precinct shapes
-#' @param plan Required. Either a vector of district assignments
-#' or the name of a column in precincts with district assignments.
-#' @param state Required. the state postal code of the state
-#' @param path Optional. A path to try to save to. Warns if saving failed.
+#' @param precincts `sf` object of precinct geometries.
+#' @param plan Either a vector of district assignments aligned with `precincts`,
+#'   or the name of a column in `precincts` containing those assignments.
+#' @param state State postal abbreviation used to fetch 2020 blocks.
+#' @param path Optional output path. If supplied, the result is written as CSV and
+#'   also returned.
 #' @templateVar epsg TRUE
 #' @template template
 #'
-#' @return tibble with columns Id, as used by DRA, identical to GEOID in census terms and District.
+#' @return tibble with columns `GEOID20` and `District`, suitable for writing to
+#'   a DRA-style CSV.
 #' @export
 #' @concept dra
 #' @examples \dontrun{

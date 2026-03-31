@@ -7,21 +7,22 @@
 geo_trim(from, to, thresh = 0.01, bool = FALSE, epsg = 3857)
 }
 \arguments{
-\item{from}{Required. sf dataframe. the geography to subset}
+\item{from}{\code{sf} object to subset.}
 
-\item{to}{Required. sf dataframe. the geography that from must intersect}
+\item{to}{\code{sf} object used as the target geography.}
 
-\item{thresh}{Percent as decimal of an area to trim away. Default is .01, which is 1\%.}
+\item{thresh}{Minimum retained overlap as a proportion of each row's area.}
 
-\item{bool}{Optional, defaults to FALSE. Should this just return a logical vector?}
+\item{bool}{Logical. If \code{TRUE}, return only the logical keep vector.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-sf data frame or logical vector if bool=TRUE
+subset of \code{from}, or a logical vector when \code{bool = TRUE}
 }
 \description{
-Trim Away Small Pieces
+Keep only rows of \code{from} whose intersection with \code{to} covers more than a given
+share of the row's area.
 }
 \examples{
 \dontrun{

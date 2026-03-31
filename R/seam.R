@@ -1,13 +1,16 @@
-#' Remove Edges along a Boundary
+#' Remove Edges Across an Administrative Boundary
 #'
-#' @param adj zero indexed adjacency graph
-#' @param shp tibble where admin column is found
-#' @param admin quoted name of administrative unit column
-#' @param seam units to rip the seam between by removing adjacency connections
+#' Remove adjacency connections between two or more administrative units, such as
+#' counties on opposite sides of a seam.
+#'
+#' @param adj Zero-indexed adjacency graph.
+#' @param shp `sf` object containing the administrative identifier.
+#' @param admin Name of the administrative-unit column in `shp`.
+#' @param seam Vector of administrative-unit values to separate.
 #' @templateVar epsg TRUE
 #' @template template
 #'
-#' @return adjacency list
+#' @return adjacency list with all cross-seam edges removed
 #' @export
 #'
 #' @concept seam
@@ -47,16 +50,19 @@ seam_rip <- function(adj, shp, admin, seam, epsg = 3857) {
   adj
 }
 
-#' Filter Shape to Geographies Along Border
+#' Filter Shapes to Units Along a Seam
 #'
-#' @param adj zero indexed adjacency graph
-#' @param shp tibble to subset and where admin column is found
-#' @param admin quoted name of administrative unit column
-#' @param seam administrative units to filter by
+#' Keep only rows in `shp` that lie on the border between two administrative
+#' units and have at least one adjacency connection across that border.
+#'
+#' @param adj Zero-indexed adjacency graph.
+#' @param shp `sf` object containing the administrative identifier.
+#' @param admin Name of the administrative-unit column in `shp`.
+#' @param seam Length-2 vector of administrative-unit values defining the seam.
 #' @templateVar epsg TRUE
 #' @template template
 #'
-#' @return subset of shp
+#' @return subset of `shp` containing only rows on the selected seam
 #' @export
 #' @concept seam
 #'
@@ -93,16 +99,18 @@ seam_geom <- function(adj, shp, admin, seam, epsg = 3857) {
   shp[keep, ]
 }
 
-#' Filter Adjacency to Edges Along Border
+#' Filter Adjacency to the Edges Along a Seam
 #'
-#' @param adj zero indexed adjacency graph
-#' @param shp tibble to subset and where admin column is found
-#' @param admin quoted name of administrative unit column
-#' @param seam administrative units to filter by
+#' Keep only the adjacency edges that connect the two sides of a selected seam.
+#'
+#' @param adj Zero-indexed adjacency graph.
+#' @param shp `sf` object containing the administrative identifier.
+#' @param admin Name of the administrative-unit column in `shp`.
+#' @param seam Length-2 vector of administrative-unit values defining the seam.
 #' @templateVar epsg TRUE
 #' @template template
 #'
-#' @return subset of adj
+#' @return adjacency list containing only cross-seam edges
 #' @export
 #' @concept seam
 #'
@@ -153,15 +161,18 @@ seam_adj <- function(adj, shp, admin, seam, epsg = 3857) {
   )
 }
 
-#' Suggest Edges to Connect Two Sides of a Border
+#' Suggest Edges to Sew a Seam
 #'
-#' @param shp sf tibble where admin column is found
-#' @param admin quoted name of administrative unit column
-#' @param seam administrative units to filter by
+#' Build a set of candidate cross-seam edges by constructing Voronoi cells from
+#' representative points and identifying neighboring cells across the seam.
+#'
+#' @param shp `sf` object containing the administrative identifier.
+#' @param admin Name of the administrative-unit column in `shp`.
+#' @param seam Length-2 vector of administrative-unit values defining the seam.
 #' @templateVar epsg TRUE
 #' @template template
 #'
-#' @return tibble of edges connecting sides of a border
+#' @return tibble with columns `v1` and `v2`, suitable for use with [add_edge()]
 #' @export
 #' @concept seam
 #'

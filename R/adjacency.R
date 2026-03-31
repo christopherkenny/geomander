@@ -1,6 +1,9 @@
 #' Add Edges to an Adjacency List
 #'
-#' @param adj list of adjacent precincts
+#' Add one or more undirected edges to an adjacency list in place and return the
+#' modified list.
+#'
+#' @param adj List of neighbors, one entry per vertex.
 #' @param v1 vector of vertex identifiers for the first vertex. Can be an
 #'   integer index or a value to look up in `ids`, if that argument is provided.
 #'   If more than one identifier is present, connects each to corresponding
@@ -9,12 +12,12 @@
 #'   integer index or a value to look up in `ids`, if that argument is provided.
 #'   If more than one identifier is present, connects each to corresponding
 #'   entry in v2.
-#' @param ids A vector of identifiers which is used to look up the row indices
-#'   for the vertices.  If provided, the entries in `v1` and `v2` must match
-#'   exactly one entry in `ids`. 
-#' @param zero boolean, TRUE if the list is zero indexed. False if one indexed.
+#' @param ids Optional identifier vector used to look up row indices. If
+#'   provided, each entry in `v1` and `v2` must match exactly one entry.
+#' @param zero Logical. `TRUE` when the adjacency list stores zero-based neighbor
+#'   indices and `FALSE` when it stores one-based indices.
 #'
-#' @return adjacency list.
+#' @return Adjacency list with the requested edges added symmetrically.
 #' @export
 #'
 #' @concept fix
@@ -44,9 +47,12 @@ add_edge <- function(adj, v1, v2, ids = NULL, zero = TRUE) {
   adj
 }
 
-#' Subtract Edges from an Adjacency List
+#' Remove Edges from an Adjacency List
 #'
-#' @param adj list of adjacent precincts
+#' Remove one or more undirected edges from an adjacency list and return the
+#' modified list.
+#'
+#' @param adj List of neighbors, one entry per vertex.
 #' @param v1 vector of vertex identifiers for the first vertex. Can be an
 #'   integer index or a value to look up in `ids`, if that argument is provided.
 #'   If more than one identifier is present, disconnects each to corresponding
@@ -55,14 +61,14 @@ add_edge <- function(adj, v1, v2, ids = NULL, zero = TRUE) {
 #'   integer index or a value to look up in `ids`, if that argument is provided.
 #'   If more than one identifier is present, disconnects each to corresponding
 #'   entry in v2, if an edge exists.
-#' @param ids A vector of identifiers which is used to look up the row indices
-#'   for the vertices.  If provided, the entries in `v1` and `v2` must match
-#'   exactly one entry in `ids`. 
-#' @param zero boolean, TRUE if `adj` is zero indexed. False if one indexed.
+#' @param ids Optional identifier vector used to look up row indices. If
+#'   provided, each entry in `v1` and `v2` must match exactly one entry.
+#' @param zero Logical. `TRUE` when the adjacency list stores zero-based neighbor
+#'   indices and `FALSE` when it stores one-based indices.
 #'
 #' @export
 #' @md
-#' @return adjacency list.
+#' @return Adjacency list with the requested edges removed symmetrically.
 #'
 #' @concept fix
 #' @examples
@@ -129,15 +135,17 @@ match_vtxs <- function(adj, v1, v2, ids = NULL) {
 #' as a friend to add. This is useful for when a small number of precincts are disconnected
 #' from the remainder of the geography, such as an island.
 #'
-#' @param shp an sf shapefile
-#' @param adj an adjacency list
-#' @param idx Optional. Which indices to suggest neighbors for. If blank, suggests for those
-#' with no neighbors.
-#' @param neighbors number of neighbors to suggest
+#' @param shp `sf` object used to compute representative points.
+#' @param adj Adjacency list.
+#' @param idx Optional integer vector of row indices to repair. If omitted, the
+#'   function uses rows with no neighbors.
+#' @param neighbors Number of candidate neighbors to return for each row in
+#'   `idx`.
 #'
 #' @concept fix
 #'
-#' @return tibble with two columns of suggested rows of shp to connect in adj
+#' @return tibble with columns `x` and `y`, giving pairs of row indices that
+#'   could be connected with [add_edge()].
 #' @export
 #'
 #' @examples
@@ -171,13 +179,16 @@ suggest_neighbors <- function(shp, adj, idx, neighbors = 1) {
 
 #' Compare Adjacency Lists
 #'
-#' @param adj1 Required. A first adjacency list.
-#' @param adj2 Required. A second adjacency list.
-#' @param shp shapefile to compare intersection types.
-#' @param zero Boolean. Defaults to TRUE. Are adj1 and adj2 zero indexed?
+#' Compare two adjacency lists and report edges that differ between them.
 #'
-#' @return tibble with row indices to compare, and optionally columns which describe the
-#' DE-9IM relationship between differences.
+#' @param adj1 First adjacency list.
+#' @param adj2 Second adjacency list.
+#' @param shp Optional `sf` object used to compute DE-9IM relations for differing
+#'   pairs.
+#' @param zero Logical. `TRUE` when the adjacency lists are zero-indexed.
+#'
+#' @return tibble of differing edge pairs. When `shp` is supplied, includes
+#'   DE-9IM relation and simple intersection class diagnostics.
 #' @export
 #'
 #' @concept fix
@@ -240,16 +251,16 @@ compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE) {
 }
 
 
-#' Build Adjacency List
+#' Build an Adjacency List
 #'
-#' This mimics redist's redist.adjacency using GEOS to create the patterns, rather than sf.
+#' This mimics redist's redist.adjacency using geos to create the patterns, rather than sf.
 #' This is faster than that version, but forces projections.
 #'
-#' @param shp sf dataframe
+#' @param shp `sf` dataframe.
 #' @templateVar epsg TRUE
 #' @template template
 #'
-#' @return list with nrow(shp) entries
+#' @return Zero-indexed adjacency list with `nrow(shp)` entries.
 #' @export
 #'
 #' @concept fix

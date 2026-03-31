@@ -7,12 +7,12 @@
 geos_centerish(shp, epsg = 3857)
 }
 \arguments{
-\item{shp}{An sf dataframe}
+\item{shp}{An \code{sf} dataframe.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-A geos geometry list
+geos geometry vector of points.
 }
 \description{
 Returns points within the shape, near the center.

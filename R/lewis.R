@@ -1,14 +1,16 @@
-#' Get historical United States Congressional District Shapefiles
+#' Get Historical United States Congressional District Shapefiles
 #'
 #' Data sourced from the United States Congressional District Shapefiles, primarily
 #' hosted at <https://cdmaps.polisci.ucla.edu/>. Files are fetched through the GitHub
 #' repository at <https://github.com/JeffreyBLewis/congressional-district-boundaries>.
 #'
-#' @param state two letter state abbreviation
-#' @param congress congress number, from 1 to 114.
-#' @param path_only logical. If TRUE, returns only the URL to the file.
+#' @param state State name, FIPS, or two-letter abbreviation understood by
+#'   `censable`.
+#' @param congress Congress number to retrieve.
+#' @param path_only Logical. If `TRUE`, return only the selected download URL.
 #'
-#' @return a sf tibble of the congressional district boundaries
+#' @return `sf` tibble of congressional district boundaries, or a character URL
+#'   when `path_only = TRUE`.
 #' @export
 #'
 #' @references

@@ -1,12 +1,14 @@
 #' Filter to Intersecting Pieces
 #'
-#' @param from Required. sf dataframe. the geography to subset
-#' @param to Required. sf dataframe. the geography that from must intersect
-#' @param bool Optional, defaults to FALSE. Should this just return a logical vector?
+#' Keep only the rows of `from` whose geometry intersects any geometry in `to`.
+#'
+#' @param from `sf` object to subset.
+#' @param to `sf` object used as the target geography.
+#' @param bool Logical. If `TRUE`, return only the logical keep vector.
 #' @templateVar epsg TRUE
 #' @template  template
 #'
-#' @return sf data frame or logical vector if bool == TRUE
+#' @return subset of `from`, or a logical vector when `bool = TRUE`
 #' @export
 #'
 #' @concept datatable
@@ -42,14 +44,17 @@ geo_filter <- function(from, to, bool = FALSE, epsg = 3857) {
 
 #' Trim Away Small Pieces
 #'
-#' @param from Required. sf dataframe. the geography to subset
-#' @param to Required. sf dataframe. the geography that from must intersect
-#' @param thresh Percent as decimal of an area to trim away. Default is .01, which is 1%.
-#' @param bool Optional, defaults to FALSE. Should this just return a logical vector?
+#' Keep only rows of `from` whose intersection with `to` covers more than a given
+#' share of the row's area.
+#'
+#' @param from `sf` object to subset.
+#' @param to `sf` object used as the target geography.
+#' @param thresh Minimum retained overlap as a proportion of each row's area.
+#' @param bool Logical. If `TRUE`, return only the logical keep vector.
 #' @templateVar epsg TRUE
 #' @template  template
 #'
-#' @return sf data frame or logical vector if bool=TRUE
+#' @return subset of `from`, or a logical vector when `bool = TRUE`
 #' @export
 #'
 #' @concept datatable

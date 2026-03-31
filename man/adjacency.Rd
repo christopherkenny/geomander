@@ -2,20 +2,20 @@
 % Please edit documentation in R/adjacency.R
 \name{adjacency}
 \alias{adjacency}
-\title{Build Adjacency List}
+\title{Build an Adjacency List}
 \usage{
 adjacency(shp, epsg = 3857)
 }
 \arguments{
-\item{shp}{sf dataframe}
+\item{shp}{\code{sf} dataframe.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-list with nrow(shp) entries
+Zero-indexed adjacency list with \code{nrow(shp)} entries.
 }
 \description{
-This mimics redist's redist.adjacency using GEOS to create the patterns, rather than sf.
+This mimics redist's redist.adjacency using geos to create the patterns, rather than sf.
 This is faster than that version, but forces projections.
 }
 \examples{

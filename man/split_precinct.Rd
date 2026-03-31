@@ -7,28 +7,31 @@
 split_precinct(lower, precinct, split_by, lower_wt, split_by_id, epsg = 3857)
 }
 \arguments{
-\item{lower}{The lower geography that makes up the precinct, this is often a
-block level geography.}
+\item{lower}{Lower geography that makes up the precinct, often blocks.}
 
-\item{precinct}{The single precinct that you would like to split.}
+\item{precinct}{Single-row \code{sf} object giving the precinct to split.}
 
-\item{split_by}{The upper geography that you want to split precinct by}
+\item{split_by}{Geography that defines the pieces to split the precinct into.}
 
-\item{lower_wt}{Optional. Numeric weights to give to each precinct, typically
-VAP or population.}
+\item{lower_wt}{Optional numeric vector of length \code{nrow(lower)} to aggregate
+within the split pieces, such as population or VAP.}
 
-\item{split_by_id}{Optional. A string that names a column in split_by that
-identifies each observation in split_by}
+\item{split_by_id}{Optional column name in \code{split_by} to copy onto the output.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-sf data frame with precinct split
+\code{sf} dataframe with one row per observed split piece
 }
 \description{
 States often split a precinct when they create districts but rarely provide the
 geography for the split precinct. This allows you to split a precinct using a
 lower geography, typically blocks.
+}
+\details{
+The function first filters \code{lower} and \code{split_by} to the selected precinct,
+matches lower-level units to \code{split_by}, and unions matched pieces. When
+\code{lower_wt} is supplied, a \code{wt} column is added with summed weights.
 }
 \examples{
 library(sf)

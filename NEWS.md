@@ -1,6 +1,7 @@
 # geomander 2.5.3
 
 * Fixes an NA matching error within `get_lewis()` that would break downloads for certain congress-state pairs (#17).
+* Expands inline documentation to provide better descriptions of arguments and goals of functions.
 
 # geomander 2.5.2
 
@@ -78,7 +79,7 @@
 # geomander 1.0.8
 * downgrade CRS for solaris 2005 build
 
-# geomander 1.0.7 
+# geomander 1.0.7
 * Shortens vignettes for CRAN build speed
 
 # geomander 1.0.6

@@ -7,21 +7,24 @@
 local_morans(shp, adj, wts, spatial_mat, epsg = 3857)
 }
 \arguments{
-\item{shp}{sf data frame. Optional if adj or spatial_mat provided.}
+\item{shp}{\code{sf} dataframe. Optional if \code{adj} or \code{spatial_mat} is supplied.}
 
-\item{adj}{zero indexed adjacency list. Optional if shp or spatial_mat provided.}
+\item{adj}{Zero-indexed adjacency list. Optional if \code{shp} or \code{spatial_mat} is
+supplied.}
 
-\item{wts}{Required. Numeric vector with weights to use for Moran's I.}
+\item{wts}{Numeric vector of observed values.}
 
-\item{spatial_mat}{matrix of spatial weights. Optional if shp or adj provided.}
+\item{spatial_mat}{Square spatial weights matrix. Optional if \code{shp} or \code{adj}
+is supplied.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-tibble
+tibble with columns \code{moran}, \code{expectation}, and \code{variance}
 }
 \description{
-Compute Local Moran's I
+Compute Local Moran's I for each observation using either an \code{sf} object, a
+zero-indexed adjacency list, or a spatial weights matrix.
 }
 \examples{
 library(dplyr)

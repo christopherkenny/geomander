@@ -1,14 +1,16 @@
-#' Estimate Regions by Geographic Features
+#' Estimate Regions Separated by Geographic Features
 #'
-#' This offers a basic method for dividing a shape into separate pieces
+#' Divide an adjacency graph into regions by removing edges whose centerlines
+#' intersect a set of line features, such as roads or rivers.
 #'
-#' @param shp `sf` tibble to estimate regions for
-#' @param lines `sf` tibble which divides `shp` into regions
-#' @param adj adjacency graph
+#' @param shp `sf` object to regionalize.
+#' @param lines `sf` line object representing separators.
+#' @param adj Optional zero-indexed adjacency graph. Defaults to
+#'   `adjacency(shp)`.
 #' @templateVar epsg TRUE
 #' @template template
 #'
-#' @return integer vector of regions with `nrow(shp)` entries
+#' @return integer vector of region labels with `nrow(shp)` entries
 #' @export
 #'
 #' @examples

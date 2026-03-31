@@ -7,12 +7,13 @@
 st_centerish(shp, epsg = 3857)
 }
 \arguments{
-\item{shp}{An sf dataframe}
+\item{shp}{An \code{sf} dataframe.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-An sf dataframe where geometry is the center(ish) of each shape in shp
+\code{sf} dataframe with the same rows and attributes as \code{shp}, but point
+geometries.
 }
 \description{
 Returns points within the shape, near the center.

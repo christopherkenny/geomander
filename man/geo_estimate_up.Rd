@@ -2,28 +2,32 @@
 % Please edit documentation in R/estimate.R
 \name{geo_estimate_up}
 \alias{geo_estimate_up}
-\title{Estimate Up Geography Levels}
+\title{Aggregate Values Up to a Larger Geography}
 \usage{
 geo_estimate_up(from, to, value, method = "center", epsg = 3857)
 }
 \arguments{
-\item{from}{smaller geography level}
+\item{from}{Smaller geography level.}
 
-\item{to}{larger geography level}
+\item{to}{Larger geography level.}
 
-\item{value}{numeric vector of length nrow(from). Defaults to 1.}
+\item{value}{Numeric vector of length \code{nrow(from)} to aggregate. Defaults to
+\code{1}.}
 
-\item{method}{string from center, centroid, point, or area for matching levels}
+\item{method}{Matching method passed to \code{\link[=geo_match]{geo_match()}}.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-numeric vector with each value aggregated by group
+numeric vector of length \code{nrow(to)} with values aggregated by group
 }
 \description{
-Simple method for aggregating data up to a higher level This is most often useful
-for getting population data from a block level up to a precinct level.
-Geographic partner to estimate_up.
+Aggregate values from a smaller geography to a larger geography after matching
+each row of \code{from} to a row of \code{to}. This is commonly used to roll block-level
+counts up to precincts or districts.
+}
+\details{
+Groups in \code{to} with no matched rows are included in the output and receive \code{0}.
 }
 \examples{
 library(dplyr)

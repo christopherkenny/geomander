@@ -7,20 +7,21 @@
 suggest_component_connection(shp, adj, group, epsg = 3857)
 }
 \arguments{
-\item{shp}{An sf data frame}
+\item{shp}{An \code{sf} dataframe.}
 
-\item{adj}{adjacency list}
+\item{adj}{Adjacency list.}
 
-\item{group}{array of group identifiers. Typically district numbers or county names.
-Defaults to rep(1, length(adj)) if missing.}
+\item{group}{Optional vector of group identifiers. If omitted, all rows are
+treated as belonging to one group.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-tibble with two columns of suggested rows of shp to connect in adj
+tibble with columns \code{x} and \code{y}, giving candidate row pairs to connect
+with \code{\link[=add_edge]{add_edge()}}.
 }
 \description{
-Suggests nearest neighbors for connecting a disconnected group.
+Suggest nearest cross-component links that could reconnect disconnected groups.
 }
 \examples{
 library(dplyr)

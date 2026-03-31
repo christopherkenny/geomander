@@ -2,26 +2,29 @@
 % Please edit documentation in R/alarm.R
 \name{get_alarm}
 \alias{get_alarm}
-\title{Get ALARM Dataset}
+\title{Get an ALARM Dataset}
 \usage{
 get_alarm(state, year = 2020, geometry = TRUE, epsg = 3857)
 }
 \arguments{
-\item{state}{two letter state abbreviation}
+\item{state}{Two-letter state abbreviation.}
 
-\item{year}{year to get data for. Either \code{2020} or \code{2010}}
+\item{year}{Year to retrieve, either \code{2020} or \code{2010}.}
 
-\item{geometry}{Default is TRUE. Add geometry to the data?}
+\item{geometry}{Logical. If \code{TRUE}, join the corresponding geometry.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-tibble with election data and optional geometry
+tibble or \code{sf} object with ALARM election data and, optionally,
+geometry.
 }
 \description{
-Gets a dataset from the Algorithm-Assisted Redistricting Methodology Project.
-The current supported data is the 2020 retabulations of the VEST data, which
-can be downloaded with \code{get_vest}.
+Download a state dataset from the Algorithm-Assisted Redistricting Methodology
+Project. Depending on state and year, the data are returned at either the
+voting-district level or the census-block level.
+The current supported data is the 2020 and 2010 retabulations of the VEST
+data, which can be downloaded with \code{\link[=get_vest]{get_vest()}}.
 }
 \details{
 See the full available data at \url{https://github.com/alarm-redist/census-2020}.

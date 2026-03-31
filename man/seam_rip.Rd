@@ -2,26 +2,27 @@
 % Please edit documentation in R/seam.R
 \name{seam_rip}
 \alias{seam_rip}
-\title{Remove Edges along a Boundary}
+\title{Remove Edges Across an Administrative Boundary}
 \usage{
 seam_rip(adj, shp, admin, seam, epsg = 3857)
 }
 \arguments{
-\item{adj}{zero indexed adjacency graph}
+\item{adj}{Zero-indexed adjacency graph.}
 
-\item{shp}{tibble where admin column is found}
+\item{shp}{\code{sf} object containing the administrative identifier.}
 
-\item{admin}{quoted name of administrative unit column}
+\item{admin}{Name of the administrative-unit column in \code{shp}.}
 
-\item{seam}{units to rip the seam between by removing adjacency connections}
+\item{seam}{Vector of administrative-unit values to separate.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-adjacency list
+adjacency list with all cross-seam edges removed
 }
 \description{
-Remove Edges along a Boundary
+Remove adjacency connections between two or more administrative units, such as
+counties on opposite sides of a seam.
 }
 \examples{
 data('rockland')

@@ -1,13 +1,18 @@
 #' Compute Local Geary's C
 #'
-#' @param shp sf data frame. Optional if adj or spatial_mat provided.
-#' @param adj zero indexed adjacency list. Optional if shp or spatial_mat provided.
-#' @param wts Required. Numeric vector with weights to use for Moran's I.
-#' @param spatial_mat matrix of spatial weights. Not required if shp or adj provided.
+#' Compute Local Geary's C for each observation using either an `sf` object, a
+#' zero-indexed adjacency list, or a spatial weights matrix.
+#'
+#' @param shp `sf` dataframe. Optional if `adj` or `spatial_mat` is supplied.
+#' @param adj Zero-indexed adjacency list. Optional if `shp` or `spatial_mat` is
+#'   supplied.
+#' @param wts Numeric vector of observed values.
+#' @param spatial_mat Square spatial weights matrix. Optional if `shp` or `adj`
+#'   is supplied.
 #' @templateVar epsg TRUE
 #' @template template
 #'
-#' @return numeric vector
+#' @return tibble with one column, `geary`, and one row per observation
 #' @export
 #'
 #' @concept spatcorr
@@ -45,19 +50,21 @@ local_gearys <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
 #' Compute Global Geary's C
 #'
 #' Computes the Global Geary's Contiguity statistic. Can produce spatial weights
-#' from an adjacency or sf data frame, in which case the spatial_mat is a contiguity
+#' from an adjacency or sf dataframe, in which case the spatial_mat is a contiguity
 #' matrix. Users can also provide a spatial_mat argument directly.
 #'
-#' @param shp sf data frame. Optional if adj or spatial_mat provided.
-#' @param adj zero indexed adjacency list. Optional if shp or spatial_mat provided.
-#' @param wts Required. Numeric vector with weights to use for Moran's I.
-#' @param spatial_mat matrix of spatial weights. Optional if shp or adj provided.
+#' @param shp `sf` dataframe. Optional if `adj` or `spatial_mat` is supplied.
+#' @param adj Zero-indexed adjacency list. Optional if `shp` or `spatial_mat` is
+#'   supplied.
+#' @param wts Numeric vector of observed values.
+#' @param spatial_mat Square spatial weights matrix. Optional if `shp` or `adj`
+#'   is supplied.
 #' @templateVar epsg TRUE
 #' @template template
 #'
 #' @concept spatcorr
 #'
-#' @return double
+#' @return numeric scalar containing the global Geary's C statistic
 #' @export
 #' @examples
 #' library(dplyr)

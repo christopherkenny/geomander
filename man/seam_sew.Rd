@@ -2,24 +2,25 @@
 % Please edit documentation in R/seam.R
 \name{seam_sew}
 \alias{seam_sew}
-\title{Suggest Edges to Connect Two Sides of a Border}
+\title{Suggest Edges to Sew a Seam}
 \usage{
 seam_sew(shp, admin, seam, epsg = 3857)
 }
 \arguments{
-\item{shp}{sf tibble where admin column is found}
+\item{shp}{\code{sf} object containing the administrative identifier.}
 
-\item{admin}{quoted name of administrative unit column}
+\item{admin}{Name of the administrative-unit column in \code{shp}.}
 
-\item{seam}{administrative units to filter by}
+\item{seam}{Length-2 vector of administrative-unit values defining the seam.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-tibble of edges connecting sides of a border
+tibble with columns \code{v1} and \code{v2}, suitable for use with \code{\link[=add_edge]{add_edge()}}
 }
 \description{
-Suggest Edges to Connect Two Sides of a Border
+Build a set of candidate cross-seam edges by constructing Voronoi cells from
+representative points and identifying neighboring cells across the seam.
 }
 \examples{
 data('rockland')

@@ -7,14 +7,14 @@
 geos_circle_center(shp, tolerance = 0.01, epsg = 3857)
 }
 \arguments{
-\item{shp}{An sf dataframe}
+\item{shp}{An \code{sf} dataframe.}
 
 \item{tolerance}{positive numeric tolerance to simplify by. Default is 0.01.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-A geos geometry list
+geos geometry vector of points.
 }
 \description{
 Returns the centroid of the largest inscribed circle for each shape

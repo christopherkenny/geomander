@@ -1,12 +1,13 @@
-#' Create Plots of Shapes by Group with Connected Components Colored
+#' Plot Groups with Connected Components Colored
 #'
-#' @param shp An sf shapefile
-#' @param adj adjacency list
-#' @param group array of group identifiers. Typically district numbers or county names.
-#' @param save Boolean, whether to save or not.
-#' @param path Path to save, only used if save is TRUE. Defaults to working directory.
+#' @param shp An `sf` object.
+#' @param adj Adjacency list.
+#' @param group Optional vector of group identifiers, typically district numbers
+#'   or county names.
+#' @param save Logical. If `TRUE`, save each plot to disk.
+#' @param path Directory prefix used when `save = TRUE`.
 #'
-#' @return list of ggplots
+#' @return list of `ggplot` objects, one per unique group
 #' @export
 #'
 #' @concept plot
@@ -65,15 +66,15 @@ geo_plot_group <- function(shp, adj, group, save = FALSE, path = '') {
   out
 }
 
-#' Plots a Shape with Row Numbers as Text
+#' Plot an `sf` Object with Row Numbers
 #'
-#' One liner to plot a shape with row numbers
+#' Quick diagnostic plot that labels each row with its row number.
 #'
-#' @param shp An sf shapefile
+#' @param shp An `sf` object.
 #'
 #' @concept plot
 #'
-#' @return ggplot
+#' @return `ggplot` object
 #' @export
 #'
 #' @examples

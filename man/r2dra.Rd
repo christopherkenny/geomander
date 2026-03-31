@@ -2,28 +2,30 @@
 % Please edit documentation in R/dra.R
 \name{r2dra}
 \alias{r2dra}
-\title{R to DRA}
+\title{Convert an R Plan to DRA Block Assignment Format}
 \usage{
 r2dra(precincts, plan, state, path, epsg = 3857)
 }
 \arguments{
-\item{precincts}{Required. an sf dataframe of precinct shapes}
+\item{precincts}{\code{sf} object of precinct geometries.}
 
-\item{plan}{Required. Either a vector of district assignments
-or the name of a column in precincts with district assignments.}
+\item{plan}{Either a vector of district assignments aligned with \code{precincts},
+or the name of a column in \code{precincts} containing those assignments.}
 
-\item{state}{Required. the state postal code of the state}
+\item{state}{State postal abbreviation used to fetch 2020 blocks.}
 
-\item{path}{Optional. A path to try to save to. Warns if saving failed.}
+\item{path}{Optional output path. If supplied, the result is written as CSV and
+also returned.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-tibble with columns Id, as used by DRA, identical to GEOID in census terms and District.
+tibble with columns \code{GEOID20} and \code{District}, suitable for writing to
+a DRA-style CSV.
 }
 \description{
-Project a plan at the precinct level down to blocks into a format that can be used
-with DRA. Projecting down to blocks can take a lot of time for larger states.
+Project a plan defined on precincts down to 2020 census blocks and return the
+two-column format expected by DRA exports.
 }
 \examples{
 \dontrun{

@@ -2,18 +2,19 @@
 % Please edit documentation in R/vest.R
 \name{clean_vest}
 \alias{clean_vest}
-\title{Clean VEST Names}
+\title{Clean VEST Column Names}
 \usage{
 clean_vest(data)
 }
 \arguments{
-\item{data}{sf tibble from VEST}
+\item{data}{\code{sf} tibble from \code{\link[=get_vest]{get_vest()}}.}
 }
 \value{
-data with cleaned names
+input object with renamed columns
 }
 \description{
-Clean VEST Names
+Rename VEST election-result columns into a more uniform
+\code{office_year_party_candidate} style.
 }
 \examples{
 data(va18sub)

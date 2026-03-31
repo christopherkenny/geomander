@@ -7,20 +7,21 @@
 compare_adjacencies(adj1, adj2, shp, zero = TRUE)
 }
 \arguments{
-\item{adj1}{Required. A first adjacency list.}
+\item{adj1}{First adjacency list.}
 
-\item{adj2}{Required. A second adjacency list.}
+\item{adj2}{Second adjacency list.}
 
-\item{shp}{shapefile to compare intersection types.}
+\item{shp}{Optional \code{sf} object used to compute DE-9IM relations for differing
+pairs.}
 
-\item{zero}{Boolean. Defaults to TRUE. Are adj1 and adj2 zero indexed?}
+\item{zero}{Logical. \code{TRUE} when the adjacency lists are zero-indexed.}
 }
 \value{
-tibble with row indices to compare, and optionally columns which describe the
-DE-9IM relationship between differences.
+tibble of differing edge pairs. When \code{shp} is supplied, includes
+DE-9IM relation and simple intersection class diagnostics.
 }
 \description{
-Compare Adjacency Lists
+Compare two adjacency lists and report edges that differ between them.
 }
 \examples{
 data(towns)

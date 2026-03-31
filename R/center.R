@@ -3,11 +3,12 @@
 #' Returns points within the shape, near the center.
 #' Uses the centroid if that's in the shape, or point on surface if not.
 #'
-#' @param shp An sf dataframe
+#' @param shp An `sf` dataframe.
 #' @templateVar epsg TRUE
 #' @template template
 #'
-#' @return An sf dataframe where geometry is the center(ish) of each shape in shp
+#' @return `sf` dataframe with the same rows and attributes as `shp`, but point
+#'   geometries.
 #' @export
 #'
 #' @concept center
@@ -28,11 +29,11 @@ st_centerish <- function(shp, epsg = 3857) {
 #' Returns points within the shape, near the center.
 #' Uses the centroid if that's in the shape, or point on surface if not.
 #'
-#' @param shp An sf dataframe
+#' @param shp An `sf` dataframe.
 #' @templateVar epsg TRUE
 #' @template template
 #'
-#' @return A geos geometry list
+#' @return geos geometry vector of points.
 #' @export
 #'
 #' @concept center
@@ -67,16 +68,17 @@ geos_centerish <- function(shp, epsg = 3857) {
   cent
 }
 
-#' Get the centroid of the maximum inscribed circle
+#' Get the Center of the Maximum Inscribed Circle
 #'
-#' Returns the centroid of the largest inscribed circle for each shape
+#' Compute the centroid of the largest inscribed circle for each feature.
 #'
-#' @param shp An sf dataframe
+#' @param shp An `sf` dataframe.
 #' @templateVar tolerance TRUE
 #' @templateVar epsg TRUE
 #' @template template
 #'
-#' @return An sf dataframe where geometry is the circle center of each shape in shp
+#' @return `sf` dataframe with the same rows and attributes as `shp`, but point
+#'   geometries.
 #' @export
 #'
 #' @concept center
@@ -96,12 +98,12 @@ st_circle_center <- function(shp, tolerance = 0.01, epsg = 3857) {
 #'
 #' Returns the centroid of the largest inscribed circle for each shape
 #'
-#' @param shp An sf dataframe
+#' @param shp An `sf` dataframe.
 #' @templateVar tolerance TRUE
 #' @templateVar epsg TRUE
 #' @template template
 #'
-#' @return A geos geometry list
+#' @return geos geometry vector of points.
 #' @export
 #'
 #' @concept center

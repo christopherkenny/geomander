@@ -2,24 +2,26 @@
 % Please edit documentation in R/regionalize.R
 \name{regionalize}
 \alias{regionalize}
-\title{Estimate Regions by Geographic Features}
+\title{Estimate Regions Separated by Geographic Features}
 \usage{
 regionalize(shp, lines, adj = adjacency(shp), epsg = 3857)
 }
 \arguments{
-\item{shp}{\code{sf} tibble to estimate regions for}
+\item{shp}{\code{sf} object to regionalize.}
 
-\item{lines}{\code{sf} tibble which divides \code{shp} into regions}
+\item{lines}{\code{sf} line object representing separators.}
 
-\item{adj}{adjacency graph}
+\item{adj}{Optional zero-indexed adjacency graph. Defaults to
+\code{adjacency(shp)}.}
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 }
 \value{
-integer vector of regions with \code{nrow(shp)} entries
+integer vector of region labels with \code{nrow(shp)} entries
 }
 \description{
-This offers a basic method for dividing a shape into separate pieces
+Divide an adjacency graph into regions by removing edges whose centerlines
+intersect a set of line features, such as roads or rivers.
 }
 \examples{
 data(towns)

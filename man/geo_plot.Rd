@@ -2,18 +2,18 @@
 % Please edit documentation in R/plots.R
 \name{geo_plot}
 \alias{geo_plot}
-\title{Plots a Shape with Row Numbers as Text}
+\title{Plot an \code{sf} Object with Row Numbers}
 \usage{
 geo_plot(shp)
 }
 \arguments{
-\item{shp}{An sf shapefile}
+\item{shp}{An \code{sf} object.}
 }
 \value{
-ggplot
+\code{ggplot} object
 }
 \description{
-One liner to plot a shape with row numbers
+Quick diagnostic plot that labels each row with its row number.
 }
 \examples{
 data(checkerboard)
