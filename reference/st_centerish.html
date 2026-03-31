@@ -76,7 +76,7 @@ Uses the centroid if that's in the shape, or point on surface if not.</p>
 
 
 <dl><dt id="arg-shp">shp<a class="anchor" aria-label="anchor" href="#arg-shp"></a></dt>
-<dd><p>An sf dataframe</p></dd>
+<dd><p>An <code>sf</code> dataframe.</p></dd>
 
 
 <dt id="arg-epsg">epsg<a class="anchor" aria-label="anchor" href="#arg-epsg"></a></dt>
@@ -85,7 +85,8 @@ Uses the centroid if that's in the shape, or point on surface if not.</p>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An sf dataframe where geometry is the center(ish) of each shape in shp</p>
+    <p><code>sf</code> dataframe with the same rows and attributes as <code>shp</code>, but point
+geometries.</p>
     </div>
 
     <div id="ref-examples">

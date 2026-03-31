@@ -78,30 +78,32 @@ estimate the block level to the voting district level.</p>
 
 
 <dl><dt id="arg-baf">baf<a class="anchor" aria-label="anchor" href="#arg-baf"></a></dt>
-<dd><p>a tibble representing a block assignment file.</p></dd>
+<dd><p>dataframe representing a block assignment file.</p></dd>
 
 
 <dt id="arg-plan-name">plan_name<a class="anchor" aria-label="anchor" href="#arg-plan-name"></a></dt>
-<dd><p>character. Name of column in <code>baf</code> which corresponds to the districts.</p></dd>
+<dd><p>Name of the column in <code>baf</code> containing district assignments.</p></dd>
 
 
 <dt id="arg-geoid">GEOID<a class="anchor" aria-label="anchor" href="#arg-geoid"></a></dt>
-<dd><p>character. Name of column which corresponds to each block's GEOID,
-sometimes called "BLOCKID". Default is <code>'GEOID'</code>.</p></dd>
+<dd><p>Name of the column containing block GEOIDs, sometimes called
+<code>"BLOCKID"</code>. Defaults to <code>"GEOID"</code>.</p></dd>
 
 
 <dt id="arg-year">year<a class="anchor" aria-label="anchor" href="#arg-year"></a></dt>
-<dd><p>the decade to request, either <code>2010</code> or <code>2020</code>. Default is <code>2020</code>.</p></dd>
+<dd><p>Decennial vintage for the crosswalk, either <code>2010</code> or <code>2020</code>.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a tibble with a vtd-level assignment file</p>
+    <p>tibble with one row per voting district and the requested plan column</p>
     </div>
     <div id="details">
     <h2>Details</h2>
     <p>If a voting district is split between blocks, this currently uses the most
 common district.</p>
+<p>When a voting district contains blocks assigned to more than one district, the
+output uses the modal district assignment.</p>
     </div>
 
     <div id="ref-examples">

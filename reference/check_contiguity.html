@@ -80,22 +80,24 @@ within a subgeography.</p>
 
 
 <dl><dt id="arg-adj">adj<a class="anchor" aria-label="anchor" href="#arg-adj"></a></dt>
-<dd><p>adjacency list</p></dd>
+<dd><p>Zero-indexed adjacency list.</p></dd>
 
 
 <dt id="arg-group">group<a class="anchor" aria-label="anchor" href="#arg-group"></a></dt>
-<dd><p>array of group identifiers. Typically district numbers or county names.
-Defaults to 1 if no input is provided, checking that the adjacency list itself is
-one connected component.</p></dd>
+<dd><p>Optional vector of group identifiers, typically district numbers
+or county names. If omitted, all rows are treated as belonging to one group.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>tibble with contiguity indicators. Each row is the units of <code>adj</code>. Columns include</p><ul><li><p><code>group</code> Values of the inputted <code>group</code> argument. If <code>group</code> is not specified, then all values
-will be 1.</p></li>
-<li><p><code>component</code> A number for each contiguous set of units within a <code>group</code>. If all units within a
-<code>group</code> are contiguous, all values are 1. If there are two sets, each discontiguous with
-the other, the larger one will be numbered 1 and the smaller one will be numbered as 2.</p></li>
+    <p>tibble with contiguity indicators. Each row is the units of <code>adj</code>.
+Columns include</p><ul><li><p><code>group</code> Values of the inputted <code>group</code> argument. If <code>group</code> is not
+specified, then all values will be 1.</p></li>
+<li><p><code>group_number</code> Integer encoding of <code>group</code>.</p></li>
+<li><p><code>component</code> A number for each contiguous set of units within a <code>group</code>.
+If all units within a <code>group</code> are contiguous, all values are 1. If there
+are two sets, each discontiguous with the other, the larger one will be
+numbered 1 and the smaller one will be numbered 2.</p></li>
 </ul></div>
     <div id="details">
     <h2>Details</h2>

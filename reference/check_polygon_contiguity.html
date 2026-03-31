@@ -76,13 +76,12 @@ Avoids issues where a precinct is actually a multipolygon</p>
 
 
 <dl><dt id="arg-shp">shp<a class="anchor" aria-label="anchor" href="#arg-shp"></a></dt>
-<dd><p>An sf data frame</p></dd>
+<dd><p>An <code>sf</code> dataframe.</p></dd>
 
 
 <dt id="arg-group">group<a class="anchor" aria-label="anchor" href="#arg-group"></a></dt>
-<dd><p>unquoted name of group identifier in shp.
-Typically, this is district assignment. If you're looking for dis-contiguous precincts,
-this should be a row number.</p></dd>
+<dd><p>Unquoted column name in <code>shp</code> giving the grouping variable. Use a
+row identifier when checking whether individual rows are multipart.</p></dd>
 
 
 <dt id="arg-epsg">epsg<a class="anchor" aria-label="anchor" href="#arg-epsg"></a></dt>
@@ -91,8 +90,7 @@ this should be a row number.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>tibble with a column for each of inputted group, created group number, and the
-identified connected component number</p>
+    <p>tibble in the same format as <code><a href="check_contiguity.html">check_contiguity()</a></code>.</p>
     </div>
 
     <div id="ref-examples">
