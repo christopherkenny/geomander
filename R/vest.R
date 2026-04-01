@@ -23,8 +23,8 @@ get_vest <- function(state, year, path = tempdir(), clean_names = TRUE, epsg = 3
   abb <- tolower(censable::match_abb(state))
 
   file_name <- stringr::str_glue('{abb}_{year}.zip')
-  if (state == 'fl' && year == 2016) {
-    file_name <- 'fl.zip'
+  if (state %in% c('fl', 'md', 'nj', 'tx') && year == 2016) {
+    file_name <- stringr::str_glue('{abb}.zip')
   }
 
   doi <- vest_doi()[as.character(year)]
