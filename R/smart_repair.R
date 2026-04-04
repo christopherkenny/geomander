@@ -86,6 +86,63 @@
 #'
 #' # With rook-to-queen conversion (threshold in CRS units, e.g., meters)
 #' repaired <- smart_repair(precincts, rook_threshold = 30)
+sr_compute_snap_magnitude <- function(shp, regions = NULL, snap_precision = 9L) {
+  geom_bbox <- sf::st_bbox(shp)
+  widths <- c(geom_bbox$xmax - geom_bbox$xmin, geom_bbox$ymax - geom_bbox$ymin)
+
+  if (!is.null(regions)) {
+    region_bbox <- sf::st_bbox(regions)
+    widths <- c(
+      widths,
+      region_bbox$xmax - region_bbox$xmin,
+      region_bbox$ymax - region_bbox$ymin
+    )
+  }
+
+  largest_bound <- max(as.numeric(widths), na.rm = TRUE)
+  if (!is.finite(largest_bound) || largest_bound <= 0) {
+    return(NULL)
+  }
+
+  floor(log10(largest_bound)) - snap_precision
+}
+
+
+sr_snap_sfc_to_grid <- function(geom, snap_magnitude) {
+  if (is.null(snap_magnitude)) {
+    return(geom)
+  }
+
+  grid_size <- 10^snap_magnitude
+  geom_crs <- sf::st_crs(geom)
+  snapped <- geos::geos_set_precision(
+    geos::as_geos_geometry(sf::st_set_crs(geom, NA)),
+    grid_size,
+    preserve_topology = TRUE
+  )
+  snapped_sfc <- sf::st_as_sfc(snapped)
+  sf::st_set_crs(snapped_sfc, geom_crs)
+}
+
+
+sr_snap_sf_to_grid <- function(shp, snap_magnitude) {
+  sf::st_geometry(shp) <- sr_snap_sfc_to_grid(sf::st_geometry(shp), snap_magnitude)
+  shp
+}
+
+
+sr_extract_polygonal_sfc <- function(geom) {
+  geom_types <- as.character(sf::st_geometry_type(geom, by_geometry = TRUE))
+  out <- geom
+
+  collection_idx <- which(geom_types == 'GEOMETRYCOLLECTION')
+  if (length(collection_idx) > 0L) {
+    out[collection_idx] <- sf::st_collection_extract(geom[collection_idx], type = 'POLYGON')
+  }
+
+  out
+}
+
 smart_repair <- function(
   shp,
   regions = NULL,
@@ -125,6 +182,7 @@ smart_repair <- function(
 
   n_units <- nrow(shp)
   original_crs <- sf::st_crs(shp)
+  snap_magnitude <- NULL
 
   # --- Planarize --------------------------------------------------------
   planar <- make_planar_pair(shp, regions, epsg = epsg)
@@ -140,7 +198,7 @@ smart_repair <- function(
     )
     fixed <- sf::st_make_valid(sf::st_geometry(shp))
     # make_valid can produce GEOMETRYCOLLECTION; extract only polygon parts
-    sf::st_geometry(shp) <- sf::st_collection_extract(fixed, type = 'POLYGON')
+    sf::st_geometry(shp) <- sr_extract_polygonal_sfc(fixed)
   }
   if (region_aware) {
     invalid_regions <- which(!sf::st_is_valid(regions))
@@ -150,7 +208,16 @@ smart_repair <- function(
         repairing with {.fn sf::st_make_valid} before processing.'
       )
       fixed_r <- sf::st_make_valid(sf::st_geometry(regions))
-      sf::st_geometry(regions) <- sf::st_collection_extract(fixed_r, type = 'POLYGON')
+      sf::st_geometry(regions) <- sr_extract_polygonal_sfc(fixed_r)
+    }
+  }
+
+  # --- Snap to grid -----------------------------------------------------
+  snap_magnitude <- sr_compute_snap_magnitude(shp, regions, snap_precision = 9L)
+  if (!is.null(snap_magnitude)) {
+    shp <- sr_snap_sf_to_grid(shp, snap_magnitude)
+    if (region_aware) {
+      regions <- sr_snap_sf_to_grid(regions, snap_magnitude)
     }
   }
 
@@ -168,11 +235,12 @@ smart_repair <- function(
   unit_region <- sr_assign_units_to_regions(unit_geom, region_geom)
 
   # PHASE 1: Construct refined tiling
-  refined <- sr_construct_refined_tiling(unit_geom, region_geom, unit_region)
+  refined <- sr_construct_refined_tiling(unit_geom, region_geom, unit_region, snap_magnitude)
 
   pieces <- refined$pieces
   piece_parents <- refined$piece_parents
   overlap_order <- refined$overlap_order
+  piece_region <- refined$piece_region
 
   # PHASE 2: Assign overlaps
   piece_assignment <- sr_assign_overlaps(
@@ -190,8 +258,11 @@ smart_repair <- function(
     overlap_order,
     repaired,
     n_units,
-    max_gap_frac
+    max_gap_frac,
+    piece_region = piece_region,
+    unit_region = unit_region
   )
+  repaired <- sr_rebuild_repaired_geom(repaired)
 
   # PHASE 4: Clean up disconnected units
   repaired <- sr_normalize_polygon_geom(repaired)
@@ -200,6 +271,7 @@ smart_repair <- function(
   # PHASE 5 (optional): Small rook-to-queen adjacency conversion
   repaired <- sr_normalize_polygon_geom(repaired)
   repaired <- sr_rook_to_queen(repaired, rook_threshold)
+  repaired <- sr_rebuild_repaired_geom(repaired)
 
   # --- Reassemble output ------------------------------------------------
   repaired_sfc <- sf::st_as_sfc(repaired)
@@ -270,9 +342,9 @@ sr_assign_units_to_regions <- function(unit_geom, region_geom) {
 #'   }
 #'
 #' @noRd
-sr_construct_refined_tiling <- function(unit_geom, region_geom, unit_region) {
+sr_construct_refined_tiling <- function(unit_geom, region_geom, unit_region, snap_magnitude = NULL) {
   # -- 1a: fully noded union of boundaries --------------------------------
-  noded <- sr_compute_noded_union(unit_geom, region_geom)
+  noded <- sr_compute_noded_union(unit_geom, region_geom, snap_magnitude)
 
   # -- 1b: polygonize to obtain pieces ------------------------------------
   pieces <- sr_polygonize_skeleton(noded)
@@ -298,7 +370,7 @@ sr_construct_refined_tiling <- function(unit_geom, region_geom, unit_region) {
 #' @return A length-1 `geos_geometry` representing the noded 1-complex.
 #'
 #' @noRd
-sr_compute_noded_union <- function(unit_geom, region_geom) {
+sr_compute_noded_union <- function(unit_geom, region_geom, snap_magnitude = NULL) {
   unit_bounds <- geos::geos_boundary(unit_geom)
 
   if (!is.null(region_geom)) {
@@ -306,6 +378,14 @@ sr_compute_noded_union <- function(unit_geom, region_geom) {
     all_bounds <- c(unit_bounds, region_bounds)
   } else {
     all_bounds <- unit_bounds
+  }
+
+  if (!is.null(snap_magnitude)) {
+    all_bounds <- geos::geos_set_precision(
+      all_bounds,
+      10^(snap_magnitude - 1L),
+      preserve_topology = TRUE
+    )
   }
 
   # Collect into a single geometry, union, then node so that every crossing
@@ -350,7 +430,8 @@ sr_polygonize_skeleton <- function(noded) {
 #' @param region_geom `geos_geometry` vector of region polygons, or `NULL`.
 #' @param unit_region integer vector mapping units to region indices, or `NULL`.
 #'
-#' @return A list with `pieces`, `piece_parents`, and `overlap_order` (see
+#' @return A list with `pieces`, `piece_parents`, `overlap_order`, and
+#'   `piece_region` (see
 #'   `sr_construct_refined_tiling()` for details).
 #'
 #' @noRd
@@ -361,36 +442,52 @@ sr_tag_pieces <- function(pieces, unit_geom, region_geom, unit_region) {
   # Representative point inside each piece (guaranteed to be interior)
   rep_pts <- geos::geos_point_on_surface(pieces)
 
-  unit_tree <- geos::geos_strtree(unit_geom)
-
-  # For each rep point, find which units' bounding boxes it may fall in
-  candidates <- geos::geos_strtree_query(unit_tree, rep_pts)
-
   # If region-aware, also determine which region each piece belongs to
   piece_region <- NULL
   if (region_aware) {
     piece_region <- largest_intersection_geos(rep_pts, region_geom)
   }
 
+  unit_tree <- geos::geos_strtree(unit_geom)
+
+  # For each rep point, find which units' bounding boxes it may fall in
+  candidates <- geos::geos_strtree_query(unit_tree, rep_pts)
+  candidate_keys <- vapply(candidates, function(idx) {
+    if (length(idx) == 0L) {
+      return("")
+    }
+    paste(idx, collapse = ",")
+  }, character(1L))
+  candidate_groups <- split(seq_len(n_pieces), candidate_keys)
+
   # For each piece, refine candidates to true containment
   piece_parents <- vector('list', n_pieces)
-  for (i in seq_len(n_pieces)) {
-    cands <- candidates[[i]]
+  for (group_name in names(candidate_groups)) {
+    piece_idxs <- candidate_groups[[group_name]]
+    if (length(piece_idxs) == 0L) {
+      next
+    }
+    cands <- candidates[[piece_idxs[1L]]]
     if (length(cands) == 0L) {
-      piece_parents[[i]] <- integer(0L)
+      for (piece_idx in piece_idxs) {
+        piece_parents[[piece_idx]] <- integer(0L)
+      }
       next
     }
 
-    # Test actual containment: does the unit polygon contain the rep point?
-    inside <- geos::geos_contains(unit_geom[cands], rep_pts[[i]])
-    parents <- cands[inside]
+    # Batch containment checks for pieces sharing the same candidate units.
+    within_map <- geos::geos_within_matrix(rep_pts[piece_idxs], unit_geom[cands])
+    for (offset in seq_along(piece_idxs)) {
+      parents <- cands[within_map[[offset]]]
 
-    # In region-aware mode, keep only parents assigned to the same region
-    if (region_aware && !is.na(piece_region[i])) {
-      parents <- parents[unit_region[parents] == piece_region[i]]
+      # In region-aware mode, keep only parents assigned to the same region
+      piece_idx <- piece_idxs[offset]
+      if (region_aware && !is.na(piece_region[piece_idx])) {
+        parents <- parents[unit_region[parents] == piece_region[piece_idx]]
+      }
+
+      piece_parents[[piece_idx]] <- as.integer(parents)
     }
-
-    piece_parents[[i]] <- as.integer(parents)
   }
 
   overlap_order <- lengths(piece_parents)
@@ -401,12 +498,14 @@ sr_tag_pieces <- function(pieces, unit_geom, region_geom, unit_region) {
     pieces <- pieces[keep]
     piece_parents <- piece_parents[keep]
     overlap_order <- overlap_order[keep]
+    piece_region <- piece_region[keep]
   }
 
   list(
     pieces = pieces,
     piece_parents = piece_parents,
-    overlap_order = as.integer(overlap_order)
+    overlap_order = as.integer(overlap_order),
+    piece_region = piece_region
   )
 }
 
@@ -612,22 +711,1308 @@ sr_normalize_polygon_geom <- function(repaired) {
 
 # --- Phase 3 helpers: close gaps ----------------------------------------
 
+# Utility: polygon ring coordinates without closing duplicate
+sr_coords <- function(geom) {
+  coords <- wk::wk_coords(geom)
+  n <- nrow(coords)
+  if (n > 1L &&
+      abs(coords$x[1L] - coords$x[n]) < 1e-12 &&
+      abs(coords$y[1L] - coords$y[n]) < 1e-12) {
+    coords <- coords[-n, , drop = FALSE]
+  }
+  coords
+}
+
+# Utility: incenter of a triangle from a 3-row data.frame with columns x, y
+sr_incenter <- function(v) {
+  xa <- v[1L, "x"]; ya <- v[1L, "y"]
+  xb <- v[2L, "x"]; yb <- v[2L, "y"]
+  xc <- v[3L, "x"]; yc <- v[3L, "y"]
+  a <- sqrt((xb - xc)^2 + (yb - yc)^2)  # BC (opposite A)
+  b <- sqrt((xa - xc)^2 + (ya - yc)^2)  # CA (opposite B)
+  c <- sqrt((xa - xb)^2 + (ya - yb)^2)  # AB (opposite C)
+  s <- a + b + c
+  if (s <= 0) return(data.frame(x = xa, y = ya))
+  data.frame(x = (a * xa + b * xb + c * xc) / s,
+             y = (a * ya + b * yb + c * yc) / s)
+}
+
+# Utility: convert (x, y) data.frame path to geos LINESTRING, or NULL if < 2 rows
+sr_path_to_linestring <- function(path_df) {
+  if (is.null(path_df) || nrow(path_df) < 2L) return(NULL)
+  pts <- paste(sprintf("%.15g %.15g", path_df$x, path_df$y), collapse = ", ")
+  geos::as_geos_geometry(paste0("LINESTRING (", pts, ")"))
+}
+
+# Utility: build a geos POINT from a 1-row data.frame (x, y)
+sr_xy_to_point <- function(xy) {
+  geos::as_geos_geometry(sprintf("POINT (%.15g %.15g)", xy$x, xy$y))
+}
+
+
+sr_xy_equal <- function(a_xy, b_xy, tol = 1e-8) {
+  abs(a_xy$x[1L] - b_xy$x[1L]) < tol &&
+    abs(a_xy$y[1L] - b_xy$y[1L]) < tol
+}
+
+
+sr_xy_key <- function(xy, digits = 12L) {
+  sprintf(
+    paste0("%.", digits, "f_%.", digits, "f"),
+    xy$x[1L],
+    xy$y[1L]
+  )
+}
+
+
+sr_xy_keys <- function(xy_df, digits = 12L) {
+  sprintf(
+    paste0("%.", digits, "f_%.", digits, "f"),
+    xy_df$x,
+    xy_df$y
+  )
+}
+
+
+sr_xy_from_key <- function(key, coord_map) {
+  idx <- match(key, coord_map$key)
+  data.frame(
+    x = coord_map$x[idx],
+    y = coord_map$y[idx]
+  )
+}
+
+
+sr_segment_geom <- function(start_xy, end_xy) {
+  geos::as_geos_geometry(sprintf(
+    "LINESTRING (%.15g %.15g, %.15g %.15g)",
+    start_xy$x,
+    start_xy$y,
+    end_xy$x,
+    end_xy$y
+  ))
+}
+
+
+sr_segment_in_polygon <- function(poly_geom, start_xy, end_xy) {
+  isTRUE(geos::geos_covers(poly_geom, sr_segment_geom(start_xy, end_xy)))
+}
+
+
+sr_point_on_segment <- function(point_xy, start_xy, end_xy, tol = 1e-8) {
+  dx_seg <- end_xy$x[1L] - start_xy$x[1L]
+  dy_seg <- end_xy$y[1L] - start_xy$y[1L]
+  dx_pt <- point_xy$x[1L] - start_xy$x[1L]
+  dy_pt <- point_xy$y[1L] - start_xy$y[1L]
+
+  cross <- dx_seg * dy_pt - dy_seg * dx_pt
+  if (abs(cross) > tol) {
+    return(FALSE)
+  }
+
+  dot <- dx_pt * dx_seg + dy_pt * dy_seg
+  if (dot < -tol) {
+    return(FALSE)
+  }
+
+  seg_len_sq <- dx_seg * dx_seg + dy_seg * dy_seg
+  dot <= seg_len_sq + tol
+}
+
+
+sr_polygon_orientation_area <- function(poly_geom) {
+  coords <- sr_coords(poly_geom)
+  next_idx <- c(seq.int(2L, nrow(coords)), 1L)
+  sum(coords$x * coords$y[next_idx] - coords$x[next_idx] * coords$y) / 2
+}
+
+
+sr_orient_polygon_ccw <- function(poly_geom) {
+  if (sr_polygon_orientation_area(poly_geom) < 0) {
+    geos::geos_reverse(poly_geom)
+  } else {
+    poly_geom
+  }
+}
+
+
+sr_geometry_list <- function(geom) {
+  n_geom <- geos::geos_num_geometries(geom)
+  if (n_geom <= 1L) {
+    return(list(geom))
+  }
+  lapply(seq_len(n_geom), function(i) geos::geos_geometry_n(geom, i))
+}
+
+
+sr_polygon_parts <- function(poly_geom) {
+  geom_type <- toupper(geos::geos_type(poly_geom))
+  if (geom_type == "POLYGON") {
+    return(list(poly_geom))
+  }
+  if (geom_type == "MULTIPOLYGON" || geom_type == "GEOMETRYCOLLECTION") {
+    parts <- sr_geometry_list(poly_geom)
+    return(Filter(function(g) toupper(geos::geos_type(g)) == "POLYGON", parts))
+  }
+  list()
+}
+
+
+sr_triangles_in_polygon <- function(poly_geom) {
+  tri_coll <- geos::geos_constrained_delaunay_triangles(poly_geom)
+  Filter(function(g) toupper(geos::geos_type(g)) == "POLYGON", sr_geometry_list(tri_coll))
+}
+
+
+sr_prepare_shortest_path_context <- function(poly_geom) {
+  poly_oriented <- sr_orient_polygon_ccw(poly_geom)
+  boundary_pts <- sr_coords(poly_oriented)[, c("x", "y"), drop = FALSE]
+  boundary_keys <- sr_xy_keys(boundary_pts)
+  triangles <- sr_triangles_in_polygon(poly_oriented)
+  triangle_keys <- lapply(triangles, function(tri) sr_xy_keys(sr_triangle_vertices(tri)))
+
+  list(
+    poly_oriented = poly_oriented,
+    boundary_pts = boundary_pts,
+    boundary_keys = boundary_keys,
+    triangles = triangles,
+    triangle_keys = triangle_keys
+  )
+}
+
+
+sr_triangle_vertices <- function(triangle_geom) {
+  sr_coords(triangle_geom)[, c("x", "y"), drop = FALSE]
+}
+
+
+sr_triangle_contains_key <- function(triangle_keys, key) {
+  key %in% triangle_keys
+}
+
+
+sr_shared_edge <- function(geom1, geom2) {
+  inter <- geos::geos_intersection(geom1, geom2)
+  !geos::geos_is_empty(inter) &&
+    grepl("LINE", toupper(geos::geos_type(inter))) &&
+    geos::geos_length(inter) > 0
+}
+
+
+sr_union_geometry_list <- function(geom_list) {
+  if (length(geom_list) == 0L) {
+    return(geos::as_geos_geometry("POLYGON EMPTY"))
+  }
+  if (length(geom_list) == 1L) {
+    return(geom_list[[1L]])
+  }
+  geos::geos_unary_union(geos::geos_make_collection(do.call(c, geom_list)))
+}
+
+
+sr_shortest_path_visibility_graph <- function(poly_geom, start_xy, end_xy) {
+  eps <- 1e-8
+
+  if (sr_segment_in_polygon(poly_geom, start_xy, end_xy)) {
+    return(data.frame(x = c(start_xy$x, end_xy$x),
+                      y = c(start_xy$y, end_xy$y)))
+  }
+
+  coords <- sr_coords(poly_geom)
+  verts <- data.frame(x = coords$x, y = coords$y)
+
+  has_vertex <- function(xy) {
+    any(abs(verts$x - xy$x) < eps & abs(verts$y - xy$y) < eps)
+  }
+  if (!has_vertex(start_xy)) {
+    verts <- rbind(verts, data.frame(x = start_xy$x, y = start_xy$y))
+  }
+  if (!has_vertex(end_xy)) {
+    verts <- rbind(verts, data.frame(x = end_xy$x, y = end_xy$y))
+  }
+
+  start_idx <- which(abs(verts$x - start_xy$x) < eps &
+                     abs(verts$y - start_xy$y) < eps)[1L]
+  end_idx <- which(abs(verts$x - end_xy$x) < eps &
+                   abs(verts$y - end_xy$y) < eps)[1L]
+  n_v <- nrow(verts)
+
+  if (start_idx == end_idx) {
+    return(data.frame(x = start_xy$x, y = start_xy$y))
+  }
+
+  vis_dist <- matrix(Inf, n_v, n_v)
+  diag(vis_dist) <- 0
+  for (i in seq_len(n_v - 1L)) {
+    for (j in seq.int(i + 1L, n_v)) {
+      if (sr_segment_in_polygon(
+        poly_geom,
+        data.frame(x = verts$x[i], y = verts$y[i]),
+        data.frame(x = verts$x[j], y = verts$y[j])
+      )) {
+        d <- sqrt((verts$x[i] - verts$x[j])^2 + (verts$y[i] - verts$y[j])^2)
+        vis_dist[i, j] <- d
+        vis_dist[j, i] <- d
+      }
+    }
+  }
+
+  visited <- logical(n_v)
+  dist_v <- rep(Inf, n_v)
+  prev_v <- rep(NA_integer_, n_v)
+  dist_v[start_idx] <- 0
+  for (iter in seq_len(n_v)) {
+    u <- which.min(ifelse(visited, Inf, dist_v))
+    if (is.infinite(dist_v[u])) break
+    if (u == end_idx) break
+    visited[u] <- TRUE
+    for (v in seq_len(n_v)) {
+      if (!visited[v] && is.finite(vis_dist[u, v])) {
+        nd <- dist_v[u] + vis_dist[u, v]
+        if (nd < dist_v[v]) {
+          dist_v[v] <- nd
+          prev_v[v] <- u
+        }
+      }
+    }
+  }
+
+  path <- integer(0L)
+  cur <- end_idx
+  while (!is.na(cur)) {
+    path <- c(cur, path)
+    cur <- prev_v[cur]
+  }
+  if (length(path) == 0L || path[1L] != start_idx) {
+    return(data.frame(x = c(start_xy$x, end_xy$x), y = c(start_xy$y, end_xy$y)))
+  }
+  data.frame(x = verts$x[path], y = verts$y[path])
+}
+
+
+#' Find the shortest path between two points within a simply-connected polygon
+#'
+#' Builds a visibility graph on the polygon's vertices (extended with start/end
+#' if they are not already vertices, e.g. an interior incenter) and runs
+#' Dijkstra to find the shortest path.
+#'
+#' @param poly_geom A length-1 `geos_geometry` POLYGON (simply connected).
+#' @param start_xy  A 1-row data.frame with columns `x` and `y`.
+#' @param end_xy    A 1-row data.frame with columns `x` and `y`.
+#'
+#' @return A data.frame with columns `x` and `y` giving path vertices
+#'   (start to end inclusive).
+#'
+#' @noRd
+sr_shortest_path_in_polygon <- function(poly_geom, start_xy, end_xy, path_context = NULL) {
+  if (sr_segment_in_polygon(poly_geom, start_xy, end_xy)) {
+    return(data.frame(x = c(start_xy$x, end_xy$x),
+                      y = c(start_xy$y, end_xy$y)))
+  }
+
+  if (is.null(path_context)) {
+    path_context <- sr_prepare_shortest_path_context(poly_geom)
+  }
+
+  poly_oriented <- path_context$poly_oriented
+  boundary_pts <- path_context$boundary_pts
+  boundary_keys <- path_context$boundary_keys
+  start_key <- sr_xy_key(start_xy)
+  end_key <- sr_xy_key(end_xy)
+  if (!(start_key %in% boundary_keys) || !(end_key %in% boundary_keys)) {
+    return(sr_shortest_path_visibility_graph(poly_geom, start_xy, end_xy))
+  }
+
+  if (start_key == end_key) {
+    return(data.frame(x = start_xy$x, y = start_xy$y))
+  }
+
+  start_idx <- match(start_key, boundary_keys)
+  end_idx <- match(end_key, boundary_keys)
+  n_boundary <- nrow(boundary_pts)
+
+  if (start_idx < end_idx) {
+    right_path <- boundary_pts[start_idx:end_idx, , drop = FALSE]
+    left_path <- boundary_pts[c(end_idx:n_boundary, seq_len(start_idx)), , drop = FALSE]
+    left_path <- left_path[nrow(left_path):1L, , drop = FALSE]
+  } else {
+    right_path <- boundary_pts[c(start_idx:n_boundary, seq_len(end_idx)), , drop = FALSE]
+    left_path <- boundary_pts[end_idx:start_idx, , drop = FALSE]
+    left_path <- left_path[nrow(left_path):1L, , drop = FALSE]
+  }
+
+  right_inner_keys <- if (nrow(right_path) > 2L) sr_xy_keys(right_path[2:(nrow(right_path) - 1L), , drop = FALSE]) else character(0L)
+  left_inner_keys <- if (nrow(left_path) > 2L) sr_xy_keys(left_path[2:(nrow(left_path) - 1L), , drop = FALSE]) else character(0L)
+
+  triangles <- path_context$triangles
+  triangle_keys <- path_context$triangle_keys
+  if (length(triangles) == 0L) {
+    return(sr_shortest_path_visibility_graph(poly_geom, start_xy, end_xy))
+  }
+
+  if (length(right_inner_keys) > 0L && length(left_inner_keys) > 0L) {
+    keep_triangles <- Map(function(tri, tri_keys) {
+        if (any(tri_keys %in% right_inner_keys) && any(tri_keys %in% left_inner_keys)) {
+          list(triangle = tri, triangle_keys = tri_keys)
+        } else {
+          NULL
+        }
+      }, triangles, triangle_keys)
+    keep_triangles <- Filter(Negate(is.null), keep_triangles)
+    triangles <- lapply(keep_triangles, `[[`, "triangle")
+    triangle_keys <- lapply(keep_triangles, `[[`, "triangle_keys")
+  }
+  if (length(triangles) == 0L) {
+    triangles <- path_context$triangles
+    triangle_keys <- path_context$triangle_keys
+  }
+
+  all_vertices <- unique(rbind(
+    boundary_pts,
+    data.frame(x = start_xy$x, y = start_xy$y),
+    data.frame(x = end_xy$x, y = end_xy$y)
+  ))
+  coord_map <- transform(all_vertices, key = sr_xy_keys(all_vertices))
+
+  initial_idx <- which(vapply(triangle_keys, sr_triangle_contains_key, logical(1L), key = start_key))
+  if (length(initial_idx) == 0L) {
+    return(sr_shortest_path_visibility_graph(poly_geom, start_xy, end_xy))
+  }
+
+  ordered_triangles <- list(triangles[[initial_idx[1L]]])
+  if (length(triangles) > 1L) {
+    remaining <- triangles[-initial_idx[1L]]
+    while (length(remaining) > 0L) {
+      lead_tri <- ordered_triangles[[length(ordered_triangles)]]
+      next_idx <- which(vapply(remaining, sr_shared_edge, logical(1L), geom1 = lead_tri))
+      if (length(next_idx) == 0L) {
+        break
+      }
+      ordered_triangles[[length(ordered_triangles) + 1L]] <- remaining[[next_idx[1L]]]
+      remaining <- remaining[-next_idx[1L]]
+    }
+  }
+
+  polygon_simplified <- sr_union_geometry_list(ordered_triangles)
+
+  ordered_path_keys <- start_key
+  right_simplified_keys <- start_key
+  left_simplified_keys <- start_key
+  right_path_keys <- sr_xy_keys(right_path)
+  left_path_keys <- sr_xy_keys(left_path)
+
+  for (tri in ordered_triangles) {
+    tri_keys <- sr_xy_keys(sr_triangle_vertices(tri))
+    tri_new <- tri_keys[!tri_keys %in% ordered_path_keys]
+    if (length(tri_new) == 0L) {
+      next
+    }
+    ordered_path_keys <- c(ordered_path_keys, tri_new)
+    right_simplified_keys <- c(right_simplified_keys, tri_new[tri_new %in% right_path_keys])
+    left_simplified_keys <- c(left_simplified_keys, tri_new[tri_new %in% left_path_keys])
+  }
+
+  if (length(left_simplified_keys) < 2L || length(right_simplified_keys) < 2L || length(ordered_path_keys) < 3L) {
+    return(sr_shortest_path_visibility_graph(poly_geom, start_xy, end_xy))
+  }
+
+  found_path_keys <- start_key
+  left_funnel <- c(left_simplified_keys[1L], left_simplified_keys[2L])
+  right_funnel <- c(right_simplified_keys[1L], right_simplified_keys[2L])
+  ordered_path_keys <- ordered_path_keys[-seq_len(min(3L, length(ordered_path_keys)))]
+
+  for (point_key in ordered_path_keys) {
+    apex_key <- found_path_keys[length(found_path_keys)]
+    apex_xy <- sr_xy_from_key(apex_key, coord_map)
+    point_xy <- sr_xy_from_key(point_key, coord_map)
+
+    if (point_key %in% left_simplified_keys) {
+      this_funnel <- left_funnel
+      other_funnel <- right_funnel
+      reflex_sign <- 1
+      update_left <- TRUE
+    } else if (point_key %in% right_simplified_keys) {
+      this_funnel <- right_funnel
+      other_funnel <- left_funnel
+      reflex_sign <- -1
+      update_left <- FALSE
+    } else {
+      next
+    }
+
+    if (sr_segment_in_polygon(polygon_simplified, apex_xy, point_xy)) {
+      new_funnel <- apex_key
+      if (length(this_funnel) > 1L) {
+        for (i in seq.int(2L, length(this_funnel))) {
+          funnel_xy <- sr_xy_from_key(this_funnel[i], coord_map)
+          if (sr_point_on_segment(funnel_xy, apex_xy, point_xy)) {
+            new_funnel <- c(new_funnel, this_funnel[i])
+          }
+        }
+      }
+      this_funnel <- c(new_funnel, point_key)
+    } else {
+      visible_idx <- integer(0L)
+      if (length(this_funnel) > 1L) {
+        for (i in seq.int(2L, length(this_funnel))) {
+          funnel_xy <- sr_xy_from_key(this_funnel[i], coord_map)
+          if (sr_segment_in_polygon(polygon_simplified, funnel_xy, point_xy)) {
+            visible_idx <- i
+            break
+          }
+        }
+      }
+      if (length(visible_idx) == 0L) {
+        return(sr_shortest_path_visibility_graph(poly_geom, start_xy, end_xy))
+      }
+
+      prev_xy <- sr_xy_from_key(this_funnel[visible_idx - 1L], coord_map)
+      seen_xy <- sr_xy_from_key(this_funnel[visible_idx], coord_map)
+      vec1_x <- seen_xy$x[1L] - prev_xy$x[1L]
+      vec1_y <- seen_xy$y[1L] - prev_xy$y[1L]
+      vec2_x <- point_xy$x[1L] - seen_xy$x[1L]
+      vec2_y <- point_xy$y[1L] - seen_xy$y[1L]
+      cross_prod <- vec1_x * vec2_y - vec1_y * vec2_x
+
+      if (cross_prod * reflex_sign >= 0) {
+        new_funnel <- this_funnel[seq_len(visible_idx)]
+        if (visible_idx < length(this_funnel)) {
+          for (i in seq.int(visible_idx + 1L, length(this_funnel))) {
+            this_seen_xy <- sr_xy_from_key(this_funnel[i], coord_map)
+            if (sr_point_on_segment(this_seen_xy, seen_xy, point_xy)) {
+              new_funnel <- c(new_funnel, this_funnel[i])
+            }
+          }
+        }
+        this_funnel <- c(new_funnel, point_key)
+      } else {
+        other_seen_idx <- integer(0L)
+        if (length(other_funnel) > 1L) {
+          for (i in seq.int(2L, length(other_funnel))) {
+            funnel_xy <- sr_xy_from_key(other_funnel[i], coord_map)
+            if (sr_segment_in_polygon(polygon_simplified, funnel_xy, point_xy)) {
+              other_seen_idx <- i
+              break
+            }
+          }
+        }
+        if (length(other_seen_idx) == 0L) {
+          return(sr_shortest_path_visibility_graph(poly_geom, start_xy, end_xy))
+        }
+
+        found_path_keys <- c(found_path_keys, other_funnel[seq.int(2L, other_seen_idx)])
+        apex_key <- other_funnel[other_seen_idx]
+        apex_xy <- sr_xy_from_key(apex_key, coord_map)
+        other_start_idx <- other_seen_idx
+
+        if (other_seen_idx < length(other_funnel)) {
+          for (i in seq.int(other_seen_idx + 1L, length(other_funnel))) {
+            funnel_xy <- sr_xy_from_key(other_funnel[i], coord_map)
+            if (sr_point_on_segment(funnel_xy, apex_xy, point_xy)) {
+              found_path_keys <- c(found_path_keys, other_funnel[i])
+              apex_key <- other_funnel[i]
+              apex_xy <- sr_xy_from_key(apex_key, coord_map)
+              other_start_idx <- i
+            }
+          }
+        }
+
+        this_funnel <- c(apex_key, point_key)
+        other_funnel <- other_funnel[seq.int(other_start_idx, length(other_funnel))]
+      }
+    }
+
+    if (update_left) {
+      left_funnel <- this_funnel
+      right_funnel <- other_funnel
+    } else {
+      right_funnel <- this_funnel
+      left_funnel <- other_funnel
+    }
+  }
+
+  found_path_keys <- c(found_path_keys, left_funnel[-1L])
+  path_rows <- lapply(found_path_keys, sr_xy_from_key, coord_map = coord_map)
+  do.call(rbind, path_rows)
+}
+
+
+#' Identify sub-boundary arcs of a gap polygon
+#'
+#' Returns a list of `list(unit, arc)` entries: for each adjacent repaired unit
+#' the shared arc(s), plus any exterior portions tagged with `unit = NA`.
+#'
+#' @param gap_geom      A length-1 `geos_geometry` POLYGON.
+#' @param repaired      `geos_geometry` vector.
+#' @param adjacent_units Integer vector of adjacent unit indices.
+#'
+#' @noRd
+sr_construct_gap_boundaries <- function(gap_geom, repaired, adjacent_units) {
+  gap_bound <- geos::geos_boundary(gap_geom)
+  result    <- list()
+  covered   <- list()
+  gap_coords <- sr_coords(gap_geom)
+  span <- max(gap_coords$x) - min(gap_coords$x) + max(gap_coords$y) - min(gap_coords$y)
+  min_arc_length <- max(span * 1e-8, 1e-12)
+
+  for (k in adjacent_units) {
+    if (geos::geos_is_empty(repaired[k])) next
+    shared <- geos::geos_intersection(gap_bound, geos::geos_boundary(repaired[k]))
+    if (geos::geos_is_empty(shared) || geos::geos_length(shared) <= min_arc_length) next
+
+    if (grepl("COLLECTION|MULTI", geos::geos_type(shared), ignore.case = TRUE)) {
+      n_p   <- geos::geos_num_geometries(shared)
+      parts <- geos::geos_geometry_n(shared, seq_len(n_p))
+      for (p in seq_along(parts)) {
+        if (geos::geos_length(parts[p]) > min_arc_length) {
+          result  <- c(result,  list(list(unit = k,   arc = parts[p])))
+          covered <- c(covered, list(parts[p]))
+        }
+      }
+    } else {
+      result  <- c(result,  list(list(unit = k,   arc = shared)))
+      covered <- c(covered, list(shared))
+    }
+  }
+
+  if (length(covered) > 0L) {
+    cov  <- geos::geos_unary_union(geos::geos_make_collection(do.call(c, covered)))
+    ext  <- geos::geos_difference(gap_bound, cov)
+    if (!geos::geos_is_empty(ext) && geos::geos_length(ext) > min_arc_length) {
+      if (grepl("MULTI|COLLECTION", geos::geos_type(ext), ignore.case = TRUE)) {
+        n_e   <- geos::geos_num_geometries(ext)
+        parts <- geos::geos_geometry_n(ext, seq_len(n_e))
+        for (p in seq_along(parts))
+          if (geos::geos_length(parts[p]) > min_arc_length)
+            result <- c(result, list(list(unit = NA_integer_, arc = parts[p])))
+      } else {
+        result <- c(result, list(list(unit = NA_integer_, arc = ext)))
+      }
+    }
+  }
+
+  result
+}
+
+
+#' Order gap sub-boundaries in cyclic order around the gap ring
+#'
+#' @noRd
+sr_order_boundaries <- function(gap_geom, boundaries) {
+  gap_c <- sr_coords(gap_geom)
+  n_b   <- length(boundaries)
+  span  <- max(gap_c$x) - min(gap_c$x) + max(gap_c$y) - min(gap_c$y) + 1
+  eps   <- span * 1e-6
+
+  pos <- integer(n_b)
+  for (i in seq_len(n_b)) {
+    ac <- wk::wk_coords(boundaries[[i]]$arc)
+    dists <- sqrt((gap_c$x - ac$x[1L])^2 + (gap_c$y - ac$y[1L])^2)
+    m  <- which.min(dists)
+    pos[i] <- if (dists[m] < eps) m else NA_integer_
+  }
+
+  valid <- !is.na(pos)
+  if (!any(valid)) return(boundaries)
+  boundaries[c(which(valid)[order(pos[valid])], which(!valid))]
+}
+
+
+sr_merge_boundary_run <- function(boundary_run) {
+  if (length(boundary_run) == 1L) {
+    return(boundary_run[[1L]])
+  }
+
+  merged_arc <- tryCatch(
+    geos::geos_line_merge(
+      geos::geos_unary_union(
+        geos::geos_make_collection(do.call(c, lapply(boundary_run, `[[`, "arc")))
+      )
+    ),
+    error = function(e) NULL
+  )
+
+  if (is.null(merged_arc) || geos::geos_is_empty(merged_arc)) {
+    return(boundary_run[[1L]])
+  }
+
+  if (grepl("MULTI|COLLECTION", geos::geos_type(merged_arc), ignore.case = TRUE)) {
+    n_parts <- geos::geos_num_geometries(merged_arc)
+    parts <- geos::geos_geometry_n(merged_arc, seq_len(n_parts))
+    parts <- parts[geos::geos_length(parts) > 0]
+    if (length(parts) != 1L) {
+      return(boundary_run[[1L]])
+    }
+    merged_arc <- parts[1L]
+  }
+
+  list(unit = boundary_run[[1L]]$unit, arc = merged_arc)
+}
+
+
+sr_merge_adjacent_boundaries <- function(boundaries) {
+  if (length(boundaries) <= 1L) {
+    return(boundaries)
+  }
+
+  merged <- list()
+  run <- list(boundaries[[1L]])
+  for (i in seq.int(2L, length(boundaries))) {
+    same_unit <- identical(boundaries[[i]]$unit, run[[length(run)]]$unit)
+    if (same_unit) {
+      run[[length(run) + 1L]] <- boundaries[[i]]
+    } else {
+      merged[[length(merged) + 1L]] <- sr_merge_boundary_run(run)
+      run <- list(boundaries[[i]])
+    }
+  }
+  merged[[length(merged) + 1L]] <- sr_merge_boundary_run(run)
+
+  if (length(merged) > 1L && identical(merged[[1L]]$unit, merged[[length(merged)]]$unit)) {
+    wrap_run <- list(merged[[length(merged)]], merged[[1L]])
+    merged <- c(list(sr_merge_boundary_run(wrap_run)), merged[2:(length(merged) - 1L)])
+  }
+
+  merged
+}
+
+
+sr_gap_adjacency <- function(gap_geom, repaired) {
+  repaired_tree <- geos::geos_strtree(repaired)
+  candidates <- geos::geos_strtree_query(repaired_tree, gap_geom)[[1L]]
+  if (length(candidates) == 0L) {
+    return(NULL)
+  }
+
+  gap_bound <- geos::geos_boundary(gap_geom)
+  shared_perims <- vapply(candidates, function(k) {
+    if (geos::geos_is_empty(repaired[k])) {
+      return(0)
+    }
+    geos::geos_length(
+      geos::geos_intersection(gap_bound, geos::geos_boundary(repaired[k]))
+    )
+  }, double(1L))
+
+  adjacent_mask <- shared_perims > 0
+  if (!any(adjacent_mask)) {
+    return(NULL)
+  }
+
+  list(
+    candidates = candidates[adjacent_mask],
+    shared_perims = shared_perims[adjacent_mask]
+  )
+}
+
+
+sr_convexify_gaps <- function(gaps_queue, repaired, unit_region = NULL) {
+  region_aware <- length(gaps_queue) > 0L &&
+    is.list(gaps_queue[[1L]]) &&
+    all(c("geom", "region") %in% names(gaps_queue[[1L]]))
+  completed_gaps <- vector("list", 0L)
+
+  while (length(gaps_queue) > 0L) {
+    gap_item <- gaps_queue[[1L]]
+    gaps_queue <- gaps_queue[-1L]
+    if (region_aware) {
+      gap_geom <- gap_item$geom
+      gap_region <- gap_item$region
+    } else {
+      gap_geom <- gap_item
+      gap_region <- NULL
+    }
+
+    if (geos::geos_is_empty(gap_geom) || geos::geos_num_interior_rings(gap_geom) > 0L) {
+      next
+    }
+
+    adjacency <- sr_gap_adjacency(gap_geom, repaired)
+    if (is.null(adjacency)) {
+      completed_gaps[[length(completed_gaps) + 1L]] <- if (region_aware) {
+        list(geom = gap_geom, region = gap_region)
+      } else {
+        gap_geom
+      }
+      next
+    }
+
+    if (region_aware && !is.null(unit_region) && !is.na(gap_region)) {
+      keep <- unit_region[adjacency$candidates] == gap_region
+      keep[is.na(keep)] <- FALSE
+      adjacency$candidates <- adjacency$candidates[keep]
+      adjacency$shared_perims <- adjacency$shared_perims[keep]
+      if (length(adjacency$candidates) == 0L) {
+        completed_gaps[[length(completed_gaps) + 1L]] <- list(
+          geom = gap_geom,
+          region = gap_region
+        )
+        next
+      }
+    }
+
+    adjacent_units <- adjacency$candidates
+    bounds <- sr_construct_gap_boundaries(gap_geom, repaired, adjacent_units)
+    target_ids <- vapply(bounds, function(bound) {
+      if (is.na(bound$unit)) -1L else as.integer(bound$unit)
+    }, integer(1L))
+    non_ext_targets <- unique(target_ids[target_ids != -1L])
+
+    if (length(non_ext_targets) == 0L) {
+      completed_gaps[[length(completed_gaps) + 1L]] <- if (region_aware) {
+        list(geom = gap_geom, region = gap_region)
+      } else {
+        gap_geom
+      }
+      next
+    }
+
+    if (length(non_ext_targets) == 1L) {
+      target_unit <- non_ext_targets[1L]
+      repaired[target_unit] <- sr_normalize_polygon_geom(
+        geos::geos_union(repaired[target_unit], gap_geom)
+      )
+      next
+    }
+
+    target_counts <- table(target_ids[target_ids != -1L])
+    repeated_targets <- target_counts[target_counts > 1L]
+    has_repeated_target <- length(repeated_targets) > 0L
+
+    gap_in_progress <- gap_geom
+    for (bound in bounds) {
+      if (is.na(bound$unit) || geos::geos_is_empty(gap_in_progress)) {
+        next
+      }
+
+      arc_coords <- wk::wk_coords(bound$arc)
+      n_arc <- nrow(arc_coords)
+      if (n_arc < 2L) {
+        next
+      }
+
+      start_xy <- data.frame(x = arc_coords$x[1L], y = arc_coords$y[1L])
+      end_xy <- data.frame(x = arc_coords$x[n_arc], y = arc_coords$y[n_arc])
+      path_df <- tryCatch(
+        sr_shortest_path_in_polygon(gap_in_progress, start_xy, end_xy),
+        error = function(e) NULL
+      )
+      if (is.null(path_df) || nrow(path_df) < 2L) {
+        next
+      }
+
+      path_line <- sr_path_to_linestring(path_df)
+      if (is.null(path_line)) {
+        next
+      }
+
+      add_boundary <- tryCatch(
+        geos::geos_node(geos::geos_unary_union(
+          geos::geos_make_collection(c(bound$arc, path_line))
+        )),
+        error = function(e) NULL
+      )
+      partition_boundary <- tryCatch(
+        geos::geos_node(geos::geos_unary_union(
+          geos::geos_make_collection(c(geos::geos_boundary(gap_in_progress), path_line))
+        )),
+        error = function(e) NULL
+      )
+      if (is.null(add_boundary) || is.null(partition_boundary)) {
+        next
+      }
+
+      add_polys <- sr_polygon_parts(geos::geos_polygonize(add_boundary))
+      partition_polys <- sr_polygon_parts(geos::geos_polygonize(partition_boundary))
+      if (length(add_polys) == 0L) {
+        next
+      }
+
+      for (poly_to_add in add_polys) {
+        repaired[bound$unit] <- sr_normalize_polygon_geom(
+          geos::geos_union(repaired[bound$unit], poly_to_add)
+        )
+        partition_polys <- Filter(function(poly_part) {
+          rep_pt <- geos::geos_point_on_surface(poly_part)
+          !isTRUE(geos::geos_covers(poly_to_add, rep_pt))
+        }, partition_polys)
+      }
+
+      gap_in_progress <- sr_normalize_polygon_geom(sr_union_geometry_list(partition_polys))
+    }
+
+    if (geos::geos_is_empty(gap_in_progress)) {
+      next
+    }
+
+    new_gaps <- sr_polygon_parts(gap_in_progress)
+    for (new_gap in new_gaps) {
+      if (!has_repeated_target) {
+        completed_gaps[[length(completed_gaps) + 1L]] <- if (region_aware) {
+          list(geom = new_gap, region = gap_region)
+        } else {
+          new_gap
+        }
+        next
+      }
+
+      new_adjacency <- sr_gap_adjacency(new_gap, repaired)
+      if (is.null(new_adjacency)) {
+        completed_gaps[[length(completed_gaps) + 1L]] <- if (region_aware) {
+          list(geom = new_gap, region = gap_region)
+        } else {
+          new_gap
+        }
+        next
+      }
+
+      new_bounds <- sr_construct_gap_boundaries(new_gap, repaired, new_adjacency$candidates)
+      new_target_ids <- vapply(new_bounds, function(bound) {
+        if (is.na(bound$unit)) -1L else as.integer(bound$unit)
+      }, integer(1L))
+      new_target_counts <- table(new_target_ids[new_target_ids != -1L])
+
+      reprocess_gap <- any(vapply(names(repeated_targets), function(target_name) {
+        target_key <- as.integer(target_name)
+        target_count <- if (target_name %in% names(new_target_counts)) new_target_counts[[target_name]] else 0L
+        target_count > 0L && target_count < repeated_targets[[target_name]]
+      }, logical(1L)))
+
+      if (reprocess_gap) {
+        gaps_queue[[length(gaps_queue) + 1L]] <- if (region_aware) {
+          list(geom = new_gap, region = gap_region)
+        } else {
+          new_gap
+        }
+      } else {
+        completed_gaps[[length(completed_gaps) + 1L]] <- if (region_aware) {
+          list(geom = new_gap, region = gap_region)
+        } else {
+          new_gap
+        }
+      }
+    }
+  }
+
+  list(repaired = repaired, gaps_queue = completed_gaps)
+}
+
+
+# Assign polygonized sub-pieces to units by largest shared boundary perimeter
+sr_assign_sub_pieces <- function(sub_pieces, repaired, candidate_units) {
+  adj_bounds <- geos::geos_boundary(repaired[candidate_units])
+  for (si in seq_along(sub_pieces)) {
+    sp_bound <- geos::geos_boundary(sub_pieces[si])
+    perims   <- vapply(seq_along(candidate_units), function(idx) {
+      geos::geos_length(geos::geos_intersection(sp_bound, adj_bounds[idx]))
+    }, double(1L))
+    k <- candidate_units[which.max(perims)]
+    repaired[k] <- sr_normalize_polygon_geom(geos::geos_union(repaired[k], sub_pieces[si]))
+  }
+  repaired
+}
+
+
+#' Fill a triangular gap (3 boundary segments)
+#'
+#' If all 3 sides touch distinct non-exterior units, splits at the incenter.
+#' Otherwise assigns the entire gap to the unit with the largest shared
+#' boundary perimeter.
+#'
+#' @noRd
+sr_fill_triangle_gap <- function(gap_geom, repaired, boundaries,
+                                  sh_perims, adj_units) {
+  non_ext <- unique(Filter(Negate(is.na),
+                           vapply(boundaries, `[[`, integer(1L), "unit")))
+  if (length(non_ext) == 3L) {
+    gap_c <- sr_coords(gap_geom)
+    if (nrow(gap_c) >= 3L) {
+      ic         <- sr_incenter(gap_c[1:3, c("x", "y")])
+      filled_any <- FALSE
+      for (b in boundaries) {
+        if (is.na(b$unit)) next
+        ac   <- wk::wk_coords(b$arc)
+        n_ac <- nrow(ac)
+        if (n_ac < 2L) next
+        tri <- tryCatch(
+          geos::as_geos_geometry(sprintf(
+            "POLYGON ((%.15g %.15g, %.15g %.15g, %.15g %.15g, %.15g %.15g))",
+            ac$x[1L], ac$y[1L], ac$x[n_ac], ac$y[n_ac],
+            ic$x, ic$y, ac$x[1L], ac$y[1L]
+          )),
+          error = function(e) NULL
+        )
+        if (is.null(tri) || geos::geos_area(tri) <= 0) next
+        k <- b$unit
+        repaired[k] <- sr_normalize_polygon_geom(geos::geos_union(repaired[k], tri))
+        filled_any  <- TRUE
+      }
+      if (filled_any) return(repaired)
+    }
+  }
+  k <- adj_units[which.max(sh_perims)]
+  repaired[k] <- sr_normalize_polygon_geom(geos::geos_union(repaired[k], gap_geom))
+  repaired
+}
+
+
+#' Fill a gap with exactly 3 sub-boundaries
+#'
+#' Handles the 3-sub-boundary (non-triangle) case: incenter-based partition
+#' when the incenter of the convex hull of main vertices lies inside the gap,
+#' with a shortest-path diagonal fallback.
+#'
+#' @noRd
+sr_fill_3boundary_gap <- function(gap_geom, repaired, bounds_ord,
+                                   sh_perims, adj_units) {
+  is_ext <- vapply(bounds_ord, function(b) is.na(b$unit), logical(1L))
+  n_ext  <- sum(is_ext)
+
+  .fallback <- function() {
+    k <- adj_units[which.max(sh_perims)]
+    repaired[k] <<- sr_normalize_polygon_geom(geos::geos_union(repaired[k], gap_geom))
+    repaired
+  }
+
+  .split_via_sp <- function(arc1, arc2, opp_arc, unit1, unit2,
+                              main_v_xy, near_xy) {
+    sp_df <- tryCatch(
+      sr_shortest_path_in_polygon(gap_geom, main_v_xy, near_xy),
+      error = function(e) NULL
+    )
+    if (is.null(sp_df)) return(NULL)
+    sp_line <- sr_path_to_linestring(sp_df)
+    opp_c   <- wk::wk_coords(opp_arc)
+    near_i  <- which(abs(opp_c$x - near_xy$x) < 1e-8 &
+                     abs(opp_c$y - near_xy$y) < 1e-8)
+    if (length(near_i) == 0L) return(NULL)
+    near_i <- near_i[1L]; n_opp <- nrow(opp_c)
+
+    for (lb in list(
+      list(b_arc = arc1, k = unit1, pts = opp_c[near_i:n_opp, , drop = FALSE]),
+      list(b_arc = arc2, k = unit2, pts = opp_c[1L:near_i,   , drop = FALSE])
+    )) {
+      if (is.na(lb$k)) next
+      opp_part <- sr_path_to_linestring(
+        data.frame(x = lb$pts$x, y = lb$pts$y)
+      )
+      if (is.null(opp_part)) next
+      coll  <- geos::geos_make_collection(c(lb$b_arc, sp_line, opp_part))
+      noded <- tryCatch(
+        geos::geos_node(geos::geos_unary_union(coll)),
+        error = function(e) NULL
+      )
+      if (is.null(noded)) next
+      polys <- geos::geos_polygonize(noded)
+      if (geos::geos_num_geometries(polys) > 0L) {
+        poly <- geos::geos_geometry_n(polys, 1L)
+        if (geos::geos_area(poly) > 0)
+          repaired[lb$k] <<- sr_normalize_polygon_geom(
+            geos::geos_union(repaired[lb$k], poly)
+          )
+      }
+    }
+    repaired
+  }
+
+  if (n_ext == 0L) {
+    # All 3 sub-boundaries are non-exterior
+    main_vs <- lapply(bounds_ord, function(b) {
+      ac <- wk::wk_coords(b$arc)
+      data.frame(x = ac$x[1L], y = ac$y[1L])
+    })
+    hull_v <- do.call(rbind, main_vs)
+    ic_xy  <- sr_incenter(hull_v)
+    ic_pt  <- sr_xy_to_point(ic_xy)
+
+    if (isTRUE(geos::geos_contains(gap_geom, ic_pt))) {
+      sp_lines <- lapply(main_vs, function(mv) {
+        sp_df <- tryCatch(sr_shortest_path_in_polygon(gap_geom, ic_xy, mv),
+                          error = function(e) NULL)
+        sr_path_to_linestring(sp_df)
+      })
+      valid_sps <- !vapply(sp_lines, is.null, logical(1L))
+      if (sum(valid_sps) >= 2L) {
+        all_l_vec <- do.call(c, c(
+          list(geos::geos_boundary(gap_geom)),
+          Filter(Negate(is.null), sp_lines)
+        ))
+        noded <- tryCatch(
+          geos::geos_node(geos::geos_unary_union(
+            geos::geos_make_collection(all_l_vec)
+          )),
+          error = function(e) NULL
+        )
+        if (!is.null(noded)) {
+          pc  <- geos::geos_polygonize(noded)
+          n_s <- geos::geos_num_geometries(pc)
+          if (n_s >= 2L) {
+            subs <- geos::geos_geometry_n(pc, seq_len(n_s))
+            subs <- subs[geos::geos_contains(
+              gap_geom, geos::geos_point_on_surface(subs)
+            )]
+            if (length(subs) > 0L)
+              return(sr_assign_sub_pieces(subs, repaired, adj_units))
+          }
+        }
+      }
+    }
+
+    # Fallback: shortest-path diagonal to nearest interior point on the boundary
+    # closest to the incenter
+    arc_dists <- vapply(bounds_ord, function(b)
+      geos::geos_distance(b$arc, ic_pt)[[1L]], double(1L))
+    min_p <- which.min(arc_dists)
+    perm  <- c(min_p, (min_p %% 3L) + 1L, ((min_p + 1L) %% 3L) + 1L)
+    b_opp <- bounds_ord[[perm[1L]]]
+    b_1   <- bounds_ord[[perm[2L]]]
+    b_2   <- bounds_ord[[perm[3L]]]
+
+    ac2       <- wk::wk_coords(b_2$arc)
+    main_v_xy <- data.frame(x = ac2$x[1L], y = ac2$y[1L])
+    opp_c     <- wk::wk_coords(b_opp$arc)
+    n_opp     <- nrow(opp_c)
+    if (n_opp <= 2L) return(.fallback())
+
+    int_idx <- 2L:(n_opp - 1L)
+    int_c   <- opp_c[int_idx, , drop = FALSE]
+    near_i  <- int_idx[which.min(
+      sqrt((int_c$x - main_v_xy$x)^2 + (int_c$y - main_v_xy$y)^2)
+    )]
+    near_xy <- data.frame(x = opp_c$x[near_i], y = opp_c$y[near_i])
+
+    result <- .split_via_sp(b_1$arc, b_2$arc, b_opp$arc,
+                             b_1$unit, b_2$unit, main_v_xy, near_xy)
+    if (!is.null(result)) return(result)
+    return(.fallback())
+
+  } else if (n_ext == 1L) {
+    # 1 exterior + 2 non-exterior sub-boundaries
+    ext_p <- which(is_ext)[1L]
+    perm  <- c(ext_p, (ext_p %% 3L) + 1L, ((ext_p + 1L) %% 3L) + 1L)
+    b_ext <- bounds_ord[[perm[1L]]]
+    b_1   <- bounds_ord[[perm[2L]]]
+    b_2   <- bounds_ord[[perm[3L]]]
+
+    ac2       <- wk::wk_coords(b_2$arc)
+    main_v_xy <- data.frame(x = ac2$x[1L], y = ac2$y[1L])
+    ext_c     <- wk::wk_coords(b_ext$arc)
+    n_ext_c   <- nrow(ext_c)
+    near_pos  <- which.min(
+      sqrt((ext_c$x - main_v_xy$x)^2 + (ext_c$y - main_v_xy$y)^2)
+    )
+
+    if (near_pos == 1L) {
+      if (!is.na(b_1$unit))
+        repaired[b_1$unit] <- sr_normalize_polygon_geom(
+          geos::geos_union(repaired[b_1$unit], gap_geom)
+        )
+    } else if (near_pos == n_ext_c) {
+      if (!is.na(b_2$unit))
+        repaired[b_2$unit] <- sr_normalize_polygon_geom(
+          geos::geos_union(repaired[b_2$unit], gap_geom)
+        )
+    } else {
+      near_xy <- data.frame(x = ext_c$x[near_pos], y = ext_c$y[near_pos])
+      result  <- .split_via_sp(b_1$arc, b_2$arc, b_ext$arc,
+                                b_1$unit, b_2$unit, main_v_xy, near_xy)
+      if (!is.null(result)) return(result)
+      return(.fallback())
+    }
+    return(repaired)
+
+  } else {
+    return(.fallback())
+  }
+}
+
+
+#' Fill a gap with 4+ sub-boundaries via iterative diagonal splitting
+#'
+#' Finds the closest pair of strongly-mutually-visible non-adjacent
+#' sub-boundaries, splits the gap along shortest-path diagonals, and returns
+#' the remaining sub-gaps for further processing.
+#'
+#' @return A list `list(repaired, new_gaps)`, or `NULL` if no valid pair found.
+#'
+#' @noRd
+sr_fill_4plus_boundary_gap <- function(gap_geom, repaired, bounds_ord,
+                                        sh_perims, adj_units) {
+  n_b <- length(bounds_ord)
+  path_context <- sr_prepare_shortest_path_context(gap_geom)
+  candidate_units <- unique(Filter(Negate(is.na), vapply(bounds_ord, function(bound) {
+    if (is.na(bound$unit)) {
+      return(NA_integer_)
+    }
+    as.integer(bound$unit)
+  }, integer(1L))))
+
+  # Non-adjacent pairs (positive distance), sorted by distance
+  pairs <- list()
+  for (i in seq_len(n_b - 1L)) {
+    for (j in seq.int(i + 1L, n_b)) {
+      d <- geos::geos_distance(bounds_ord[[i]]$arc, bounds_ord[[j]]$arc)[[1L]]
+      if (d > 0) pairs <- c(pairs, list(list(i = i, j = j, dist = d)))
+    }
+  }
+  if (length(pairs) == 0L) return(NULL)
+  pairs <- pairs[order(vapply(pairs, `[[`, double(1L), "dist"))]
+
+  # Helper: compute remaining gap pieces after assigning some polygons
+  .remaining_gaps <- function(new_lines, assigned_polys) {
+    all_arcs <- lapply(bounds_ord, `[[`, "arc")
+    coll <- geos::geos_make_collection(do.call(c, c(all_arcs, new_lines)))
+    nd   <- tryCatch(geos::geos_node(geos::geos_unary_union(coll)),
+                     error = function(e) NULL)
+    if (is.null(nd)) return(list())
+    hp   <- geos::geos_polygonize(nd)
+    n_hp <- geos::geos_num_geometries(hp)
+    if (n_hp == 0L) return(list())
+    all_hp <- geos::geos_geometry_n(hp, seq_len(n_hp))
+    gaps   <- vector("list", 0L)
+    for (hi in seq_len(n_hp)) {
+      if (geos::geos_area(all_hp[hi]) <= 0) next
+      rep_pt <- geos::geos_point_on_surface(all_hp[hi])
+      already <- any(vapply(assigned_polys, function(p)
+        isTRUE(geos::geos_contains(p, rep_pt)), logical(1L)))
+      if (!already) gaps[[length(gaps) + 1L]] <- all_hp[hi]
+    }
+    gaps
+  }
+
+  for (pr in pairs) {
+    bi <- bounds_ord[[pr$i]]; bj <- bounds_ord[[pr$j]]
+    if (is.na(bi$unit) && is.na(bj$unit)) next
+
+    if (is.na(bi$unit) || is.na(bj$unit)) {
+      # One exterior + one non-exterior
+      b_ext <- if (is.na(bi$unit)) bi else bj
+      b_int <- if (is.na(bi$unit)) bj else bi
+      k_int <- b_int$unit
+
+      int_c <- wk::wk_coords(b_int$arc); n_int <- nrow(int_c)
+      ext_c <- wk::wk_coords(b_ext$arc)
+      p1 <- data.frame(x = int_c$x[1L],    y = int_c$y[1L])
+      p2 <- data.frame(x = int_c$x[n_int], y = int_c$y[n_int])
+
+      mid_c    <- wk::wk_coords(geos::geos_point_on_surface(b_int$arc))
+      near_pos <- which.min(sqrt((ext_c$x - mid_c$x[1L])^2 +
+                                   (ext_c$y - mid_c$y[1L])^2))
+      near_xy  <- data.frame(x = ext_c$x[near_pos], y = ext_c$y[near_pos])
+
+      path1_df <- tryCatch(sr_shortest_path_in_polygon(gap_geom, p1, near_xy, path_context),
+                           error = function(e) NULL)
+      path2_df <- tryCatch(sr_shortest_path_in_polygon(gap_geom, p2, near_xy, path_context),
+                           error = function(e) NULL)
+      if (is.null(path1_df) || is.null(path2_df)) next
+
+      path1_l <- sr_path_to_linestring(path1_df)
+      path2_l <- sr_path_to_linestring(path2_df)
+
+      coll_add <- geos::geos_make_collection(c(b_int$arc, path1_l, path2_l))
+      nd_add   <- tryCatch(geos::geos_node(geos::geos_unary_union(coll_add)),
+                           error = function(e) NULL)
+      if (is.null(nd_add)) next
+      pa     <- geos::geos_polygonize(nd_add)
+      n_add  <- geos::geos_num_geometries(pa)
+      if (n_add == 0L) next
+
+      assigned <- list()
+      for (pi in seq_len(n_add)) {
+        poly <- geos::geos_geometry_n(pa, pi)
+        if (geos::geos_area(poly) > 0) {
+          repaired[k_int] <- sr_normalize_polygon_geom(
+            geos::geos_union(repaired[k_int], poly)
+          )
+          assigned <- c(assigned, list(poly))
+        }
+      }
+      new_gaps <- .remaining_gaps(list(path1_l, path2_l), assigned)
+      return(list(repaired = repaired, new_gaps = new_gaps))
+    }
+
+    # Both non-exterior: test strong mutual visibility
+    i_c <- wk::wk_coords(bi$arc); n_i <- nrow(i_c)
+    j_c <- wk::wk_coords(bj$arc); n_j <- nrow(j_c)
+    p11 <- data.frame(x = i_c$x[1L],  y = i_c$y[1L])
+    p12 <- data.frame(x = i_c$x[n_i], y = i_c$y[n_i])
+    p21 <- data.frame(x = j_c$x[1L],  y = j_c$y[1L])
+    p22 <- data.frame(x = j_c$x[n_j], y = j_c$y[n_j])
+
+    tp1 <- tryCatch(sr_shortest_path_in_polygon(gap_geom, p11, p22, path_context),
+                    error = function(e) NULL)
+    tp2 <- tryCatch(sr_shortest_path_in_polygon(gap_geom, p12, p21, path_context),
+                    error = function(e) NULL)
+    if (is.null(tp1) || is.null(tp2)) next
+
+    # Paths are disjoint iff they share no vertex coordinates
+    tp1_strs <- sprintf("%.6g_%.6g", tp1$x, tp1$y)
+    tp2_strs <- sprintf("%.6g_%.6g", tp2$x, tp2$y)
+    if (length(intersect(tp1_strs, tp2_strs)) > 0L) next
+
+    # Strongly mutually visible: use crossing paths for repeated targets and
+    # non-crossing paths for distinct targets, matching the Python logic.
+    if (bi$unit == bj$unit) {
+      path1_df <- tp1
+      path2_df <- tp2
+    } else {
+      path1_df <- tryCatch(sr_shortest_path_in_polygon(gap_geom, p11, p21, path_context),
+                           error = function(e) NULL)
+      path2_df <- tryCatch(sr_shortest_path_in_polygon(gap_geom, p12, p22, path_context),
+                           error = function(e) NULL)
+    }
+    if (is.null(path1_df) || is.null(path2_df)) next
+
+    path1_l <- sr_path_to_linestring(path1_df)
+    path2_l <- sr_path_to_linestring(path2_df)
+
+    coll_add <- geos::geos_make_collection(c(bi$arc, bj$arc, path1_l, path2_l))
+    nd_add   <- tryCatch(geos::geos_node(geos::geos_unary_union(coll_add)),
+                         error = function(e) NULL)
+    if (is.null(nd_add)) next
+    pa_coll <- geos::geos_polygonize(nd_add)
+    n_add   <- geos::geos_num_geometries(pa_coll)
+    if (n_add == 0L) next
+
+    pa_vec   <- geos::geos_geometry_n(pa_coll, seq_len(n_add))
+    assigned <- list()
+    candidate_bounds <- geos::geos_boundary(repaired[candidate_units])
+    for (pi in seq_along(pa_vec)) {
+      poly <- pa_vec[pi]
+      if (geos::geos_area(poly) <= 0) next
+      pb      <- geos::geos_boundary(poly)
+      perims <- vapply(seq_along(candidate_units), function(idx) {
+        geos::geos_length(geos::geos_intersection(pb, candidate_bounds[idx]))
+      }, double(1L))
+      if (max(perims) <= 0) next
+      k <- candidate_units[which.max(perims)]
+      if (!is.na(k)) {
+        repaired[k] <- sr_normalize_polygon_geom(geos::geos_union(repaired[k], poly))
+        assigned    <- c(assigned, list(poly))
+      }
+    }
+    new_gaps <- .remaining_gaps(list(path1_l, path2_l), assigned)
+    return(list(repaired = repaired, new_gaps = new_gaps))
+  }
+
+  NULL  # no valid pair found
+}
+
+
 #' Close gap pieces by splitting them among adjacent units
 #'
-#' For each gap (order-0 piece), find adjacent repaired units and split the gap
-#' proportionally using a centroid-based triangular decomposition. Each triangle
-#' is assigned to the adjacent unit whose boundary it shares the most perimeter
-#' with. This preserves adjacency relations (the key innovation over naive
-#' "assign entire gap to one unit" approaches).
+#' Consolidates order-0 pieces into connected gap regions, then applies the
+#' full algorithm from Clelland (2025): convexification of sub-boundaries
+#' followed by case analysis (single unit, triangle, 3 sub-boundaries,
+#' 4+ sub-boundaries with iterative diagonal splitting).
 #'
-#' Gaps that are non-simply-connected or exceed `max_gap_frac` times the
-#' largest adjacent unit area are skipped.
-#'
-#' @param pieces `geos_geometry` vector of polygon pieces.
+#' @param pieces        `geos_geometry` vector of polygon pieces.
 #' @param overlap_order Integer vector of overlap orders.
-#' @param repaired `geos_geometry` vector of current repaired geometries.
-#' @param n_units Number of units.
-#' @param max_gap_frac Maximum gap area as fraction of largest adjacent unit.
+#' @param repaired      `geos_geometry` vector of current repaired geometries.
+#' @param n_units       Number of original units.
+#' @param max_gap_frac  Maximum gap area as fraction of largest adjacent unit.
+#' @param piece_region  Integer region id per piece, or `NULL`.
+#' @param unit_region   Integer region id per unit, or `NULL`.
 #'
 #' @return Updated `repaired` geos_geometry vector.
 #'
@@ -637,82 +2022,161 @@ sr_close_gaps <- function(
   overlap_order,
   repaired,
   n_units,
-  max_gap_frac
+  max_gap_frac,
+  piece_region = NULL,
+  unit_region = NULL
 ) {
-  gaps <- which(overlap_order == 0L)
-  if (length(gaps) == 0L) {
-    return(repaired)
+  gap_idxs <- which(overlap_order == 0L)
+  if (length(gap_idxs) == 0L) return(repaired)
+
+  # Consolidate adjacent gap pieces into connected regions before processing
+  region_aware <- !is.null(piece_region) && !is.null(unit_region)
+  gap_vec <- pieces[gap_idxs]
+
+  if (region_aware) {
+    gap_regions <- piece_region[gap_idxs]
+    gaps_queue <- list()
+
+    for (gap_region in unique(gap_regions[!is.na(gap_regions)])) {
+      region_gap_idxs <- which(gap_regions == gap_region)
+      region_gaps <- gap_vec[region_gap_idxs]
+      if (length(region_gaps) == 0L) {
+        next
+      }
+
+      if (length(region_gaps) > 1L) {
+        gap_union <- geos::geos_unary_union(geos::geos_make_collection(region_gaps))
+        n_consol <- geos::geos_num_geometries(gap_union)
+        region_queue <- lapply(seq_len(n_consol), function(i) {
+          list(
+            geom = geos::geos_geometry_n(gap_union, i),
+            region = gap_region
+          )
+        })
+      } else {
+        region_queue <- list(list(geom = region_gaps[1L], region = gap_region))
+      }
+
+      gaps_queue <- c(gaps_queue, region_queue)
+    }
+  } else {
+    if (length(gap_vec) > 1L) {
+      gap_union  <- geos::geos_unary_union(geos::geos_make_collection(gap_vec))
+      n_consol   <- geos::geos_num_geometries(gap_union)
+      gaps_queue <- lapply(seq_len(n_consol), function(i) {
+        geos::geos_geometry_n(gap_union, i)
+      })
+    } else {
+      gaps_queue <- list(gap_vec[1L])
+    }
   }
 
-  # Spatial index on repaired units for efficient lookup
-  repaired_tree <- geos::geos_strtree(repaired)
+  convexified <- sr_convexify_gaps(gaps_queue, repaired, unit_region = unit_region)
+  repaired <- convexified$repaired
+  gaps_queue <- convexified$gaps_queue
 
-  for (i in gaps) {
-    gap_geom <- pieces[i]
-
-    # Skip non-simply-connected gaps (have holes)
-    if (geos::geos_num_interior_rings(gap_geom) > 0L) {
-      next
-    }
-
-    # Find candidate adjacent units via spatial index
-    candidates <- geos::geos_strtree_query(repaired_tree, gap_geom)[[1]]
-    if (length(candidates) == 0L) {
-      next
-    }
-
-    # Filter to units actually sharing a boundary (positive shared length)
-    gap_bound <- geos::geos_boundary(gap_geom)
-    shared_perims <- vapply(
-      candidates,
-      function(k) {
-        if (geos::geos_is_empty(repaired[k])) {
-          return(0)
-        }
-        inter <- geos::geos_intersection(
-          gap_bound,
-          geos::geos_boundary(repaired[k])
-        )
-        geos::geos_length(inter)
-      },
-      double(1)
-    )
-
-    adjacent_mask <- shared_perims > 0
-    if (!any(adjacent_mask)) {
-      next
-    }
-
-    adjacent_units <- candidates[adjacent_mask]
-    shared_perims <- shared_perims[adjacent_mask]
-
-    # Skip gaps that are too large relative to adjacent units
-    gap_area <- geos::geos_area(gap_geom)
-    max_adj_area <- max(geos::geos_area(repaired[adjacent_units]))
-    if (max_adj_area > 0 && gap_area > max_gap_frac * max_adj_area) {
-      next
-    }
-
-    if (length(adjacent_units) == 1L) {
-      # Single adjacent unit: assign whole gap
-      k <- adjacent_units[1L]
-      repaired[k] <- sr_normalize_polygon_geom(geos::geos_union(repaired[k], gap_geom))
+  while (length(gaps_queue) > 0L) {
+    gap_item   <- gaps_queue[[1L]]
+    gaps_queue <- gaps_queue[-1L]
+    if (region_aware) {
+      gap_geom <- gap_item$geom
+      gap_region <- gap_item$region
     } else {
-      # Multiple adjacent units: split gap via centroid decomposition
-      split <- sr_split_gap(gap_geom, repaired, adjacent_units)
+      gap_geom <- gap_item
+      gap_region <- NULL
+    }
 
-      if (is.null(split)) {
-        # Splitting failed — fall back to largest shared perimeter
-        k <- adjacent_units[which.max(shared_perims)]
-        repaired[k] <- sr_normalize_polygon_geom(geos::geos_union(repaired[k], gap_geom))
-      } else {
-        for (si in seq_along(split$sub_pieces)) {
-          k <- split$assignments[si]
-          repaired[k] <- sr_normalize_polygon_geom(
-            geos::geos_union(repaired[k], split$sub_pieces[si])
-          )
+    if (geos::geos_is_empty(gap_geom)) next
+    if (geos::geos_num_interior_rings(gap_geom) > 0L) next
+
+    adjacency <- sr_gap_adjacency(gap_geom, repaired)
+    if (is.null(adjacency)) next
+    adj_units <- adjacency$candidates
+    sh_perims <- adjacency$shared_perims
+
+    if (region_aware && !is.na(gap_region)) {
+      keep <- unit_region[adj_units] == gap_region
+      keep[is.na(keep)] <- FALSE
+      adj_units <- adj_units[keep]
+      sh_perims <- sh_perims[keep]
+      if (length(adj_units) == 0L) next
+    }
+
+    # Skip gap if too large relative to adjacent units
+    gap_area <- geos::geos_area(gap_geom)
+    max_a    <- max(geos::geos_area(repaired[adj_units]))
+    if (max_a > 0 && gap_area > max_gap_frac * max_a) next
+
+    # Trivial: single adjacent unit
+    if (length(adj_units) == 1L) {
+      k <- adj_units[1L]
+      repaired[k] <- sr_normalize_polygon_geom(geos::geos_union(repaired[k], gap_geom))
+      next
+    }
+
+    # Build and order sub-boundaries for case analysis
+    bounds <- tryCatch(
+      sr_construct_gap_boundaries(gap_geom, repaired, adj_units),
+      error = function(e) NULL
+    )
+    if (is.null(bounds) || length(bounds) == 0L) {
+      k <- adj_units[which.max(sh_perims)]
+      repaired[k] <- sr_normalize_polygon_geom(geos::geos_union(repaired[k], gap_geom))
+      next
+    }
+    n_non_ext <- sum(vapply(bounds, function(b) !is.na(b$unit), logical(1L)))
+    if (n_non_ext == 0L) next
+    if (n_non_ext == 1L) {
+      k <- Filter(function(b) !is.na(b$unit), bounds)[[1L]]$unit
+      repaired[k] <- sr_normalize_polygon_geom(geos::geos_union(repaired[k], gap_geom))
+      next
+    }
+
+    bounds_ord <- sr_merge_adjacent_boundaries(sr_order_boundaries(gap_geom, bounds))
+    n_g_segs   <- nrow(sr_coords(gap_geom))  # vertices == segments in closed ring
+    n_bounds   <- length(bounds_ord)
+
+    result <- if (n_g_segs == 3L) {
+      # Triangular gap: incenter split or perimeter fallback
+      tryCatch(
+        sr_fill_triangle_gap(gap_geom, repaired, bounds_ord, sh_perims, adj_units),
+        error = function(e) NULL
+      )
+    } else if (n_bounds == 3L) {
+      # 3 sub-boundaries: incenter or diagonal split
+      tryCatch(
+        sr_fill_3boundary_gap(gap_geom, repaired, bounds_ord, sh_perims, adj_units),
+        error = function(e) NULL
+      )
+    } else if (n_bounds >= 4L) {
+      # 4+ sub-boundaries: iterative diagonal splitting
+      r4 <- tryCatch(
+        sr_fill_4plus_boundary_gap(gap_geom, repaired, bounds_ord,
+                                    sh_perims, adj_units),
+        error = function(e) NULL
+      )
+      if (!is.null(r4)) {
+        repaired   <- r4$repaired
+        if (region_aware) {
+          new_gap_items <- lapply(as.list(r4$new_gaps), function(new_gap) {
+            list(geom = new_gap, region = gap_region)
+          })
+          gaps_queue <- c(new_gap_items, gaps_queue)
+        } else {
+          gaps_queue <- c(as.list(r4$new_gaps), gaps_queue)
         }
+        next
       }
+      NULL
+    } else {
+      NULL
+    }
+
+    if (!is.null(result)) {
+      repaired <- result
+    } else {
+      k <- adj_units[which.max(sh_perims)]
+      repaired[k] <- sr_normalize_polygon_geom(geos::geos_union(repaired[k], gap_geom))
     }
   }
 
@@ -720,100 +2184,29 @@ sr_close_gaps <- function(
 }
 
 
-#' Split a gap polygon among adjacent units via centroid decomposition
+#' Rebuild repaired geometries from their own refined tiling
 #'
-#' Creates a triangular fan from the gap's interior point to each boundary
-#' vertex, then assigns each triangle to the adjacent unit sharing the most
-#' boundary with it.
+#' This removes any positive-area overlaps that may have been introduced by
+#' geometric unions during gap-closing or later post-processing, while staying
+#' entirely in geos-land.
 #'
-#' @param gap_geom A single `geos_geometry` polygon (the gap).
-#' @param repaired `geos_geometry` vector of current repaired unit geometries.
-#' @param adjacent_units Integer vector of unit indices adjacent to this gap.
+#' @param repaired `geos_geometry` vector of repaired unit geometries.
 #'
-#' @return A list with `sub_pieces` (geos_geometry vector) and `assignments`
-#'   (integer vector of unit indices), or `NULL` if splitting fails.
+#' @return A normalized `geos_geometry` vector with overlaps reassigned away.
 #'
 #' @noRd
-sr_split_gap <- function(gap_geom, repaired, adjacent_units) {
-  # Use point_on_surface for robustness (always inside the polygon)
-  center <- geos::geos_point_on_surface(gap_geom)
-
-  # Extract gap boundary vertices via wk
-  coords <- wk::wk_coords(gap_geom)
-  n_v <- nrow(coords)
-  # Remove closing vertex (duplicate of first)
-  if (
-    n_v > 1 &&
-      coords$x[1] == coords$x[n_v] &&
-      coords$y[1] == coords$y[n_v]
-  ) {
-    coords <- coords[-n_v, , drop = FALSE]
-    n_v <- n_v - 1L
-  }
-
-  if (n_v < 3L) {
-    return(NULL)
-  }
-
-  # Create line segments from center to each vertex
-  center_coords <- wk::wk_coords(center)
-  cx <- center_coords$x[1]
-  cy <- center_coords$y[1]
-
-  wkt_lines <- sprintf(
-    "LINESTRING (%.15g %.15g, %.15g %.15g)",
-    cx,
-    cy,
-    coords$x,
-    coords$y
+sr_rebuild_repaired_geom <- function(repaired) {
+  n_units <- length(repaired)
+  refined <- sr_construct_refined_tiling(repaired, NULL, NULL, NULL)
+  piece_assignment <- sr_assign_overlaps(
+    refined$pieces,
+    refined$piece_parents,
+    refined$overlap_order,
+    n_units
   )
-  split_lines <- geos::as_geos_geometry(wkt_lines)
-
-  # Nod gap boundary + split lines, then polygonize.
-  # geos_node can throw TopologyException for near-degenerate geometries;
-  # return NULL to trigger the fallback (assign whole gap by largest perimeter).
-  all_lines <- c(geos::geos_boundary(gap_geom), split_lines)
-  coll <- geos::geos_make_collection(all_lines)
-  unioned <- geos::geos_unary_union(coll)
-  noded <- tryCatch(geos::geos_node(unioned), error = function(e) NULL)
-  if (is.null(noded)) {
-    return(NULL)
-  }
-  poly_coll <- geos::geos_polygonize(noded)
-  n_sub <- geos::geos_num_geometries(poly_coll)
-
-  if (n_sub <= 1L) {
-    return(NULL)
-  }
-
-  sub_pieces <- geos::geos_geometry_n(poly_coll, seq_len(n_sub))
-
-  # Only keep pieces whose representative point is inside the gap
-  sub_reps <- geos::geos_point_on_surface(sub_pieces)
-  inside <- geos::geos_contains(gap_geom, sub_reps)
-  sub_pieces <- sub_pieces[inside]
-  if (length(sub_pieces) == 0L) {
-    return(NULL)
-  }
-
-  # Assign each sub-piece to adjacent unit with largest shared perimeter
-  adj_bounds <- geos::geos_boundary(repaired[adjacent_units])
-  assignments <- integer(length(sub_pieces))
-  for (si in seq_along(sub_pieces)) {
-    sp_bound <- geos::geos_boundary(sub_pieces[si])
-    perims <- vapply(
-      seq_along(adjacent_units),
-      function(idx) {
-        geos::geos_length(
-          geos::geos_intersection(sp_bound, adj_bounds[idx])
-        )
-      },
-      double(1)
-    )
-    assignments[si] <- adjacent_units[which.max(perims)]
-  }
-
-  list(sub_pieces = sub_pieces, assignments = assignments)
+  sr_normalize_polygon_geom(
+    sr_build_repaired_geom(refined$pieces, piece_assignment, n_units)
+  )
 }
 
 
@@ -834,73 +2227,83 @@ sr_split_gap <- function(gap_geom, repaired, adjacent_units) {
 #' @noRd
 sr_cleanup_disconnected <- function(repaired, min_component_frac) {
   n_units <- length(repaired)
-  repaired_tree <- geos::geos_strtree(repaired)
+  changed <- TRUE
 
-  for (k in seq_len(n_units)) {
-    repeat {
-      if (geos::geos_is_empty(repaired[k])) {
-        break
-      }
-      n_comp <- geos::geos_num_geometries(repaired[k])
-      if (n_comp <= 1L) {
-        break
-      }
+  while (changed) {
+    changed <- FALSE
 
-      # Extract components and sort by area
-      comps <- geos::geos_geometry_n(repaired[k], seq_len(n_comp))
-      areas <- geos::geos_area(comps)
-      ord <- order(areas)
-      smallest_idx <- ord[1L]
-      largest_area <- areas[ord[n_comp]]
-      smallest_area <- areas[smallest_idx]
+    for (k in seq_len(n_units)) {
+      repeat {
+        if (geos::geos_is_empty(repaired[k])) {
+          break
+        }
+        n_comp <- geos::geos_num_geometries(repaired[k])
+        if (n_comp <= 1L) {
+          break
+        }
 
-      if (smallest_area >= min_component_frac * largest_area) {
-        break
-      }
+        # Extract components and sort by area
+        comps <- geos::geos_geometry_n(repaired[k], seq_len(n_comp))
+        areas <- geos::geos_area(comps)
+        ord <- order(areas)
+        smallest_idx <- ord[1L]
+        largest_area <- areas[ord[n_comp]]
+        smallest_area <- areas[smallest_idx]
 
-      # Find adjacent unit for the orphan component
-      smallest_comp <- comps[smallest_idx]
-      candidates <- geos::geos_strtree_query(repaired_tree, smallest_comp)[[1]]
-      candidates <- setdiff(candidates, k)
+        # Find adjacent unit for the orphan component
+        smallest_comp <- comps[smallest_idx]
+        repaired_tree <- geos::geos_strtree(repaired)
+        candidates <- geos::geos_strtree_query(repaired_tree, smallest_comp)[[1]]
+        candidates <- setdiff(candidates, k)
 
-      if (length(candidates) == 0L) {
-        break
-      }
+        if (length(candidates) == 0L) {
+          break
+        }
 
-      comp_bound <- geos::geos_boundary(smallest_comp)
-      shared_perims <- vapply(
-        candidates,
-        function(j) {
-          if (geos::geos_is_empty(repaired[j])) {
-            return(0)
-          }
-          inter <- geos::geos_intersection(
-            comp_bound,
-            geos::geos_boundary(repaired[j])
-          )
-          geos::geos_length(inter)
-        },
-        double(1)
-      )
+        orphan_limit <- min_component_frac * largest_area
+        borderline_orphan <- n_comp == 2L &&
+          length(candidates) == 1L &&
+          smallest_area < (2 * orphan_limit)
+        if (smallest_area >= orphan_limit && !borderline_orphan) {
+          break
+        }
 
-      best_perim <- max(shared_perims)
-      if (best_perim <= 0) {
-        break
-      }
-      best_k <- candidates[which.max(shared_perims)]
-
-      # Reassign: remove orphan from k, add to best_k
-      remaining <- comps[setdiff(seq_len(n_comp), smallest_idx)]
-      if (length(remaining) == 1L) {
-        repaired[k] <- remaining[1L]
-      } else {
-        repaired[k] <- sr_normalize_polygon_geom(
-          geos::geos_unary_union(geos::geos_make_collection(remaining))
+        comp_bound <- geos::geos_boundary(smallest_comp)
+        shared_perims <- vapply(
+          candidates,
+          function(j) {
+            if (geos::geos_is_empty(repaired[j])) {
+              return(0)
+            }
+            inter <- geos::geos_intersection(
+              comp_bound,
+              geos::geos_boundary(repaired[j])
+            )
+            geos::geos_length(inter)
+          },
+          double(1)
         )
+
+        best_perim <- max(shared_perims)
+        if (best_perim <= 0) {
+          break
+        }
+        best_k <- candidates[which.max(shared_perims)]
+
+        # Reassign: remove orphan from k, add to best_k
+        remaining <- comps[setdiff(seq_len(n_comp), smallest_idx)]
+        if (length(remaining) == 1L) {
+          repaired[k] <- remaining[1L]
+        } else {
+          repaired[k] <- sr_normalize_polygon_geom(
+            geos::geos_unary_union(geos::geos_make_collection(remaining))
+          )
+        }
+        repaired[best_k] <- sr_normalize_polygon_geom(
+          geos::geos_union(repaired[best_k], smallest_comp)
+        )
+        changed <- TRUE
       }
-      repaired[best_k] <- sr_normalize_polygon_geom(
-        geos::geos_union(repaired[best_k], smallest_comp)
-      )
     }
   }
 
@@ -947,106 +2350,110 @@ sr_rook_to_queen <- function(repaired, rook_threshold) {
     return(repaired)
   }
 
-  tree <- geos::geos_strtree(repaired)
+  repeat {
+    tree <- geos::geos_strtree(repaired)
 
-  # Collect disks for all short rook adjacencies
-  disk_list <- list()
-  for (i in non_empty) {
-    candidates <- geos::geos_strtree_query(tree, repaired[i])[[1]]
-    candidates <- candidates[candidates > i]
+    # Collect disks for all short rook adjacencies
+    disk_list <- list()
+    for (i in non_empty) {
+      candidates <- geos::geos_strtree_query(tree, repaired[i])[[1]]
+      candidates <- candidates[candidates > i]
 
-    for (j in candidates) {
-      if (geos::geos_is_empty(repaired[j])) {
+      for (j in candidates) {
+        if (geos::geos_is_empty(repaired[j])) {
+          next
+        }
+        if (!geos::geos_intersects(repaired[i], repaired[j])) {
+          next
+        }
+
+        shared <- geos::geos_intersection(
+          geos::geos_boundary(repaired[i]),
+          geos::geos_boundary(repaired[j])
+        )
+        shared_len <- geos::geos_length(shared)
+
+        if (shared_len > 0 && shared_len < rook_threshold) {
+          midpt <- geos::geos_centroid(shared)
+          radius <- max(shared_len / 2 * 1.1, rook_threshold / 2 * 1.1)
+          disk_list[[length(disk_list) + 1L]] <- geos::geos_buffer(midpt, radius)
+        }
+      }
+    }
+
+    if (length(disk_list) == 0L) {
+      break
+    }
+
+    # Merge overlapping disks
+    all_disks <- do.call(c, disk_list)
+    merged <- geos::geos_unary_union(geos::geos_make_collection(all_disks))
+    n_merged <- geos::geos_num_geometries(merged)
+    if (n_merged == 0L) {
+      break
+    }
+    merged_disks <- geos::geos_geometry_n(merged, seq_len(n_merged))
+
+    # Process each merged disk
+    for (d_idx in seq_along(merged_disks)) {
+      disk <- merged_disks[d_idx]
+
+      # Find affected units
+      affected <- geos::geos_strtree_query(tree, disk)[[1]]
+      affected <- affected[!geos::geos_is_empty(repaired[affected])]
+      affected <- affected[geos::geos_intersects(repaired[affected], disk)]
+      if (length(affected) == 0L) {
         next
       }
-      if (!geos::geos_intersects(repaired[i], repaired[j])) {
+
+      # Excise disk from affected units
+      for (k in affected) {
+        repaired[k] <- geos::geos_difference(repaired[k], disk)
+      }
+
+      # Fill disk gap: nod disk boundary + affected unit boundaries, polygonize
+      all_bounds <- c(
+        geos::geos_boundary(disk),
+        geos::geos_boundary(repaired[affected])
+      )
+      coll <- geos::geos_make_collection(all_bounds)
+      noded <- geos::geos_node(geos::geos_unary_union(coll))
+      poly_coll <- geos::geos_polygonize(noded)
+      n_sub <- geos::geos_num_geometries(poly_coll)
+      if (n_sub == 0L) {
         next
       }
 
-      shared <- geos::geos_intersection(
-        geos::geos_boundary(repaired[i]),
-        geos::geos_boundary(repaired[j])
-      )
-      shared_len <- geos::geos_length(shared)
+      sub_pieces <- geos::geos_geometry_n(poly_coll, seq_len(n_sub))
 
-      if (shared_len > 0 && shared_len < rook_threshold) {
-        midpt <- geos::geos_centroid(shared)
-        radius <- shared_len / 2 * 1.1
-        disk_list[[length(disk_list) + 1L]] <- geos::geos_buffer(midpt, radius)
+      # Keep only pieces inside the disk
+      sub_reps <- geos::geos_point_on_surface(sub_pieces)
+      inside_disk <- geos::geos_contains(disk, sub_reps)
+      sub_pieces <- sub_pieces[inside_disk]
+      if (length(sub_pieces) == 0L) {
+        next
       }
-    }
-  }
 
-  if (length(disk_list) == 0L) {
-    return(repaired)
-  }
-
-  # Merge overlapping disks
-  all_disks <- do.call(c, disk_list)
-  merged <- geos::geos_unary_union(geos::geos_make_collection(all_disks))
-  n_merged <- geos::geos_num_geometries(merged)
-  if (n_merged == 0L) {
-    return(repaired)
-  }
-  merged_disks <- geos::geos_geometry_n(merged, seq_len(n_merged))
-
-  # Process each merged disk
-  for (d_idx in seq_along(merged_disks)) {
-    disk <- merged_disks[d_idx]
-
-    # Find affected units
-    affected <- geos::geos_strtree_query(tree, disk)[[1]]
-    affected <- affected[!geos::geos_is_empty(repaired[affected])]
-    affected <- affected[geos::geos_intersects(repaired[affected], disk)]
-    if (length(affected) == 0L) {
-      next
-    }
-
-    # Excise disk from affected units
-    for (k in affected) {
-      repaired[k] <- geos::geos_difference(repaired[k], disk)
-    }
-
-    # Fill disk gap: nod disk boundary + affected unit boundaries, polygonize
-    all_bounds <- c(
-      geos::geos_boundary(disk),
-      geos::geos_boundary(repaired[affected])
-    )
-    coll <- geos::geos_make_collection(all_bounds)
-    noded <- geos::geos_node(geos::geos_unary_union(coll))
-    poly_coll <- geos::geos_polygonize(noded)
-    n_sub <- geos::geos_num_geometries(poly_coll)
-    if (n_sub == 0L) {
-      next
-    }
-
-    sub_pieces <- geos::geos_geometry_n(poly_coll, seq_len(n_sub))
-
-    # Keep only pieces inside the disk
-    sub_reps <- geos::geos_point_on_surface(sub_pieces)
-    inside_disk <- geos::geos_contains(disk, sub_reps)
-    sub_pieces <- sub_pieces[inside_disk]
-    if (length(sub_pieces) == 0L) {
-      next
-    }
-
-    # Assign each piece to adjacent unit with largest shared perimeter
-    for (si in seq_along(sub_pieces)) {
-      sp_bound <- geos::geos_boundary(sub_pieces[si])
-      perims <- vapply(
-        affected,
-        function(k) {
-          if (geos::geos_is_empty(repaired[k])) {
-            return(0)
-          }
-          geos::geos_length(
-            geos::geos_intersection(sp_bound, geos::geos_boundary(repaired[k]))
-          )
-        },
-        double(1)
-      )
-      best <- affected[which.max(perims)]
-      repaired[best] <- geos::geos_union(repaired[best], sub_pieces[si])
+      # Assign each piece to adjacent unit with largest shared perimeter
+      for (si in seq_along(sub_pieces)) {
+        sp_bound <- geos::geos_boundary(sub_pieces[si])
+        perims <- vapply(
+          affected,
+          function(k) {
+            if (geos::geos_is_empty(repaired[k])) {
+              return(0)
+            }
+            geos::geos_length(
+              geos::geos_intersection(sp_bound, geos::geos_boundary(repaired[k]))
+            )
+          },
+          double(1)
+        )
+        best <- affected[which.max(perims)]
+        repaired[best] <- sr_normalize_polygon_geom(
+          geos::geos_union(repaired[best], sub_pieces[si])
+        )
+      }
     }
   }
 
