@@ -171,6 +171,18 @@ smart_repair <- function(
         '{.arg region_col} must name a column in {.arg shp} when {.arg regions} is provided.'
       )
     }
+
+    region_geom_check <- sf::st_geometry(regions)
+    region_total <- sum(as.numeric(sf::st_area(region_geom_check)))
+    region_union_area <- as.numeric(
+      sf::st_area(sf::st_union(region_geom_check))
+    )
+    if (region_total > region_union_area * (1 + 1e-6)) {
+      cli::cli_warn(
+        '{.arg regions} appear to have overlapping geometries. \\
+        Results may be unreliable; provide non-overlapping regions for best results.'
+      )
+    }
   }
 
   if (max_gap_frac < 0 || max_gap_frac > 1) {
@@ -231,6 +243,9 @@ smart_repair <- function(
     geos::as_geos_geometry(sf::st_set_crs(sf::st_geometry(regions), NA))
   }
 
+  # Save original component counts for disconnection cleanup (Phase 4)
+  original_n_comps <- geos::geos_num_geometries(unit_geom)
+
   # PHASE 0 (optional): Assign units to regions
   unit_region <- sr_assign_units_to_regions(unit_geom, region_geom)
 
@@ -266,7 +281,9 @@ smart_repair <- function(
 
   # PHASE 4: Clean up disconnected units
   repaired <- sr_normalize_polygon_geom(repaired)
-  repaired <- sr_cleanup_disconnected(repaired, min_component_frac)
+  repaired <- sr_cleanup_disconnected(
+    repaired, min_component_frac, original_n_comps, unit_geom
+  )
 
   # PHASE 5 (optional): Small rook-to-queen adjacency conversion
   repaired <- sr_normalize_polygon_geom(repaired)
@@ -530,6 +547,7 @@ sr_tag_pieces <- function(pieces, unit_geom, region_geom, unit_region) {
 sr_assign_overlaps <- function(pieces, piece_parents, overlap_order, n_units) {
   n_pieces <- length(pieces)
   piece_assignment <- rep(NA_integer_, n_pieces)
+  orphaned_overlaps <- integer(0L)
 
   # Step 1: assign order-1 pieces to their unique parent
   order1 <- which(overlap_order == 1L)
@@ -584,6 +602,8 @@ sr_assign_overlaps <- function(pieces, piece_parents, overlap_order, n_units) {
     #     Tiebreaker: assign to the parent with the smallest current area
     #     (load-balancing prevents all overlaps going to one unit).
     #     Update repaired geometry after each assignment.
+    #     Pieces that can't find a home (no parent with shared perimeter > 0)
+    #     are saved as orphans and retried after the full overlap tower.
     remaining_d <- order_d[is.na(piece_assignment[order_d])]
     if (length(remaining_d) == 0L) {
       next
@@ -619,6 +639,10 @@ sr_assign_overlaps <- function(pieces, piece_parents, overlap_order, n_units) {
       )
 
       max_perim <- max(shared_perim)
+      if (max_perim <= 0) {
+        orphaned_overlaps <- c(orphaned_overlaps, i)
+        next
+      }
       tied <- which(abs(shared_perim - max_perim) < 1e-10 * max_perim)
       if (length(tied) == 1L) {
         best <- parents[tied]
@@ -630,6 +654,43 @@ sr_assign_overlaps <- function(pieces, piece_parents, overlap_order, n_units) {
 
       piece_assignment[i] <- best
       repaired[best] <- sr_normalize_polygon_geom(geos::geos_union(repaired[best], pieces[i]))
+    }
+  }
+
+  # Retry orphaned overlaps now that the full overlap tower has been assigned
+  if (length(orphaned_overlaps) > 0L) {
+    repaired <- sr_build_repaired_geom(pieces, piece_assignment, n_units)
+    for (i in orphaned_overlaps) {
+      if (!is.na(piece_assignment[i])) next
+      parents <- piece_parents[[i]]
+      if (length(parents) == 0L) next
+
+      piece_bound <- geos::geos_boundary(pieces[i])
+      shared_perim <- vapply(
+        parents,
+        function(k) {
+          if (geos::geos_is_empty(repaired[k])) return(0)
+          geos::geos_length(
+            geos::geos_intersection(piece_bound, geos::geos_boundary(repaired[k]))
+          )
+        },
+        double(1)
+      )
+
+      max_perim <- max(shared_perim)
+      if (max_perim <= 0) next
+      tied <- which(abs(shared_perim - max_perim) < 1e-10 * max_perim)
+      if (length(tied) == 1L) {
+        best <- parents[tied]
+      } else {
+        tied_areas <- geos::geos_area(repaired[parents[tied]])
+        best <- parents[tied[which.min(tied_areas)]]
+      }
+
+      piece_assignment[i] <- best
+      repaired[best] <- sr_normalize_polygon_geom(
+        geos::geos_union(repaired[best], pieces[i])
+      )
     }
   }
 
@@ -2075,6 +2136,9 @@ sr_close_gaps <- function(
   repaired <- convexified$repaired
   gaps_queue <- convexified$gaps_queue
 
+  n_skipped_nsc <- 0L
+  n_skipped_area <- 0L
+
   while (length(gaps_queue) > 0L) {
     gap_item   <- gaps_queue[[1L]]
     gaps_queue <- gaps_queue[-1L]
@@ -2087,7 +2151,10 @@ sr_close_gaps <- function(
     }
 
     if (geos::geos_is_empty(gap_geom)) next
-    if (geos::geos_num_interior_rings(gap_geom) > 0L) next
+    if (geos::geos_num_interior_rings(gap_geom) > 0L) {
+      n_skipped_nsc <- n_skipped_nsc + 1L
+      next
+    }
 
     adjacency <- sr_gap_adjacency(gap_geom, repaired)
     if (is.null(adjacency)) next
@@ -2105,7 +2172,10 @@ sr_close_gaps <- function(
     # Skip gap if too large relative to adjacent units
     gap_area <- geos::geos_area(gap_geom)
     max_a    <- max(geos::geos_area(repaired[adj_units]))
-    if (max_a > 0 && gap_area > max_gap_frac * max_a) next
+    if (max_a > 0 && gap_area > max_gap_frac * max_a) {
+      n_skipped_area <- n_skipped_area + 1L
+      next
+    }
 
     # Trivial: single adjacent unit
     if (length(adj_units) == 1L) {
@@ -2180,11 +2250,21 @@ sr_close_gaps <- function(
     }
   }
 
+  if (n_skipped_nsc > 0L) {
+    cli::cli_inform(
+      '{n_skipped_nsc} gap{?s} {?was/were} not filled because {?it is/they are} \\
+      not simply connected.'
+    )
+  }
+  if (n_skipped_area > 0L) {
+    cli::cli_inform(
+      '{n_skipped_area} gap{?s} {?was/were} not filled because {?it/they} \\
+      exceed{?s/} the area threshold.'
+    )
+  }
+
   repaired
 }
-
-
-#' Rebuild repaired geometries from their own refined tiling
 #'
 #' This removes any positive-area overlaps that may have been introduced by
 #' geometric unions during gap-closing or later post-processing, while staying
@@ -2214,18 +2294,23 @@ sr_rebuild_repaired_geom <- function(repaired) {
 
 #' Reassign small orphaned components of disconnected units
 #'
-#' For each unit that is a multipolygon (disconnected), iteratively reassign
-#' the smallest component to the adjacent unit sharing the largest boundary
-#' perimeter, provided the component is smaller than `min_component_frac`
-#' times the unit's largest component.
+#' Only units that became *more* disconnected during repair (more components
+#' than in the original) are considered.  For each such unit, the smallest
+#' excess components are reassigned to the adjacent unit sharing the largest
+#' boundary perimeter, provided the component area is below
+#' `min_component_frac * max(repaired_area, original_area)`.
 #'
 #' @param repaired `geos_geometry` vector of repaired unit geometries.
 #' @param min_component_frac Threshold fraction for orphan reassignment.
+#' @param original_n_comps Integer vector of original component counts.
+#' @param original_geom `geos_geometry` vector of original unit geometries.
 #'
 #' @return Updated `geos_geometry` vector.
 #'
 #' @noRd
-sr_cleanup_disconnected <- function(repaired, min_component_frac) {
+sr_cleanup_disconnected <- function(repaired, min_component_frac,
+                                    original_n_comps = NULL,
+                                    original_geom = NULL) {
   n_units <- length(repaired)
   changed <- TRUE
 
@@ -2233,85 +2318,87 @@ sr_cleanup_disconnected <- function(repaired, min_component_frac) {
     changed <- FALSE
 
     for (k in seq_len(n_units)) {
-      repeat {
-        if (geos::geos_is_empty(repaired[k])) {
-          break
-        }
-        n_comp <- geos::geos_num_geometries(repaired[k])
-        if (n_comp <= 1L) {
-          break
-        }
+      if (geos::geos_is_empty(repaired[k])) next
+      n_comp <- geos::geos_num_geometries(repaired[k])
+      if (n_comp <= 1L) next
 
-        # Extract components and sort by area
-        comps <- geos::geos_geometry_n(repaired[k], seq_len(n_comp))
-        areas <- geos::geos_area(comps)
-        ord <- order(areas)
-        smallest_idx <- ord[1L]
-        largest_area <- areas[ord[n_comp]]
-        smallest_area <- areas[smallest_idx]
+      # Only process units with more components than originally
+      orig_n <- if (!is.null(original_n_comps)) original_n_comps[k] else 1L
+      excess <- n_comp - orig_n
+      if (excess <= 0L) next
 
-        # Find adjacent unit for the orphan component
-        smallest_comp <- comps[smallest_idx]
+      # Threshold: fraction of max(repaired_area, original_area)
+      repaired_area <- geos::geos_area(repaired[k])
+      orig_area <- if (!is.null(original_geom)) geos::geos_area(original_geom[k]) else repaired_area
+      big_area <- max(repaired_area, orig_area)
+      orphan_limit <- min_component_frac * big_area
+
+      # Extract components sorted by area
+      comps <- geos::geos_geometry_n(repaired[k], seq_len(n_comp))
+      areas <- geos::geos_area(comps)
+      ord <- order(areas)
+
+      # Reassign the `excess` smallest components (if below threshold)
+      remove_idxs <- integer(0L)
+      for (ii in seq_len(min(excess, n_comp - 1L))) {
+        comp_idx <- ord[ii]
+        if (areas[comp_idx] >= orphan_limit) next
+
+        smallest_comp <- comps[comp_idx]
         repaired_tree <- geos::geos_strtree(repaired)
         candidates <- geos::geos_strtree_query(repaired_tree, smallest_comp)[[1]]
         candidates <- setdiff(candidates, k)
-
-        if (length(candidates) == 0L) {
-          break
-        }
-
-        orphan_limit <- min_component_frac * largest_area
-        borderline_orphan <- n_comp == 2L &&
-          length(candidates) == 1L &&
-          smallest_area < (2 * orphan_limit)
-        if (smallest_area >= orphan_limit && !borderline_orphan) {
-          break
-        }
+        if (length(candidates) == 0L) next
 
         comp_bound <- geos::geos_boundary(smallest_comp)
         shared_perims <- vapply(
           candidates,
           function(j) {
-            if (geos::geos_is_empty(repaired[j])) {
-              return(0)
-            }
-            inter <- geos::geos_intersection(
-              comp_bound,
-              geos::geos_boundary(repaired[j])
+            if (geos::geos_is_empty(repaired[j])) return(0)
+            geos::geos_length(
+              geos::geos_intersection(comp_bound, geos::geos_boundary(repaired[j]))
             )
-            geos::geos_length(inter)
           },
           double(1)
         )
 
         best_perim <- max(shared_perims)
-        if (best_perim <= 0) {
-          break
-        }
+        if (best_perim <= 0) next
         best_k <- candidates[which.max(shared_perims)]
 
-        # Reassign: remove orphan from k, add to best_k
-        remaining <- comps[setdiff(seq_len(n_comp), smallest_idx)]
-        if (length(remaining) == 1L) {
+        repaired[best_k] <- sr_normalize_polygon_geom(
+          geos::geos_union(repaired[best_k], smallest_comp)
+        )
+        remove_idxs <- c(remove_idxs, comp_idx)
+        changed <- TRUE
+      }
+
+      # Rebuild unit k without the reassigned components
+      if (length(remove_idxs) > 0L) {
+        remaining <- comps[setdiff(seq_len(n_comp), remove_idxs)]
+        if (length(remaining) == 0L) {
+          repaired[k] <- geos::as_geos_geometry("POLYGON EMPTY")
+        } else if (length(remaining) == 1L) {
           repaired[k] <- remaining[1L]
         } else {
           repaired[k] <- sr_normalize_polygon_geom(
             geos::geos_unary_union(geos::geos_make_collection(remaining))
           )
         }
-        repaired[best_k] <- sr_normalize_polygon_geom(
-          geos::geos_union(repaired[best_k], smallest_comp)
-        )
-        changed <- TRUE
       }
     }
   }
 
-  # Inform about remaining disconnected units
+  # Inform about remaining disconnected units (that got worse)
   still_disc <- which(
     !geos::geos_is_empty(repaired) &
       geos::geos_num_geometries(repaired) > 1L
   )
+  if (!is.null(original_n_comps)) {
+    still_disc <- still_disc[
+      geos::geos_num_geometries(repaired[still_disc]) > original_n_comps[still_disc]
+    ]
+  }
   if (length(still_disc) > 0L) {
     cli::cli_inform(
       '{length(still_disc)} unit{?s} remain{?s/} disconnected after repair.'
@@ -2326,11 +2413,11 @@ sr_cleanup_disconnected <- function(repaired, min_component_frac) {
 
 #' Convert short rook adjacencies to queen adjacencies
 #'
-#' For each pair of repaired units sharing a boundary shorter than
-#' `rook_threshold`, excise a small disk around the shared boundary midpoint
-#' and redistribute the resulting gap to adjacent units using the noded-union +
-#' polygonize approach. This effectively replaces the rook adjacency (shared
-#' edge) with a queen adjacency (shared point).
+#' For each pair of repaired units whose *total* shared boundary length is
+#' shorter than `rook_threshold`, excise a small disk around each boundary
+#' component's midpoint and redistribute the resulting gap to adjacent units.
+#' The threshold is applied to the aggregate length per pair (not per segment),
+#' matching the Python implementation.
 #'
 #' @param repaired `geos_geometry` vector of repaired unit geometries.
 #' @param rook_threshold Numeric threshold (in planar CRS units). `NULL` or
@@ -2353,46 +2440,75 @@ sr_rook_to_queen <- function(repaired, rook_threshold) {
   repeat {
     tree <- geos::geos_strtree(repaired)
 
-    # Collect disks for all short rook adjacencies
-    disk_list <- list()
+    # Collect per-pair total shared lengths, then build disks only for short pairs
+    pair_info <- list()
     for (i in non_empty) {
       candidates <- geos::geos_strtree_query(tree, repaired[i])[[1]]
       candidates <- candidates[candidates > i]
 
       for (j in candidates) {
-        if (geos::geos_is_empty(repaired[j])) {
-          next
-        }
-        if (!geos::geos_intersects(repaired[i], repaired[j])) {
-          next
-        }
+        if (geos::geos_is_empty(repaired[j])) next
+        if (!geos::geos_intersects(repaired[i], repaired[j])) next
 
         shared <- geos::geos_intersection(
           geos::geos_boundary(repaired[i]),
           geos::geos_boundary(repaired[j])
         )
-        shared_len <- geos::geos_length(shared)
+        total_len <- geos::geos_length(shared)
 
-        if (shared_len > 0 && shared_len < rook_threshold) {
-          midpt <- geos::geos_centroid(shared)
-          radius <- max(shared_len / 2 * 1.1, rook_threshold / 2 * 1.1)
-          disk_list[[length(disk_list) + 1L]] <- geos::geos_buffer(midpt, radius)
+        if (total_len > 0 && total_len < rook_threshold) {
+          # Explode into individual line components for disk placement
+          shared_type <- geos::geos_type(shared)
+          if (grepl("MULTI|COLLECTION", shared_type, ignore.case = TRUE)) {
+            n_parts <- geos::geos_num_geometries(shared)
+            parts <- geos::geos_geometry_n(shared, seq_len(n_parts))
+            parts <- parts[geos::geos_length(parts) > 0]
+          } else if (geos::geos_length(shared) > 0) {
+            parts <- shared
+          } else {
+            next
+          }
+
+          for (p_idx in seq_along(parts)) {
+            seg <- parts[p_idx]
+            seg_len <- geos::geos_length(seg)
+            if (seg_len <= 0) next
+            midpt <- geos::geos_centroid(seg)
+            radius <- 0.6 * seg_len
+            pair_info[[length(pair_info) + 1L]] <- list(
+              disk = geos::geos_buffer(midpt, radius)
+            )
+          }
         }
       }
     }
 
-    if (length(disk_list) == 0L) {
-      break
-    }
+    if (length(pair_info) == 0L) break
 
-    # Merge overlapping disks
-    all_disks <- do.call(c, disk_list)
-    merged <- geos::geos_unary_union(geos::geos_make_collection(all_disks))
-    n_merged <- geos::geos_num_geometries(merged)
-    if (n_merged == 0L) {
-      break
+    # Merge overlapping disks, then iteratively convexify until disjoint
+    all_disks <- do.call(c, lapply(pair_info, `[[`, "disk"))
+    polys_to_remove <- all_disks
+    repeat {
+      merged <- geos::geos_unary_union(geos::geos_make_collection(polys_to_remove))
+      n_merged <- geos::geos_num_geometries(merged)
+      if (n_merged == 0L) break
+      merged_parts <- geos::geos_geometry_n(merged, seq_len(n_merged))
+      convex_parts <- geos::geos_convex_hull(merged_parts)
+
+      if (n_merged == 1L) {
+        polys_to_remove <- convex_parts
+        break
+      }
+
+      convex_union <- geos::geos_unary_union(geos::geos_make_collection(convex_parts))
+      n_convex <- geos::geos_num_geometries(convex_union)
+      if (n_convex == n_merged) {
+        polys_to_remove <- convex_parts
+        break
+      }
+      polys_to_remove <- convex_parts
     }
-    merged_disks <- geos::geos_geometry_n(merged, seq_len(n_merged))
+    merged_disks <- polys_to_remove
 
     # Process each merged disk
     for (d_idx in seq_along(merged_disks)) {
@@ -2402,9 +2518,7 @@ sr_rook_to_queen <- function(repaired, rook_threshold) {
       affected <- geos::geos_strtree_query(tree, disk)[[1]]
       affected <- affected[!geos::geos_is_empty(repaired[affected])]
       affected <- affected[geos::geos_intersects(repaired[affected], disk)]
-      if (length(affected) == 0L) {
-        next
-      }
+      if (length(affected) == 0L) next
 
       # Excise disk from affected units
       for (k in affected) {
@@ -2420,9 +2534,7 @@ sr_rook_to_queen <- function(repaired, rook_threshold) {
       noded <- geos::geos_node(geos::geos_unary_union(coll))
       poly_coll <- geos::geos_polygonize(noded)
       n_sub <- geos::geos_num_geometries(poly_coll)
-      if (n_sub == 0L) {
-        next
-      }
+      if (n_sub == 0L) next
 
       sub_pieces <- geos::geos_geometry_n(poly_coll, seq_len(n_sub))
 
@@ -2430,9 +2542,7 @@ sr_rook_to_queen <- function(repaired, rook_threshold) {
       sub_reps <- geos::geos_point_on_surface(sub_pieces)
       inside_disk <- geos::geos_contains(disk, sub_reps)
       sub_pieces <- sub_pieces[inside_disk]
-      if (length(sub_pieces) == 0L) {
-        next
-      }
+      if (length(sub_pieces) == 0L) next
 
       # Assign each piece to adjacent unit with largest shared perimeter
       for (si in seq_along(sub_pieces)) {
@@ -2440,9 +2550,7 @@ sr_rook_to_queen <- function(repaired, rook_threshold) {
         perims <- vapply(
           affected,
           function(k) {
-            if (geos::geos_is_empty(repaired[k])) {
-              return(0)
-            }
+            if (geos::geos_is_empty(repaired[k])) return(0)
             geos::geos_length(
               geos::geos_intersection(sp_bound, geos::geos_boundary(repaired[k]))
             )

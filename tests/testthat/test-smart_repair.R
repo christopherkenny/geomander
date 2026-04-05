@@ -489,3 +489,71 @@ test_that('smart_repair rook_threshold converts short rook adjacencies to queen'
   # After rook_threshold = 0.05, all remaining shared boundaries are >= 0.05
   expect_true(min_rook_length(srtq_result) >= 0.05)
 })
+
+test_that('smart_repair warns when regions overlap', {
+  shp <- make_perfect_shp() # 4 squares in 2x2 grid
+  r1 <- sf::st_polygon(list(matrix(
+    c(0, 0, 1.5, 0, 1.5, 2, 0, 2, 0, 0),
+    ncol = 2, byrow = TRUE
+  )))
+  r2 <- sf::st_polygon(list(matrix(
+    c(0.5, 0, 2, 0, 2, 2, 0.5, 2, 0.5, 0),
+    ncol = 2, byrow = TRUE
+  )))
+  regions <- sf::st_sf(id = 1:2, geometry = sf::st_sfc(r1, r2))
+  shp$region_id <- c(1L, 2L, 1L, 2L)
+
+  expect_warning(
+    smart_repair(shp, regions = regions, region_col = 'region_id', epsg = FALSE),
+    'overlapping'
+  )
+})
+
+
+test_that('smart_repair informs about gaps exceeding area threshold', {
+  # Non-overlapping thin frame around a large central gap
+  top <- sf::st_polygon(list(matrix(
+    c(0, 0.9, 1, 0.9, 1, 1, 0, 1, 0, 0.9),
+    ncol = 2, byrow = TRUE
+  )))
+  bottom <- sf::st_polygon(list(matrix(
+    c(0, 0, 1, 0, 1, 0.1, 0, 0.1, 0, 0),
+    ncol = 2, byrow = TRUE
+  )))
+  left <- sf::st_polygon(list(matrix(
+    c(0, 0.1, 0.1, 0.1, 0.1, 0.9, 0, 0.9, 0, 0.1),
+    ncol = 2, byrow = TRUE
+  )))
+  right <- sf::st_polygon(list(matrix(
+    c(0.9, 0.1, 1, 0.1, 1, 0.9, 0.9, 0.9, 0.9, 0.1),
+    ncol = 2, byrow = TRUE
+  )))
+  shp <- sf::st_sf(id = 1:4, geometry = sf::st_sfc(top, bottom, left, right))
+
+  # Gap area ~ 0.64, max unit area ~ 0.1, default max_gap_frac = 0.1
+  # 0.64 >> 0.1 * 0.1 = 0.01, so the gap should be skipped
+  expect_message(
+    smart_repair(shp, epsg = FALSE),
+    'area threshold'
+  )
+})
+
+
+test_that('smart_repair rook_threshold applies per-pair total (not per-segment)', {
+  u1 <- sf::st_polygon(list(matrix(
+    c(0, 0,  0.5, 0,  0.5, 0.4,  0.48, 0.5,  0.5, 0.6,  0.5, 1,  0, 1,  0, 0),
+    ncol = 2, byrow = TRUE
+  )))
+  u2 <- sf::st_polygon(list(matrix(
+    c(0.5, 0,  1, 0,  1, 1,  0.5, 1,  0.5, 0.6,  0.52, 0.5,  0.5, 0.4,  0.5, 0),
+    ncol = 2, byrow = TRUE
+  )))
+  shp <- sf::st_sf(id = 1:2, geometry = sf::st_sfc(u1, u2))
+
+  result <- smart_repair(shp, rook_threshold = 0.3, epsg = FALSE)
+  g <- sf::st_geometry(result)
+
+  inter <- sf::st_intersection(g[[1]], g[[2]])
+  shared_len <- as.numeric(sf::st_length(inter))
+  expect_true(shared_len > 0.3)
+})
