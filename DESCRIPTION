@@ -49,4 +49,5 @@ LazyData: true
 Encoding: UTF-8
 VignetteBuilder: knitr
 Config/testthat/edition: 3
+Config/Needs/website: christopherkenny/ctktemplate
 Language: en-US
