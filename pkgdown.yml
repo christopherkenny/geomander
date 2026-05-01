@@ -1,10 +1,10 @@
-pandoc: 3.1.11
+pandoc: 3.8.3
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   Merging_Election_Data: Merging_Election_Data.html
   Redistricting_School_Districts: Redistricting_School_Districts.html
-last_built: 2026-04-01T02:28Z
+last_built: 2026-05-01T16:22Z
 urls:
   reference: https://christophertkenny.com/geomander/reference
   article: https://christophertkenny.com/geomander/articles

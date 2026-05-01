@@ -1,0 +1,283 @@
+# geomander
+
+Focuses on creating data sets and other tools that help make
+understanding gerrymandering faster and easier. Designed for easy
+preparation to run simulation analysis with the R package redist, but is
+aimed at the geographic aspects of redistricting, not partitioning
+methods. Most of these tools are gathered from seminar papers and do not
+correspond to a single publication.
+
+## Installation
+
+You can install the released version of geomander from
+[CRAN](https://CRAN.R-project.org) with:
+
+``` r
+
+install.packages("geomander")
+```
+
+And the development version from [GitHub](https://github.com/) with:
+
+``` r
+
+# install.packages("devtools")
+devtools::install_github("christopherkenny/geomander")
+```
+
+## Examples
+
+A very common task is aggregating block data to precincts.
+
+``` r
+
+library(geomander)
+library(tidyverse)
+#> ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+#> ✔ dplyr     1.1.4     ✔ readr     2.1.4
+#> ✔ forcats   1.0.0     ✔ stringr   1.5.1
+#> ✔ ggplot2   3.4.4     ✔ tibble    3.2.1
+#> ✔ lubridate 1.9.3     ✔ tidyr     1.3.0
+#> ✔ purrr     1.0.2     
+#> ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+#> ✖ dplyr::filter() masks stats::filter()
+#> ✖ dplyr::lag()    masks stats::lag()
+#> ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+ 
+# load precincts
+data('va18sub')
+
+# create block data
+block <- create_block_table(state = 'VA', county = '087')  
+
+# match the geographies
+matches <- geo_match(from = block, to = va18sub)
+
+# Aggregate
+prec <- block2prec(block_table = block, matches = matches)
+```
+
+Other important tasks include breaking data into pieces by blocks
+underlying them.
+
+``` r
+
+library(geomander)
+library(tidyverse)
+ 
+# load precincts
+data("va18sub")
+
+# subset to target area
+va18sub <- va18sub |> filter(COUNTYFP == '087')
+```
+
+Then we can get common block data:
+
+``` r
+
+block <- create_block_table(state = 'VA', county = '087')  
+```
+
+And estimate down to blocks
+
+``` r
+
+disagg <- geo_estimate_down(from = va18sub, to = block, wts = block$vap, value = va18sub$G18USSRSTE)
+```
+
+For more information, see the documentation and vignettes, available at
+<https://christophertkenny.com/geomander/>
+
+# Package index
+
+## Estimating Across Geographic Levels
+
+Functions for approximating values at different levels of geography
+
+- [`estimate_down()`](https://christophertkenny.com/geomander/reference/estimate_down.md)
+  : Estimate Values Down Using Precomputed Matches
+- [`estimate_up()`](https://christophertkenny.com/geomander/reference/estimate_up.md)
+  : Aggregate Values Up Using Precomputed Matches
+- [`geo_estimate_down()`](https://christophertkenny.com/geomander/reference/geo_estimate_down.md)
+  : Estimate Values Down to a Finer Geography
+- [`geo_estimate_up()`](https://christophertkenny.com/geomander/reference/geo_estimate_up.md)
+  : Aggregate Values Up to a Larger Geography
+- [`geo_match()`](https://christophertkenny.com/geomander/reference/geo_match.md)
+  : Match Features Across Geographic Layers
+
+## Buiding Datasets
+
+Functions to help build and refine data
+
+- [`block2prec()`](https://christophertkenny.com/geomander/reference/block2prec.md)
+  : Aggregate a Block Table by Matches
+- [`block2prec_by_county()`](https://christophertkenny.com/geomander/reference/block2prec_by_county.md)
+  : Aggregate a Block Table by Matches Within County
+- [`create_block_table()`](https://christophertkenny.com/geomander/reference/create_block_table.md)
+  : Create a Census Block-Level Table
+- [`create_tract_table()`](https://christophertkenny.com/geomander/reference/create_tract_table.md)
+  : Create an ACS Tract-Level Table
+- [`geo_filter()`](https://christophertkenny.com/geomander/reference/geo_filter.md)
+  : Filter to Intersecting Pieces
+- [`geo_trim()`](https://christophertkenny.com/geomander/reference/geo_trim.md)
+  : Trim Away Small Pieces
+
+## Downloading Datasets
+
+Functions to help download common datasets
+
+- [`alarm_states()`](https://christophertkenny.com/geomander/reference/alarm_states.md)
+  : List Available States from ALARM Data
+- [`clean_vest()`](https://christophertkenny.com/geomander/reference/clean_vest.md)
+  : Clean VEST Column Names
+- [`get_alarm()`](https://christophertkenny.com/geomander/reference/get_alarm.md)
+  : Get an ALARM Dataset
+- [`get_dra()`](https://christophertkenny.com/geomander/reference/get_dra.md)
+  : Get a Dave's Redistricting App Dataset
+- [`get_heda()`](https://christophertkenny.com/geomander/reference/get_heda.md)
+  : Get a Harvard Election Data Archive ("HEDA") Dataset
+- [`get_vest()`](https://christophertkenny.com/geomander/reference/get_vest.md)
+  : Get a Voting and Election Science Team ("VEST") Dataset
+- [`heda_states()`](https://christophertkenny.com/geomander/reference/heda_states.md)
+  : List Available HEDA States
+- [`vest_states()`](https://christophertkenny.com/geomander/reference/vest_states.md)
+  : List Available VEST States
+
+## Fixing Geographic Imperfections
+
+Functions to help pretend that the geographies were properly connected
+
+- [`add_edge()`](https://christophertkenny.com/geomander/reference/add_edge.md)
+  : Add Edges to an Adjacency List
+- [`adjacency()`](https://christophertkenny.com/geomander/reference/adjacency.md)
+  : Build an Adjacency List
+- [`check_contiguity()`](https://christophertkenny.com/geomander/reference/check_contiguity.md)
+  [`cct()`](https://christophertkenny.com/geomander/reference/check_contiguity.md)
+  [`ccm()`](https://christophertkenny.com/geomander/reference/check_contiguity.md)
+  : Check Contiguity by Group
+- [`check_polygon_contiguity()`](https://christophertkenny.com/geomander/reference/check_polygon_contiguity.md)
+  : Check Polygon Contiguity
+- [`compare_adjacencies()`](https://christophertkenny.com/geomander/reference/compare_adjacencies.md)
+  : Compare Adjacency Lists
+- [`geo_sort()`](https://christophertkenny.com/geomander/reference/geo_sort.md)
+  : Sort Features by Northwest-to-Southeast Order
+- [`split_precinct()`](https://christophertkenny.com/geomander/reference/split_precinct.md)
+  : Split a Precinct
+- [`subtract_edge()`](https://christophertkenny.com/geomander/reference/subtract_edge.md)
+  : Remove Edges from an Adjacency List
+- [`suggest_component_connection()`](https://christophertkenny.com/geomander/reference/suggest_component_connection.md)
+  : Suggest Connections for Disconnected Groups
+- [`suggest_neighbors()`](https://christophertkenny.com/geomander/reference/suggest_neighbors.md)
+  : Suggest Neighbors for Lonely Precincts
+
+## Format Data with Dave’s Redistricting
+
+Functions to get maps into DRA or from DRA
+
+- [`dra2r()`](https://christophertkenny.com/geomander/reference/dra2r.md)
+  : Convert DRA Export Data to an R Spatial Object
+- [`r2dra()`](https://christophertkenny.com/geomander/reference/r2dra.md)
+  : Convert an R Plan to DRA Block Assignment Format
+
+## Center of Shape
+
+Adjusted centroids to ensure that the point is in the shape
+
+- [`geos_centerish()`](https://christophertkenny.com/geomander/reference/geos_centerish.md)
+  : Get the kind of center of each shape
+- [`geos_circle_center()`](https://christophertkenny.com/geomander/reference/geos_circle_center.md)
+  : Get the centroid of the maximum inscribed circle
+- [`st_centerish()`](https://christophertkenny.com/geomander/reference/st_centerish.md)
+  : Get the kind of center of each shape
+- [`st_circle_center()`](https://christophertkenny.com/geomander/reference/st_circle_center.md)
+  : Get the Center of the Maximum Inscribed Circle
+
+## Tools for working with borders
+
+Functions that deal with two sides of a seam between two administrative
+units
+
+- [`seam_adj()`](https://christophertkenny.com/geomander/reference/seam_adj.md)
+  : Filter Adjacency to the Edges Along a Seam
+- [`seam_geom()`](https://christophertkenny.com/geomander/reference/seam_geom.md)
+  : Filter Shapes to Units Along a Seam
+- [`seam_rip()`](https://christophertkenny.com/geomander/reference/seam_rip.md)
+  : Remove Edges Across an Administrative Boundary
+- [`seam_sew()`](https://christophertkenny.com/geomander/reference/seam_sew.md)
+  : Suggest Edges to Sew a Seam
+
+## Spatial Autocorrelation
+
+Functions to measure local and global autocorrelation measures
+
+- [`global_gearys()`](https://christophertkenny.com/geomander/reference/global_gearys.md)
+  : Compute Global Geary's C
+- [`global_morans()`](https://christophertkenny.com/geomander/reference/global_morans.md)
+  : Compute Global Moran's I
+- [`gstar_i()`](https://christophertkenny.com/geomander/reference/gstar_i.md)
+  : Compute Standardized Getis-Ord G\*i
+- [`local_gearys()`](https://christophertkenny.com/geomander/reference/local_gearys.md)
+  : Compute Local Geary's C
+- [`local_morans()`](https://christophertkenny.com/geomander/reference/local_morans.md)
+  : Compute Local Moran's I
+
+## Included Example Data
+
+- [`checkerboard`](https://christophertkenny.com/geomander/reference/checkerboard.md)
+  : Checkerboard
+- [`checkerboard_adj`](https://christophertkenny.com/geomander/reference/checkerboard_adj.md)
+  : Checkerboard Adjacency
+- [`nrcsd`](https://christophertkenny.com/geomander/reference/nrcsd.md)
+  : nrcsd
+- [`orange`](https://christophertkenny.com/geomander/reference/orange.md)
+  : orange
+- [`precincts`](https://christophertkenny.com/geomander/reference/precincts.md)
+  : precincts
+- [`rockland`](https://christophertkenny.com/geomander/reference/rockland.md)
+  : rockland
+- [`towns`](https://christophertkenny.com/geomander/reference/towns.md)
+  : towns
+- [`va18sub`](https://christophertkenny.com/geomander/reference/va18sub.md)
+  : va18sub
+- [`va_blocks`](https://christophertkenny.com/geomander/reference/va_blocks.md)
+  : va_blocks
+- [`va_blocks`](https://christophertkenny.com/geomander/reference/va_vtd.md)
+  : va_vtd
+
+## Plotting Functions
+
+- [`geo_plot()`](https://christophertkenny.com/geomander/reference/geo_plot.md)
+  :
+
+  Plot an `sf` Object with Row Numbers
+
+- [`geo_plot_group()`](https://christophertkenny.com/geomander/reference/geo_plot_group.md)
+  : Plot Groups with Connected Components Colored
+
+## Leftovers
+
+Functions that don’t really fit elsewhere
+
+- [`geomander-package`](https://christophertkenny.com/geomander/reference/geomander-package.md)
+  [`geomander`](https://christophertkenny.com/geomander/reference/geomander-package.md)
+  : Geographic Tools for Studying Gerrymandering
+- [`baf_to_vtd()`](https://christophertkenny.com/geomander/reference/baf_to_vtd.md)
+  : Estimate Plans from a Block Assignment File to Voting Districts
+- [`count_connections()`](https://christophertkenny.com/geomander/reference/count_connections.md)
+  : Count How Often Pairs of Units Share a District
+- [`get_lewis()`](https://christophertkenny.com/geomander/reference/get_lewis.md)
+  : Get Historical United States Congressional District Shapefiles
+- [`get_rpvnearme()`](https://christophertkenny.com/geomander/reference/get_rpvnearme.md)
+  : Get the RPV Near Me Dataset
+- [`regionalize()`](https://christophertkenny.com/geomander/reference/regionalize.md)
+  : Estimate Regions Separated by Geographic Features
+
+# Articles
+
+### All vignettes
+
+- [Merging Election
+  Data](https://christophertkenny.com/geomander/articles/Merging_Election_Data.md):
+- [Redistricting School
+  Districts](https://christophertkenny.com/geomander/articles/Redistricting_School_Districts.md):
