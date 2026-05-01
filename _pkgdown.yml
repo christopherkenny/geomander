@@ -1,5 +1,7 @@
 url: https://christophertkenny.com/geomander
 template:
+  bootstrap: 5
+  package: ctktemplate
   params:
     bootswatch: journal
 reference:
