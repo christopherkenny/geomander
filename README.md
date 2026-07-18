@@ -14,6 +14,8 @@ downloads](http://cranlogs.r-pkg.org/badges/grand-total/geomander)
 badge](https://christopherkenny.r-universe.dev/badges/geomander)](https://christopherkenny.r-universe.dev/geomander)
 <!-- badges: end -->
 
+*Awarded the 2026 Society for Political Methodology Statistical Software Award*
+
 Focuses on creating data sets and other tools that help make
 understanding gerrymandering faster and easier. Designed for easy
 preparation to run simulation analysis with the R package redist, but is
