@@ -22,6 +22,8 @@ knitr::opts_chunk$set(
 [![geomander status badge](https://christopherkenny.r-universe.dev/badges/geomander)](https://christopherkenny.r-universe.dev/geomander)
 <!-- badges: end -->
 
+*Awarded the 2026 Society for Political Methodology Statistical Software Award*
+
 Focuses on creating data sets and other tools that help make understanding gerrymandering faster and easier. Designed for easy preparation to run simulation analysis with the R package redist, but is aimed at the geographic aspects of redistricting, not partitioning methods. Most of these tools are gathered from seminar papers and do not correspond to a single publication.
 
 ## Installation
@@ -46,12 +48,12 @@ A very common task is aggregating block data to precincts.
 ```{r example, results = 'hide'}
 library(geomander)
 library(tidyverse)
- 
+
 # load precincts
 data('va18sub')
 
 # create block data
-block <- create_block_table(state = 'VA', county = '087')  
+block <- create_block_table(state = 'VA', county = '087')
 
 # match the geographies
 matches <- geo_match(from = block, to = va18sub)
@@ -64,7 +66,7 @@ Other important tasks include breaking data into pieces by blocks underlying the
 ```{r, message=FALSE, warning=FALSE}
 library(geomander)
 library(tidyverse)
- 
+
 # load precincts
 data("va18sub")
 
@@ -74,7 +76,7 @@ va18sub <- va18sub |> filter(COUNTYFP == '087')
 
 Then we can get common block data:
 ```{r, results='hide', message=FALSE, warning=FALSE}
-block <- create_block_table(state = 'VA', county = '087')  
+block <- create_block_table(state = 'VA', county = '087')
 ```
 
 And estimate down to blocks
