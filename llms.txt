@@ -37,21 +37,21 @@ A very common task is aggregating block data to precincts.
 library(geomander)
 library(tidyverse)
 #> ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-#> ✔ dplyr     1.1.4     ✔ readr     2.1.4
-#> ✔ forcats   1.0.0     ✔ stringr   1.5.1
-#> ✔ ggplot2   3.4.4     ✔ tibble    3.2.1
-#> ✔ lubridate 1.9.3     ✔ tidyr     1.3.0
-#> ✔ purrr     1.0.2     
+#> ✔ dplyr     1.2.1     ✔ readr     2.1.6
+#> ✔ forcats   1.0.1     ✔ stringr   1.6.0
+#> ✔ ggplot2   4.0.2     ✔ tibble    3.3.1
+#> ✔ lubridate 1.9.5     ✔ tidyr     1.3.2
+#> ✔ purrr     1.2.1     
 #> ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 #> ✖ dplyr::filter() masks stats::filter()
 #> ✖ dplyr::lag()    masks stats::lag()
 #> ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
- 
+
 # load precincts
 data('va18sub')
 
 # create block data
-block <- create_block_table(state = 'VA', county = '087')  
+block <- create_block_table(state = 'VA', county = '087')
 
 # match the geographies
 matches <- geo_match(from = block, to = va18sub)
@@ -67,7 +67,7 @@ underlying them.
 
 library(geomander)
 library(tidyverse)
- 
+
 # load precincts
 data("va18sub")
 
@@ -79,7 +79,7 @@ Then we can get common block data:
 
 ``` r
 
-block <- create_block_table(state = 'VA', county = '087')  
+block <- create_block_table(state = 'VA', county = '087')
 ```
 
 And estimate down to blocks
