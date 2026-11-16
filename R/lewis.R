@@ -29,30 +29,30 @@ get_lewis <- function(state, congress, path_only = FALSE) {
 
   st_f <- lewis_urls[stringr::str_detect(lewis_urls, stringr::str_c('/', st))]
 
-  f <- lapply(stringr::str_extract_all(st_f, '\\d+'), as.integer)
-  f <- lapply(f, function(x) setdiff(x, 20))
-  f <- lapply(f, function(x) {
-    if (length(x) == 1) {
-      congress == x
-    } else {
-      dplyr::between(congress, x[1], x[2])
-    }
-  }) |>
-    unlist()
+  rng <- stringr::str_match(st_f, '_(\\d+)_to_(\\d+)\\.geojson$')
+  f <- congress >= as.integer(rng[, 2]) & congress <= as.integer(rng[, 3])
 
   file_name <- st_f[f]
+  if (length(file_name) > 1) {
+    file_name <- file_name[!basename(file_name) %in% lewis_at_large]
+  }
 
   cli::cli_inform(
     'Data sourced from the United States Congressional District Shapefiles {.url https://cdmaps.polisci.ucla.edu/}.',
     .frequency = 'once',
     .frequency_id = 'cite_lewis'
   )
-  
+
   if (path_only) {
     return(file_name)
   }
 
-  out <- sf::read_sf(file_name)
+  if (length(file_name) == 1) {
+    out <- sf::read_sf(file_name)
+  } else {
+    # plans split across two files: LA 33-36, MA 15-16, TN 33-36
+    out <- rbind(sf::read_sf(file_name[1]), sf::read_sf(file_name[2]))
+  }
 
   # if (requireNamespace('RcppSimdJson', quietly = TRUE)) {
   #   if (nrow(out) > 1) {
@@ -180,8 +180,7 @@ lewis_urls <- c(
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Delaware_103_to_114.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Delaware_115_to_119.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/District%20Of%20Columbia_098_to_102.geojson',
-  'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/District%20Of%20Columbia_103_to_114.geojson',
-  'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/District%20of%20Columbia_115_to_119.geojson',
+  'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/District%20Of%20Columbia_103_to_119.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Florida_029_to_078.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Florida_044_to_047.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Florida_048_to_057.geojson',
@@ -589,8 +588,7 @@ lewis_urls <- c(
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/New%20Jersey_093_to_097.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/New%20Jersey_098_to_098.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/New%20Jersey_099_to_102.geojson',
-  'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/New%20Jersey_103_to_105.geojson',
-  'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/New%20Jersey_106_to_107.geojson',
+  'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/New%20Jersey_103_to_107.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/New%20Jersey_108_to_112.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/New%20Jersey_113_to_114.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/New%20Jersey_115_to_117.geojson',
@@ -635,7 +633,6 @@ lewis_urls <- c(
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/New%20York_093_to_093.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/New%20York_094_to_097.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/New%20York_098_to_098.geojson',
-  'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/New%20York_098_to_102.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/New%20York_099_to_102.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/New%20York_103_to_105.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/New%20York_106_to_107.geojson',
@@ -876,8 +873,7 @@ lewis_urls <- c(
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Texas_098_to_098.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Texas_099_to_102.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Texas_103_to_104.geojson',
-  'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Texas_105_to_106.geojson',
-  'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Texas_107_to_107.geojson',
+  'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Texas_105_to_107.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Texas_108_to_108.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Texas_109_to_109.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Texas_110_to_112.geojson',
@@ -932,8 +928,7 @@ lewis_urls <- c(
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Virginia_090_to_092.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Virginia_093_to_097.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Virginia_098_to_102.geojson',
-  'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Virginia_103_to_103.geojson',
-  'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Virginia_104_to_105.geojson',
+  'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Virginia_103_to_105.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Virginia_106_to_107.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Virginia_108_to_112.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Virginia_113_to_114.geojson',
@@ -988,4 +983,33 @@ lewis_urls <- c(
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Wisconsin_113_to_117.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Wisconsin_118_to_119.geojson',
   'https://raw.githubusercontent.com/JeffreyBLewis/congressional-district-boundaries/master/GeoJson/Wyoming_051_to_119.geojson'
+)
+
+# at-large / general ticket files (district 0, or -1 for Texas_028_to_031)
+lewis_at_large <- c(
+  'Arkansas_024_to_048.geojson',
+  'California_031_to_048.geojson',
+  'Colorado_044_to_063.geojson',
+  'Connecticut_001_to_088.geojson',
+  'Florida_029_to_078.geojson',
+  'Georgia_023_to_048.geojson',
+  'Illinois_038_to_080.geojson',
+  'Kansas_036_to_055.geojson',
+  'Michigan_024_to_088.geojson',
+  'Minnesota_035_to_073.geojson',
+  'Mississippi_015_to_033.geojson',
+  'Missouri_022_to_073.geojson',
+  'Montana_051_to_117.geojson',
+  'New%20Jersey_001_to_027.geojson',
+  'New%20York_048_to_078.geojson',
+  'North%20Dakota_051_to_119.geojson',
+  'Ohio_063_to_089.geojson',
+  'Oklahoma_063_to_077.geojson',
+  'Pennsylvania_001_to_067.geojson',
+  'South%20Dakota_051_to_119.geojson',
+  'Texas_028_to_031.geojson',
+  'Texas_043_to_089.geojson',
+  'Vermont_013_to_119.geojson',
+  'Virginia_048_to_073.geojson',
+  'Washington_051_to_085.geojson'
 )
