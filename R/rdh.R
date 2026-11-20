@@ -30,7 +30,7 @@ read_rdh <- function(
     poss <- poss |>
       dplyr::filter(
         !stringr::str_detect(.data$Name, 'MACOSX'),
-        stringr::str_detect(.data$Name, '\\.shp$')
+        stringr::str_detect(.data$Name, '\\.(shp|geojson|gpkg)$')
       )
     if (nrow(poss) > 1) {
       poss <- poss |>
@@ -38,7 +38,7 @@ read_rdh <- function(
     }
     if (nrow(poss) != 1) {
       cli::cli_abort(
-        'Expected exactly one shapefile in {.file {file}}, found {nrow(poss)}.'
+        'Expected exactly one spatial file in {.file {file}}, found {nrow(poss)}.'
       )
     }
     utils::unzip(file, exdir = path)
@@ -87,6 +87,11 @@ clean_rdh <- function(data, year = NULL) {
     noms
   )
   que <- base::setdiff(que, can)
+  # paired YES/NO, FOR/AGA, or Y/N columns are always questions
+  yn <- grep('^[GPRS](\\d{2})?[A-Z]+\\d*[A-Z]*(YES|NO|FOR|AGA|Y|N)$', noms)
+  stem <- sub('(YES|NO|FOR|AGA|Y|N)$', '', noms[yn])
+  que <- base::union(que, yn[stem %in% stem[duplicated(stem)]])
+  can <- base::setdiff(can, que)
 
   if (is.null(year) || is.na(year)) {
     year <- stringr::str_sub(
@@ -124,7 +129,7 @@ clean_rdh <- function(data, year = NULL) {
   for (i in seq_along(que)) {
     mt <- stringr::str_match(
       noms[que[i]],
-      '^([GPRS])(\\d{2})?([A-Z]+?)(\\d*)(YES|NO)$'
+      '^([GPRS])(\\d{2})?([A-Z]+)(\\d*)([A-Z]*)(YES|NO|FOR|AGA|Y|N)$'
     )
     off <- tolower(mt[4])
     off <- ifelse(
@@ -132,10 +137,17 @@ clean_rdh <- function(data, year = NULL) {
       off,
       rdh_abb_to_alarm[off]
     )
-    off <- paste0(off, mt[5])
+    off <- paste0(off, mt[5], tolower(mt[6]))
     yr <- ifelse(is.na(mt[3]), year, mt[3])
     yr <- ifelse(mt[2] == 'G', yr, paste0(tolower(mt[2]), yr))
-    resp <- tolower(mt[6])
+    resp <- switch(
+      tolower(mt[7]),
+      'for' = 'yes',
+      y = 'yes',
+      aga = 'no',
+      n = 'no',
+      tolower(mt[7])
+    )
     noms[que[i]] <- stringr::str_glue('{off}_{yr}_{resp}')
   }
 
@@ -162,6 +174,10 @@ rdh_party <- function(str) {
     p <- 'ind'
   } else if (p == 'C') {
     p <- 'con'
+  } else if (p == 'N') {
+    p <- 'non'
+  } else if (p == 'U') {
+    p <- 'una'
   } else {
     p <- 'unk'
   }
