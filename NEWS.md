@@ -3,6 +3,7 @@
 * Fixes an NA matching error within `get_lewis()` that would break downloads for certain congress-state pairs (#17).
 * Expands inline documentation to provide better descriptions of arguments and goals of functions.
 * Adds `read_rdh()` and `clean_rdh()` for Redistricting Data Hub precinct files.
+* Switches to [air](https://posit-dev.github.io/air/) and [jarl](https://jarl.etiennebacher.com/) for formatting and linting.
 
 # geomander 2.5.2
 

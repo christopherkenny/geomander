@@ -17,5 +17,3 @@ NULL
 #' @importFrom rlang .env .data :=
 #' @importFrom Rcpp evalCpp
 NULL
-
-globalVariables(c('.'))

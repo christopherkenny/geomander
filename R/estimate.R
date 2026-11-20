@@ -55,20 +55,20 @@ geo_estimate_down <- function(
     dplyr::group_by(group) |>
     dplyr::mutate(GTot = sum(wts)) |>
     dplyr::ungroup() |>
-    dplyr::mutate(dplyr::if_else(GTot == 0, 1, wts)) |>
+    dplyr::mutate(wts = dplyr::if_else(.data$GTot == 0, 1, wts)) |>
     dplyr::group_by(group) |>
     dplyr::mutate(GTot = sum(wts)) |>
     dplyr::ungroup() |>
-    dplyr::mutate(cont = wts / GTot)
+    dplyr::mutate(cont = wts / .data$GTot)
 
   tb2 <- tibble(group = seq_along(value), value = value)
 
   tb <- tb |>
     dplyr::left_join(tb2, by = 'group') |>
-    dplyr::mutate(out = cont * value)
+    dplyr::mutate(out = .data$cont * value)
 
   tb <- tb |>
-    dplyr::mutate(out = ifelse(is.na(out), 0, out))
+    dplyr::mutate(out = ifelse(is.na(.data$out), 0, .data$out))
 
   tb$out
 }
@@ -116,20 +116,20 @@ estimate_down <- function(wts, value, group) {
     dplyr::group_by(group) |>
     dplyr::mutate(GTot = sum(wts)) |>
     dplyr::ungroup() |>
-    dplyr::mutate(wts = dplyr::if_else(GTot == 0, 1, wts)) |>
+    dplyr::mutate(wts = dplyr::if_else(.data$GTot == 0, 1, wts)) |>
     dplyr::group_by(group) |>
     dplyr::mutate(GTot = sum(wts)) |>
     dplyr::ungroup() |>
-    dplyr::mutate(cont = wts / GTot)
+    dplyr::mutate(cont = wts / .data$GTot)
 
   tb2 <- tibble(group = seq_along(value), value = value)
 
   tb <- tb |>
     dplyr::left_join(tb2, by = 'group') |>
-    dplyr::mutate(out = cont * value)
+    dplyr::mutate(out = .data$cont * value)
 
   tb <- tb |>
-    dplyr::mutate(out = ifelse(is.na(out), 0, out))
+    dplyr::mutate(out = ifelse(is.na(.data$out), 0, .data$out))
 
   tb$out
 }
@@ -238,6 +238,3 @@ estimate_up <- function(value, group) {
 
   tb$value
 }
-
-
-globalVariables(c('GTot', 'cont', 'out', 'group', 'value'))

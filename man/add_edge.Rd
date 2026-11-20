@@ -37,6 +37,6 @@ data(towns)
 adj <- adjacency(towns)
 
 add_edge(adj, 2, 3)
-add_edge(adj, "West Haverstraw", "Stony Point", towns$MUNI)
+add_edge(adj, 'West Haverstraw', 'Stony Point', towns$MUNI)
 }
 \concept{fix}

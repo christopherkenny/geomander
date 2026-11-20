@@ -49,7 +49,7 @@ get_heda <- function(state, path = tempdir(), epsg = 3857, ...) {
     x <- x |>
       dplyr::mutate(GEOID = stringr::str_sub(.data$geoid10, 1, 11)) |>
       dplyr::group_by(.data$GEOID) |>
-      dplyr::summarise(dplyr::across(where(is.numeric), function(x) {
+      dplyr::summarise(dplyr::across(dplyr::where(is.numeric), function(x) {
         sum(x, na.rm = TRUE)
       }))
 

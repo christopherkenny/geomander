@@ -187,19 +187,19 @@ block2prec <- function(block_table, matches, geometry = FALSE) {
   if (!geometry) {
     ret <- block_table |>
       sf::st_drop_geometry() |>
-      dplyr::group_by(matches_id) |>
+      dplyr::group_by(.data$matches_id) |>
       dplyr::summarize(
-        dplyr::across(where(is.numeric), sum),
-        dplyr::across(where(function(x) length(unique(x)) == 1), unique),
+        dplyr::across(dplyr::where(is.numeric), sum),
+        dplyr::across(dplyr::where(function(x) length(unique(x)) == 1), unique),
         .groups = 'drop'
       )
   } else {
     ret <- block_table |>
-      dplyr::group_by(matches_id) |>
+      dplyr::group_by(.data$matches_id) |>
       dplyr::summarize(
-        dplyr::across(where(is.numeric), sum),
-        dplyr::across(where(function(x) length(unique(x)) == 1), unique),
-        geometry = sf::st_union(geometry),
+        dplyr::across(dplyr::where(is.numeric), sum),
+        dplyr::across(dplyr::where(function(x) length(unique(x)) == 1), unique),
+        geometry = sf::st_union(.data$geometry),
         .groups = 'drop'
       ) |>
       sf::st_as_sf()
@@ -286,7 +286,7 @@ block2prec_by_county <- function(
 
   precinct <- precinct |>
     mutate(rowid = row_number()) |>
-    select(rowid, geometry, all_of(precinct_county_fips))
+    select(all_of(c('rowid', 'geometry', precinct_county_fips)))
 
   prectb <- tibble()
   countiesl <- unique(block_table$county)
@@ -302,7 +302,7 @@ block2prec_by_county <- function(
 
     prectemp <- prectemp |>
       dplyr::left_join(
-        y = psub |> sf::st_drop_geometry() |> dplyr::select(rowid, matches_id),
+        y = psub |> sf::st_drop_geometry() |> dplyr::select(dplyr::all_of(c('rowid', 'matches_id'))),
         by = 'matches_id'
       )
 
@@ -311,21 +311,7 @@ block2prec_by_county <- function(
   }
 
   prectb |>
-    dplyr::arrange(rowid) |>
-    dplyr::mutate(matches_id = rowid) |>
-    dplyr::select(-rowid)
+    dplyr::arrange(.data$rowid) |>
+    dplyr::mutate(matches_id = .data$rowid) |>
+    dplyr::select(-dplyr::all_of('rowid'))
 }
-
-# fmt: skip
-globalVariables(c(
-  'GEOID', 'variable', 'value', 'AWATER10', 'ALAND10', 'County',
-  'State', 'pop', 'pop_black', 'pop_hisp', 'pop_other',
-  'pop_white', 'vap', 'rowid', 'geometry', '.data',
-  'COUNTYFP', 'cvap_black', 'cvap_hisp', 'cvap_white', 'STATEFP',
-  'estimate',
-  'vap_black', 'vap_hisp', 'vap_other', 'vap_white', 'matches_id',
-  'm_vap', 'm_nvap', 'f_vap', 'f_nvap', 'm_vap_black', 'Mnvap_black',
-  'f_vap_black', 'f_nvap_black', 'm_vap_white', 'Mnvap_white', 'f_vap_white',
-  'f_nvap_white', 'm_vap_hisp', 'Mnvap_hisp', 'f_vap_hisp', 'f_nvap_hisp',
-  'where'
-))

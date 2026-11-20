@@ -77,8 +77,8 @@ check_contiguity <- function(adj, group) {
       dplyr::group_by(.data$group_number) |>
       dplyr::mutate(
         component = match(
-          component,
-          as.numeric(names(sort(table(component), decreasing = TRUE)))
+          .data$component,
+          as.numeric(names(sort(table(.data$component), decreasing = TRUE)))
         )
       ) |>
       dplyr::ungroup()

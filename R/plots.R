@@ -50,7 +50,7 @@ geo_plot_group <- function(shp, adj, group, save = FALSE, path = '') {
       dplyr::filter(group == gc)
 
     p <- temp |>
-      ggplot2::ggplot(aes(fill = as.character(component))) +
+      ggplot2::ggplot(aes(fill = as.character(.data$component))) +
       ggplot2::geom_sf() +
       ggplot2::labs(fill = 'Conn Comp', title = gc) +
       ggplot2::theme_void() +
@@ -88,5 +88,3 @@ geo_plot <- function(shp) {
     ggplot2::geom_sf_text(aes(label = .data$rn)) +
     ggplot2::theme_void()
 }
-
-globalVariables('component')

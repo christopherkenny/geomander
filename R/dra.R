@@ -71,7 +71,7 @@ dra2r <- function(dra, state, precincts, epsg = 3857) {
   }
 
   # rename District column
-  dra <- dra |> dplyr::rename(District_DRA = District)
+  dra <- dra |> dplyr::rename(dplyr::all_of(c(District_DRA = 'District')))
 
   # get the block file to match it to
   shp <- tinytiger::tt_blocks(state, year = 2020)
@@ -91,11 +91,11 @@ dra2r <- function(dra, state, precincts, epsg = 3857) {
 
     shp <- shp |>
       sf::st_drop_geometry() |>
-      dplyr::select(matches, District_DRA)
+      dplyr::select(dplyr::all_of(c('matches', 'District_DRA')))
 
     # get the most likely match
     shp <- shp |>
-      dplyr::group_by(matches, District_DRA) |>
+      dplyr::group_by(.data$matches, .data$District_DRA) |>
       dplyr::mutate(n = n()) |>
       dplyr::ungroup() |>
       dplyr::group_by(matches) |>
@@ -192,5 +192,3 @@ r2dra <- function(precincts, plan, state, path, epsg = 3857) {
 
   out
 }
-
-globalVariables(c('District', 'District_DRA'))

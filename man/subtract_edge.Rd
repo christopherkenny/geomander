@@ -37,6 +37,6 @@ data(towns)
 adj <- adjacency(towns)
 
 subtract_edge(adj, 2, 3)
-subtract_edge(adj, "West Haverstraw", "Stony Point", towns$MUNI)
+subtract_edge(adj, 'West Haverstraw', 'Stony Point', towns$MUNI)
 }
 \concept{fix}
