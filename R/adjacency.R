@@ -25,7 +25,7 @@
 #' @examples
 #' data(towns)
 #' adj <- adjacency(towns)
-#' 
+#'
 #' add_edge(adj, 2, 3)
 #' add_edge(adj, "West Haverstraw", "Stony Point", towns$MUNI)
 add_edge <- function(adj, v1, v2, ids = NULL, zero = TRUE) {
@@ -34,8 +34,8 @@ add_edge <- function(adj, v1, v2, ids = NULL, zero = TRUE) {
   }
 
   zero <- as.integer(zero)
-  
-  matched = match_vtxs(adj, v1, v2, ids)
+
+  matched <- match_vtxs(adj, v1, v2, ids)
   v1 <- matched$v1
   v2 <- matched$v2
 
@@ -83,8 +83,8 @@ subtract_edge <- function(adj, v1, v2, ids = NULL, zero = TRUE) {
   }
 
   zero <- as.integer(zero)
-  
-  matched = match_vtxs(adj, v1, v2, ids)
+
+  matched <- match_vtxs(adj, v1, v2, ids)
   v1 <- matched$v1
   v2 <- matched$v2
 
@@ -100,32 +100,38 @@ subtract_edge <- function(adj, v1, v2, ids = NULL, zero = TRUE) {
 match_vtxs <- function(adj, v1, v2, ids = NULL) {
   if (!is.null(ids)) {
     if (length(adj) != length(ids)) {
-      cli::cli_abort('{.arg ids} must be the same length as {.arg adj}.', 
-                     call=parent.frame())
+      cli::cli_abort(
+        '{.arg ids} must be the same length as {.arg adj}.',
+        call = parent.frame()
+      )
     }
-    
+
     lv1 <- lapply(v1, function(x) which(x == ids))
     lv2 <- lapply(v2, function(x) which(x == ids))
-    
+
     if (any(lengths(lv1) > 1) || any(lengths(lv2) > 1)) {
       cli::cli_abort(
-        c('Provided {.arg ids} are not unique:',
-          'i'='Duplicates: {c(v1[lengths(lv1) > 1], v2[lengths(lv2) > 1])}'),
-        call=parent.frame()
+        c(
+          'Provided {.arg ids} are not unique:',
+          'i' = 'Duplicates: {c(v1[lengths(lv1) > 1], v2[lengths(lv2) > 1])}'
+        ),
+        call = parent.frame()
       )
     }
     if (any(lengths(lv1) == 0) || any(lengths(lv2) == 0)) {
       cli::cli_abort(
-        c('Some values in {.arg v1} and {.arg v2} are not in {.arg ids}:',
-          'i'='Missing: {c(v1[lengths(lv1) == 0], v2[lengths(lv2) == 0])}'),
-        call=parent.frame()
+        c(
+          'Some values in {.arg v1} and {.arg v2} are not in {.arg ids}:',
+          'i' = 'Missing: {c(v1[lengths(lv1) == 0], v2[lengths(lv2) == 0])}'
+        ),
+        call = parent.frame()
       )
     }
-    
+
     v1 <- unlist(lv1)
     v2 <- unlist(lv2)
   }
-  
+
   list(v1 = v1, v2 = v2)
 }
 
@@ -202,7 +208,9 @@ suggest_neighbors <- function(shp, adj, idx, neighbors = 1) {
 #' compare_adjacencies(rook, sf_rook, zero = FALSE)
 compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE) {
   if (missing(adj1) | missing(adj2)) {
-    cli::cli_abort('Please provide an argument to both {.arg adj1} and {.arg adj2}.')
+    cli::cli_abort(
+      'Please provide an argument to both {.arg adj1} and {.arg adj2}.'
+    )
   }
 
   if (length(adj1) != length(adj2)) {
@@ -212,17 +220,18 @@ compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE) {
   ret <- tibble()
   for (i in seq_along(adj1)) {
     temp1 <- tibble(
-      x = i, y = adj1[[i]][which(!(adj1[[i]] %in% adj2[[i]]))],
+      x = i,
+      y = adj1[[i]][which(!(adj1[[i]] %in% adj2[[i]]))],
       from = 1
     )
     temp2 <- tibble(
-      x = i, y = adj2[[i]][which(!(adj2[[i]] %in% adj1[[i]]))],
+      x = i,
+      y = adj2[[i]][which(!(adj2[[i]] %in% adj1[[i]]))],
       from = 2
     )
 
     ret <- bind_rows(ret, temp1, temp2)
   }
-
 
   if (nrow(ret) > 0 & zero) {
     ret$y <- ret$y + 1
@@ -231,7 +240,6 @@ compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE) {
   ret$relation <- NA_character_
   ret$class <- NA_character_
 
-
   if (!missing(shp)) {
     if (nrow(ret) > 1) {
       for (i in seq_len(nrow(ret))) {
@@ -239,10 +247,12 @@ compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE) {
         temp2 <- shp |> slice(ret$y[i])
 
         ret$relation[i] <- sf::st_relate(temp1, temp2)
-        suppressWarnings(ret$class[i] <- class(sf::st_geometry(sf::st_intersection(
-          shp[ret$x[i], ],
-          shp[ret$y[i], ]
-        )))[1])
+        suppressWarnings(
+          ret$class[i] <- class(sf::st_geometry(sf::st_intersection(
+            shp[ret$x[i], ],
+            shp[ret$y[i], ]
+          )))[1]
+        )
       }
     }
   }

@@ -68,9 +68,16 @@ test_that('centerish works', {
       structure(c(7.5, 6.5), class = c('XY', 'POINT', 'sfg')),
       structure(c(7.5, 7.5), class = c('XY', 'POINT', 'sfg'))
     ),
-    n_empty = 0L, precision = 0,
-    crs = structure(list(input = NA_character_, wkt = NA_character_), class = 'crs'),
-    bbox = structure(c(xmin = 0.5, ymin = 0.5, xmax = 7.5, ymax = 7.5), class = 'bbox'),
+    n_empty = 0L,
+    precision = 0,
+    crs = structure(
+      list(input = NA_character_, wkt = NA_character_),
+      class = 'crs'
+    ),
+    bbox = structure(
+      c(xmin = 0.5, ymin = 0.5, xmax = 7.5, ymax = 7.5),
+      class = 'bbox'
+    ),
     class = c('sfc_POINT', 'sfc')
   )
 

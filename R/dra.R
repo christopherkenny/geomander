@@ -34,26 +34,39 @@ dra2r <- function(dra, state, precincts, epsg = 3857) {
   if ('character' %in% class(dra)) {
     # check that it's pointing to a good thing:
     if (!file.exists(dra)) {
-      cli::cli_abort('{.arg dra} supplied as character, but does not point to a valid file.')
+      cli::cli_abort(
+        '{.arg dra} supplied as character, but does not point to a valid file.'
+      )
     }
 
     # get the file extension
     ext <- stringr::str_sub(dra, start = -4)
     if (ext == '.csv') {
-      dra <- readr::read_csv(file = dra, col_types = c(GEOID20 = 'c', District = 'c'), col_names = TRUE)
+      dra <- readr::read_csv(
+        file = dra,
+        col_types = c(GEOID20 = 'c', District = 'c'),
+        col_names = TRUE
+      )
     } else if (ext == 'json') {
-      cli::cli_abort('Please export the map as a csv. json not currently supported, but may be in the future.')
+      cli::cli_abort(
+        'Please export the map as a csv. json not currently supported, but may be in the future.'
+      )
     } else {
-      cli::cli_abort('dra points to a valid file, but not a csv. Please point to a csv export of the map.')
+      cli::cli_abort(
+        'dra points to a valid file, but not a csv. Please point to a csv export of the map.'
+      )
     }
 
-
     if (!('GEOID20' %in% names(dra) & 'District' %in% names(dra))) {
-      cli::cli_abort('{.arg dra} points to a file where {.var GEOID20} and/or {.var District} column not present.')
+      cli::cli_abort(
+        '{.arg dra} points to a file where {.var GEOID20} and/or {.var District} column not present.'
+      )
     }
   } else {
     if (!('GEOID20' %in% names(dra) & 'District' %in% names(dra))) {
-      cli::cli_abort('{.arg dra} provided as dataframe, but {.var GEOID20} and/or {.var District} column not present.')
+      cli::cli_abort(
+        '{.arg dra} provided as dataframe, but {.var GEOID20} and/or {.var District} column not present.'
+      )
     }
   }
 
@@ -165,10 +178,15 @@ r2dra <- function(precincts, plan, state, path, epsg = 3857) {
     if (stringr::str_sub(path, start = -4) == '.csv') {
       suc <- try(readr::write_csv(x = out, file = path), silent = TRUE)
     } else {
-      suc <- try(readr::write_csv(x = out, file = paste0(path, '.csv')), silent = TRUE)
+      suc <- try(
+        readr::write_csv(x = out, file = paste0(path, '.csv')),
+        silent = TRUE
+      )
     }
     if (!'data.frame' %in% class(suc)) {
-      cli::cli_warn('save to path failed. Returning dataframe to be saved manually.')
+      cli::cli_warn(
+        'save to path failed. Returning dataframe to be saved manually.'
+      )
     }
   }
 

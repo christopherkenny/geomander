@@ -49,8 +49,18 @@
 #'
 #' geo_match(from = checkerboard, to = counties)
 #' geo_match(from = checkerboard, to = counties, method = 'area')
-geo_match <- function(from, to, method = 'center', by = NULL, tiebreaker = TRUE, epsg = 3857) {
-  match.arg(arg = method, choices = c('center', 'centroid', 'point', 'circle', 'area'))
+geo_match <- function(
+  from,
+  to,
+  method = 'center',
+  by = NULL,
+  tiebreaker = TRUE,
+  epsg = 3857
+) {
+  match.arg(
+    arg = method,
+    choices = c('center', 'centroid', 'point', 'circle', 'area')
+  )
 
   if (missing(from)) {
     cli::cli_abort('Please provide an argument to {.arg from}.')
@@ -58,40 +68,46 @@ geo_match <- function(from, to, method = 'center', by = NULL, tiebreaker = TRUE,
   if (missing(to)) {
     cli::cli_abort('Please provide an argument to {.arg to}.')
   }
-  
+
   # setup by ----
   if (!is.null(by)) {
-    
     if (length(by) != 1) {
       cli::cli_abort('{.arg by} must be {.val NULL} or length 1.')
     }
-    
+
     if (length(names(by)) > 0) {
       col_from <- names(by)
       col_to <- unname(by)
     } else {
       col_to <- col_from <- by
     }
-    
+
     if (!col_from %in% names(from)) {
-      cli::cli_abort('{.arg by} entry for from {col_from} not found in {.arg from}.')
+      cli::cli_abort(
+        '{.arg by} entry for from {col_from} not found in {.arg from}.'
+      )
     }
     if (!col_to %in% names(to)) {
-      cli::cli_abort('{.arg to} entry for from {col_to} not found in {.arg to}.')
+      cli::cli_abort(
+        '{.arg to} entry for from {col_to} not found in {.arg to}.'
+      )
     }
-    
+
     vals <- unique(from[[col_from]])
-    
+
     col_from_data <- from[[col_from]]
     col_to_data <- to[[col_to]]
-    
+
     from_idx <- lapply(vals, function(v) which(col_from_data == v))
     to_idx <- lapply(vals, function(v) which(col_to_data == v))
-    
   }
-  
+
   # start from / to optimizing ----
-  pairs <- make_planar_pair(sf::st_geometry(from), sf::st_geometry(to), epsg = epsg)
+  pairs <- make_planar_pair(
+    sf::st_geometry(from),
+    sf::st_geometry(to),
+    epsg = epsg
+  )
   from <- pairs$x
   to <- pairs$y
   to_tree <- geos::geos_strtree(to)
@@ -115,7 +131,10 @@ geo_match <- function(from, to, method = 'center', by = NULL, tiebreaker = TRUE,
         idx <- which(lengths(ints) != 1)
 
         if (tiebreaker) {
-          ints[idx] <- geos::geos_nearest_indexed(geom = from[idx, ], tree = to_tree)
+          ints[idx] <- geos::geos_nearest_indexed(
+            geom = from[idx, ],
+            tree = to_tree
+          )
         } else {
           for (i in seq_along(ints)) {
             if (length(ints[[i]]) == 0) {
@@ -137,7 +156,10 @@ geo_match <- function(from, to, method = 'center', by = NULL, tiebreaker = TRUE,
         idx <- which(is.na(ints))
 
         if (tiebreaker) {
-          ints[idx] <- geos::geos_nearest_indexed(geom = from[idx, ], tree = to_tree)
+          ints[idx] <- geos::geos_nearest_indexed(
+            geom = from[idx, ],
+            tree = to_tree
+          )
         } else {
           ints[idx] <- -1L
         }
@@ -162,8 +184,10 @@ geo_match <- function(from, to, method = 'center', by = NULL, tiebreaker = TRUE,
           return(integer(0)) # perhaps cli::cli_abort('something about values being in both')
         }
         geo_match(
-          from = from_l[[i]], to = to_l[[i]],
-          method = method, tiebreaker = tiebreaker,
+          from = from_l[[i]],
+          to = to_l[[i]],
+          method = method,
+          tiebreaker = tiebreaker,
           epsg = FALSE
         )
       }

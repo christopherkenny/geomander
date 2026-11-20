@@ -1,6 +1,7 @@
 test_that('match center works', {
   mtches <- geo_match(va_blocks, va18sub)
 
+  # fmt: skip
   expected <- c(
     64L, 69L, 66L, 66L, 69L, 70L, 70L, 69L, 63L, 68L, 38L, 54L,
     62L, 54L, 71L, 38L, 52L, 52L, 82L, 79L, 73L, 84L, 87L, 76L, 77L,
@@ -492,6 +493,7 @@ test_that('match center works', {
 test_that('match area works', {
   mtches_a <- geo_match(va_blocks, va18sub, method = 'area')
 
+  # fmt: skip
   expected <- c(
     64L, 69L, 66L, 66L, 69L, 70L, 70L, 69L, 63L, 68L, 38L, 54L,
     62L, 54L, 71L, 38L, 52L, 52L, 82L, 79L, 73L, 84L, 87L, 76L, 77L,
@@ -983,6 +985,7 @@ test_that('match area works', {
 test_that('match centroid works', {
   mtches_centroid <- geo_match(va_blocks, va18sub, method = 'centroid')
 
+  # fmt: skip
   expected <- c(
     64L, 69L, 66L, 66L, 69L, 70L, 70L, 69L, 63L, 68L, 38L, 54L,
     62L, 54L, 71L, 38L, 52L, 52L, 82L, 79L, 73L, 81L, 87L, 76L, 77L,
@@ -1474,6 +1477,7 @@ test_that('match centroid works', {
 test_that('match point works', {
   mtches_pt <- geo_match(va_blocks, va18sub, method = 'point')
 
+  # fmt: skip
   expected <- c(
     64L, 69L, 66L, 66L, 69L, 70L, 70L, 69L, 63L, 68L, 38L, 54L,
     62L, 54L, 71L, 38L, 52L, 52L, 82L, 79L, 73L, 84L, 87L, 76L, 77L,

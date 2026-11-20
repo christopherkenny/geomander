@@ -21,7 +21,6 @@ test_that('make planar x != y, one planar works', {
   expect_equal(sf::st_crs(x$x)[[1]], 'EPSG:9311')
   expect_equal(sf::st_crs(x$y)[[1]], 'EPSG:9311')
 
-
   x <- make_planar_pair(towns2, towns)
 
   expect_equal(sf::st_crs(x$x)[[1]], 'EPSG:9311')

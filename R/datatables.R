@@ -23,27 +23,45 @@
 #' # uses the Census API
 #' create_block_table(state = 'NY', county = 'Rockland', geometry = FALSE)
 #' }
-create_block_table <- function(state, county = NULL, geometry = TRUE, year = 2020,
-                               mem = FALSE, epsg = 3857) {
+create_block_table <- function(
+  state,
+  county = NULL,
+  geometry = TRUE,
+  year = 2020,
+  mem = FALSE,
+  epsg = 3857
+) {
   statepo <- censable::match_abb(state)
 
   if (length(statepo) == 0) {
-    cli::cli_abort('Please provide a two letter postal abbreviation for the {.arg state}.')
+    cli::cli_abort(
+      'Please provide a two letter postal abbreviation for the {.arg state}.'
+    )
   }
 
   if (year < 2000 || year %% 10 != 0) {
-    cli::cli_warn('Only 2010 and 2020 are currently supported. 2000 may or may not work.')
+    cli::cli_warn(
+      'Only 2010 and 2020 are currently supported. 2000 may or may not work.'
+    )
   }
 
   if (mem) {
     out <- censable::mem_build_dec(
-      geography = 'block', state = state, county = county,
-      geometry = geometry, year = year, groups = 'all'
+      geography = 'block',
+      state = state,
+      county = county,
+      geometry = geometry,
+      year = year,
+      groups = 'all'
     )
   } else {
     out <- censable::build_dec(
-      geography = 'block', state = state, county = county,
-      geometry = geometry, year = year, groups = 'all'
+      geography = 'block',
+      state = state,
+      county = county,
+      geometry = geometry,
+      year = year,
+      groups = 'all'
     )
   }
 
@@ -79,12 +97,20 @@ create_block_table <- function(state, county = NULL, geometry = TRUE, year = 202
 #' # Relies on Census Bureau API
 #' tract <- create_tract_table('NY', 'Rockland', year = 2018)
 #' }
-create_tract_table <- function(state, county, geometry = TRUE, year = 2019,
-                               mem = FALSE, epsg = 3857) {
+create_tract_table <- function(
+  state,
+  county,
+  geometry = TRUE,
+  year = 2019,
+  mem = FALSE,
+  epsg = 3857
+) {
   statepo <- censable::match_abb(state)
 
   if (length(statepo) == 0) {
-    cli::cli_abort('Please provide a two letter postal abbreviation for the state.')
+    cli::cli_abort(
+      'Please provide a two letter postal abbreviation for the state.'
+    )
   }
 
   if (year < 2009 | year > 2019) {
@@ -93,13 +119,21 @@ create_tract_table <- function(state, county, geometry = TRUE, year = 2019,
 
   if (mem) {
     out <- censable::mem_build_acs(
-      geography = 'tract', state = state, county = county,
-      geometry = geometry, year = year, groups = 'all'
+      geography = 'tract',
+      state = state,
+      county = county,
+      geometry = geometry,
+      year = year,
+      groups = 'all'
     )
   } else {
     out <- censable::build_acs(
-      geography = 'tract', state = state, county = county,
-      geometry = geometry, year = year, groups = 'all'
+      geography = 'tract',
+      state = state,
+      county = county,
+      geometry = geometry,
+      year = year,
+      groups = 'all'
     )
   }
 
@@ -141,20 +175,21 @@ block2prec <- function(block_table, matches, geometry = FALSE) {
   if (missing(matches)) {
     cli::cli_abort('Please provide an argument to {.arg matches}.')
   }
-  
+
   nrow_to <- attr(matches, 'matching_max')
   if (is.null(nrow_to)) {
     nrow_to <- max(matches)
   }
 
-  block_table <- block_table |> 
+  block_table <- block_table |>
     dplyr::mutate(matches_id = matches)
 
   if (!geometry) {
     ret <- block_table |>
       sf::st_drop_geometry() |>
       dplyr::group_by(matches_id) |>
-      dplyr::summarize(dplyr::across(where(is.numeric), sum),
+      dplyr::summarize(
+        dplyr::across(where(is.numeric), sum),
         dplyr::across(where(function(x) length(unique(x)) == 1), unique),
         .groups = 'drop'
       )
@@ -178,24 +213,25 @@ block2prec <- function(block_table, matches, geometry = FALSE) {
           0L
         } else {
           # don't fill when there are negative values
-         NA_integer_ 
+          NA_integer_
         }
       } else if (length(unique(x)) == 1) {
         unique(x)
       } else {
         NA
       }
-    }) |> 
+    }) |>
       stats::setNames(names(ret)) |>
       Filter(f = function(x) !is.na(x))
-      
+
     ret <- tidyr::complete(
-      data = ret, matches_id = seq_len(nrow_to),
+      data = ret,
+      matches_id = seq_len(nrow_to),
       fill = cols_to_fill,
       explicit = FALSE
     )
   }
-  
+
   ret
 }
 
@@ -223,7 +259,12 @@ block2prec <- function(block_table, matches, geometry = FALSE) {
 #' block <- create_block_table('NY', 'Rockland')
 #' block2prec_by_county(block, towns, 'fips')
 #' }
-block2prec_by_county <- function(block_table, precinct, precinct_county_fips, epsg = 3857) {
+block2prec_by_county <- function(
+  block_table,
+  precinct,
+  precinct_county_fips,
+  epsg = 3857
+) {
   if (missing(block_table)) {
     cli::cli_abort('Please provide an argument to {.arg block_table}.')
   }
@@ -234,7 +275,9 @@ block2prec_by_county <- function(block_table, precinct, precinct_county_fips, ep
     cli::cli_abort('Please provide an argument to {.argprecinct_county_fips}.')
   }
   if (!precinct_county_fips %in% names(precinct)) {
-    cli::cli_abort('{.arg precinct_county_fips} is not the name of a column in precinct.')
+    cli::cli_abort(
+      '{.arg precinct_county_fips} is not the name of a column in precinct.'
+    )
   }
 
   pairs <- make_planar_pair(block_table, precinct, epsg = epsg)
@@ -258,8 +301,10 @@ block2prec_by_county <- function(block_table, precinct, precinct_county_fips, ep
     prectemp <- block2prec(bsub, matches = matches)
 
     prectemp <- prectemp |>
-      dplyr::left_join(y = psub |> sf::st_drop_geometry() |>
-        dplyr::select(rowid, matches_id), by = 'matches_id')
+      dplyr::left_join(
+        y = psub |> sf::st_drop_geometry() |> dplyr::select(rowid, matches_id),
+        by = 'matches_id'
+      )
 
     prectb <- prectb |>
       dplyr::bind_rows(prectemp)
@@ -271,7 +316,7 @@ block2prec_by_county <- function(block_table, precinct, precinct_county_fips, ep
     dplyr::select(-rowid)
 }
 
-
+# fmt: skip
 globalVariables(c(
   'GEOID', 'variable', 'value', 'AWATER10', 'ALAND10', 'County',
   'State', 'pop', 'pop_black', 'pop_hisp', 'pop_other',

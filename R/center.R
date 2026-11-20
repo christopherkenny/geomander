@@ -88,7 +88,11 @@ geos_centerish <- function(shp, epsg = 3857) {
 #' st_circle_center(towns)
 #'
 st_circle_center <- function(shp, tolerance = 0.01, epsg = 3857) {
-  cent <- geos_circle_center(sf::st_geometry(shp), tolerance = tolerance, epsg = epsg)
+  cent <- geos_circle_center(
+    sf::st_geometry(shp),
+    tolerance = tolerance,
+    epsg = epsg
+  )
 
   sf::st_geometry(shp) <- sf::st_as_sfc(cent)
   shp
@@ -115,5 +119,8 @@ st_circle_center <- function(shp, tolerance = 0.01, epsg = 3857) {
 geos_circle_center <- function(shp, tolerance = 0.01, epsg = 3857) {
   shp <- make_planar_pair(x = sf::st_geometry(shp), epsg = epsg)$x
 
-  geos::geos_centroid(geos::geos_maximum_inscribed_crc(shp, tolerance = tolerance))
+  geos::geos_centroid(geos::geos_maximum_inscribed_crc(
+    shp,
+    tolerance = tolerance
+  ))
 }

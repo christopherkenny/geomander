@@ -21,7 +21,9 @@ all_files <- lapply(ids, function(id) {
 })
 
 eda <- tibble::tibble(
-  id = ids, name = ns, files = all_files
+  id = ids,
+  name = ns,
+  files = all_files
 ) |>
   mutate(
     state = ifelse(
@@ -35,7 +37,9 @@ eda <- tibble::tibble(
 
 eda_save <- eda |>
   filter(!is.na(state)) |>
-  mutate(files = map(files, \(x) Filter(\(y) stringr::str_detect(y, '.zip'), x)))
+  mutate(
+    files = map(files, \(x) Filter(\(y) stringr::str_detect(y, '.zip'), x))
+  )
 
 eda_aug <- tibble::tribble(
   ~state, ~files,

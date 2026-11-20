@@ -19,15 +19,20 @@ make_planar_pair <- function(x, y = NULL, epsg = 3857) {
   }
 
   if (!is.null(y)) {
-    if (!x_is_ll && !y_is_ll) { # both not-ll
-      if (x_crs != y_crs) { # diff crs -> use x crs
+    if (!x_is_ll && !y_is_ll) {
+      # both not-ll
+      if (x_crs != y_crs) {
+        # diff crs -> use x crs
         y <- sf::st_transform(y, x_crs)
       }
-    } else if (!x_is_ll) { # y ll, x not-ll -> use x crs
+    } else if (!x_is_ll) {
+      # y ll, x not-ll -> use x crs
       y <- sf::st_transform(y, x_crs)
-    } else if (!y_is_ll) { # x ll, y not-ll -> use y crs
+    } else if (!y_is_ll) {
+      # x ll, y not-ll -> use y crs
       x <- sf::st_transform(x, y_crs)
-    } else { # both ll -> use epsg
+    } else {
+      # both ll -> use epsg
       x <- sf::st_transform(x, epsg)
       y <- sf::st_transform(y, epsg)
     }

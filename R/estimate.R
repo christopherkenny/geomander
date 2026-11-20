@@ -34,7 +34,14 @@
 #'   summarize(geometry = sf::st_union(geometry)) |>
 #'   mutate(pop = c(100, 200))
 #' geo_estimate_down(from = counties, to = checkerboard, value = counties$pop)
-geo_estimate_down <- function(from, to, wts, value, method = 'center', epsg = 3857) {
+geo_estimate_down <- function(
+  from,
+  to,
+  wts,
+  value,
+  method = 'center',
+  epsg = 3857
+) {
   group <- geo_match(from = to, to = from, method = method, epsg = epsg)
 
   if (missing(wts)) {

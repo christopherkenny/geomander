@@ -46,15 +46,18 @@ edge_center <- function(shp, adj) {
     start = rep(seq_along(nb), lengths(nb)),
     finish = unlist(nb)
   )
-  
+
   edgedf <- edgedf |>
-    dplyr::mutate(i = pmin(.data$start, .data$finish), j = pmax(.data$start, .data$finish)) |>
+    dplyr::mutate(
+      i = pmin(.data$start, .data$finish),
+      j = pmax(.data$start, .data$finish)
+    ) |>
     dplyr::select('i', 'j')
   edgedf <- edgedf[!duplicated(edgedf), ]
-  
+
   is <- edgedf$i
   js <- edgedf$j
-  
+
   shps <- lapply(seq_along(is), function(x) {
     geos::geos_make_linestring(
       x = c(geos::geos_x(centers[[is[x]]]), geos::geos_x(centers[[js[x]]])),
@@ -66,7 +69,7 @@ edge_center <- function(shp, adj) {
   }) |>
     sf::st_sfc(crs = sf::st_crs(shp)) |>
     sf::st_collection_extract('LINESTRING')
-  
+
   edgedf |>
     dplyr::mutate(
       geometry = shps

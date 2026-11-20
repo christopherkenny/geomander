@@ -24,7 +24,9 @@
 #' local_morans(shp = checkerboard, wts = checkerboard$m)
 local_morans <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
   if (missing(shp) & missing(adj) & missing(spatial_mat)) {
-    cli::cli_abort('Please supply an argument to at least one of {.arg shp} or {.arg adj} or {.arg spatial_mat}.')
+    cli::cli_abort(
+      'Please supply an argument to at least one of {.arg shp} or {.arg adj} or {.arg spatial_mat}.'
+    )
   }
 
   if (missing(adj) & missing(spatial_mat)) {
@@ -39,13 +41,18 @@ local_morans <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
     }
 
     if (length(wts) != nrow(spatial_mat)) {
-      cli::cli_abort('{.arg wts} and {.arg spatial_mat} have different lengths.')
+      cli::cli_abort(
+        '{.arg wts} and {.arg spatial_mat} have different lengths.'
+      )
     }
   }
 
-
   out <- localmoran(wts, mat)
-  tibble(moran = out$moran, expectation = out$expectation, variance = out$variance)
+  tibble(
+    moran = out$moran,
+    expectation = out$expectation,
+    variance = out$variance
+  )
 }
 
 #' Compute Global Moran's I
@@ -76,7 +83,9 @@ local_morans <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
 #' global_morans(shp = checkerboard, wts = checkerboard$m)
 global_morans <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
   if (missing(shp) & missing(adj) & missing(spatial_mat)) {
-    cli::cli_abort('Please supply an argument to at least one of {.arg shp} or {.arg adj} or {.arg spatial_mat}.')
+    cli::cli_abort(
+      'Please supply an argument to at least one of {.arg shp} or {.arg adj} or {.arg spatial_mat}.'
+    )
   }
 
   if (missing(adj) & missing(spatial_mat)) {
@@ -91,7 +100,9 @@ global_morans <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
     }
 
     if (length(wts) != nrow(spatial_mat)) {
-      cli::cli_abort('{.arg wts} and {.arg spatial_mat} have different lengths.')
+      cli::cli_abort(
+        '{.arg wts} and {.arg spatial_mat} have different lengths.'
+      )
     }
   }
 

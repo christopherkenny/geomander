@@ -23,7 +23,9 @@
 #' gstar_i(shp = checkerboard, wts = checkerboard$m)
 gstar_i <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
   if (missing(shp) & missing(adj) & missing(spatial_mat)) {
-    cli::cli_abort('Please supply an argument to at least one of {.arg shp} or {.arg adj} or {.arg spatial_mat}.')
+    cli::cli_abort(
+      'Please supply an argument to at least one of {.arg shp} or {.arg adj} or {.arg spatial_mat}.'
+    )
   }
 
   if (missing(adj) & missing(spatial_mat)) {

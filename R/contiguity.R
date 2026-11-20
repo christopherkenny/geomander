@@ -76,11 +76,14 @@ check_contiguity <- function(adj, group) {
     out <- out |>
       dplyr::group_by(.data$group_number) |>
       dplyr::mutate(
-        component = match(component, as.numeric(names(sort(table(component), decreasing = TRUE))))
-    ) |>
+        component = match(
+          component,
+          as.numeric(names(sort(table(component), decreasing = TRUE)))
+        )
+      ) |>
       dplyr::ungroup()
   }
-  
+
   out
 }
 
@@ -135,9 +138,12 @@ check_polygon_contiguity <- function(shp, group, epsg = 3857) {
 
   adj <- adj_geos(shp)
 
-  check_contiguity(adj = adj, group = shp |>
-    sf::st_drop_geometry() |>
-    dplyr::pull({{ group }}))
+  check_contiguity(
+    adj = adj,
+    group = shp |>
+      sf::st_drop_geometry() |>
+      dplyr::pull({{ group }})
+  )
 }
 
 #' Suggest Connections for Disconnected Groups

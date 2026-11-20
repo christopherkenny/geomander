@@ -75,7 +75,10 @@ geo_trim <- function(from, to, thresh = 0.01, bool = FALSE, epsg = 3857) {
   from <- pairs$x
   to <- pairs$y
 
-  ints <- geos::geos_intersection(from, geos::geos_unary_union(geos::geos_make_collection(to)))
+  ints <- geos::geos_intersection(
+    from,
+    geos::geos_unary_union(geos::geos_make_collection(to))
+  )
   area <- geos::geos_area(from)
   areaints <- rep(0, nrow(from))
   areaints <- geos::geos_area(geos::geos_make_valid(ints)) # , NA_on_exception = TRUE in valid

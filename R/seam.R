@@ -87,13 +87,21 @@ seam_geom <- function(adj, shp, admin, seam, epsg = 3857) {
   admin_a <- which(admin == seam[1])
   admin_b <- which(admin == seam[2])
 
-  keep_a <- vapply(seq_along(admin_a), function(i) {
-    any((adj[[admin_a[i]]] + 1L) %in% admin_b)
-  }, FALSE)
+  keep_a <- vapply(
+    seq_along(admin_a),
+    function(i) {
+      any((adj[[admin_a[i]]] + 1L) %in% admin_b)
+    },
+    FALSE
+  )
 
-  keep_b <- vapply(seq_along(admin_b), function(i) {
-    any((adj[[admin_b[i]]] + 1L) %in% admin_a)
-  }, FALSE)
+  keep_b <- vapply(
+    seq_along(admin_b),
+    function(i) {
+      any((adj[[admin_b[i]]] + 1L) %in% admin_a)
+    },
+    FALSE
+  )
 
   keep <- sort(c(admin_a[keep_a], admin_b[keep_b]))
   shp[keep, ]
@@ -135,13 +143,21 @@ seam_adj <- function(adj, shp, admin, seam, epsg = 3857) {
   admin_a <- which(admin == seam[1])
   admin_b <- which(admin == seam[2])
 
-  keep_a <- vapply(seq_along(admin_a), function(i) {
-    any((adj[[admin_a[i]]] + 1L) %in% admin_b)
-  }, FALSE)
+  keep_a <- vapply(
+    seq_along(admin_a),
+    function(i) {
+      any((adj[[admin_a[i]]] + 1L) %in% admin_b)
+    },
+    FALSE
+  )
 
-  keep_b <- vapply(seq_along(admin_b), function(i) {
-    any((adj[[admin_b[i]]] + 1L) %in% admin_a)
-  }, FALSE)
+  keep_b <- vapply(
+    seq_along(admin_b),
+    function(i) {
+      any((adj[[admin_b[i]]] + 1L) %in% admin_a)
+    },
+    FALSE
+  )
 
   admin_a <- admin_a[keep_a]
   admin_b <- admin_b[keep_b]

@@ -19,7 +19,14 @@
 #' # Requires Dataverse API
 #' shp <- get_vest('CO', 2020)
 #' }
-get_vest <- function(state, year, path = tempdir(), clean_names = TRUE, epsg = 3857, ...) {
+get_vest <- function(
+  state,
+  year,
+  path = tempdir(),
+  clean_names = TRUE,
+  epsg = 3857,
+  ...
+) {
   abb <- tolower(censable::match_abb(state))
 
   file_name <- stringr::str_glue('{abb}_{year}.zip')
@@ -37,14 +44,18 @@ get_vest <- function(state, year, path = tempdir(), clean_names = TRUE, epsg = 3
 
   tf <- tempfile(fileext = '.zip')
   x <- dataverse::get_file_by_name(
-    filename = file_name, dataset = doi,
+    filename = file_name,
+    dataset = doi,
     server = 'dataverse.harvard.edu'
   ) |>
     writeBin(con = tf)
   utils::unzip(tf, exdir = path)
 
   poss <- sf::st_layers(dsn = path)[[1]]
-  up_path <- poss[stringr::str_starts(string = poss, stringr::str_glue('{abb}_{year}'))]
+  up_path <- poss[stringr::str_starts(
+    string = poss,
+    stringr::str_glue('{abb}_{year}')
+  )]
 
   out <- sf::read_sf(dsn = paste0(path, '/', up_path, '.shp'), ...)
 
@@ -112,9 +123,13 @@ clean_vest <- function(data) {
 vest_states <- function(year) {
   doi <- vest_doi()[as.character(year)]
   files <- dataverse::dataset_files(doi, server = 'dataverse.harvard.edu')
-  out <- stringr::str_sub(unlist(lapply(files, function(x) {
-    x[['label']]
-  })), 1, 2)
+  out <- stringr::str_sub(
+    unlist(lapply(files, function(x) {
+      x[['label']]
+    })),
+    1,
+    2
+  )
   base::setdiff(out, 'do')
 }
 
@@ -164,35 +179,89 @@ vest_abb <- function(x) {
   structure(
     list(
       a = c(
-        'A##', 'AGR', 'ATG', 'AUD', 'CFO',
-        'CHA', 'COC', 'COM', 'CON', 'COU', 'CSC', 'DEL', 'GOV',
-        'H##', 'HOD', 'HOR', 'INS', 'LAB', 'LND', 'LTG', 'MAY',
-        'MNI', 'PSC', 'PUC', 'RGT', 'SAC', 'SBE', 'SCC', 'SOC',
-        'SOS', 'SPI', 'SPL', 'SSC', 'TAX', 'TRE', 'UBR', 'USS'
+        'A##',
+        'AGR',
+        'ATG',
+        'AUD',
+        'CFO',
+        'CHA',
+        'COC',
+        'COM',
+        'CON',
+        'COU',
+        'CSC',
+        'DEL',
+        'GOV',
+        'H##',
+        'HOD',
+        'HOR',
+        'INS',
+        'LAB',
+        'LND',
+        'LTG',
+        'MAY',
+        'MNI',
+        'PSC',
+        'PUC',
+        'RGT',
+        'SAC',
+        'SBE',
+        'SCC',
+        'SOC',
+        'SOS',
+        'SPI',
+        'SPL',
+        'SSC',
+        'TAX',
+        'TRE',
+        'UBR',
+        'USS'
       ),
       b = c(
-        'Ballot amendment, where ## is an identifier', 'Commissioner of Agriculture',
-        'Attorney General', 'Auditor', 'Chief Financial Officer',
-        'Council Chairman', 'Corporation Commissioner', 'Comptroller',
-        'State Controller', 'City Council Member', 'Clerk of the Supreme Court',
-        'Delegate to the U.S. House', 'Governor', 'U.S. House, where ## is the district number. AL: at large.',
+        'Ballot amendment, where ## is an identifier',
+        'Commissioner of Agriculture',
+        'Attorney General',
+        'Auditor',
+        'Chief Financial Officer',
+        'Council Chairman',
+        'Corporation Commissioner',
+        'Comptroller',
+        'State Controller',
+        'City Council Member',
+        'Clerk of the Supreme Court',
+        'Delegate to the U.S. House',
+        'Governor',
+        'U.S. House, where ## is the district number. AL: at large.',
         'House of Delegates, accompanied by a HOD_DIST column indicating district number',
         'U.S. House, accompanied by a HOR_DIST column indicating district number',
-        'Insurance Commissioner', 'Labor Commissioner', 'Commissioner of Public/State Lands',
-        'Lieutenant Governor', 'Mayor', 'State Mine Inspector', 'Public Service Commissioner',
-        'Public Utilities Commissioner', 'State University Regent',
-        'State Appeals Court (in AL: Civil Appeals)', 'State Board of Education',
-        'State Court of Criminal Appeals', 'Secretary of Commonwealth',
-        'Secretary of State', 'Superintendent of Public Instruction',
-        'Commissioner of School and Public Lands', 'State Supreme Court',
-        'Tax Commissioner', 'Treasurer', 'University Board of Regents/Trustees/Governors',
+        'Insurance Commissioner',
+        'Labor Commissioner',
+        'Commissioner of Public/State Lands',
+        'Lieutenant Governor',
+        'Mayor',
+        'State Mine Inspector',
+        'Public Service Commissioner',
+        'Public Utilities Commissioner',
+        'State University Regent',
+        'State Appeals Court (in AL: Civil Appeals)',
+        'State Board of Education',
+        'State Court of Criminal Appeals',
+        'Secretary of Commonwealth',
+        'Secretary of State',
+        'Superintendent of Public Instruction',
+        'Commissioner of School and Public Lands',
+        'State Supreme Court',
+        'Tax Commissioner',
+        'Treasurer',
+        'University Board of Regents/Trustees/Governors',
         'U.S. Senate'
       )
     ),
     row.names = c(NA, -37L),
     class = c(
       'tbl_df',
-      'tbl', 'data.frame'
+      'tbl',
+      'data.frame'
     )
   )
 }

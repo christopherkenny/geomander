@@ -24,7 +24,9 @@
 #' local_gearys(shp = checkerboard, wts = checkerboard$m)
 local_gearys <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
   if (missing(shp) & missing(adj) & missing(spatial_mat)) {
-    cli::cli_abort('Please supply an argument to at least one of shp or adj or spatial_mat.')
+    cli::cli_abort(
+      'Please supply an argument to at least one of shp or adj or spatial_mat.'
+    )
   }
 
   if (missing(adj) & missing(spatial_mat)) {
@@ -73,7 +75,9 @@ local_gearys <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
 #' global_gearys(shp = checkerboard, wts = checkerboard$m)
 global_gearys <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
   if (missing(shp) & missing(adj) & missing(spatial_mat)) {
-    cli::cli_abort('Please supply an argument to at least one of {.arg shp} or {.arg adj} or {.arg spatial_mat}.')
+    cli::cli_abort(
+      'Please supply an argument to at least one of {.arg shp} or {.arg adj} or {.arg spatial_mat}.'
+    )
   }
 
   if (missing(adj) & missing(spatial_mat)) {
@@ -88,10 +92,11 @@ global_gearys <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
     }
 
     if (length(wts) != nrow(spatial_mat)) {
-      cli::cli_abort('{.arg wts} and {.arg spatial_mat} have different lengths.')
+      cli::cli_abort(
+        '{.arg wts} and {.arg spatial_mat} have different lengths.'
+      )
     }
   }
-
 
   out <- globalgeary(wts, mat)
 

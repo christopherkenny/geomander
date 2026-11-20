@@ -24,7 +24,7 @@
 #' # Not guaranteed to reach download from redistrict2020.org
 #' \dontrun{
 #' # download and read baf ----
-#' url <- paste0('https://github.com/PlanScore/Redistrict2020/', 
+#' url <- paste0('https://github.com/PlanScore/Redistrict2020/',
 #'               'raw/main/files/DE-2021-01/DE_SLDU_bef.zip')
 #' tf <- tempfile('.zip')
 #' utils::download.file(url, tf)
@@ -56,7 +56,7 @@ baf_to_vtd <- function(baf, plan_name, GEOID = 'GEOID', year = 2020) {
   if (!'character' %in% class(GEOID)) {
     cli::cli_abort('{.arg GEOID} must be a {.cls character}.')
   }
-  
+
   if (!year %in% c(2010, 2020)) {
     cli::cli_abort('{.arg year} must be either 2010 or 2020.')
   }
@@ -68,7 +68,11 @@ baf_to_vtd <- function(baf, plan_name, GEOID = 'GEOID', year = 2020) {
     cli::cli_abort(c('VTD file not found for state {.val {state_fips}}.'))
   }
   baf_vtd <- baf_vtd[[1]] |>
-    dplyr::rename(GEOID = .data$BLOCKID, county = .data$COUNTYFP, vtd = .data$DISTRICT)
+    dplyr::rename(
+      GEOID = .data$BLOCKID,
+      county = .data$COUNTYFP,
+      vtd = .data$DISTRICT
+    )
 
   baf <- baf |>
     dplyr::rename(GEOID = .env$GEOID) |>

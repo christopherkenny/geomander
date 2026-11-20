@@ -37,14 +37,25 @@
 #'   dplyr::summarize(geometry = sf::st_union(geometry))
 #'
 #' split_precinct(low, prec, dists, split_by_id = 'dist')
-split_precinct <- function(lower, precinct, split_by, lower_wt, split_by_id, epsg = 3857) {
+split_precinct <- function(
+  lower,
+  precinct,
+  split_by,
+  lower_wt,
+  split_by_id,
+  epsg = 3857
+) {
   if (!missing(lower_wt)) {
     if (length(lower_wt) != nrow(lower)) {
-      cli::cli_abort('{.arg lower_wt} must have the same number of entries as {.arg lower}')
+      cli::cli_abort(
+        '{.arg lower_wt} must have the same number of entries as {.arg lower}'
+      )
     }
 
     if (!is.numeric(lower_wt)) {
-      cli::cli_abort('{.arg lower_wt} must be a numeric vector to allow for weighting.')
+      cli::cli_abort(
+        '{.arg lower_wt} must be a numeric vector to allow for weighting.'
+      )
     }
   }
 
@@ -53,7 +64,9 @@ split_precinct <- function(lower, precinct, split_by, lower_wt, split_by_id, eps
   }
 
   if (nrow(split_by) < 2) {
-    cli::cli_abort('{.arg split_by} requires at least two geographies to consider.')
+    cli::cli_abort(
+      '{.arg split_by} requires at least two geographies to consider.'
+    )
   }
 
   pairs <- make_planar_pair(lower, precinct, epsg = epsg)
@@ -77,7 +90,6 @@ split_precinct <- function(lower, precinct, split_by, lower_wt, split_by_id, eps
     dplyr::group_by(.data$new) |>
     dplyr::summarize(geometry = sf::st_union(.data$geometry))
 
-
   if (!missing(lower_wt)) {
     out_wt <- tibble(new = matches, wt = lower_wt) |>
       dplyr::group_by(.data$new) |>
@@ -90,7 +102,9 @@ split_precinct <- function(lower, precinct, split_by, lower_wt, split_by_id, eps
     if (split_by_id %in% names(split_by)) {
       out_geo$id <- split_by[[split_by_id]][out_geo$new]
     } else {
-      cli::cli_warn('{.arg split_by_id} provided, but no column with that name found.')
+      cli::cli_warn(
+        '{.arg split_by_id} provided, but no column with that name found.'
+      )
     }
   }
 

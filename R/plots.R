@@ -42,7 +42,6 @@ geo_plot_group <- function(shp, adj, group, save = FALSE, path = '') {
     dplyr::bind_cols(components) |>
     dplyr::mutate(rownum = row_number())
 
-
   out <- list()
   for (g in 1:length(unique(group))) {
     gc <- unique(group)[g]
