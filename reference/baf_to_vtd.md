@@ -47,10 +47,10 @@ district, the output uses the modal district assignment.
 # Not guaranteed to reach download from redistrict2020.org
 if (FALSE) { # \dontrun{
 # download and read baf ----
-url <- paste0('https://github.com/PlanScore/Redistrict2020/', 
+url <- paste0('https://github.com/PlanScore/Redistrict2020/',
               'raw/main/files/DE-2021-01/DE_SLDU_bef.zip')
 tf <- tempfile('.zip')
-utils::download.file(url, tf)
+utils::download.file(url, tf, mode = 'wb')
 utils::unzip(tf, exdir = dirname(tf))
 baf <- readr::read_csv(
   file = paste0(dirname(tf), '/DE_SLDU_bef.csv'),

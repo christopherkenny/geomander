@@ -13,6 +13,8 @@
   and
   [`clean_rdh()`](https://christophertkenny.com/geomander/reference/clean_rdh.md)
   for Redistricting Data Hub precinct files.
+- Switches to [air](https://posit-dev.github.io/air/) and
+  [jarl](https://jarl.etiennebacher.com/) for formatting and linting.
 
 ## geomander 2.5.2
 

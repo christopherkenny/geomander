@@ -71,7 +71,7 @@ add_edge(adj, 2, 3)
 #> [[7]]
 #> [1] 0 3 5
 #> 
-add_edge(adj, "West Haverstraw", "Stony Point", towns$MUNI)
+add_edge(adj, 'West Haverstraw', 'Stony Point', towns$MUNI)
 #> [[1]]
 #> [1] 3 4 6
 #> 
