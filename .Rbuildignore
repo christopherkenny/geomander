@@ -18,3 +18,4 @@ man-roxygen
 ^[.]?air[.]toml$
 ^\.vscode$
 ^jarl\.toml$
+^\.git-blame-ignore-revs$
