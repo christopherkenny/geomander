@@ -10,15 +10,15 @@ test_that('adding edges works', {
 
   expect_equal(
     add_edge(adj, 4, 6),
-    add_edge(adj, "West Haverstraw", "Stony Point", towns$MUNI)
+    add_edge(adj, 'West Haverstraw', 'Stony Point', towns$MUNI)
   )
   expect_error(
-    add_edge(adj, "Haverstraw", "Stony Point", towns$MUNI),
-    "[Dd]uplicate"
+    add_edge(adj, 'Haverstraw', 'Stony Point', towns$MUNI),
+    '[Dd]uplicate'
   )
   expect_error(
-    add_edge(adj, "NOT A TOWN", "Stony Point", towns$MUNI),
-    "[Mm]issing"
+    add_edge(adj, 'NOT A TOWN', 'Stony Point', towns$MUNI),
+    '[Mm]issing'
   )
 })
 

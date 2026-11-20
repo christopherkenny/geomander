@@ -7,9 +7,9 @@ output: github_document
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
+  comment = '#>',
+  fig.path = 'man/figures/README-',
+  out.width = '100%'
 )
 ```
 
@@ -68,7 +68,7 @@ library(geomander)
 library(tidyverse)
 
 # load precincts
-data("va18sub")
+data('va18sub')
 
 # subset to target area
 va18sub <- va18sub |> filter(COUNTYFP == '087')

@@ -13,7 +13,7 @@ make_planar_pair <- function(x, y = NULL, epsg = 3857) {
     cli::cli_warn('Planarizing skipped. {.arg x} missing CRS.')
     return(list(x = x, y = y))
   }
-  if ((is.null(y_crs) || is.na(y_crs)) & !is.null(y)) {
+  if ((is.null(y_crs) || is.na(y_crs)) && !is.null(y)) {
     cli::cli_warn('Planarizing skipped. {.arg y} missing CRS.')
     return(list(x = x, y = y))
   }

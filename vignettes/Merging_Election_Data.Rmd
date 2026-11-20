@@ -45,7 +45,7 @@ block <- create_block_table(state = 'VA', county = '087', year = 2010)
 
 To avoid needing API access, we can use saved data. These polygons are simplified using `rmapshaper`.
 ```{r}
-data("va_blocks")
+data('va_blocks')
 block <- va_blocks
 ```
 
@@ -101,7 +101,7 @@ vtd <- tt_voting_districts(state = 'VA', county = '087', year = 2010)
 As with other potential calls to the API, this data is also simplified and included.
 
 ```{r}
-data("va_vtd")
+data('va_vtd')
 vtd <- va_vtd
 ```
 

@@ -27,7 +27,7 @@
 #' adj <- adjacency(towns)
 #'
 #' add_edge(adj, 2, 3)
-#' add_edge(adj, "West Haverstraw", "Stony Point", towns$MUNI)
+#' add_edge(adj, 'West Haverstraw', 'Stony Point', towns$MUNI)
 add_edge <- function(adj, v1, v2, ids = NULL, zero = TRUE) {
   if (length(v1) != length(v2)) {
     cli::cli_abort('{.arg v1} and {.arg v2} lengths are different.')
@@ -76,7 +76,7 @@ add_edge <- function(adj, v1, v2, ids = NULL, zero = TRUE) {
 #' adj <- adjacency(towns)
 #'
 #' subtract_edge(adj, 2, 3)
-#' subtract_edge(adj, "West Haverstraw", "Stony Point", towns$MUNI)
+#' subtract_edge(adj, 'West Haverstraw', 'Stony Point', towns$MUNI)
 subtract_edge <- function(adj, v1, v2, ids = NULL, zero = TRUE) {
   if (length(v1) != length(v2)) {
     cli::cli_abort('{.arg v1} and {.arg v2} lengths are different.')
@@ -207,7 +207,7 @@ suggest_neighbors <- function(shp, adj, idx, neighbors = 1) {
 #' })
 #' compare_adjacencies(rook, sf_rook, zero = FALSE)
 compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE) {
-  if (missing(adj1) | missing(adj2)) {
+  if (missing(adj1) || missing(adj2)) {
     cli::cli_abort(
       'Please provide an argument to both {.arg adj1} and {.arg adj2}.'
     )
@@ -233,7 +233,7 @@ compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE) {
     ret <- bind_rows(ret, temp1, temp2)
   }
 
-  if (nrow(ret) > 0 & zero) {
+  if (nrow(ret) > 0 && zero) {
     ret$y <- ret$y + 1
   }
 

@@ -113,7 +113,7 @@ create_tract_table <- function(
     )
   }
 
-  if (year < 2009 | year > 2019) {
+  if (year < 2009 || year > 2019) {
     cli::cli_warn('Only years in 2009:2019 inclusive are currently supported.')
   }
 

@@ -56,7 +56,7 @@ ND_files <- eda |>
   filter(id == '10.7910/DVN/YN4TLR') |>
   pull(files) |>
   .[[1]] |>
-  Filter(\(x) substr(x, 1, 2) == 'ND', .)
+  Filter(\(x) startsWith(x, 'ND'), .)
 
 # dataverse::dataset_files(ids[10])
 

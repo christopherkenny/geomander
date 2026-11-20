@@ -85,7 +85,7 @@ split_precinct <- function(
   matches <- geo_match(from = lower, to = split_by, epsg = FALSE)
 
   out_geo <- lower |>
-    dplyr::select("geometry") |>
+    dplyr::select('geometry') |>
     dplyr::mutate(new = matches) |>
     dplyr::group_by(.data$new) |>
     dplyr::summarize(geometry = sf::st_union(.data$geometry))

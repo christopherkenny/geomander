@@ -61,7 +61,7 @@ geo_estimate_down <- function(
     dplyr::ungroup() |>
     dplyr::mutate(cont = wts / GTot)
 
-  tb2 <- tibble(group = 1:length(value), value = value)
+  tb2 <- tibble(group = seq_along(value), value = value)
 
   tb <- tb |>
     dplyr::left_join(tb2, by = 'group') |>
@@ -122,7 +122,7 @@ estimate_down <- function(wts, value, group) {
     dplyr::ungroup() |>
     dplyr::mutate(cont = wts / GTot)
 
-  tb2 <- tibble(group = 1:length(value), value = value)
+  tb2 <- tibble(group = seq_along(value), value = value)
 
   tb <- tb |>
     dplyr::left_join(tb2, by = 'group') |>
@@ -182,7 +182,7 @@ geo_estimate_up <- function(from, to, value, method = 'center', epsg = 3857) {
     arrange(group)
 
   if (nrow(tb) < nrow(to)) {
-    for (i in 1:nrow(to)) {
+    for (i in seq_len(nrow(to))) {
       if (tb$group[i] != i) {
         tb <- tb |> add_row(group = i, value = 0, .after = (i - 1))
       }

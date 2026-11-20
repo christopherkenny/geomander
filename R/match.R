@@ -152,7 +152,7 @@ geo_match <- function(
         y = geos::geos_make_valid(to)
       )
 
-      if (any(is.na(ints))) {
+      if (anyNA(ints)) {
         idx <- which(is.na(ints))
 
         if (tiebreaker) {

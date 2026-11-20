@@ -23,13 +23,13 @@
 #' checkerboard <- checkerboard |> mutate(m = as.numeric((id + i) %% 2 == 0))
 #' local_gearys(shp = checkerboard, wts = checkerboard$m)
 local_gearys <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
-  if (missing(shp) & missing(adj) & missing(spatial_mat)) {
+  if (missing(shp) && missing(adj) && missing(spatial_mat)) {
     cli::cli_abort(
       'Please supply an argument to at least one of shp or adj or spatial_mat.'
     )
   }
 
-  if (missing(adj) & missing(spatial_mat)) {
+  if (missing(adj) && missing(spatial_mat)) {
     adj <- adjacency(shp, epsg = epsg)
   }
 
@@ -74,13 +74,13 @@ local_gearys <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
 #' checkerboard <- checkerboard |> mutate(m = as.numeric((id + i) %% 2 == 0))
 #' global_gearys(shp = checkerboard, wts = checkerboard$m)
 global_gearys <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
-  if (missing(shp) & missing(adj) & missing(spatial_mat)) {
+  if (missing(shp) && missing(adj) && missing(spatial_mat)) {
     cli::cli_abort(
       'Please supply an argument to at least one of {.arg shp} or {.arg adj} or {.arg spatial_mat}.'
     )
   }
 
-  if (missing(adj) & missing(spatial_mat)) {
+  if (missing(adj) && missing(spatial_mat)) {
     adj <- adjacency(shp, epsg = epsg)
   }
 

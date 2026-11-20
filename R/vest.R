@@ -175,6 +175,7 @@ vest_party <- function(str) {
 
 #' VEST Abbreviations
 #' @keywords internal
+# jarl-ignore unused_function: dev helper
 vest_abb <- function(x) {
   structure(
     list(
