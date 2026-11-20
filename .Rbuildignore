@@ -15,3 +15,6 @@ man-roxygen
 ^CRAN-SUBMISSION$
 ^data-raw$
 ^revdep$
+^[.]?air[.]toml$
+^\.vscode$
+^jarl\.toml$

@@ -1,0 +1,5 @@
+[lint]
+extend-select = ["quotes"]
+
+[lint.quotes]
+quote = "single"
