@@ -92,6 +92,9 @@ clean_rdh <- function(data, year = NULL) {
   stem <- sub('(YES|NO|FOR|AGA|Y|N)$', '', noms[yn])
   que <- base::union(que, yn[stem %in% stem[duplicated(stem)]])
   can <- base::setdiff(can, que)
+  if (length(can) == 0 && length(que) == 0) {
+    cli::cli_warn('No RDH-style election columns found. Names left unchanged.')
+  }
 
   if (is.null(year) || is.na(year)) {
     year <- stringr::str_sub(
