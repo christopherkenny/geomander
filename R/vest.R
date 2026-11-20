@@ -162,8 +162,6 @@ vest_party <- function(str) {
     p <- 'oth'
   } else if (p == 'I') {
     p <- 'ind'
-  } else if (p == 'I') {
-    p <- 'ind'
   } else if (p == 'C') {
     p <- 'con'
   } else {
