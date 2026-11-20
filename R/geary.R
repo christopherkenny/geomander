@@ -45,7 +45,7 @@ local_gearys <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
     }
   }
 
-  tibble(geary = localgeary(wts, mat))
+  tibble::tibble(geary = localgeary(wts, mat))
 }
 
 

@@ -48,7 +48,7 @@ local_morans <- function(shp, adj, wts, spatial_mat, epsg = 3857) {
   }
 
   out <- localmoran(wts, mat)
-  tibble(
+  tibble::tibble(
     moran = out$moran,
     expectation = out$expectation,
     variance = out$variance

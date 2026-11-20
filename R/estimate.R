@@ -51,7 +51,7 @@ geo_estimate_down <- function(
     value <- rep(1, nrow(from))
   }
 
-  tb <- tibble(wts = wts, group = group) |>
+  tb <- tibble::tibble(wts = wts, group = group) |>
     dplyr::group_by(group) |>
     dplyr::mutate(GTot = sum(wts)) |>
     dplyr::ungroup() |>
@@ -61,7 +61,7 @@ geo_estimate_down <- function(
     dplyr::ungroup() |>
     dplyr::mutate(cont = wts / .data$GTot)
 
-  tb2 <- tibble(group = seq_along(value), value = value)
+  tb2 <- tibble::tibble(group = seq_along(value), value = value)
 
   tb <- tb |>
     dplyr::left_join(tb2, by = 'group') |>
@@ -87,9 +87,6 @@ geo_estimate_down <- function(
 #'
 #' @return numeric vector of length `length(group)` with values split by weight
 #'
-#' @importFrom tibble tibble
-#' @importFrom dplyr group_by ungroup slice pull left_join
-#'
 #' @concept estimate
 #'
 #' @export
@@ -112,7 +109,7 @@ estimate_down <- function(wts, value, group) {
     value <- 1
   }
 
-  tb <- tibble(wts = wts, group = group) |>
+  tb <- tibble::tibble(wts = wts, group = group) |>
     dplyr::group_by(group) |>
     dplyr::mutate(GTot = sum(wts)) |>
     dplyr::ungroup() |>
@@ -122,7 +119,7 @@ estimate_down <- function(wts, value, group) {
     dplyr::ungroup() |>
     dplyr::mutate(cont = wts / .data$GTot)
 
-  tb2 <- tibble(group = seq_along(value), value = value)
+  tb2 <- tibble::tibble(group = seq_along(value), value = value)
 
   tb <- tb |>
     dplyr::left_join(tb2, by = 'group') |>
@@ -154,9 +151,6 @@ estimate_down <- function(wts, value, group) {
 #'
 #' @return numeric vector of length `nrow(to)` with values aggregated by group
 #'
-#' @importFrom tibble tibble add_row
-#' @importFrom dplyr group_by ungroup slice pull left_join
-#'
 #' @concept estimate
 #'
 #' @export
@@ -176,15 +170,15 @@ geo_estimate_up <- function(from, to, value, method = 'center', epsg = 3857) {
   if (missing(value)) {
     value <- 1
   }
-  tb <- tibble(value = value, group = group) |>
-    group_by(group) |>
-    summarize(value = sum(value)) |>
-    arrange(group)
+  tb <- tibble::tibble(value = value, group = group) |>
+    dplyr::group_by(group) |>
+    dplyr::summarize(value = sum(value)) |>
+    dplyr::arrange(group)
 
   if (nrow(tb) < nrow(to)) {
     for (i in seq_len(nrow(to))) {
       if (tb$group[i] != i) {
-        tb <- tb |> add_row(group = i, value = 0, .after = (i - 1))
+        tb <- tb |> tibble::add_row(group = i, value = 0, .after = (i - 1))
       }
     }
   }
@@ -203,8 +197,6 @@ geo_estimate_up <- function(from, to, value, method = 'center', epsg = 3857) {
 #'
 #' @return numeric vector of length `max(group)` with values aggregated by group
 #'
-#' @importFrom tibble tibble add_row
-#' @importFrom dplyr group_by ungroup slice pull left_join
 #' @export
 #' @concept estimate
 #' @examples
@@ -222,7 +214,7 @@ estimate_up <- function(value, group) {
     value <- 1
   }
 
-  tb <- tibble(value = value, group = group) |>
+  tb <- tibble::tibble(value = value, group = group) |>
     dplyr::group_by(group) |>
     dplyr::summarize(value = sum(value)) |>
     dplyr::arrange(group)

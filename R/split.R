@@ -91,7 +91,7 @@ split_precinct <- function(
     dplyr::summarize(geometry = sf::st_union(.data$geometry))
 
   if (!missing(lower_wt)) {
-    out_wt <- tibble(new = matches, wt = lower_wt) |>
+    out_wt <- tibble::tibble(new = matches, wt = lower_wt) |>
       dplyr::group_by(.data$new) |>
       dplyr::summarize(wt = sum(.data$lower_wt, na.rm = TRUE), .groups = 'drop')
 

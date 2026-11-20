@@ -76,7 +76,7 @@ baf_to_vtd <- function(baf, plan_name, GEOID = 'GEOID', year = 2020) {
 
   baf <- baf |>
     dplyr::rename(GEOID = .env$GEOID) |>
-    left_join(baf_vtd, by = 'GEOID')
+    dplyr::left_join(baf_vtd, by = 'GEOID')
 
   baf |>
     dplyr::select(-.data$GEOID) |>

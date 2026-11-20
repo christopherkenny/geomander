@@ -64,7 +64,7 @@ check_contiguity <- function(adj, group) {
     groups <- rep(1L, length(adj))
   }
 
-  out <- tibble(
+  out <- tibble::tibble(
     group = group,
     group_number = groups,
     component = contiguity(adj, groups - 1L)
@@ -184,9 +184,9 @@ suggest_component_connection <- function(shp, adj, group, epsg = 3857) {
   components <- check_contiguity(adj = adj, group = group)
 
   shp <- make_planar_pair(x = shp, epsg = 3857)$x
-  shp <- shp |> mutate(rownum = row_number())
+  shp <- shp |> dplyr::mutate(rownum = dplyr::row_number())
 
-  out <- tibble()
+  out <- tibble::tibble()
   for (g in seq_len(length(unique(group)))) {
     sub <- components$component[group == g]
     if (max(sub) > 1) {
@@ -197,7 +197,7 @@ suggest_component_connection <- function(shp, adj, group, epsg = 3857) {
         dists <- dist_mat_geos(x = tempx, y = tempy)
         prop <- arrayInd(which.min(dists), dim(dists))
         out <- out |>
-          dplyr::bind_rows(tibble(
+          dplyr::bind_rows(tibble::tibble(
             x = tempx$rownum[prop[1, 1]],
             y = tempy$rownum[prop[1, 2]]
           ))

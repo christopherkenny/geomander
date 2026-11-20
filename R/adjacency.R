@@ -169,7 +169,7 @@ suggest_neighbors <- function(shp, adj, idx, neighbors = 1) {
 
   cents <- st_centerish(shp)
 
-  out <- tibble()
+  out <- tibble::tibble()
   for (i in idx) {
     nn <- nn_geos(x = cents[i, ], y = cents[-i, ], k = neighbors)
     for (j in seq_along(nn)) {
@@ -177,7 +177,7 @@ suggest_neighbors <- function(shp, adj, idx, neighbors = 1) {
         nn[j] <- nn[j] + 1
       }
     }
-    out <- bind_rows(out, tibble(x = i, y = nn))
+    out <- dplyr::bind_rows(out, tibble::tibble(x = i, y = nn))
   }
 
   out
@@ -217,20 +217,20 @@ compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE) {
     cli::cli_abort('{.arg adj1} and {.arg adj2} have different lengths.')
   }
 
-  ret <- tibble()
+  ret <- tibble::tibble()
   for (i in seq_along(adj1)) {
-    temp1 <- tibble(
+    temp1 <- tibble::tibble(
       x = i,
       y = adj1[[i]][which(!(adj1[[i]] %in% adj2[[i]]))],
       from = 1
     )
-    temp2 <- tibble(
+    temp2 <- tibble::tibble(
       x = i,
       y = adj2[[i]][which(!(adj2[[i]] %in% adj1[[i]]))],
       from = 2
     )
 
-    ret <- bind_rows(ret, temp1, temp2)
+    ret <- dplyr::bind_rows(ret, temp1, temp2)
   }
 
   if (nrow(ret) > 0 && zero) {
@@ -243,8 +243,8 @@ compare_adjacencies <- function(adj1, adj2, shp, zero = TRUE) {
   if (!missing(shp)) {
     if (nrow(ret) > 1) {
       for (i in seq_len(nrow(ret))) {
-        temp1 <- shp |> slice(ret$x[i])
-        temp2 <- shp |> slice(ret$y[i])
+        temp1 <- shp |> dplyr::slice(ret$x[i])
+        temp2 <- shp |> dplyr::slice(ret$y[i])
 
         ret$relation[i] <- sf::st_relate(temp1, temp2)
         suppressWarnings(

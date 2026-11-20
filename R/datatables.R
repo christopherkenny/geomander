@@ -285,24 +285,26 @@ block2prec_by_county <- function(
   precinct <- pairs$y
 
   precinct <- precinct |>
-    mutate(rowid = row_number()) |>
-    select(all_of(c('rowid', 'geometry', precinct_county_fips)))
+    dplyr::mutate(rowid = dplyr::row_number()) |>
+    dplyr::select(dplyr::all_of(c('rowid', 'geometry', precinct_county_fips)))
 
-  prectb <- tibble()
+  prectb <- tibble::tibble()
   countiesl <- unique(block_table$county)
 
   for (cty in seq_along(countiesl)) {
-    bsub <- block_table |> filter(.data$county == countiesl[cty])
+    bsub <- block_table |> dplyr::filter(.data$county == countiesl[cty])
     psub <- precinct |>
-      filter(.data[[precinct_county_fips]] == countiesl[cty]) |>
-      mutate(matches_id = row_number())
+      dplyr::filter(.data[[precinct_county_fips]] == countiesl[cty]) |>
+      dplyr::mutate(matches_id = dplyr::row_number())
 
     matches <- geo_match(from = bsub, to = psub, epsg = FALSE)
     prectemp <- block2prec(bsub, matches = matches)
 
     prectemp <- prectemp |>
       dplyr::left_join(
-        y = psub |> sf::st_drop_geometry() |> dplyr::select(dplyr::all_of(c('rowid', 'matches_id'))),
+        y = psub |>
+          sf::st_drop_geometry() |>
+          dplyr::select(dplyr::all_of(c('rowid', 'matches_id'))),
         by = 'matches_id'
       )
 

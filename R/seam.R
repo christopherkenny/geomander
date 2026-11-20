@@ -222,7 +222,7 @@ seam_sew <- function(shp, admin, seam, epsg = 3857) {
 
   adj <- seam_adj(adj_geos(vr), shp, admin, seam)
 
-  tibble(
+  tibble::tibble(
     v1 = unlist(lapply(seq_along(adj), function(i) {
       rep(i, length(adj[[i]]))
     })),

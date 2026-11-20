@@ -40,7 +40,7 @@ geo_plot_group <- function(shp, adj, group, save = FALSE, path = '') {
 
   shp <- shp |>
     dplyr::bind_cols(components) |>
-    dplyr::mutate(rownum = row_number())
+    dplyr::mutate(rownum = dplyr::row_number())
 
   out <- list()
   for (g in seq_along(unique(group))) {
@@ -50,7 +50,7 @@ geo_plot_group <- function(shp, adj, group, save = FALSE, path = '') {
       dplyr::filter(group == gc)
 
     p <- temp |>
-      ggplot2::ggplot(aes(fill = as.character(.data$component))) +
+      ggplot2::ggplot(ggplot2::aes(fill = as.character(.data$component))) +
       ggplot2::geom_sf() +
       ggplot2::labs(fill = 'Conn Comp', title = gc) +
       ggplot2::theme_void() +
@@ -58,7 +58,10 @@ geo_plot_group <- function(shp, adj, group, save = FALSE, path = '') {
 
     out[[g]] <- p
     if (save) {
-      ggsave(filename = paste0(path, 'group_plot_', gc, '.png'), plot = p)
+      ggplot2::ggsave(
+        filename = paste0(path, 'group_plot_', gc, '.png'),
+        plot = p
+      )
     }
   }
 
@@ -85,6 +88,6 @@ geo_plot <- function(shp) {
     dplyr::mutate(rn = dplyr::row_number()) |>
     ggplot2::ggplot() +
     ggplot2::geom_sf() +
-    ggplot2::geom_sf_text(aes(label = .data$rn)) +
+    ggplot2::geom_sf_text(ggplot2::aes(label = .data$rn)) +
     ggplot2::theme_void()
 }

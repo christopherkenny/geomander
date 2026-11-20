@@ -96,10 +96,10 @@ dra2r <- function(dra, state, precincts, epsg = 3857) {
     # get the most likely match
     shp <- shp |>
       dplyr::group_by(.data$matches, .data$District_DRA) |>
-      dplyr::mutate(n = n()) |>
+      dplyr::mutate(n = dplyr::n()) |>
       dplyr::ungroup() |>
       dplyr::group_by(matches) |>
-      dplyr::arrange(desc(n)) |>
+      dplyr::arrange(dplyr::desc(n)) |>
       dplyr::slice(1) |>
       dplyr::ungroup() |>
       dplyr::select(-n)
@@ -169,7 +169,7 @@ r2dra <- function(precincts, plan, state, path, epsg = 3857) {
 
   dist <- plan[matches]
 
-  out <- tibble(GEOID20 = shp$GEOID20, District = dist)
+  out <- tibble::tibble(GEOID20 = shp$GEOID20, District = dist)
 
   # return if no path
   if (missing(path)) {
