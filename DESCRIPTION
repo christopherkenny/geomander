@@ -18,7 +18,6 @@ License: MIT + file LICENCE
 URL: https://christophertkenny.com/geomander/, https://github.com/christopherkenny/geomander
 BugReports: https://github.com/christopherkenny/geomander/issues
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 LinkingTo: Rcpp (>= 1.0.7)
 Imports:
     baf,
@@ -51,3 +50,4 @@ VignetteBuilder: knitr
 Config/testthat/edition: 3
 Config/Needs/website: christopherkenny/ctktemplate
 Language: en-US
+Config/roxygen2/version: 8.0.0

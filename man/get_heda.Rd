@@ -13,7 +13,7 @@ get_heda(state, path = tempdir(), epsg = 3857, ...)
 
 \item{epsg}{numeric EPSG code to planarize to. Default is 3857.}
 
-\item{...}{Additional arguments passed to \code{\link[sf:st_read]{sf::read_sf()}}.}
+\item{...}{Additional arguments passed to \code{\link[sf:read_sf]{sf::read_sf()}}.}
 }
 \value{
 \code{sf} tibble containing the requested HEDA dataset
