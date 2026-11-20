@@ -19,12 +19,12 @@ test_that('split works', {
           structure(
             list(
               structure(c(0, 1, 1, 0, 0, 0, 0, 1, 1, 0),
-                .Dim = c(5L, 2L)
+                dim = c(5L, 2L)
               )
             ),
             class = c('XY', 'POLYGON', 'sfg')
           ),
-          structure(list(structure(c(1, 1, 0, 0, 0, 1, 1, 2, 1, 1, 2, 3, 3, 2), .Dim = c(7L, 2L))),
+          structure(list(structure(c(1, 1, 0, 0, 0, 1, 1, 2, 1, 1, 2, 3, 3, 2), dim = c(7L, 2L))),
             class = c('XY', 'POLYGON', 'sfg')
           )
         ),
@@ -38,7 +38,7 @@ test_that('split works', {
     row.names = 1:2,
     class = c('sf', 'tbl_df', 'tbl', 'data.frame'),
     sf_column = 'geometry', agr = structure(c(new = NA_integer_, id = NA_integer_),
-      class = 'factor', .Label = c('constant', 'aggregate', 'identity')
+      class = 'factor', levels = c('constant', 'aggregate', 'identity')
     )
   )
 
