@@ -8,6 +8,11 @@
   ([\#17](https://github.com/christopherkenny/geomander/issues/17)).
 - Expands inline documentation to provide better descriptions of
   arguments and goals of functions.
+- Adds
+  [`read_rdh()`](https://christophertkenny.com/geomander/reference/read_rdh.md)
+  and
+  [`clean_rdh()`](https://christophertkenny.com/geomander/reference/clean_rdh.md)
+  for Redistricting Data Hub precinct files.
 
 ## geomander 2.5.2
 

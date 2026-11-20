@@ -132,6 +132,8 @@ Functions to help download common datasets
 
 - [`alarm_states()`](https://christophertkenny.com/geomander/reference/alarm_states.md)
   : List Available States from ALARM Data
+- [`clean_rdh()`](https://christophertkenny.com/geomander/reference/clean_rdh.md)
+  : Clean RDH Column Names
 - [`clean_vest()`](https://christophertkenny.com/geomander/reference/clean_vest.md)
   : Clean VEST Column Names
 - [`get_alarm()`](https://christophertkenny.com/geomander/reference/get_alarm.md)
@@ -144,6 +146,8 @@ Functions to help download common datasets
   : Get a Voting and Election Science Team ("VEST") Dataset
 - [`heda_states()`](https://christophertkenny.com/geomander/reference/heda_states.md)
   : List Available HEDA States
+- [`read_rdh()`](https://christophertkenny.com/geomander/reference/read_rdh.md)
+  : Read a Redistricting Data Hub ("RDH") Dataset
 - [`vest_states()`](https://christophertkenny.com/geomander/reference/vest_states.md)
   : List Available VEST States
 
