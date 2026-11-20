@@ -109,7 +109,7 @@ analysis.</p>
 <p>To avoid needing API access, we can use saved data. These polygons
 are simplified using <code>rmapshaper</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"va_blocks"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">'va_blocks'</span><span class="op">)</span></span>
 <span><span class="va">block</span> <span class="op">&lt;-</span> <span class="va">va_blocks</span></span></code></pre></div>
 <p>A typical approach from here is to match the geography from the
 blocks to the precincts. In this case, the geographies of the blocks are
@@ -164,7 +164,7 @@ the relevant Virginia county.</p>
 <p>As with other potential calls to the API, this data is also
 simplified and included.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"va_vtd"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">'va_vtd'</span><span class="op">)</span></span>
 <span><span class="va">vtd</span> <span class="op">&lt;-</span> <span class="va">va_vtd</span></span></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">vtd</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>

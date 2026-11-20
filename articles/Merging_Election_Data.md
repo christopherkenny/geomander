@@ -57,7 +57,7 @@ simplified using `rmapshaper`.
 
 ``` r
 
-data("va_blocks")
+data('va_blocks')
 block <- va_blocks
 ```
 
@@ -144,7 +144,7 @@ and included.
 
 ``` r
 
-data("va_vtd")
+data('va_vtd')
 vtd <- va_vtd
 ```
 
